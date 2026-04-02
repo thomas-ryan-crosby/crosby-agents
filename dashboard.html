@@ -153,7 +153,7 @@
     <button class="nav-btn" data-view="approvals"><i data-lucide="check-circle" style="width:15px;height:15px;"></i> Approvals <span class="nav-badge" id="approvalBadge">0</span></button>
     <button class="nav-btn" data-view="schedule"><i data-lucide="calendar" style="width:15px;height:15px;"></i> Schedule</button>
     <button class="nav-btn" data-view="metrics"><i data-lucide="trending-up" style="width:15px;height:15px;"></i> Metrics</button>
-    <button class="nav-btn" data-view="docs"><i data-lucide="file-text" style="width:15px;height:15px;"></i> Docs <span class="nav-badge" id="docsBadge">3</span></button>
+    <button class="nav-btn" data-view="docs"><i data-lucide="file-text" style="width:15px;height:15px;"></i> Docs <span class="nav-badge" id="docsBadge">6</span></button>
     <button class="nav-btn" data-view="strategy"><i data-lucide="book-open" style="width:15px;height:15px;"></i> Strategy</button>
   </nav>
 
@@ -592,7 +592,7 @@ const AGENTS = [
   { slug: "clerical-data-agent", name: "Clerical Data", icon: "database", phase: 1, color: "#374151", phaseLabel: "Phase 1 — Foundation", status: "building", description: "The data intake layer. Converts raw source files (XLS, WDB, CSV) into the clean structured data store. The only agent that touches raw files — all other agents read exclusively from data/." },
   // Phase 2 — Operations Core
   { slug: "lease-intelligence-agent", name: "Lease Intelligence", icon: "clock", phase: 2, color: "#dc2626", phaseLabel: "Phase 2 — Ops Core", status: "building", description: "Monitors lease expirations, notice deadlines & auto-renewals. Generates renewal offer letters and vacancy alerts." },
-  { slug: "vacancy-marketing-agent", name: "Vacancy Marketing", icon: "file-text", phase: 2, color: "#d97706", phaseLabel: "Phase 2 — Ops Core", status: "planned", description: "Triggers on confirmed vacancy. Writes LoopNet/CoStar listing copy and generates leasing brief PDFs." },
+  { slug: "vacancy-marketing-agent", name: "Vacancy Marketing", icon: "file-text", phase: 2, color: "#d97706", phaseLabel: "Phase 2 — Ops Core", status: "building", description: "Triggers on confirmed vacancy. Writes LoopNet/CoStar listing copy and generates leasing brief PDFs." },
   { slug: "rent-roll-intelligence-agent", name: "Rent Roll Intelligence", icon: "bar-chart-2", phase: 2, color: "#2563eb", phaseLabel: "Phase 2 — Ops Core", status: "planned", description: "Monitors rent rolls across all buildings, flags anomalies, and produces monthly portfolio summary reports." },
   // Phase 3 — HOA & Residential
   { slug: "hoa-management-agent", name: "HOA Management", icon: "home", phase: 3, color: "#7c3aed", phaseLabel: "Phase 3 — HOA & Residential", status: "planned", description: "Dues tracking, violation notices, maintenance requests, and board communications for HOA communities." },
@@ -634,6 +634,14 @@ var DOCUMENTS = [
     lastUpdated:"2026-04-01", status:"active",
     description:"Crosby Development brand personality, voice by audience (residential, commercial, HOA, prospects), writing standards, Fair Housing language, and asset status.",
     file:"knowledge-base/formative/BRAND_VOICE.md" },
+  { id:"triggering-architecture", title:"Triggering Architecture", category:"Formative", icon:"cpu", color:"#0891b2",
+    lastUpdated:"2026-04-02", status:"active",
+    description:"How agents get triggered — manual chat commands, Cowork scheduled tasks, and event-driven agent chains. Model assignments, execution environment, and scaling path.",
+    file:"knowledge-base/formative/TRIGGERING_ARCHITECTURE.md" },
+  { id:"data-schema", title:"Data Schema Reference", category:"Formative", icon:"database", color:"#374151",
+    lastUpdated:"2026-04-02", status:"active",
+    description:"Field-level schema for all 6 JSON data files (properties, buildings, units, tenants, leases, hoa-lots). Entity relationships, update protocol, and current data status.",
+    file:"knowledge-base/formative/DATA_SCHEMA.md" },
   // ── Agent Outputs ──────────────────────────────────────────────────────────
   { id:"bldg1-lease-review-2026-04", title:"Building #1 Lease Review — April 2026", category:"Agent Output",
     icon:"clock", color:"#dc2626", lastUpdated:"2026-04-01", status:"pending_review",
@@ -650,6 +658,22 @@ var DOCUMENTS = [
     agentSlug:"lease-intelligence-agent", propertySlug:"sanctuary-office-park",
     description:"Draft renewal offer letter for Nirvana Massage (Suite 306, 610 SF). Proposes 2-year extension at $1,372/mo (Year 1) + $1,413/mo (Year 2). Notice deadline: July 4, 2026 (94 days).",
     file:"knowledge-base/outputs/lease-intelligence/nirvana-renewal-2026-04.md" },
+  // ── Vacancy Marketing Agent Outputs ──
+  { id:"bldg1-suite302-listing-2026-07", title:"Vacancy Listing — Suite 302, Building #1", category:"Agent Output",
+    icon:"file-text", color:"#d97706", lastUpdated:"2026-04-02", status:"pending_review",
+    agentSlug:"vacancy-marketing-agent", propertySlug:"sanctuary-office-park",
+    description:"LoopNet/CoStar listing copy for Suite 302 (655 SF, 3rd floor). Sec National vacating June 30. Proposed asking rate: $30.37–$32.44/SF/year. Full-service lease, available July 1, 2026.",
+    file:"knowledge-base/outputs/vacancy-marketing/bldg1-suite302-listing-2026-07.md" },
+  { id:"bldg1-suite302-brief-2026-07", title:"Leasing Brief — Suite 302, Building #1", category:"Agent Output",
+    icon:"file-text", color:"#d97706", lastUpdated:"2026-04-02", status:"pending_review",
+    agentSlug:"vacancy-marketing-agent", propertySlug:"sanctuary-office-park",
+    description:"One-page leasing brief for broker distribution. Suite 302 specs, building overview, campus amenities, location map notes, lease terms, and contact CTA.",
+    file:"knowledge-base/outputs/vacancy-marketing/bldg1-suite302-brief-2026-07.md" },
+  { id:"bldg1-suite302-email-2026-07", title:"Email Blast — Suite 302, Building #1", category:"Agent Output",
+    icon:"file-text", color:"#d97706", lastUpdated:"2026-04-02", status:"pending_review",
+    agentSlug:"vacancy-marketing-agent", propertySlug:"sanctuary-office-park",
+    description:"Email announcement for broker contacts and prospect list. 655 SF available July 1, asking $30.37–$32.44/SF/year. Ready for Gmail draft on approval.",
+    file:"knowledge-base/outputs/vacancy-marketing/bldg1-suite302-email-2026-07.md" },
 ];
 
 var docStatuses = {}; // tracks approve/reject decisions
@@ -798,6 +822,15 @@ function renderActivity() {
 // ── AGENTS ──────────────────────────────────────────────────────────────────
 var AGENT_DETAILS = {
   "clerical-data-agent": {
+    runtime: {
+      model: "claude-sonnet-4-6",
+      modelRationale: "Structured data parsing — fast, precise, low cost. No creative writing needed.",
+      executionMode: "Cowork session — manual trigger",
+      schedule: "On demand only. Runs when user provides new raw data files.",
+      estimatedTokens: "~8K input / ~12K output per building import",
+      dependencies: "None — this is the foundation layer. All other agents depend on its output.",
+      outputGate: "Import diff report must be approved in Docs tab before data is considered live.",
+    },
     inputs: [
       { label:"rentinfo#1–5.xls (raw)", detail:"Monthly commercial rent rolls from the OFFICE RENTS folder. Read once per update cycle — not referenced again after clean data is written." },
       { label:"Residential rent rolls (.wdb)", detail:"Microsoft Works Database files for Metairie Plaza, Metairie Lake, Mandeville Lake. Parsed via olefile/OLE2 compound document reader." },
@@ -845,6 +878,15 @@ var AGENT_DETAILS = {
     ],
   },
   "lease-intelligence-agent": {
+    runtime: {
+      model: "claude-sonnet-4-6",
+      modelRationale: "Date math, urgency classification, and template-based letter generation. Sonnet handles this well at lower cost.",
+      executionMode: "Cowork scheduled task + manual trigger",
+      schedule: "Weekly (Monday) — deadline scan. Monthly (1st) — renewal letter drafts. On demand via chat.",
+      estimatedTokens: "~6K input / ~10K output per weekly scan; ~4K per renewal letter",
+      dependencies: "Reads data/leases.json, data/units.json, data/tenants.json (written by Clerical Data Agent). References LEASING_PLAYBOOK.md.",
+      outputGate: "All renewal letters and vacancy alerts require human approval in Docs tab before any external action.",
+    },
     inputs: [
       { label:"data/leases.json", detail:"All active lease records — unitId, tenantId, commenced, terminates, monthlyRent, escalationPct, autoRenew, noticeDays, noticeDeadline, status (active / vacating / mtm / owner-occupant), docFile" },
       { label:"data/units.json", detail:"Suite-level records — identifier, floor, SF, type, buildingId, occupancy status. Used to cross-reference lease data and populate vacancy reports." },
@@ -887,6 +929,15 @@ var AGENT_DETAILS = {
     ],
   },
   "vacancy-marketing-agent": {
+    runtime: {
+      model: "claude-opus-4-6",
+      modelRationale: "Marketing copy requires high-quality creative writing — compelling headlines, professional listing descriptions, persuasive email copy. Opus produces publication-ready output.",
+      executionMode: "Event-driven (from Lease Intelligence) + manual trigger",
+      schedule: "Triggered when Lease Intelligence Agent confirms a vacancy (status: 'vacating'). Also available on demand.",
+      estimatedTokens: "~8K input / ~15K output per vacancy (3 deliverables: listing, brief, email)",
+      dependencies: "Requires approved vacancy alert from Lease Intelligence Agent. Reads data/leases.json, data/units.json, data/properties.json. References BRAND_VOICE.md.",
+      outputGate: "ALL marketing copy requires human approval before posting to LoopNet/CoStar, distributing to brokers, or creating Gmail drafts.",
+    },
     inputs: [
       { label:"data/leases.json", detail:"Reads status:'vacating' entries — unitId, tenantId, terminates date (= confirmed vacancy date). The primary trigger source." },
       { label:"data/units.json", detail:"Suite specs for the vacating unit — SF, floor, type, building. Used to build listing copy and leasing brief." },
@@ -926,6 +977,15 @@ var AGENT_DETAILS = {
     ],
   },
   "rent-roll-intelligence-agent": {
+    runtime: {
+      model: "claude-sonnet-4-6",
+      modelRationale: "Financial calculations, occupancy math, and tabular report generation. Sonnet is ideal for structured numerical analysis.",
+      executionMode: "Cowork scheduled task + manual trigger",
+      schedule: "Monthly (1st) — full portfolio summary. Anomaly alerts posted immediately when detected during any data update.",
+      estimatedTokens: "~12K input / ~8K output for monthly portfolio summary (scales with property count)",
+      dependencies: "Reads all data/*.json files (written by Clerical Data Agent). Previous SUMMARY.md for MoM comparison.",
+      outputGate: "Monthly summary requires approval before sharing with stakeholders. Anomaly alerts require investigation confirmation.",
+    },
     inputs: [
       { label:"data/leases.json", detail:"All active lease records across all properties — monthlyRent, status, escalationPct, commenced, terminates, unitId. Primary revenue source." },
       { label:"data/units.json", detail:"All leasable spaces — SF, type, status, buildingId. Used to calculate occupancy rates and vacant SF by building." },
@@ -965,6 +1025,15 @@ var AGENT_DETAILS = {
     ],
   },
   "hoa-management-agent": {
+    runtime: {
+      model: "claude-sonnet-4-6",
+      modelRationale: "Template-based notices (dues, violations, agendas). Structured, consistent output. Sonnet is efficient for recurring document generation.",
+      executionMode: "Cowork scheduled task + manual trigger",
+      schedule: "Monthly — dues reminders (25th), delinquency flags (10th). On demand for violation notices and board agendas.",
+      estimatedTokens: "~4K input / ~6K output per batch of dues notices; ~3K per violation notice",
+      dependencies: "Reads data/hoa-lots.json, data/properties.json (written by Clerical Data Agent). References BRAND_VOICE.md for tone.",
+      outputGate: "ALL outgoing HOA communications require human approval. Enforcement actions require legal review.",
+    },
     inputs: [
       { label:"data/hoa-lots.json", detail:"Full lot roster — 45 lots, lot number, type (townhome/cottage), owner name, tenant name, Crosby vs. third-party managed, monthlyDues, monthlyRent. Canonical source for all HOA communications." },
       { label:"data/properties.json", detail:"Lakeside Village property record — address, city, Crosby role (manager), notes. Used for letterhead and community identity." },
@@ -1003,6 +1072,15 @@ var AGENT_DETAILS = {
     ],
   },
   "residential-leasing-agent": {
+    runtime: {
+      model: "claude-sonnet-4-6",
+      modelRationale: "Renewal letters are template-driven; listing copy is semi-structured. Sonnet handles both efficiently. Upgrade to Opus for high-value creative campaigns if needed.",
+      executionMode: "Cowork scheduled task + event-driven + manual trigger",
+      schedule: "Monthly (1st) — renewal scans for leases expiring within 60 days. Event-driven on vacancy detection. On demand for move-out acks and inquiry responses.",
+      estimatedTokens: "~6K input / ~8K output per listing; ~3K per renewal letter",
+      dependencies: "Reads data/leases.json, data/units.json, data/tenants.json, data/properties.json. References BRAND_VOICE.md (Fair Housing) and LEASING_PLAYBOOK.md.",
+      outputGate: "ALL tenant communications require approval. Rental rates proposed by agent must be confirmed by human.",
+    },
     inputs: [
       { label:"data/leases.json", detail:"All residential lease records — unitId, tenantId, monthlyRent, commenced, terminates, status (active / vacating / mtm). Drives renewal and vacancy workflows." },
       { label:"data/units.json", detail:"Residential units across Metairie Plaza, Metairie Lake, Mandeville Lake, Lakeside Village — bedrooms, bathrooms, SF, floor, status. Drives listing copy and unit mix analysis." },
@@ -1041,6 +1119,15 @@ var AGENT_DETAILS = {
     ],
   },
   "market-intelligence-agent": {
+    runtime: {
+      model: "claude-opus-4-6",
+      modelRationale: "Web research synthesis, market analysis, and strategic narrative writing. Opus produces institutional-quality market reports and can reason across multiple data sources.",
+      executionMode: "Cowork scheduled task + manual trigger",
+      schedule: "Monthly (15th) — comp pull and rate benchmarking. Quarterly (last day of Q) — full market summary. On demand via chat.",
+      estimatedTokens: "~15K input / ~12K output for quarterly report (heavy web research context)",
+      dependencies: "Web search tools (CoStar, LoopNet, Apartments.com, MLS, local news). Reads data/leases.json + data/properties.json for Crosby rate benchmarking.",
+      outputGate: "Quarterly market summary requires approval before distribution. Comp data should be validated by human (agent may miss off-market activity).",
+    },
     inputs: [
       { label:"Web — CoStar / LoopNet", detail:"Comparable commercial listings in Mandeville/Northshore market — $/SF, vacancy rates, new supply, absorption" },
       { label:"Web — Apartments.com / Zillow / MLS", detail:"Comparable residential listings in Metairie and Mandeville — rent per bedroom, occupancy trends, new development" },
@@ -1075,6 +1162,15 @@ var AGENT_DETAILS = {
     ],
   },
   "investor-relations-agent": {
+    runtime: {
+      model: "claude-opus-4-6",
+      modelRationale: "Executive-level writing for investor-facing documents. Portfolio narratives, deal memos, and development updates require Opus-quality reasoning and prose.",
+      executionMode: "Cowork scheduled task + manual trigger",
+      schedule: "Quarterly (last day of Q) — portfolio performance summary. On demand for deal memos and Gulf South updates.",
+      estimatedTokens: "~20K input / ~15K output for quarterly summary (reads entire data layer + market reports)",
+      dependencies: "Reads all data/*.json files. Reads approved Market Intelligence quarterly reports. Gulf South Commerce Park data (pending structured intake).",
+      outputGate: "ALL stakeholder-facing documents require approval and financial verification against accounting records before distribution.",
+    },
     inputs: [
       { label:"data/*.json (portfolio-wide)", detail:"Complete data layer — leases.json (revenue, terms), units.json (occupancy/SF), buildings.json (building-level rollups), properties.json (8 properties), hoa-lots.json (HOA dues and rentals). All 8 properties." },
       { label:"Approved market intelligence reports", detail:"Quarterly market summaries from Market Intelligence Agent — used for context in investor narratives" },
@@ -1108,6 +1204,15 @@ var AGENT_DETAILS = {
     ],
   },
   "acquisitions-agent": {
+    runtime: {
+      model: "claude-opus-4-6",
+      modelRationale: "Strategic analysis, opportunity scoring, and LOI drafting require high-quality reasoning. Opus can synthesize market data, portfolio fit, and deal structure into actionable briefs.",
+      executionMode: "Cowork scheduled task + manual trigger",
+      schedule: "Weekly (Friday) — market scan for new listings. On demand for opportunity briefs and LOI drafts.",
+      estimatedTokens: "~12K input / ~10K output per opportunity brief; ~6K per LOI draft",
+      dependencies: "Web search tools (CoStar, LoopNet, MLS). Reads data/properties.json for portfolio context. References AGENT_CHARTER.md for acquisition strategy.",
+      outputGate: "ALL acquisition decisions require Ryan Crosby approval. LOIs require legal review. Agent surfaces opportunities — human decides.",
+    },
     inputs: [
       { label:"Web — CoStar / LoopNet / MLS", detail:"Active listings in Greater New Orleans and Northshore — commercial, multi-family, industrial — filtered by criteria matching Crosby strategy" },
       { label:"AGENT_CHARTER.md", detail:"Portfolio strategy and asset class focus — guides which acquisition targets are relevant" },
@@ -1170,6 +1275,51 @@ function renderAgents(selectedSlug) {
     html += '<div style="display:flex;gap:8px;align-items:center;">'+statusBdg+'</div></div>';
     html += '<p style="font-size:14px;color:#374151;margin-top:14px;line-height:1.6;">'+a.description+'</p>';
     html += '</div>';
+
+    // ── Runtime & Technical panel ──
+    if(d.runtime) {
+      var r = d.runtime;
+      var modelColor = r.model.indexOf("opus")>-1 ? "#7c3aed" : r.model.indexOf("sonnet")>-1 ? "#2563eb" : "#6b7280";
+      var modelLabel = r.model.indexOf("opus")>-1 ? "Opus 4" : r.model.indexOf("sonnet")>-1 ? "Sonnet 4" : r.model;
+      html += '<div class="card" style="margin-bottom:20px;background:linear-gradient(135deg,#f8fafc 0%,#f1f5f9 100%);border:1px solid #e2e8f0;">';
+      html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">'+iconSvg("cpu",16,"#475569")+'<span style="font-size:14px;font-weight:700;color:#111827;">Runtime & Technical</span></div>';
+      html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px;">';
+      // Model chip
+      html += '<div style="background:#fff;border-radius:8px;padding:12px;border:1px solid #e2e8f0;">';
+      html += '<div style="font-size:11px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;">Model</div>';
+      html += '<div style="display:flex;align-items:center;gap:6px;">';
+      html += '<span style="width:8px;height:8px;border-radius:50%;background:'+modelColor+';flex-shrink:0;"></span>';
+      html += '<span style="font-size:15px;font-weight:700;color:'+modelColor+';">'+modelLabel+'</span></div>';
+      html += '<div style="font-family:monospace;font-size:11px;color:#9ca3af;margin-top:4px;">'+r.model+'</div></div>';
+      // Execution mode
+      html += '<div style="background:#fff;border-radius:8px;padding:12px;border:1px solid #e2e8f0;">';
+      html += '<div style="font-size:11px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;">Execution Mode</div>';
+      html += '<div style="font-size:13px;font-weight:600;color:#374151;">'+r.executionMode+'</div></div>';
+      // Schedule
+      html += '<div style="background:#fff;border-radius:8px;padding:12px;border:1px solid #e2e8f0;">';
+      html += '<div style="font-size:11px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;">Schedule</div>';
+      html += '<div style="font-size:13px;font-weight:600;color:#374151;">'+r.schedule+'</div></div>';
+      html += '</div>';
+      // Lower details row
+      html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">';
+      // Token estimate
+      html += '<div style="background:#fff;border-radius:8px;padding:12px;border:1px solid #e2e8f0;">';
+      html += '<div style="font-size:11px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;">Est. Token Usage</div>';
+      html += '<div style="font-size:13px;color:#374151;">'+r.estimatedTokens+'</div></div>';
+      // Dependencies
+      html += '<div style="background:#fff;border-radius:8px;padding:12px;border:1px solid #e2e8f0;">';
+      html += '<div style="font-size:11px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;">Dependencies</div>';
+      html += '<div style="font-size:13px;color:#374151;">'+r.dependencies+'</div></div>';
+      html += '</div>';
+      // Model rationale + output gate
+      html += '<div style="margin-top:12px;padding:12px;background:#fff;border-radius:8px;border:1px solid #e2e8f0;">';
+      html += '<div style="font-size:11px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;">Why This Model</div>';
+      html += '<div style="font-size:13px;color:#374151;line-height:1.5;">'+r.modelRationale+'</div></div>';
+      html += '<div style="margin-top:8px;padding:12px;background:#fef2f2;border-radius:8px;border:1px solid #fecaca;">';
+      html += '<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">'+iconSvg("shield",13,"#dc2626")+'<span style="font-size:11px;font-weight:600;color:#991b1b;text-transform:uppercase;letter-spacing:0.05em;">Output Gate</span></div>';
+      html += '<div style="font-size:13px;color:#991b1b;line-height:1.5;">'+r.outputGate+'</div></div>';
+      html += '</div>';
+    }
 
     function detailSection(iconName, color, title, items, renderFn) {
       var s = '<div class="card" style="margin-bottom:16px;">';
@@ -2056,7 +2206,180 @@ function buildDocHTML(id) {
   if(id==="leasing-playbook")          return buildLeasingPlaybookHTML();
   if(id==="operations-playbook")       return buildOperationsPlaybookHTML();
   if(id==="brand-voice")               return buildBrandVoiceHTML();
+  if(id==="triggering-architecture")   return buildTriggeringArchHTML();
+  if(id==="data-schema")              return buildDataSchemaHTML();
+  if(id==="bldg1-suite302-listing-2026-07") return buildSuite302ListingHTML();
+  if(id==="bldg1-suite302-brief-2026-07")   return buildSuite302BriefHTML();
+  if(id==="bldg1-suite302-email-2026-07")   return buildSuite302EmailHTML();
   return "<p>Content not found.</p>";
+}
+
+function buildTriggeringArchHTML() {
+  return '<h1>Agent Triggering Architecture</h1>'+
+  '<p style="color:#6b7280;font-size:13px;">Version 1.0 &bull; April 2, 2026</p><hr>'+
+  '<h2>How Agents Run</h2>'+
+  '<p>There is no standalone server or cron daemon. Agents run <strong>within Cowork sessions</strong> — they are Claude prompts with structured data access, not background microservices.</p>'+
+  '<h2>Three Trigger Mechanisms</h2>'+
+  '<h3>1. Manual Trigger (Chat)</h3>'+
+  '<p>The operator types a command in chat. The agent reads its prompt, loads data files, executes its workflow, and posts output to the Docs tab. <strong>Available now</strong> — the primary mode during Phase 1 and early Phase 2.</p>'+
+  '<h3>2. Scheduled Tasks (Cowork Scheduler)</h3>'+
+  '<p>Cowork supports scheduled tasks that replace traditional cron jobs. Each schedule defines: what agent to run, what prompt to execute, and how often.</p>'+
+  '<table><thead><tr><th>Agent</th><th>Task</th><th>Schedule</th></tr></thead><tbody>'+
+  '<tr><td>Lease Intelligence</td><td>Weekly deadline scan</td><td>Every Monday</td></tr>'+
+  '<tr><td>Lease Intelligence</td><td>Monthly renewal letter drafts</td><td>1st of month</td></tr>'+
+  '<tr><td>Rent Roll Intelligence</td><td>Monthly portfolio summary</td><td>1st of month</td></tr>'+
+  '<tr><td>HOA Management</td><td>Dues reminders</td><td>25th of month</td></tr>'+
+  '<tr><td>Market Intelligence</td><td>Quarterly market summary</td><td>Last day of Q</td></tr>'+
+  '<tr><td>Acquisitions</td><td>Weekly market scan</td><td>Every Friday</td></tr>'+
+  '</tbody></table>'+
+  '<p>Scheduled tasks will be deployed as agents move from "building" to "active" status.</p>'+
+  '<h3>3. Event-Driven (Agent Chains)</h3>'+
+  '<p>Some agents trigger other agents based on their output. Currently these are <strong>human-mediated</strong> — the upstream agent recommends the next step, the human approves, then the downstream agent runs.</p>'+
+  '<div style="background:#f9fafb;padding:16px;border-radius:8px;border:1px solid #e5e7eb;margin:12px 0;font-family:monospace;font-size:13px;line-height:1.8;">'+
+  'Lease Intelligence → detects vacating → Vacancy Alert (Docs) → human approves → Vacancy Marketing Agent<br>'+
+  'Market Intelligence → rate benchmarking → Lease Intelligence reads comps for renewal rates<br>'+
+  'Clerical Data → writes data/*.json → all downstream agents read updated data'+
+  '</div>'+
+  '<h2>Model Assignments</h2>'+
+  '<table><thead><tr><th>Model</th><th>Agents</th><th>Rationale</th></tr></thead><tbody>'+
+  '<tr><td style="color:#2563eb;font-weight:700;">Sonnet 4</td><td>Clerical Data, Lease Intelligence, Rent Roll, HOA, Residential Leasing</td><td>Structured data, template output, high frequency</td></tr>'+
+  '<tr><td style="color:#7c3aed;font-weight:700;">Opus 4</td><td>Vacancy Marketing, Market Intelligence, Investor Relations, Acquisitions</td><td>Creative writing, research synthesis, strategic analysis</td></tr>'+
+  '</tbody></table>'+
+  '<h2>Execution Environment</h2>'+
+  '<p>Runtime: Cowork sessions. Data: local JSON files. State: files + Git. Concurrency: one agent per session. Cost: per-token (Sonnet for high-frequency, Opus for high-value).</p>'+
+  '<h2>Scaling Path</h2>'+
+  '<p><strong>Phase 1 (now):</strong> Manual triggers. <strong>Phase 2:</strong> Cowork scheduled tasks. <strong>Phase 3:</strong> Automated agent chains for low-risk workflows. <strong>Phase 4 (if needed):</strong> Custom orchestrator calling Claude API directly.</p>'+
+  '<p style="font-size:12px;color:#9ca3af;margin-top:16px;">Full document: knowledge-base/formative/TRIGGERING_ARCHITECTURE.md</p>';
+}
+
+function buildDataSchemaHTML() {
+  return '<h1>Data Schema Reference</h1>'+
+  '<p style="color:#6b7280;font-size:13px;">Version 1.0 &bull; April 2, 2026</p><hr>'+
+  '<h2>Entity Relationship</h2>'+
+  '<div style="background:#f9fafb;padding:16px;border-radius:8px;border:1px solid #e5e7eb;margin:12px 0;font-family:monospace;font-size:13px;line-height:1.8;">'+
+  'properties.json (8 records)<br>'+
+  '&nbsp;&nbsp;└─ buildings.json → propertyId<br>'+
+  '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└─ units.json → buildingId, propertyId<br>'+
+  '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└─ leases.json → unitId, tenantId, buildingId, propertyId<br>'+
+  '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└─ tenants.json → referenced by leases<br>'+
+  'hoa-lots.json → propertyId (standalone for HOA communities)'+
+  '</div>'+
+  '<h2>Data Files</h2>'+
+  '<table><thead><tr><th>File</th><th>Records</th><th>Status</th></tr></thead><tbody>'+
+  '<tr><td>properties.json</td><td>8</td><td style="color:#059669;">Loaded</td></tr>'+
+  '<tr><td>buildings.json</td><td>5 (1 full, 4 stubs)</td><td style="color:#d97706;">Partial</td></tr>'+
+  '<tr><td>units.json</td><td>13 (Bldg #1 only)</td><td style="color:#d97706;">Partial</td></tr>'+
+  '<tr><td>tenants.json</td><td>13 (Bldg #1 only)</td><td style="color:#d97706;">Partial</td></tr>'+
+  '<tr><td>leases.json</td><td>13 (Bldg #1 only)</td><td style="color:#d97706;">Partial</td></tr>'+
+  '<tr><td>hoa-lots.json</td><td>1 summary</td><td style="color:#d97706;">Pending lot-level expansion</td></tr>'+
+  '</tbody></table>'+
+  '<h2>Update Protocol</h2>'+
+  '<p><strong>Write access:</strong> Clerical Data Agent only. All other agents are read-only consumers.</p>'+
+  '<p><strong>Audit trail:</strong> Every update appended to data/CHANGELOG.md with timestamp, source file, and records affected.</p>'+
+  '<p><strong>Computed fields:</strong> <code>daysToNoticeDeadline</code> is always calculated at runtime from today\'s date and <code>noticeDeadline</code>. Never trust the stored value.</p>'+
+  '<p style="font-size:12px;color:#9ca3af;margin-top:16px;">Full document: knowledge-base/formative/DATA_SCHEMA.md</p>';
+}
+
+function buildSuite302ListingHTML() {
+  return '<h1>LoopNet/CoStar Listing — Suite 302, Building #1</h1>'+
+  '<p style="color:#6b7280;font-size:13px;">Generated by Vacancy Marketing Agent (claude-opus-4-6) &bull; April 2, 2026 &bull; Vacancy Source: Lease Intelligence — Sec National vacating June 30</p><hr>'+
+  '<h2>Headline</h2>'+
+  '<p style="font-size:18px;font-weight:700;color:#111827;">655 SF Professional Office Suite — Sanctuary Office Park, Mandeville</p>'+
+  '<h2>Tagline</h2>'+
+  '<p style="font-style:italic;color:#374151;">Third-floor office in established Northshore professional campus. Available July 1, 2026.</p>'+
+  '<h2>Short Description (Search Preview)</h2>'+
+  '<div style="background:#f9fafb;padding:16px;border-radius:8px;border:1px solid #e5e7eb;margin:12px 0;">'+
+  '<p style="font-size:14px;color:#374151;">Professional office suite available at The Sanctuary Office Park, #1 Sanctuary Blvd., Mandeville, LA. 655 SF on the 3rd floor of Building #1. Full-service lease in a 5-building, 91,600+ SF professional campus with park-like setting, surface parking, and an established tenant community of legal, medical, financial, and professional services firms. Locally owned and managed by Crosby Development since 1954.</p></div>'+
+  '<h2>Full Description</h2>'+
+  '<p>Suite 302 is a 655-square-foot professional office on the third floor of Building #1 at The Sanctuary Office Park in Mandeville, Louisiana. The space is available beginning July 1, 2026, and is delivered in move-in-ready condition.</p>'+
+  '<p>Building #1 is a three-story, 10,228 SF building at the entrance of the Sanctuary campus. The building is currently 100% occupied with a diverse tenant base that includes legal, medical, insurance, and professional services firms. Suite 302 represents the only available space in the building following the departure of a long-term tenant.</p>'+
+  '<p>The Sanctuary Office Park is a 5-building, 91,602 SF professional campus located at #1 Sanctuary Blvd. in Mandeville. The park operates at 99.7% occupancy as of April 2026 — a reflection of the quality of the space, the strength of the Northshore office market, and the responsiveness of on-site ownership. Tenants benefit from a park-like campus setting, surface parking, fiber/broadband connectivity, and individual building entries that provide a professional and private feel.</p>'+
+  '<p>Mandeville is the commercial heart of St. Tammany Parish on Louisiana\'s Northshore. The Sanctuary Office Park is minutes from Mandeville Town Center, with convenient access to I-12 and the Lake Pontchartrain Causeway for a 45-minute connection to downtown New Orleans and Metairie.</p>'+
+  '<p>The Sanctuary Office Park is owned and managed by Crosby Development Company, L.L.C. — a family-owned Louisiana real estate firm with over 70 years of continuous operation. Crosby Development is headquartered on-site in Building #1, providing tenants with direct access to responsive, local ownership. We don\'t manage from a distance — we\'re your neighbors.</p>'+
+  '<h2>Key Facts</h2>'+
+  '<table><thead><tr><th>Detail</th><th>Value</th></tr></thead><tbody>'+
+  '<tr><td>Suite</td><td>302</td></tr>'+
+  '<tr><td>Building</td><td>Sanctuary #1</td></tr>'+
+  '<tr><td>Floor</td><td>3rd</td></tr>'+
+  '<tr><td>Square Footage</td><td>655 SF</td></tr>'+
+  '<tr><td><strong>Asking Rate</strong></td><td><strong>$30.37 – $32.44 /SF/year</strong></td></tr>'+
+  '<tr><td>Monthly (est. midpoint)</td><td>~$1,714 /month</td></tr>'+
+  '<tr><td>Lease Type</td><td>Full Service</td></tr>'+
+  '<tr><td>Available</td><td>July 1, 2026</td></tr>'+
+  '<tr><td>Parking</td><td>Surface lot — ample, free</td></tr>'+
+  '<tr><td>Campus Occupancy</td><td>99.7%</td></tr>'+
+  '<tr><td>Contact</td><td>Crosby Development — 985-674-7500 — info@crosbydevelopment.com</td></tr>'+
+  '</tbody></table>'+
+  '<h2 style="color:#d97706;">Agent Notes</h2>'+
+  '<ul>'+
+  '<li><strong>Rate basis:</strong> Prior tenant (Sec National) paid $1,609.96/mo = $29.49/SF/year. Proposed range: 3% escalation floor ($30.37) and 10% ceiling ($32.44).</li>'+
+  '<li><strong>Rate pending market comp validation.</strong> No Market Intelligence comp report available yet. Recommend running Market Intelligence Agent for Mandeville office comps before finalizing.</li>'+
+  '<li>Prior tenant occupied since 2015 — 11-year tenancy. Space should be in good condition. Recommend physical inspection before listing goes live.</li>'+
+  '<li>Building #1 will drop to ~93.6% occupancy when this suite vacates.</li>'+
+  '</ul>';
+}
+
+function buildSuite302BriefHTML() {
+  return '<div style="text-align:center;margin-bottom:20px;padding:20px;border-bottom:2px solid #111827;">'+
+  '<h1 style="font-size:20px;margin-bottom:4px;">CROSBY DEVELOPMENT COMPANY, L.L.C.</h1>'+
+  '<p style="color:#6b7280;font-size:13px;">#1 Sanctuary Blvd., Mandeville, LA 70471 &bull; 985-674-7500 &bull; info@crosbydevelopment.com</p></div>'+
+  '<p style="color:#6b7280;font-size:13px;">Generated by Vacancy Marketing Agent (claude-opus-4-6) &bull; April 2, 2026</p><hr>'+
+  '<h2>Available: Suite 302, The Sanctuary Office Park</h2>'+
+  '<p style="font-size:16px;font-weight:700;">655 SF &bull; 3rd Floor &bull; Building #1 &bull; Available July 1, 2026</p>'+
+  '<h3>Suite Overview</h3>'+
+  '<p>Suite 302 is a 655-square-foot office on the third floor of Building #1. The space is delivered in move-in-ready condition following an 11-year professional tenant. Third-floor location with individual building entry.</p>'+
+  '<h3>Building Overview</h3>'+
+  '<p>Building #1 is a three-story, 10,228 SF professional office building at the entrance of The Sanctuary Office Park campus. Current occupancy: 100% (Suite 302 is the only upcoming availability). Tenant mix includes legal, medical, insurance, technology, and professional services firms.</p>'+
+  '<h3>Campus Amenities</h3>'+
+  '<ul>'+
+  '<li>5-building, 91,602 SF professional office campus</li>'+
+  '<li>99.7% campus-wide occupancy</li>'+
+  '<li>Park-like campus setting with landscaped grounds</li>'+
+  '<li>Ample free surface parking</li>'+
+  '<li>Fiber and broadband connectivity</li>'+
+  '<li>On-site ownership and management</li>'+
+  '<li>Signage opportunities available</li></ul>'+
+  '<h3>Location</h3>'+
+  '<table><thead><tr><th>Destination</th><th>Drive Time</th></tr></thead><tbody>'+
+  '<tr><td>Mandeville Town Center</td><td>~5 minutes</td></tr>'+
+  '<tr><td>Covington</td><td>~15 minutes</td></tr>'+
+  '<tr><td>Downtown New Orleans (via Causeway)</td><td>~45 minutes</td></tr>'+
+  '<tr><td>Metairie</td><td>~40 minutes</td></tr>'+
+  '</tbody></table>'+
+  '<h3>Lease Terms</h3>'+
+  '<table><thead><tr><th>Item</th><th>Detail</th></tr></thead><tbody>'+
+  '<tr><td>Asking Rate</td><td>$30.37 – $32.44 /SF/year</td></tr>'+
+  '<tr><td>Monthly (est.)</td><td>~$1,658 – $1,771/month</td></tr>'+
+  '<tr><td>Lease Type</td><td>Full Service</td></tr>'+
+  '<tr><td>Available</td><td>July 1, 2026</td></tr>'+
+  '<tr><td>Parking</td><td>Free surface lot</td></tr>'+
+  '</tbody></table>'+
+  '<p style="font-style:italic;color:#6b7280;font-size:13px;">Rate pending final confirmation. Contact us for current pricing.</p>';
+}
+
+function buildSuite302EmailHTML() {
+  return '<h1>Email Blast — Suite 302, Building #1</h1>'+
+  '<p style="color:#6b7280;font-size:13px;">Generated by Vacancy Marketing Agent (claude-opus-4-6) &bull; April 2, 2026</p><hr>'+
+  '<h3>Subject Line</h3>'+
+  '<div style="background:#f9fafb;padding:12px 16px;border-radius:8px;border:1px solid #e5e7eb;font-weight:600;font-size:15px;margin:8px 0;">655 SF Office Available — Sanctuary Office Park, Mandeville</div>'+
+  '<h3>Preview Text</h3>'+
+  '<div style="background:#f9fafb;padding:12px 16px;border-radius:8px;border:1px solid #e5e7eb;font-size:13px;color:#6b7280;margin:8px 0;">Third-floor professional suite in 99.7% occupied Northshore campus. Available July 1.</div>'+
+  '<h3>Email Body</h3>'+
+  '<div style="background:#fff;padding:20px;border-radius:8px;border:1px solid #e5e7eb;margin:12px 0;">'+
+  '<p>A 655-square-foot professional office suite is available at The Sanctuary Office Park in Mandeville, Louisiana, beginning July 1, 2026.</p>'+
+  '<p>Suite 302 is on the third floor of Building #1, a 10,228 SF professional building at the entrance of the 5-building Sanctuary campus. The suite is delivered in move-in-ready condition following an 11-year tenancy.</p>'+
+  '<p>The Sanctuary Office Park operates at 99.7% occupancy across 91,602 SF — vacancies here are rare. The campus offers a park-like setting, ample free parking, fiber connectivity, and on-site ownership by Crosby Development Company, a family-owned firm with over 70 years in Louisiana real estate.</p>'+
+  '<p>Full-service lease. Asking rate: $30.37 – $32.44 /SF/year.</p>'+
+  '<p>We welcome inquiries from professional services, medical, financial, legal, and technology firms.</p>'+
+  '<div style="text-align:center;margin:20px 0;">'+
+  '<span style="display:inline-block;background:#2563eb;color:#fff;padding:10px 24px;border-radius:8px;font-weight:600;font-size:14px;">Request Suite Information</span></div>'+
+  '<p style="color:#6b7280;font-size:12px;border-top:1px solid #e5e7eb;padding-top:12px;margin-top:16px;">Crosby Development Company, L.L.C.<br>985-674-7500 | info@crosbydevelopment.com<br>#1 Sanctuary Blvd., Mandeville, LA 70471</p>'+
+  '</div>'+
+  '<h3 style="color:#d97706;">Agent Notes</h3>'+
+  '<ul>'+
+  '<li><strong>Recipient list:</strong> Not specified. Recommend: local commercial brokers (Mandeville/Covington), current Sanctuary tenants (referrals), and any prospect inquiries from the last 12 months.</li>'+
+  '<li><strong>Send timing:</strong> Recommend sending by May 1, 2026 (60 days before availability) to allow touring before July 1.</li>'+
+  '<li><strong>Gmail draft:</strong> Will be created on operator approval. Operator must confirm recipient list before send.</li></ul>';
 }
 
 function buildLeaseReviewHTML() {
