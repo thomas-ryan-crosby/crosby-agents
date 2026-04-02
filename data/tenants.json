@@ -1,0 +1,119 @@
+[
+  {
+    "id": "tenant-m-squared",
+    "name": "M Squared",
+    "type": "commercial",
+    "contactName": null,
+    "email": null,
+    "phone": null,
+    "notes": "Suite 300, Building #1. New lease commenced March 2026."
+  },
+  {
+    "id": "tenant-bayou-cpr",
+    "name": "Bayou CPR",
+    "type": "commercial",
+    "contactName": null,
+    "email": null,
+    "phone": null,
+    "notes": "Suite 301-A. Tenant since September 2015 — 10+ year relationship. Renewal urgent: notice deadline July 4, 2026."
+  },
+  {
+    "id": "tenant-acorn-adoption",
+    "name": "Acorn Adoption",
+    "type": "commercial",
+    "contactName": null,
+    "email": null,
+    "phone": null,
+    "notes": "Suite 301-B. Tenant since August 2007 — long-standing relationship."
+  },
+  {
+    "id": "tenant-travelers",
+    "name": "Travelers Insurance",
+    "type": "commercial",
+    "contactName": null,
+    "email": null,
+    "phone": null,
+    "notes": "Suites 210 & 202. Tenant since November 1996. Largest commercial tenant in Building #1 (5,573 SF). 1 five-year option remaining."
+  },
+  {
+    "id": "tenant-nirvana-massage",
+    "name": "Nirvana Massage",
+    "type": "commercial",
+    "contactName": null,
+    "email": null,
+    "phone": null,
+    "notes": "Suite 306. Tenant since June 2013 — 13+ years, longest-running tenant in Building #1. Renewal urgent: notice deadline July 4, 2026."
+  },
+  {
+    "id": "tenant-diannes-esthetics",
+    "name": "Dianne's Esthetics and Waxing",
+    "type": "commercial",
+    "contactName": "Dianne",
+    "email": null,
+    "phone": null,
+    "notes": "Suite 305B. New tenant (commenced December 2025)."
+  },
+  {
+    "id": "tenant-sec-national",
+    "name": "Security National",
+    "type": "commercial",
+    "contactName": null,
+    "email": null,
+    "phone": null,
+    "notes": "Suite 302. VACATING June 30, 2026. Notice already given. 180-day notice deadline was December 31, 2025."
+  },
+  {
+    "id": "tenant-fine-southern",
+    "name": "Fine Southern Properties",
+    "type": "commercial",
+    "contactName": "Christine West",
+    "email": null,
+    "phone": null,
+    "notes": "Suite 100. Month-to-month since March 2020. Christine West is primary contact. Should be offered a fixed-term lease."
+  },
+  {
+    "id": "tenant-crosby-development",
+    "name": "Crosby Development Company, L.L.C.",
+    "type": "owner-occupant",
+    "contactName": "Ryan Crosby",
+    "email": "info@crosbydevelopment.com",
+    "phone": "985-674-7500",
+    "notes": "Suite 101. Owner-occupant. Company headquarters."
+  },
+  {
+    "id": "tenant-mandeville-technology",
+    "name": "Mandeville Technology",
+    "type": "commercial",
+    "contactName": null,
+    "email": null,
+    "phone": null,
+    "notes": "Suite 300A. Tenant since April 2021."
+  },
+  {
+    "id": "tenant-detox",
+    "name": "Detox",
+    "type": "commercial",
+    "contactName": null,
+    "email": null,
+    "phone": null,
+    "notes": "Suite 307. New tenant (commenced April 2026)."
+  },
+  {
+    "id": "tenant-brandner-law",
+    "name": "Brandner Law Firm",
+    "type": "commercial",
+    "contactName": null,
+    "email": null,
+    "phone": null,
+    "notes": "Suite 303B. Tenant since November 2025."
+  },
+  {
+    "id": "tenant-body-remedy",
+    "name": "Body Remedy",
+    "type": "commercial",
+    "contactName": null,
+    "email": null,
+    "phone": null,
+    "notes": "Suite 303A. New tenant (commenced April 2026)."
+  }
+]

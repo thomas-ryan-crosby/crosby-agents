@@ -588,6 +588,8 @@ const LEASE_DOCS = {
 };
 
 const AGENTS = [
+  // Phase 1 — Foundation
+  { slug: "clerical-data-agent", name: "Clerical Data", icon: "database", phase: 1, color: "#374151", phaseLabel: "Phase 1 — Foundation", status: "building", description: "The data intake layer. Converts raw source files (XLS, WDB, CSV) into the clean structured data store. The only agent that touches raw files — all other agents read exclusively from data/." },
   // Phase 2 — Operations Core
   { slug: "lease-intelligence-agent", name: "Lease Intelligence", icon: "clock", phase: 2, color: "#dc2626", phaseLabel: "Phase 2 — Ops Core", status: "building", description: "Monitors lease expirations, notice deadlines & auto-renewals. Generates renewal offer letters and vacancy alerts." },
   { slug: "vacancy-marketing-agent", name: "Vacancy Marketing", icon: "file-text", phase: 2, color: "#d97706", phaseLabel: "Phase 2 — Ops Core", status: "planned", description: "Triggers on confirmed vacancy. Writes LoopNet/CoStar listing copy and generates leasing brief PDFs." },
@@ -795,12 +797,59 @@ function renderActivity() {
 
 // ── AGENTS ──────────────────────────────────────────────────────────────────
 var AGENT_DETAILS = {
+  "clerical-data-agent": {
+    inputs: [
+      { label:"rentinfo#1–5.xls (raw)", detail:"Monthly commercial rent rolls from the OFFICE RENTS folder. Read once per update cycle — not referenced again after clean data is written." },
+      { label:"Residential rent rolls (.wdb)", detail:"Microsoft Works Database files for Metairie Plaza, Metairie Lake, Mandeville Lake. Parsed via olefile/OLE2 compound document reader." },
+      { label:"HOA controller files (.csv)", detail:"Lakeside Village controller CSV — owner/renter roster, lot types, dues, contact info." },
+      { label:"Lease PDFs (Leases_Claude folder)", detail:"Used to verify tenant names, suite numbers, and commencement dates against rent roll data. Supplements but does not replace rent roll." },
+      { label:"data/CHANGELOG.md", detail:"Prior change log — used to diff new import against last known state and report only what changed." },
+    ],
+    outputs: [
+      { label:"data/properties.json", detail:"8 property records — id, name, type, address, SF/units, Crosby role, data source, last updated", format:"JSON", example:"properties.json" },
+      { label:"data/buildings.json", detail:"Building-level records within multi-building properties — SF, floors, occupancy status", format:"JSON", example:"buildings.json" },
+      { label:"data/units.json", detail:"Every leasable space — suites, apartments, lots — with SF, type, floor, occupancy status", format:"JSON", example:"units.json" },
+      { label:"data/tenants.json", detail:"Tenant/owner records — name, type, contact info, notes", format:"JSON", example:"tenants.json" },
+      { label:"data/leases.json", detail:"All active lease records — full terms, rent, escalation, notice requirements, status flags, doc filename", format:"JSON", example:"leases.json" },
+      { label:"data/hoa-lots.json", detail:"HOA lot records — ownership, dues, rental status, management type", format:"JSON", example:"hoa-lots.json" },
+      { label:"Import diff report (MD)", detail:"Human-readable summary of what changed in this import run — new tenants, changed rents, expired leases, new vacancies", format:"Markdown (.md)", example:"data-import-bldg1-2026-05.md" },
+    ],
+    storage: [
+      { label:"Output folder", detail:"data/ — all JSON files written here. This is the canonical data store." },
+      { label:"Import reports", detail:"knowledge-base/outputs/clerical-data/data-import-[source]-[YYYY-MM].md" },
+      { label:"Change log", detail:"data/CHANGELOG.md — every update appended with timestamp, source file, and records affected" },
+      { label:"Raw files", detail:"Raw source files stay in their original locations (OFFICE RENTS, Leases_Claude). They are read-only inputs; never modified." },
+    ],
+    automated: [
+      "Parse and validate raw source file structure",
+      "Map raw fields to the canonical schema (properties → buildings → units → tenants → leases)",
+      "Detect and flag data quality issues: missing fields, duplicate records, inconsistent naming",
+      "Calculate derived fields: daysToNoticeDeadline, occupancy rates, total SF by building",
+      "Generate import diff: what is new, changed, or removed vs. prior data",
+      "Write updated JSON files to data/",
+      "Append entry to data/CHANGELOG.md",
+      "Post import diff report to Docs tab as Pending Review",
+    ],
+    human: [
+      "Review import diff before data is considered 'live' for other agents — confirm changes are intentional",
+      "Resolve data quality flags: ambiguous tenant names, missing suite numbers, unexpected rent changes",
+      "Provide new source files when updated rent rolls are available (save to OFFICE RENTS folder, then ask agent to run)",
+      "Approve Lakeside Village lot-level expansion (first time only — verify 45-lot roster matches source CSV)",
+      "Confirm any tenant that appears in the import as new or removed",
+    ],
+    triggers: [
+      { when:"New source file provided (on demand)", how:"Ask: 'Run Clerical Data Agent on rentinfo#2.xls for Building #2'" },
+      { when:"Monthly data refresh (on demand)", how:"Ask: 'Import updated rent rolls for all buildings — files saved to OFFICE RENTS'" },
+      { when:"First load of a new property (on demand)", how:"Ask: 'Load Mandeville Lake rent roll from [filename]'" },
+      { when:"Data quality issue detected (automated)", how:"Any other agent that finds a mismatch between data/ and a source file will flag it and suggest a Clerical Data run" },
+    ],
+  },
   "lease-intelligence-agent": {
     inputs: [
-      { label:"LEASE_TERMS (dashboard)", detail:"Embedded lease schedule: 13 tenants, Building #1 — suite, SF, rent, commenced, terminates, notice days, notice deadline, vacating/MTM/owner flags" },
-      { label:"rentinfo#1–5.xls (OFFICE RENTS folder)", detail:"Monthly rent roll spreadsheets per building — Jan–Dec rent columns, commencement, termination, escalation rate, auto-renew flag" },
-      { label:"Lease PDF documents (Leases_Claude folder)", detail:"9 scanned/signed lease documents for Building #1 tenants — initial leases and amendments (AMD2, AMD3)" },
-      { label:"LEASING_PLAYBOOK.md", detail:"Standard renewal terms, urgency tiers, notice period rules, vacancy response procedure" },
+      { label:"data/leases.json", detail:"All active lease records — unitId, tenantId, commenced, terminates, monthlyRent, escalationPct, autoRenew, noticeDays, noticeDeadline, status (active / vacating / mtm / owner-occupant), docFile" },
+      { label:"data/units.json", detail:"Suite-level records — identifier, floor, SF, type, buildingId, occupancy status. Used to cross-reference lease data and populate vacancy reports." },
+      { label:"data/tenants.json", detail:"Tenant records — name, type, contactName, email, phone, notes. Used to personalize renewal letters and surface long-standing tenant relationships." },
+      { label:"LEASING_PLAYBOOK.md", detail:"Standard renewal terms, urgency tiers, notice period rules, vacancy response procedure, 3% escalation formula" },
     ],
     outputs: [
       { label:"Lease Review Summary Report", detail:"Full tenant schedule with urgency color-coding, action items, 12-month calendar", format:"Markdown (.md)", example:"bldg1-lease-review-2026-04.md" },
@@ -815,10 +864,10 @@ var AGENT_DETAILS = {
       { label:"Dashboard", detail:"All outputs appear in the Docs tab as Pending Review immediately after generation" },
     ],
     automated: [
-      "Weekly scan of all LEASE_TERMS data — identifies deadlines entering urgency windows",
-      "Calculates days-to-deadline for every tenant and updates urgency tier (Critical / Urgent / Watch / Stable)",
+      "Reads data/leases.json and computes daysToNoticeDeadline dynamically from today's date vs. noticeDeadline (never uses stored value)",
+      "Assigns urgency tier per tenant: Critical / Urgent / Watch / Stable / MTM / Owner based on days remaining",
       "Auto-generates draft renewal letters for all tenants in the Urgent tier",
-      "Flags confirmed vacancies (vacating: true) and queues a trigger to Vacancy Marketing Agent",
+      "Flags confirmed vacancies (status: 'vacating') and queues a trigger to Vacancy Marketing Agent",
       "Updates lease review summary report and posts to Docs tab as Pending Review",
       "Logs all activity to SUMMARY.md with timestamp and tenants affected",
     ],
@@ -830,7 +879,7 @@ var AGENT_DETAILS = {
       "Final sign-off before any letter is emailed, mailed, or hand-delivered to tenant",
     ],
     triggers: [
-      { when:"Every Monday (automated)", how:"Scheduled task — weekly lease deadline scan across all LEASE_TERMS data" },
+      { when:"Every Monday (automated)", how:"Scheduled task — weekly lease deadline scan across data/leases.json for all properties" },
       { when:"1st of every month (automated)", how:"Scheduled task — generate monthly renewal letter drafts for all Urgent-tier tenants" },
       { when:"Notice deadline enters <90 days (automated)", how:"Event trigger — auto-drafts renewal offer and flags in dashboard" },
       { when:"Vacating flag set (automated)", how:"Event trigger — generates vacancy alert and notifies Vacancy Marketing Agent" },
@@ -839,11 +888,12 @@ var AGENT_DETAILS = {
   },
   "vacancy-marketing-agent": {
     inputs: [
-      { label:"LEASE_TERMS vacancy flags", detail:"Reads vacating:true entries — suite, SF, last tenant, confirmed vacancy date" },
-      { label:"Property knowledge base", detail:"knowledge-base/properties/sanctuary-office-park.md — building specs, floor descriptions, amenities, parking, location advantages" },
+      { label:"data/leases.json", detail:"Reads status:'vacating' entries — unitId, tenantId, terminates date (= confirmed vacancy date). The primary trigger source." },
+      { label:"data/units.json", detail:"Suite specs for the vacating unit — SF, floor, type, building. Used to build listing copy and leasing brief." },
+      { label:"data/properties.json", detail:"Property-level specs — address, total SF, amenities description, location. Populates building overview in listings." },
       { label:"BRAND_VOICE.md", detail:"Commercial tone guidelines, approved language, what to avoid, Crosby identity" },
-      { label:"Market comps (from Market Intelligence Agent)", detail:"Comparable SF rates in Mandeville office market — used to position listing price competitively" },
-      { label:"Lease Intelligence output", detail:"Vacancy alert document that triggered this agent — suite details, availability date" },
+      { label:"Market comps (from Market Intelligence Agent)", detail:"Comparable $/SF rates in Mandeville office market — used to position listing price competitively" },
+      { label:"Lease Intelligence output", detail:"Vacancy alert document that triggered this agent — suite details, availability date, context on departing tenant" },
     ],
     outputs: [
       { label:"LoopNet/CoStar Listing Copy", detail:"Headline, property description (100-word summary + 500-word full), suite highlights, asking rate, availability date, contact info", format:"Markdown (.md) → plain text on approval", example:"bldg1-suite302-listing-2026-07.md" },
@@ -877,11 +927,12 @@ var AGENT_DETAILS = {
   },
   "rent-roll-intelligence-agent": {
     inputs: [
-      { label:"rentinfo#1–5.xls (OFFICE RENTS)", detail:"Monthly commercial rent rolls for all 5 Sanctuary Office Park buildings — all tenant columns, all 12 months" },
-      { label:"Metairie Plaza rent roll (.wdb)", detail:"Residential rent roll — unit, tenant, monthly rent, lease dates" },
-      { label:"Metairie Lake rent roll (.wdb)", detail:"Residential rent roll — 108 units, all active leases" },
-      { label:"Mandeville Lake rent roll (pending)", detail:"Will be added when data file is provided" },
-      { label:"Lakeside Village CSV", detail:"HOA controller file — 45 lots, owner vs. renter, Crosby-owned units, monthly rent, dues" },
+      { label:"data/leases.json", detail:"All active lease records across all properties — monthlyRent, status, escalationPct, commenced, terminates, unitId. Primary revenue source." },
+      { label:"data/units.json", detail:"All leasable spaces — SF, type, status, buildingId. Used to calculate occupancy rates and vacant SF by building." },
+      { label:"data/buildings.json", detail:"Building-level records — totalSF, floors, property. Used to compute building-wide occupancy and revenue totals." },
+      { label:"data/properties.json", detail:"Portfolio-level records — 8 properties, type, Crosby role. Used for portfolio-wide roll-up and property-by-property comparison." },
+      { label:"data/tenants.json", detail:"Tenant records — used to annotate reports with tenant names, types, and relationship context." },
+      { label:"data/hoa-lots.json", detail:"Lakeside Village HOA lot data — dues and rental revenue from Crosby-owned lots. Included in portfolio revenue totals." },
       { label:"Prior month summary (SUMMARY.md)", detail:"Previous month's figures for month-over-month comparison" },
     ],
     outputs: [
@@ -895,7 +946,7 @@ var AGENT_DETAILS = {
       { label:"Memory log", detail:"SUMMARY.md — historical monthly figures for trend tracking" },
     ],
     automated: [
-      "Reads all rent roll files at start of each month",
+      "Reads all data/ JSON files at start of each month — leases, units, buildings, properties, hoa-lots",
       "Calculates total monthly revenue per property and portfolio-wide",
       "Computes occupancy rates and vacancy counts",
       "Flags MoM changes exceeding defined thresholds",
@@ -905,7 +956,7 @@ var AGENT_DETAILS = {
     human: [
       "Review monthly summary before sharing with stakeholders or investors",
       "Investigate flagged anomalies — confirm whether change is intentional or an error",
-      "Update rent roll data files each month (save new XLS to OFFICE RENTS folder)",
+      "Run Clerical Data Agent when updated rent rolls are available — it writes fresh data/ JSON, then Rent Roll Intelligence reads the updated clean data",
     ],
     triggers: [
       { when:"1st of every month (automated)", how:"Scheduled task — runs after new rent roll files are expected to be available" },
@@ -915,10 +966,10 @@ var AGENT_DETAILS = {
   },
   "hoa-management-agent": {
     inputs: [
-      { label:"Lakeside Village CSV (controller file)", detail:"Full owner/renter roster — 45 lots, owner names, tenant names, lot type (townhome/cottage), Crosby vs. third-party managed, monthly dues, contact info" },
-      { label:"HOA governing documents (pending)", detail:"CC&Rs, bylaws, rules and regulations for Lakeside Village" },
+      { label:"data/hoa-lots.json", detail:"Full lot roster — 45 lots, lot number, type (townhome/cottage), owner name, tenant name, Crosby vs. third-party managed, monthlyDues, monthlyRent. Canonical source for all HOA communications." },
+      { label:"data/properties.json", detail:"Lakeside Village property record — address, city, Crosby role (manager), notes. Used for letterhead and community identity." },
+      { label:"HOA governing documents (pending)", detail:"CC&Rs, bylaws, rules and regulations for Lakeside Village — to be added to knowledge base when available" },
       { label:"BRAND_VOICE.md", detail:"HOA community tone — collaborative, respectful, community steward" },
-      { label:"Dues schedule", detail:"Monthly dues by lot type — current: $91,880/mo total across 45 lots" },
     ],
     outputs: [
       { label:"Monthly Dues Reminder", detail:"Per-owner notice with lot number, amount due, due date, payment instructions", format:"Markdown (.md) → email/PDF on approval", example:"lakeside-dues-notice-2026-05.md" },
@@ -953,8 +1004,10 @@ var AGENT_DETAILS = {
   },
   "residential-leasing-agent": {
     inputs: [
-      { label:"Residential rent rolls", detail:"Metairie Plaza (66 units, .wdb), Metairie Lake (108 units, .wdb), Mandeville Lake (pending), Lakeside Village rentals (11 Crosby units, CSV)" },
-      { label:"Unit mix data", detail:"Per-property: floor plans, bedroom/bath counts, SF ranges, standard rent by unit type" },
+      { label:"data/leases.json", detail:"All residential lease records — unitId, tenantId, monthlyRent, commenced, terminates, status (active / vacating / mtm). Drives renewal and vacancy workflows." },
+      { label:"data/units.json", detail:"Residential units across Metairie Plaza, Metairie Lake, Mandeville Lake, Lakeside Village — bedrooms, bathrooms, SF, floor, status. Drives listing copy and unit mix analysis." },
+      { label:"data/tenants.json", detail:"Resident records — name, contactName, email, phone. Used to personalize renewal outreach and move-out notices." },
+      { label:"data/properties.json", detail:"Property records for all residential properties — address, amenities, total units. Populates listing copy and leasing briefs." },
       { label:"BRAND_VOICE.md", detail:"Residential tone — warm, community-oriented, Fair Housing language required" },
       { label:"LEASING_PLAYBOOK.md", detail:"Residential leasing procedures — turnover, screening, renewal timelines, Fair Housing compliance" },
     ],
@@ -992,7 +1045,7 @@ var AGENT_DETAILS = {
       { label:"Web — CoStar / LoopNet", detail:"Comparable commercial listings in Mandeville/Northshore market — $/SF, vacancy rates, new supply, absorption" },
       { label:"Web — Apartments.com / Zillow / MLS", detail:"Comparable residential listings in Metairie and Mandeville — rent per bedroom, occupancy trends, new development" },
       { label:"Web — local news and economic data", detail:"St. Tammany Parish economic indicators, new business announcements, major employer activity" },
-      { label:"Existing property data", detail:"Current LEASE_TERMS and rent roll data — used to benchmark Crosby rates against market" },
+      { label:"data/leases.json + data/properties.json", detail:"Current Crosby lease rates and property footprint — used to benchmark Crosby rates against market comps by property type and location" },
       { label:"Prior reports (SUMMARY.md)", detail:"Historical market data for trend analysis" },
     ],
     outputs: [
@@ -1023,7 +1076,7 @@ var AGENT_DETAILS = {
   },
   "investor-relations-agent": {
     inputs: [
-      { label:"All property data (portfolio-wide)", detail:"Rent rolls, occupancy rates, lease terms, HOA financials — all 8 properties" },
+      { label:"data/*.json (portfolio-wide)", detail:"Complete data layer — leases.json (revenue, terms), units.json (occupancy/SF), buildings.json (building-level rollups), properties.json (8 properties), hoa-lots.json (HOA dues and rentals). All 8 properties." },
       { label:"Approved market intelligence reports", detail:"Quarterly market summaries from Market Intelligence Agent — used for context in investor narratives" },
       { label:"Gulf South Commerce Park data", detail:"Parcel map, sold parcels (Parcel 1-A), pending sales, horizontal development status" },
       { label:"Historical summaries (SUMMARY.md)", detail:"Prior quarterly reports for year-over-year comparison" },
@@ -1059,7 +1112,7 @@ var AGENT_DETAILS = {
       { label:"Web — CoStar / LoopNet / MLS", detail:"Active listings in Greater New Orleans and Northshore — commercial, multi-family, industrial — filtered by criteria matching Crosby strategy" },
       { label:"AGENT_CHARTER.md", detail:"Portfolio strategy and asset class focus — guides which acquisition targets are relevant" },
       { label:"Market Intelligence reports", detail:"Current cap rates, pricing benchmarks, and market conditions to inform opportunity assessment" },
-      { label:"Portfolio overview (dashboard data)", detail:"Existing holdings and geographic concentration — for diversification context" },
+      { label:"data/properties.json", detail:"Existing portfolio — 8 properties, types, locations, Crosby role. Used for geographic concentration analysis and strategic fit assessment of acquisition targets." },
     ],
     outputs: [
       { label:"Opportunity Brief", detail:"Property overview, asking price, cap rate estimate, location analysis, strategic fit with Crosby portfolio, recommended next step", format:"Markdown (.md)", example:"opportunity-brief-1234-highway22-2026-04-18.md" },
@@ -1189,11 +1242,11 @@ function renderAgents(selectedSlug) {
   }
 
   // ── List view ──────────────────────────────────────────────────────────────
-  var phaseNames = {2:"Phase 2 — Operations Core",3:"Phase 3 — HOA & Residential",4:"Phase 4 — Business Development"};
-  var phaseColors = {2:"#dc2626",3:"#7c3aed",4:"#059669"};
+  var phaseNames = {1:"Phase 1 — Foundation",2:"Phase 2 — Operations Core",3:"Phase 3 — HOA & Residential",4:"Phase 4 — Business Development"};
+  var phaseColors = {1:"#374151",2:"#dc2626",3:"#7c3aed",4:"#059669"};
   var html = '';
 
-  [2,3,4].forEach(function(phase) {
+  [1,2,3,4].forEach(function(phase) {
     var agents = AGENTS.filter(function(a){return a.phase===phase;});
     if(!agents.length) return;
     html += '<div style="margin-bottom:24px;">';

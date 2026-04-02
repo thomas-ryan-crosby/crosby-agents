@@ -1,0 +1,67 @@
+[
+  {
+    "id": "sanctuary-bldg-1",
+    "propertyId": "sanctuary-office-park",
+    "name": "Building #1",
+    "totalSF": 16843,
+    "occupiedSF": 16593,
+    "vacantSF": 250,
+    "floors": 3,
+    "status": "active",
+    "notes": "Primary building. Crosby Development HQ (Suite 101). Floor 3 medical/wellness concentration.",
+    "dataSource": "rentinfo#1.xls",
+    "lastUpdated": "2026-04-02"
+  },
+  {
+    "id": "sanctuary-bldg-2",
+    "propertyId": "sanctuary-office-park",
+    "name": "Building #2",
+    "totalSF": null,
+    "occupiedSF": null,
+    "vacantSF": null,
+    "floors": null,
+    "status": "pending-data",
+    "notes": "Rent roll data pending — rentinfo#2.xls not yet loaded.",
+    "dataSource": null,
+    "lastUpdated": null
+  },
+  {
+    "id": "sanctuary-bldg-3",
+    "propertyId": "sanctuary-office-park",
+    "name": "Building #3",
+    "totalSF": null,
+    "occupiedSF": null,
+    "vacantSF": null,
+    "floors": null,
+    "status": "pending-data",
+    "notes": "100% occupied per property overview. Rent roll data pending.",
+    "dataSource": null,
+    "lastUpdated": null
+  },
+  {
+    "id": "sanctuary-bldg-4",
+    "propertyId": "sanctuary-office-park",
+    "name": "Building #4",
+    "totalSF": null,
+    "occupiedSF": null,
+    "vacantSF": null,
+    "floors": null,
+    "status": "pending-data",
+    "notes": "98.8% occupied. Suite 306 JCM II vacant (250 SF). Rent roll data pending.",
+    "dataSource": null,
+    "lastUpdated": null
+  },
+  {
+    "id": "sanctuary-bldg-5",
+    "propertyId": "sanctuary-office-park",
+    "name": "Building #5",
+    "totalSF": null,
+    "occupiedSF": null,
+    "vacantSF": null,
+    "floors": null,
+    "status": "pending-data",
+    "notes": "Rent roll data pending — rentinfo#5.xls not yet loaded.",
+    "dataSource": null,
+    "lastUpdated": null
+  }
+]

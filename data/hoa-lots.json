@@ -1,0 +1,34 @@
+[
+  {
+    "id": "lakeside-lot-summary",
+    "propertyId": "lakeside-village-townhomes",
+    "notes": "Full lot-level records are held in the Lakeside Village CSV (controller file). The Clerical Data Agent will expand this file to one record per lot when detailed reconciliation is requested. Summary stats below are confirmed from the CSV.",
+    "_summary": {
+      "totalLots": 45,
+      "townhomes": 31,
+      "cottages": 14,
+      "crosbyOwnedLots": 11,
+      "crosbyManagedRentals": 7,
+      "thirdPartyManagedRentals": 4,
+      "ownerOccupiedLots": 30,
+      "totalRented": 15,
+      "monthlyRentTotal": 30675,
+      "monthlyDuesTotal": 91880,
+      "annualDuesTotal": 1102560
+    },
+    "_crosbyOwnedLots": [
+      { "lotNumber": "TBD", "type": "townhome", "monthlyRent": 2500, "monthlyDues": 2042, "managedBy": "Crosby", "tenantName": "Pending full CSV reconciliation" },
+      { "lotNumber": "TBD", "type": "townhome", "monthlyRent": 2500, "monthlyDues": 2042, "managedBy": "Crosby", "tenantName": "Pending full CSV reconciliation" },
+      { "lotNumber": "TBD", "type": "townhome", "monthlyRent": 2500, "monthlyDues": 2042, "managedBy": "Crosby", "tenantName": "Pending full CSV reconciliation" },
+      { "lotNumber": "TBD", "type": "townhome", "monthlyRent": 2500, "monthlyDues": 2042, "managedBy": "Crosby", "tenantName": "Pending full CSV reconciliation" },
+      { "lotNumber": "TBD", "type": "townhome", "monthlyRent": 2500, "monthlyDues": 2042, "managedBy": "Crosby", "tenantName": "Pending full CSV reconciliation" },
+      { "lotNumber": "TBD", "type": "townhome", "monthlyRent": 2500, "monthlyDues": 2042, "managedBy": "Crosby", "tenantName": "Pending full CSV reconciliation" },
+      { "lotNumber": "TBD", "type": "townhome", "monthlyRent": 2500, "monthlyDues": 2042, "managedBy": "Crosby", "tenantName": "Pending full CSV reconciliation" },
+      { "lotNumber": "TBD", "type": "cottage", "monthlyRent": 3200, "monthlyDues": 2042, "managedBy": "Third-Party", "tenantName": "Pending full CSV reconciliation" },
+      { "lotNumber": "TBD", "type": "cottage", "monthlyRent": 3200, "monthlyDues": 2042, "managedBy": "Third-Party", "tenantName": "Pending full CSV reconciliation" },
+      { "lotNumber": "TBD", "type": "cottage", "monthlyRent": 3200, "monthlyDues": 2042, "managedBy": "Third-Party", "tenantName": "Pending full CSV reconciliation" },
+      { "lotNumber": "TBD", "type": "cottage", "monthlyRent": 3200, "monthlyDues": 2042, "managedBy": "Third-Party", "tenantName": "Pending full CSV reconciliation" }
+    ],
+    "_nextAction": "Run Clerical Data Agent with Lakeside Village CSV to expand to full per-lot records with owner names, contact info, and lot numbers"
+  }
+]
