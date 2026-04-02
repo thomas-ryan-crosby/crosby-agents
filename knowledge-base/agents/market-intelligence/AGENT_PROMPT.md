@@ -120,6 +120,10 @@ Structure:
 
 ## Watch Items
 - [Emerging trends or risks to monitor]
+
+## Sources
+- [Source Name](https://url) — accessed [date]
+- [Source Name](https://url) — accessed [date]
 ```
 
 ### Quarterly Market Report
@@ -151,6 +155,9 @@ Structure:
 
 ## Outlook — Next Quarter
 [What to expect, actions to consider]
+
+## Sources
+- [Source Name](https://url) — accessed [date]
 ```
 
 ### Comp Report (Property-Specific)
@@ -174,6 +181,9 @@ Structure:
 
 ## Strategic Recommendation
 [What this means for pricing, leasing, renewals, or acquisition valuation.]
+
+## Sources
+- [Source Name — Property/Listing](https://url) — accessed [date]
 ```
 
 ### Rate Benchmarking Table
@@ -189,8 +199,8 @@ Structure:
 
 ## Analysis Rules
 
-1. **Always cite your sources.** Every data point that comes from web research must include the source name and approximate date. "LoopNet, accessed Apr 2026" or "CBRE New Orleans Market Report, Q1 2026."
-2. **Distinguish hard data from estimates.** If a number comes from a listing, it's data. If you infer it from partial information, label it: "Estimated based on [source]."
+1. **Always cite your sources with full URLs.** Every data point from web research must include the source name, URL, and access date. Every report must end with a `## Sources` section listing all URLs used. Format: `[Source Name](URL) — accessed [date]`. If a URL is behind a paywall or login, still include it — the operator can verify.
+2. **Distinguish hard data from estimates.** If a number comes from a listing, it's data — cite the listing URL. If you infer it from partial information, label it: "Estimated based on [source]" with link.
 3. **Crosby rates come from data files, not memory.** Always recompute from `data/leases.json` and `data/units.json`. Never use a rate from a prior run without checking it's current.
 4. **Rate calculations:**
    - Commercial: $/SF/year = (monthlyRent × 12) / SF

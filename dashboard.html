@@ -940,6 +940,7 @@ var AGENT_DETAILS = {
     ],
   },
   "vacancy-marketing-agent": {
+    promptFile: "knowledge-base/agents/vacancy-marketing/AGENT_PROMPT.md",
     runtime: {
       model: "claude-opus-4-6",
       modelRationale: "Marketing copy requires high-quality creative writing — compelling headlines, professional listing descriptions, persuasive email copy. Opus produces publication-ready output.",
@@ -1130,6 +1131,7 @@ var AGENT_DETAILS = {
     ],
   },
   "market-intelligence-agent": {
+    promptFile: "knowledge-base/agents/market-intelligence/AGENT_PROMPT.md",
     runtime: {
       model: "claude-opus-4-6",
       modelRationale: "Web research synthesis, market analysis, and strategic narrative writing. Opus produces institutional-quality market reports and can reason across multiple data sources.",
@@ -1296,7 +1298,16 @@ function renderAgents(selectedSlug) {
     html += '<div style="font-size:13px;color:#6b7280;margin-top:2px;">'+a.phaseLabel+'</div></div></div>';
     html += '<div style="display:flex;gap:8px;align-items:center;">'+statusBdg+'</div></div>';
     html += '<p style="font-size:14px;color:#374151;margin-top:14px;line-height:1.6;">'+a.description+'</p>';
+    if(d.promptFile) {
+      html += '<div style="margin-top:14px;padding-top:14px;border-top:1px solid #f3f4f6;display:flex;align-items:center;gap:8px;">';
+      html += '<button class="btn" onclick="toggleAgentPrompt(\''+selectedSlug+'\')" style="background:#eff6ff;color:#2563eb;font-size:13px;font-weight:600;padding:8px 14px;" id="promptToggleBtn">'+iconSvg("code",14,"#2563eb")+' View Agent Prompt</button>';
+      html += '<span style="font-size:12px;color:#9ca3af;font-family:monospace;">'+d.promptFile+'</span>';
+      html += '</div>';
+    }
     html += '</div>';
+
+    // ── Agent Prompt (collapsible) ──
+    html += '<div id="agentPromptPanel" style="display:none;margin-bottom:20px;"></div>';
 
     // ── Runtime & Technical panel ──
     if(d.runtime) {
@@ -1457,6 +1468,102 @@ function renderAgents(selectedSlug) {
 
   el.innerHTML = html;
   lucide.createIcons();
+}
+
+// ── AGENT PROMPT VIEWER ─────────────────────────────────────────────────────
+var agentPromptVisible = false;
+
+function simpleMarkdownToHTML(md) {
+  var lines = md.split("\n");
+  var html = "";
+  var inTable = false;
+  var inCode = false;
+  var inList = false;
+  for(var i=0;i<lines.length;i++) {
+    var line = lines[i];
+    // Code blocks
+    if(line.trim().indexOf("```")===0) {
+      if(inCode) { html+="</pre>"; inCode=false; }
+      else { html+='<pre style="background:#1e293b;color:#e2e8f0;padding:16px;border-radius:8px;font-size:13px;overflow-x:auto;margin:12px 0;">'; inCode=true; }
+      continue;
+    }
+    if(inCode) { html+=line.replace(/</g,"&lt;").replace(/>/g,"&gt;")+"\n"; continue; }
+    // Headings
+    if(line.match(/^### /)) { if(inList){html+="</ul>";inList=false;} if(inTable){html+="</tbody></table>";inTable=false;} html+='<h3 style="font-size:15px;font-weight:700;color:#111827;margin:18px 0 8px;">'+line.slice(4)+"</h3>"; continue; }
+    if(line.match(/^## /)) { if(inList){html+="</ul>";inList=false;} if(inTable){html+="</tbody></table>";inTable=false;} html+='<h2 style="font-size:17px;font-weight:700;color:#111827;margin:24px 0 10px;padding-top:16px;border-top:1px solid #e5e7eb;">'+line.slice(3)+"</h2>"; continue; }
+    if(line.match(/^# /)) { if(inList){html+="</ul>";inList=false;} if(inTable){html+="</tbody></table>";inTable=false;} html+='<h1 style="font-size:20px;font-weight:700;color:#111827;margin:0 0 12px;">'+line.slice(2)+"</h1>"; continue; }
+    // Horizontal rules
+    if(line.trim()==="---") { if(inTable){html+="</tbody></table>";inTable=false;} html+="<hr style='border:none;border-top:1px solid #e5e7eb;margin:16px 0;'>"; continue; }
+    // Tables
+    if(line.trim().match(/^\|.*\|$/)) {
+      if(line.trim().match(/^\|[\s\-:|]+\|$/)) continue; // skip separator row
+      var cells = line.trim().split("|").filter(function(c){return c.trim()!=="";});
+      if(!inTable) { html+='<table style="width:100%;border-collapse:collapse;font-size:13px;margin:8px 0;"><thead><tr>'; cells.forEach(function(c){html+='<th style="text-align:left;padding:8px 12px;font-weight:600;color:#374151;background:#f9fafb;border-bottom:1px solid #e5e7eb;">'+c.trim()+"</th>";}); html+="</tr></thead><tbody>"; inTable=true; }
+      else { html+="<tr>"; cells.forEach(function(c){html+='<td style="padding:8px 12px;border-bottom:1px solid #f3f4f6;">'+c.trim().replace(/\*\*([^*]+)\*\*/g,"<strong>$1</strong>")+"</td>";}); html+="</tr>"; }
+      continue;
+    } else if(inTable) { html+="</tbody></table>"; inTable=false; }
+    // Unordered lists
+    if(line.match(/^- /)) {
+      if(!inList) { html+='<ul style="padding-left:20px;margin:8px 0;">'; inList=true; }
+      html+='<li style="font-size:14px;color:#374151;margin:4px 0;line-height:1.6;">'+line.slice(2).replace(/\*\*([^*]+)\*\*/g,"<strong>$1</strong>").replace(/`([^`]+)`/g,'<code style="background:#f1f5f9;padding:1px 4px;border-radius:3px;font-size:12px;">$1</code>')+"</li>";
+      continue;
+    } else if(inList) { html+="</ul>"; inList=false; }
+    // Ordered lists
+    if(line.match(/^\d+\. /)) {
+      var content = line.replace(/^\d+\.\s*/,"");
+      html+='<div style="font-size:14px;color:#374151;margin:4px 0;padding-left:20px;line-height:1.6;">'+line.match(/^\d+/)[0]+'. '+content.replace(/\*\*([^*]+)\*\*/g,"<strong>$1</strong>").replace(/`([^`]+)`/g,'<code style="background:#f1f5f9;padding:1px 4px;border-radius:3px;font-size:12px;">$1</code>')+"</div>";
+      continue;
+    }
+    // Empty lines
+    if(line.trim()==="") continue;
+    // Paragraphs
+    html+='<p style="font-size:14px;color:#374151;line-height:1.6;margin:8px 0;">'+line.replace(/\*\*([^*]+)\*\*/g,"<strong>$1</strong>").replace(/`([^`]+)`/g,'<code style="background:#f1f5f9;padding:1px 4px;border-radius:3px;font-size:12px;">$1</code>').replace(/\*([^*]+)\*/g,"<em>$1</em>")+"</p>";
+  }
+  if(inList) html+="</ul>";
+  if(inTable) html+="</tbody></table>";
+  if(inCode) html+="</pre>";
+  return html;
+}
+
+function toggleAgentPrompt(slug) {
+  var panel = document.getElementById("agentPromptPanel");
+  var btn = document.getElementById("promptToggleBtn");
+  if(!panel) return;
+  if(agentPromptVisible) {
+    panel.style.display = "none";
+    agentPromptVisible = false;
+    if(btn) btn.innerHTML = iconSvg("code",14,"#2563eb")+' View Agent Prompt';
+    return;
+  }
+  var d = AGENT_DETAILS[slug];
+  if(!d || !d.promptFile) return;
+  // Try fetch first (works when served via HTTP), fall back to embedded content
+  panel.innerHTML = '<div class="card" style="padding:24px;border:1px solid #bfdbfe;background:#f8fafc;"><p style="color:#6b7280;">Loading agent prompt...</p></div>';
+  panel.style.display = "block";
+  agentPromptVisible = true;
+  if(btn) btn.innerHTML = iconSvg("x",14,"#2563eb")+' Hide Agent Prompt';
+  fetch(d.promptFile).then(function(res) {
+    if(!res.ok) throw new Error("fetch failed");
+    return res.text();
+  }).then(function(md) {
+    panel.innerHTML = '<div class="card" style="padding:24px;border:1px solid #bfdbfe;background:#fff;max-height:80vh;overflow-y:auto;">'+
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid #e5e7eb;">'+
+      '<div style="display:flex;align-items:center;gap:8px;">'+iconSvg("code",16,"#2563eb")+'<span style="font-size:14px;font-weight:700;color:#111827;">Agent Prompt Configuration</span></div>'+
+      '<span style="font-family:monospace;font-size:11px;color:#9ca3af;">'+d.promptFile+'</span></div>'+
+      simpleMarkdownToHTML(md)+
+      '</div>';
+  }).catch(function() {
+    // Fallback: show path and instructions
+    panel.innerHTML = '<div class="card" style="padding:24px;border:1px solid #bfdbfe;background:#fff;">'+
+      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">'+iconSvg("code",16,"#2563eb")+'<span style="font-size:14px;font-weight:700;color:#111827;">Agent Prompt Configuration</span></div>'+
+      '<div style="background:#fffbeb;padding:12px 16px;border-radius:8px;border:1px solid #fde68a;margin-bottom:16px;">'+
+      '<p style="font-size:13px;color:#92400e;margin:0;">To view the full prompt inline, open this dashboard via a local HTTP server (e.g. <code style="background:#fef3c7;padding:1px 4px;border-radius:3px;">npx serve .</code>). When opened via <code>file://</code>, the browser blocks loading local markdown files.</p></div>'+
+      '<div style="background:#f9fafb;padding:16px;border-radius:8px;border:1px solid #e5e7eb;">'+
+      '<p style="font-size:13px;font-weight:600;color:#374151;margin:0 0 8px;">Prompt file location:</p>'+
+      '<code style="font-size:13px;color:#2563eb;word-break:break-all;">'+d.promptFile+'</code>'+
+      '<p style="font-size:12px;color:#6b7280;margin:12px 0 0;">Open this file in any text editor or ask in chat: <em>"Show me the '+slug+' agent prompt"</em></p>'+
+      '</div></div>';
+  });
 }
 
 // ── APPROVALS ───────────────────────────────────────────────────────────────
