@@ -117,7 +117,7 @@ Monthly at midpoint:        ($31.40 × 655) / 12 = $1,714.08/month
 ## Post-Run Actions
 
 1. Write all 3 output files to `knowledge-base/outputs/vacancy-marketing/`
-2. Post all 3 to the Docs tab with `status: "pending_review"` and `agentSlug: "vacancy-marketing-agent"`
+2. **Update `data/dashboard-state.json`** — follow the protocol in `knowledge-base/formative/DASHBOARD_UPDATE_PROTOCOL.md`. Update `_meta`, `agentStatuses`, `documents[]`, and `activity[]`.
 3. Append entry to `knowledge-base/outputs/vacancy-marketing/SUMMARY.md`
 4. If this is the first vacancy for a property, note that property-level marketing data may need enrichment (photos, floor plans, amenity details)
 

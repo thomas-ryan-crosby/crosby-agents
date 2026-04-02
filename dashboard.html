@@ -100,6 +100,8 @@
     .view { display: none; }
     .view.active { display: block; }
     .alert-btn { display: none; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; padding: 8px 12px; border-radius: 8px; background: #fffbeb; color: #92400e; border: 1px solid #fde68a; cursor: pointer; }
+    .live-dot { width:6px;height:6px;border-radius:50%;background:#34d399;display:inline-block;margin-right:4px;animation:pulse-dot 2s infinite; }
+    @keyframes pulse-dot { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
     .alert-btn:hover { background: #fef3c7; }
     .doc-card { background:#fff;border-radius:12px;border:1px solid #e5e7eb;padding:16px;cursor:pointer;transition:border-color 150ms,box-shadow 150ms; }
     .doc-card:hover { border-color:#93c5fd;box-shadow:0 2px 8px rgba(0,0,0,0.06); }
@@ -140,6 +142,10 @@
         <i data-lucide="alert-circle" style="width:14px;height:14px;"></i>
         <span id="alertText"></span>
       </button>
+      <button onclick="refreshDashboard()" style="display:flex;align-items:center;gap:4px;font-size:12px;color:#6b7280;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:6px;padding:4px 10px;cursor:pointer;margin-left:8px;" title="Refresh dashboard data">
+        <i data-lucide="refresh-cw" style="width:12px;height:12px;"></i> Refresh
+      </button>
+      <span id="lastRefresh" style="font-size:11px;color:#9ca3af;margin-left:4px;display:flex;align-items:center;"><span class="live-dot"></span></span>
       <span style="font-size:12px;color:#9ca3af;margin-left:8px;" id="todayDate"></span>
     </div>
   </div>
@@ -587,6 +593,7 @@ const LEASE_DOCS = {
   },
 };
 
+// ── AGENT ROSTER (static definition — statuses loaded from dashboard-state.json) ──
 const AGENTS = [
   // Phase 1 — Foundation
   { slug: "clerical-data-agent", name: "Clerical Data", icon: "database", phase: 1, color: "#374151", phaseLabel: "Phase 1 — Foundation", status: "building", description: "The data intake layer. Converts raw source files (XLS, WDB, CSV) into the clean structured data store. The only agent that touches raw files — all other agents read exclusively from data/." },
@@ -603,91 +610,112 @@ const AGENTS = [
   { slug: "acquisitions-agent", name: "Acquisitions", icon: "search", phase: 4, color: "#f59e0b", phaseLabel: "Phase 4 — Business Dev", status: "planned", description: "Monitors MLS and CoStar for acquisition targets matching portfolio strategy. Drafts LOIs." },
 ];
 
-// Activity starts empty — populated as agents run
+// ── DYNAMIC STATE (loaded from data/dashboard-state.json) ───────────────────
 let activities = [];
+var SCHEDULED = [];
+var DOCUMENTS = [];
+var _dashboardStateLoaded = false;
+var _lastStateHash = "";
+var REFRESH_INTERVAL_MS = 30000; // poll every 30 seconds
 
-const SCHEDULED = [
-  { agent: "lease-intelligence-agent", property: "All properties", task: "Lease expiration & notice deadline scan", frequency: "Weekly (Monday 8am)", nextRun: "Mon, Apr 6", status: "Live", taskId: "lease-intelligence-weekly" },
-  { agent: "lease-intelligence-agent", property: "All properties", task: "Monthly renewal letter drafts", frequency: "Monthly (1st, 8am)", nextRun: "Fri, May 1", status: "Live", taskId: "lease-intelligence-monthly-renewals" },
-  { agent: "market-intelligence-agent", property: "All properties", task: "Monthly market snapshot + rate benchmarking", frequency: "Monthly (15th, 8am)", nextRun: "Wed, Apr 15", status: "Live", taskId: "market-intelligence-monthly" },
-  { agent: "vacancy-marketing-agent", property: "All properties", task: "Vacancy listing on confirmed vacancy", frequency: "Event-driven", nextRun: "On trigger", status: "Manual" },
-  { agent: "rent-roll-intelligence-agent", property: "All properties", task: "Monthly portfolio summary", frequency: "Monthly (1st)", nextRun: "Pending build", status: "Pending" },
-  { agent: "hoa-management-agent", property: "Lakeside Village", task: "Monthly dues reminders", frequency: "Monthly (25th)", nextRun: "Pending build", status: "Pending" },
-  { agent: "market-intelligence-agent", property: "All properties", task: "Quarterly market report", frequency: "Quarterly (end of Q)", nextRun: "Jun 30", status: "Manual" },
-  { agent: "acquisitions-agent", property: "All properties", task: "Weekly acquisition scan", frequency: "Weekly (Friday)", nextRun: "Pending build", status: "Pending" },
-];
+// ── NEXT RUN CALCULATOR ────────────────────────────────────────────────────
+// Computes the next occurrence of a cron expression (supports: min hour dom month dow)
+function computeNextRun(cron) {
+  if(!cron) return null;
+  var parts = cron.split(/\s+/);
+  if(parts.length < 5) return null;
+  var cronMin = parseInt(parts[0],10);
+  var cronHour = parseInt(parts[1],10);
+  var cronDom = parts[2]; // day of month or *
+  var cronDow = parts[4]; // day of week or *
+  var now = new Date();
+  // Try next 90 days to find a match
+  for(var d = 0; d < 90; d++) {
+    var candidate = new Date(now.getFullYear(), now.getMonth(), now.getDate() + d, cronHour, cronMin, 0);
+    if(candidate <= now && d === 0) continue;
+    var domMatch = (cronDom === "*") || (candidate.getDate() === parseInt(cronDom,10));
+    var dowMatch = (cronDow === "*") || (candidate.getDay() === parseInt(cronDow,10));
+    if(domMatch && dowMatch) return candidate;
+  }
+  return null;
+}
 
-// ── DOCUMENTS ───────────────────────────────────────────────────────────────
-var DOCUMENTS = [
-  // ── Formative ──────────────────────────────────────────────────────────────
-  { id:"agent-charter", title:"Agent Charter", category:"Formative", icon:"shield", color:"#2563eb",
-    lastUpdated:"2026-04-01", status:"active",
-    description:"Mission, 8-agent roster, operating principles, approval workflow, and external tool policy. The constitution of this agentic company.",
-    file:"knowledge-base/formative/AGENT_CHARTER.md" },
-  { id:"leasing-playbook", title:"Leasing Playbook", category:"Formative", icon:"book-open", color:"#059669",
-    lastUpdated:"2026-04-01", status:"active",
-    description:"Commercial and residential leasing procedures — notice timelines, urgency tiers, renewal standard terms, vacancy response, and HOA leasing rules.",
-    file:"knowledge-base/formative/LEASING_PLAYBOOK.md" },
-  { id:"operations-playbook", title:"Operations Playbook", category:"Formative", icon:"settings", color:"#7c3aed",
-    lastUpdated:"2026-04-01", status:"active",
-    description:"How to operate through the dashboard — daily workflow, triggering agents, reviewing outputs, data update procedures, and GitHub commit conventions.",
-    file:"knowledge-base/formative/OPERATIONS_PLAYBOOK.md" },
-  { id:"brand-voice", title:"Brand Voice & Identity", category:"Formative", icon:"pen-tool", color:"#d97706",
-    lastUpdated:"2026-04-01", status:"active",
-    description:"Crosby Development brand personality, voice by audience (residential, commercial, HOA, prospects), writing standards, Fair Housing language, and asset status.",
-    file:"knowledge-base/formative/BRAND_VOICE.md" },
-  { id:"triggering-architecture", title:"Triggering Architecture", category:"Formative", icon:"cpu", color:"#0891b2",
-    lastUpdated:"2026-04-02", status:"active",
-    description:"How agents get triggered — manual chat commands, Cowork scheduled tasks, and event-driven agent chains. Model assignments, execution environment, and scaling path.",
-    file:"knowledge-base/formative/TRIGGERING_ARCHITECTURE.md" },
-  { id:"data-schema", title:"Data Schema Reference", category:"Formative", icon:"database", color:"#374151",
-    lastUpdated:"2026-04-02", status:"active",
-    description:"Field-level schema for all 6 JSON data files (properties, buildings, units, tenants, leases, hoa-lots). Entity relationships, update protocol, and current data status.",
-    file:"knowledge-base/formative/DATA_SCHEMA.md" },
-  // ── Agent Outputs ──────────────────────────────────────────────────────────
-  { id:"bldg1-lease-review-2026-04", title:"Building #1 Lease Review — April 2026", category:"Agent Output",
-    icon:"clock", color:"#dc2626", lastUpdated:"2026-04-01", status:"pending_review",
-    agentSlug:"lease-intelligence-agent", propertySlug:"sanctuary-office-park",
-    description:"Full lease schedule for all 13 Building #1 tenants with urgency tiers, upcoming 12-month calendar, and action items. One vacancy confirmed, two renewal letters required.",
-    file:"knowledge-base/outputs/lease-intelligence/bldg1-lease-review-2026-04.md" },
-  { id:"bayoucpr-renewal-2026-04", title:"Renewal Offer — Bayou CPR, Suite 301-A", category:"Agent Output",
-    icon:"clock", color:"#dc2626", lastUpdated:"2026-04-01", status:"pending_review",
-    agentSlug:"lease-intelligence-agent", propertySlug:"sanctuary-office-park",
-    description:"Draft renewal offer letter for Bayou CPR (Suite 301-A, 400 SF). Proposes 2-year extension at $713/mo (Year 1) + $734/mo (Year 2). Notice deadline: July 4, 2026 (94 days).",
-    file:"knowledge-base/outputs/lease-intelligence/bayoucpr-renewal-2026-04.md" },
-  { id:"nirvana-renewal-2026-04", title:"Renewal Offer — Nirvana Massage, Suite 306", category:"Agent Output",
-    icon:"clock", color:"#dc2626", lastUpdated:"2026-04-01", status:"pending_review",
-    agentSlug:"lease-intelligence-agent", propertySlug:"sanctuary-office-park",
-    description:"Draft renewal offer letter for Nirvana Massage (Suite 306, 610 SF). Proposes 2-year extension at $1,372/mo (Year 1) + $1,413/mo (Year 2). Notice deadline: July 4, 2026 (94 days).",
-    file:"knowledge-base/outputs/lease-intelligence/nirvana-renewal-2026-04.md" },
-  // ── Vacancy Marketing Agent Outputs ──
-  { id:"bldg1-suite302-listing-2026-07", title:"Vacancy Listing — Suite 302, Building #1", category:"Agent Output",
-    icon:"file-text", color:"#d97706", lastUpdated:"2026-04-02", status:"pending_review",
-    agentSlug:"vacancy-marketing-agent", propertySlug:"sanctuary-office-park",
-    description:"LoopNet/CoStar listing copy for Suite 302 (655 SF, 3rd floor). Sec National vacating June 30. Proposed asking rate: $30.37–$32.44/SF/year. Full-service lease, available July 1, 2026.",
-    file:"knowledge-base/outputs/vacancy-marketing/bldg1-suite302-listing-2026-07.md" },
-  { id:"bldg1-suite302-brief-2026-07", title:"Leasing Brief — Suite 302, Building #1", category:"Agent Output",
-    icon:"file-text", color:"#d97706", lastUpdated:"2026-04-02", status:"pending_review",
-    agentSlug:"vacancy-marketing-agent", propertySlug:"sanctuary-office-park",
-    description:"One-page leasing brief for broker distribution. Suite 302 specs, building overview, campus amenities, location map notes, lease terms, and contact CTA.",
-    file:"knowledge-base/outputs/vacancy-marketing/bldg1-suite302-brief-2026-07.md" },
-  { id:"bldg1-suite302-email-2026-07", title:"Email Blast — Suite 302, Building #1", category:"Agent Output",
-    icon:"file-text", color:"#d97706", lastUpdated:"2026-04-02", status:"pending_review",
-    agentSlug:"vacancy-marketing-agent", propertySlug:"sanctuary-office-park",
-    description:"Email announcement for broker contacts and prospect list. 655 SF available July 1, asking $30.37–$32.44/SF/year. Ready for Gmail draft on approval.",
-    file:"knowledge-base/outputs/vacancy-marketing/bldg1-suite302-email-2026-07.md" },
-  // ── Market Intelligence Agent Outputs ──
-  { id:"market-snapshot-2026-04", title:"Market Snapshot — April 2026", category:"Agent Output",
-    icon:"trending-up", color:"#0891b2", lastUpdated:"2026-04-02", status:"pending_review",
-    agentSlug:"market-intelligence-agent",
-    description:"General mode: Monthly market snapshot across all Crosby-relevant asset classes — Northshore office, Metairie/Northshore multi-family, St. Tammany industrial, Mandeville HOA/townhome. Rate benchmarking, headlines, watch items.",
-    file:"knowledge-base/outputs/market-intelligence/market-snapshot-2026-04.md" },
-  { id:"comps-sanctuary-office-2026-04", title:"Comp Report — Sanctuary Office Park", category:"Agent Output",
-    icon:"trending-up", color:"#0891b2", lastUpdated:"2026-04-02", status:"pending_review",
-    agentSlug:"market-intelligence-agent", propertySlug:"sanctuary-office-park",
-    description:"Property-specific mode: 6 comparable Northshore office properties for Suite 302 rate validation. Market median $26.50/SF. Recommends narrowing asking range from $30.37–$32.44 to $29.50–$31.00/SF.",
-    file:"knowledge-base/outputs/market-intelligence/comps-sanctuary-office-2026-04.md" },
-];
+function formatNextRun(cron, status) {
+  if(status === "Pending") return "Pending build";
+  if(!cron) return status === "Manual" ? "On demand" : "—";
+  var next = computeNextRun(cron);
+  if(!next) return "—";
+  return next.toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric"});
+}
+
+// ── STATE LOADER ───────────────────────────────────────────────────────────
+function loadDashboardState(callback) {
+  fetch("data/dashboard-state.json?_t=" + Date.now())
+    .then(function(r) { return r.json(); })
+    .then(function(state) {
+      // Hash check — skip re-render if nothing changed
+      var hash = JSON.stringify(state._meta);
+      if(_dashboardStateLoaded && hash === _lastStateHash) { if(callback) callback(false); return; }
+      _lastStateHash = hash;
+
+      // Apply agent statuses
+      if(state.agentStatuses) {
+        AGENTS.forEach(function(a) {
+          var s = state.agentStatuses[a.slug];
+          if(s) {
+            a.status = s.status;
+            a.lastRun = s.lastRun;
+            a.lastOutput = s.lastOutput;
+          }
+        });
+      }
+
+      // Apply scheduled tasks
+      if(state.scheduled) {
+        SCHEDULED = state.scheduled.map(function(t) {
+          t.nextRun = formatNextRun(t.cron, t.status);
+          return t;
+        });
+      }
+
+      // Apply documents
+      if(state.documents) {
+        DOCUMENTS = state.documents;
+      }
+
+      // Apply activity
+      if(state.activity) {
+        activities = state.activity.map(function(a) {
+          // Normalize: ensure 'task' field exists for activityRowHTML compatibility
+          if(!a.task && a.title) a.task = a.title;
+          return a;
+        });
+      }
+
+      _dashboardStateLoaded = true;
+      if(callback) callback(true);
+    })
+    .catch(function(err) {
+      console.warn("Dashboard state load failed (using defaults):", err);
+      _dashboardStateLoaded = true;
+      if(callback) callback(true);
+    });
+}
+
+function refreshDashboard() {
+  loadDashboardState(function(changed) {
+    if(changed) {
+      renderPortfolio();
+      renderSchedule();
+      updateCounts();
+      updateDocBadge();
+      // Update the last-refreshed timestamp
+      var el = document.getElementById("lastRefresh");
+      if(el) el.innerHTML = '<span class="live-dot"></span>Updated ' + new Date().toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"});
+      lucide.createIcons();
+    }
+  });
+}
 
 var docStatuses = {}; // tracks approve/reject decisions
 
@@ -1284,7 +1312,9 @@ function renderAgents(selectedSlug) {
     var d = AGENT_DETAILS[selectedSlug];
     if(!a || !d) { renderAgents(null); return; }
 
-    var statusBdg = a.status==="building"
+    var statusBdg = a.status==="active"
+      ? '<span style="font-size:12px;font-weight:700;background:#d1fae5;color:#065f46;padding:3px 10px;border-radius:9999px;">Active</span>'
+      : a.status==="building"
       ? '<span style="font-size:12px;font-weight:700;background:#fee2e2;color:#991b1b;padding:3px 10px;border-radius:9999px;">Building Now</span>'
       : '<span style="font-size:12px;font-weight:700;background:#f3f4f6;color:#6b7280;padding:3px 10px;border-radius:9999px;">Planned</span>';
 
@@ -1440,11 +1470,12 @@ function renderAgents(selectedSlug) {
     html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px;">';
 
     agents.forEach(function(a) {
-      var statusBdg = a.status==="building"
+      var statusBdg = a.status==="active"
+        ? '<span style="font-size:11px;font-weight:600;background:#d1fae5;color:#065f46;padding:2px 8px;border-radius:9999px;">Active ●</span>'
+        : a.status==="building"
         ? '<span style="font-size:11px;font-weight:600;background:#fee2e2;color:#991b1b;padding:2px 8px;border-radius:9999px;">Building Now ▶</span>'
         : '<span style="font-size:11px;background:#f3f4f6;color:#6b7280;padding:2px 8px;border-radius:9999px;font-weight:500;">Planned</span>';
-      var acts = activities.filter(function(x){return x.agent===a.slug;});
-      var lastRun = acts.length>0?'Last run: '+fmtTime(acts[0].timestamp):'No runs yet';
+      var lastRun = a.lastRun ? 'Last run: '+fmtTime(a.lastRun) : 'No runs yet';
 
       html += '<div class="doc-card" onclick="renderAgents(\''+a.slug+'\')" style="border-left:3px solid '+a.color+';">';
       html += '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:10px;">';
@@ -1593,12 +1624,14 @@ function regenItem(id) { activities = activities.map(function(a){return a.id===i
 
 // ── SCHEDULE ────────────────────────────────────────────────────────────────
 function renderSchedule() {
-  var html = '<thead><tr><th>Agent</th><th>Scope</th><th>Task</th><th>Frequency</th><th>Next Run</th><th>Status</th></tr></thead><tbody>';
+  var html = '<thead><tr><th>Agent</th><th>Scope</th><th>Task</th><th>Frequency</th><th>Last Run</th><th>Next Run</th><th>Status</th></tr></thead><tbody>';
   SCHEDULED.forEach(function(t) {
     var agent = getAgent(t.agent);
     var statusClass = t.status==="Live"?"badge-approved":t.status==="Manual"?"badge-pending":"badge-idle";
     var nextRunStyle = t.status==="Live"?'font-weight:600;color:#059669;':'color:#9ca3af;';
-    html += '<tr><td><div style="display:flex;align-items:center;gap:8px;">'+iconSvg(agent?agent.icon:"activity",14,agent?agent.color:null)+'<span style="font-weight:500;color:#1f2937;">'+(agent?agent.name:"")+'</span></div></td><td style="color:#4b5563;">'+t.property+'</td><td style="color:#1f2937;">'+t.task+'</td><td><span class="freq-badge">'+t.frequency+'</span></td><td class="mono" style="'+nextRunStyle+'">'+t.nextRun+'</td><td><span class="badge '+statusClass+'">'+t.status+'</span></td></tr>';
+    var lastRunStr = t.lastRun ? new Date(t.lastRun).toLocaleDateString("en-US",{month:"short",day:"numeric"}) : '<span style="color:#d1d5db;">—</span>';
+    var resultDot = t.lastResult==="success"?'<span style="color:#059669;margin-left:4px;" title="Success">&#9679;</span>':t.lastResult==="error"?'<span style="color:#dc2626;margin-left:4px;" title="Error">&#9679;</span>':"";
+    html += '<tr><td><div style="display:flex;align-items:center;gap:8px;">'+iconSvg(agent?agent.icon:"activity",14,agent?agent.color:null)+'<span style="font-weight:500;color:#1f2937;">'+(agent?agent.name:"")+'</span></div></td><td style="color:#4b5563;">'+t.property+'</td><td style="color:#1f2937;">'+t.task+'</td><td><span class="freq-badge">'+t.frequency+'</span></td><td class="mono" style="color:#6b7280;">'+lastRunStr+resultDot+'</td><td class="mono" style="'+nextRunStyle+'">'+t.nextRun+'</td><td><span class="badge '+statusClass+'">'+t.status+'</span></td></tr>';
   });
   html += "</tbody>";
   document.getElementById("scheduleTable").innerHTML = html;
@@ -2341,6 +2374,7 @@ function buildDocHTML(id) {
   if(id==="brand-voice")               return buildBrandVoiceHTML();
   if(id==="triggering-architecture")   return buildTriggeringArchHTML();
   if(id==="data-schema")              return buildDataSchemaHTML();
+  if(id==="dashboard-update-protocol") return buildDashboardProtocolHTML();
   if(id==="market-snapshot-2026-04")        return buildMarketSnapshotHTML();
   if(id==="comps-sanctuary-office-2026-04") return buildSanctuaryCompsHTML();
   if(id==="bldg1-suite302-listing-2026-07") return buildSuite302ListingHTML();
@@ -2413,6 +2447,30 @@ function buildDataSchemaHTML() {
   '<p><strong>Audit trail:</strong> Every update appended to data/CHANGELOG.md with timestamp, source file, and records affected.</p>'+
   '<p><strong>Computed fields:</strong> <code>daysToNoticeDeadline</code> is always calculated at runtime from today\'s date and <code>noticeDeadline</code>. Never trust the stored value.</p>'+
   '<p style="font-size:12px;color:#9ca3af;margin-top:16px;">Full document: knowledge-base/formative/DATA_SCHEMA.md</p>';
+}
+
+function buildDashboardProtocolHTML() {
+  return '<h1>Dashboard Update Protocol</h1>'+
+  '<p style="color:#6b7280;font-size:13px;">Version 1.0 &bull; April 2, 2026</p><hr>'+
+  '<h2>Purpose</h2>'+
+  '<p>After every agent run, the agent must update <code>data/dashboard-state.json</code> so the dashboard reflects the latest state without manual intervention. The dashboard polls this file every 30 seconds and re-renders when changes are detected.</p>'+
+  '<h2>What Gets Updated</h2>'+
+  '<table><thead><tr><th>Section</th><th>What Changes</th><th>Who Updates</th></tr></thead><tbody>'+
+  '<tr><td><code>_meta.lastUpdated</code></td><td>Current ISO timestamp</td><td>Every agent, every run</td></tr>'+
+  '<tr><td><code>agentStatuses</code></td><td>status, lastRun, lastOutput</td><td>The running agent</td></tr>'+
+  '<tr><td><code>scheduled[]</code></td><td>lastRun, lastResult for the triggered task</td><td>Scheduled agents only</td></tr>'+
+  '<tr><td><code>documents[]</code></td><td>New entry for each output file</td><td>Every agent that writes output</td></tr>'+
+  '<tr><td><code>activity[]</code></td><td>New entry prepended (newest first)</td><td>Every agent, every run</td></tr>'+
+  '</tbody></table>'+
+  '<h2>Pattern</h2>'+
+  '<p><strong>Read → Modify → Write.</strong> Never overwrite the entire file. Always read first, modify the relevant sections, preserve all existing entries, and write back.</p>'+
+  '<h2>Status Values</h2>'+
+  '<table><thead><tr><th>Field</th><th>Values</th></tr></thead><tbody>'+
+  '<tr><td>Agent status</td><td><code>planned</code> → <code>building</code> → <code>active</code></td></tr>'+
+  '<tr><td>Document status</td><td><code>pending_review</code>, <code>approved</code>, <code>revision_requested</code>, <code>active</code></td></tr>'+
+  '<tr><td>Task lastResult</td><td><code>success</code>, <code>error</code></td></tr>'+
+  '</tbody></table>'+
+  '<p style="font-size:12px;color:#9ca3af;margin-top:16px;">Full document: knowledge-base/formative/DASHBOARD_UPDATE_PROTOCOL.md</p>';
 }
 
 function buildMarketSnapshotHTML() {
@@ -2864,11 +2922,20 @@ function init() {
   document.getElementById("todayDate").textContent = new Date().toLocaleDateString("en-US",{weekday:"long",year:"numeric",month:"long",day:"numeric"});
   var sel = document.getElementById("filterAgent");
   AGENTS.forEach(function(a) { var o = document.createElement("option"); o.value = a.slug; o.textContent = a.name; sel.appendChild(o); });
-  renderPortfolio();
-  renderSchedule();
-  updateCounts();
-  updateDocBadge();
-  lucide.createIcons();
+
+  // Load dynamic state from JSON, then render
+  loadDashboardState(function() {
+    renderPortfolio();
+    renderSchedule();
+    updateCounts();
+    updateDocBadge();
+    var el = document.getElementById("lastRefresh");
+    if(el) el.innerHTML = '<span class="live-dot"></span>Updated ' + new Date().toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"});
+    lucide.createIcons();
+
+    // Start auto-refresh polling
+    setInterval(refreshDashboard, REFRESH_INTERVAL_MS);
+  });
 }
 
 document.addEventListener("DOMContentLoaded", init);

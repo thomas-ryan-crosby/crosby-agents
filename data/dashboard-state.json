@@ -1,0 +1,348 @@
+{
+  "_meta": {
+    "version": "1.0",
+    "lastUpdated": "2026-04-02T12:00:00Z",
+    "updatedBy": "system-init",
+    "description": "Dynamic dashboard state — updated by agents after each run. The dashboard reads this file on load and polls for changes."
+  },
+  "agentStatuses": {
+    "clerical-data-agent": { "status": "building", "lastRun": null, "lastOutput": null },
+    "lease-intelligence-agent": { "status": "active", "lastRun": "2026-04-02T08:00:00Z", "lastOutput": "bldg1-lease-review-2026-04" },
+    "vacancy-marketing-agent": { "status": "active", "lastRun": "2026-04-02T10:00:00Z", "lastOutput": "bldg1-suite302-listing-2026-07" },
+    "rent-roll-intelligence-agent": { "status": "planned", "lastRun": null, "lastOutput": null },
+    "hoa-management-agent": { "status": "planned", "lastRun": null, "lastOutput": null },
+    "residential-leasing-agent": { "status": "planned", "lastRun": null, "lastOutput": null },
+    "market-intelligence-agent": { "status": "active", "lastRun": "2026-04-02T11:00:00Z", "lastOutput": "market-snapshot-2026-04" },
+    "investor-relations-agent": { "status": "planned", "lastRun": null, "lastOutput": null },
+    "acquisitions-agent": { "status": "planned", "lastRun": null, "lastOutput": null }
+  },
+  "scheduled": [
+    {
+      "taskId": "lease-intelligence-weekly",
+      "agent": "lease-intelligence-agent",
+      "property": "All properties",
+      "task": "Lease expiration & notice deadline scan",
+      "frequency": "Weekly (Monday 8am)",
+      "cron": "0 8 * * 1",
+      "status": "Live",
+      "lastRun": "2026-04-02T08:00:00Z",
+      "lastResult": "success"
+    },
+    {
+      "taskId": "lease-intelligence-monthly-renewals",
+      "agent": "lease-intelligence-agent",
+      "property": "All properties",
+      "task": "Monthly renewal letter drafts",
+      "frequency": "Monthly (1st, 8am)",
+      "cron": "0 8 1 * *",
+      "status": "Live",
+      "lastRun": "2026-04-01T08:00:00Z",
+      "lastResult": "success"
+    },
+    {
+      "taskId": "market-intelligence-monthly",
+      "agent": "market-intelligence-agent",
+      "property": "All properties",
+      "task": "Monthly market snapshot + rate benchmarking",
+      "frequency": "Monthly (15th, 8am)",
+      "cron": "0 8 15 * *",
+      "status": "Live",
+      "lastRun": "2026-04-02T11:00:00Z",
+      "lastResult": "success"
+    },
+    {
+      "taskId": "vacancy-marketing-event",
+      "agent": "vacancy-marketing-agent",
+      "property": "All properties",
+      "task": "Vacancy listing on confirmed vacancy",
+      "frequency": "Event-driven",
+      "cron": null,
+      "status": "Manual",
+      "lastRun": "2026-04-02T10:00:00Z",
+      "lastResult": "success"
+    },
+    {
+      "taskId": "rent-roll-monthly",
+      "agent": "rent-roll-intelligence-agent",
+      "property": "All properties",
+      "task": "Monthly portfolio summary",
+      "frequency": "Monthly (1st)",
+      "cron": "0 7 1 * *",
+      "status": "Pending",
+      "lastRun": null,
+      "lastResult": null
+    },
+    {
+      "taskId": "hoa-dues-monthly",
+      "agent": "hoa-management-agent",
+      "property": "Lakeside Village",
+      "task": "Monthly dues reminders",
+      "frequency": "Monthly (25th)",
+      "cron": "0 8 25 * *",
+      "status": "Pending",
+      "lastRun": null,
+      "lastResult": null
+    },
+    {
+      "taskId": "market-intelligence-quarterly",
+      "agent": "market-intelligence-agent",
+      "property": "All properties",
+      "task": "Quarterly market report",
+      "frequency": "Quarterly (end of Q)",
+      "cron": null,
+      "status": "Manual",
+      "lastRun": null,
+      "lastResult": null
+    },
+    {
+      "taskId": "acquisitions-weekly",
+      "agent": "acquisitions-agent",
+      "property": "All properties",
+      "task": "Weekly acquisition scan",
+      "frequency": "Weekly (Friday)",
+      "cron": "0 8 * * 5",
+      "status": "Pending",
+      "lastRun": null,
+      "lastResult": null
+    }
+  ],
+  "documents": [
+    {
+      "id": "agent-charter",
+      "title": "Agent Charter",
+      "category": "Formative",
+      "icon": "shield",
+      "color": "#2563eb",
+      "lastUpdated": "2026-04-01",
+      "status": "active",
+      "description": "Mission, 8-agent roster, operating principles, approval workflow, and external tool policy. The constitution of this agentic company.",
+      "file": "knowledge-base/formative/AGENT_CHARTER.md"
+    },
+    {
+      "id": "leasing-playbook",
+      "title": "Leasing Playbook",
+      "category": "Formative",
+      "icon": "book-open",
+      "color": "#059669",
+      "lastUpdated": "2026-04-01",
+      "status": "active",
+      "description": "Commercial and residential leasing procedures — notice timelines, urgency tiers, renewal standard terms, vacancy response, and HOA leasing rules.",
+      "file": "knowledge-base/formative/LEASING_PLAYBOOK.md"
+    },
+    {
+      "id": "operations-playbook",
+      "title": "Operations Playbook",
+      "category": "Formative",
+      "icon": "settings",
+      "color": "#7c3aed",
+      "lastUpdated": "2026-04-01",
+      "status": "active",
+      "description": "How to operate through the dashboard — daily workflow, triggering agents, reviewing outputs, data update procedures, and GitHub commit conventions.",
+      "file": "knowledge-base/formative/OPERATIONS_PLAYBOOK.md"
+    },
+    {
+      "id": "brand-voice",
+      "title": "Brand Voice & Identity",
+      "category": "Formative",
+      "icon": "pen-tool",
+      "color": "#d97706",
+      "lastUpdated": "2026-04-01",
+      "status": "active",
+      "description": "Crosby Development brand personality, voice by audience (residential, commercial, HOA, prospects), writing standards, Fair Housing language, and asset status.",
+      "file": "knowledge-base/formative/BRAND_VOICE.md"
+    },
+    {
+      "id": "triggering-architecture",
+      "title": "Triggering Architecture",
+      "category": "Formative",
+      "icon": "cpu",
+      "color": "#0891b2",
+      "lastUpdated": "2026-04-02",
+      "status": "active",
+      "description": "How agents get triggered — manual chat commands, Cowork scheduled tasks, and event-driven agent chains. Model assignments, execution environment, and scaling path.",
+      "file": "knowledge-base/formative/TRIGGERING_ARCHITECTURE.md"
+    },
+    {
+      "id": "data-schema",
+      "title": "Data Schema Reference",
+      "category": "Formative",
+      "icon": "database",
+      "color": "#374151",
+      "lastUpdated": "2026-04-02",
+      "status": "active",
+      "description": "Field-level schema for all 6 JSON data files (properties, buildings, units, tenants, leases, hoa-lots). Entity relationships, update protocol, and current data status.",
+      "file": "knowledge-base/formative/DATA_SCHEMA.md"
+    },
+    {
+      "id": "dashboard-update-protocol",
+      "title": "Dashboard Update Protocol",
+      "category": "Formative",
+      "icon": "refresh-cw",
+      "color": "#2563eb",
+      "lastUpdated": "2026-04-02",
+      "status": "active",
+      "description": "How agents update data/dashboard-state.json after each run — required post-run action for all agents. Defines the read-modify-write pattern, field schemas, and agent reference table.",
+      "file": "knowledge-base/formative/DASHBOARD_UPDATE_PROTOCOL.md"
+    },
+    {
+      "id": "bldg1-lease-review-2026-04",
+      "title": "Building #1 Lease Review — April 2026",
+      "category": "Agent Output",
+      "icon": "clock",
+      "color": "#dc2626",
+      "lastUpdated": "2026-04-01",
+      "status": "pending_review",
+      "agentSlug": "lease-intelligence-agent",
+      "propertySlug": "sanctuary-office-park",
+      "description": "Full lease schedule for all 13 Building #1 tenants with urgency tiers, upcoming 12-month calendar, and action items. One vacancy confirmed, two renewal letters required.",
+      "file": "knowledge-base/outputs/lease-intelligence/bldg1-lease-review-2026-04.md"
+    },
+    {
+      "id": "bayoucpr-renewal-2026-04",
+      "title": "Renewal Offer — Bayou CPR, Suite 301-A",
+      "category": "Agent Output",
+      "icon": "clock",
+      "color": "#dc2626",
+      "lastUpdated": "2026-04-01",
+      "status": "pending_review",
+      "agentSlug": "lease-intelligence-agent",
+      "propertySlug": "sanctuary-office-park",
+      "description": "Draft renewal offer letter for Bayou CPR (Suite 301-A, 400 SF). Proposes 2-year extension at $713/mo (Year 1) + $734/mo (Year 2). Notice deadline: July 4, 2026 (94 days).",
+      "file": "knowledge-base/outputs/lease-intelligence/bayoucpr-renewal-2026-04.md"
+    },
+    {
+      "id": "nirvana-renewal-2026-04",
+      "title": "Renewal Offer — Nirvana Massage, Suite 306",
+      "category": "Agent Output",
+      "icon": "clock",
+      "color": "#dc2626",
+      "lastUpdated": "2026-04-01",
+      "status": "pending_review",
+      "agentSlug": "lease-intelligence-agent",
+      "propertySlug": "sanctuary-office-park",
+      "description": "Draft renewal offer letter for Nirvana Massage (Suite 306, 610 SF). Proposes 2-year extension at $1,372/mo (Year 1) + $1,413/mo (Year 2). Notice deadline: July 4, 2026 (94 days).",
+      "file": "knowledge-base/outputs/lease-intelligence/nirvana-renewal-2026-04.md"
+    },
+    {
+      "id": "bldg1-suite302-listing-2026-07",
+      "title": "Vacancy Listing — Suite 302, Building #1",
+      "category": "Agent Output",
+      "icon": "file-text",
+      "color": "#d97706",
+      "lastUpdated": "2026-04-02",
+      "status": "pending_review",
+      "agentSlug": "vacancy-marketing-agent",
+      "propertySlug": "sanctuary-office-park",
+      "description": "LoopNet/CoStar listing copy for Suite 302 (655 SF, 3rd floor). Sec National vacating June 30. Proposed asking rate: $30.37-$32.44/SF/year. Full-service lease, available July 1, 2026.",
+      "file": "knowledge-base/outputs/vacancy-marketing/bldg1-suite302-listing-2026-07.md"
+    },
+    {
+      "id": "bldg1-suite302-brief-2026-07",
+      "title": "Leasing Brief — Suite 302, Building #1",
+      "category": "Agent Output",
+      "icon": "file-text",
+      "color": "#d97706",
+      "lastUpdated": "2026-04-02",
+      "status": "pending_review",
+      "agentSlug": "vacancy-marketing-agent",
+      "propertySlug": "sanctuary-office-park",
+      "description": "One-page leasing brief for broker distribution. Suite 302 specs, building overview, campus amenities, location map notes, lease terms, and contact CTA.",
+      "file": "knowledge-base/outputs/vacancy-marketing/bldg1-suite302-brief-2026-07.md"
+    },
+    {
+      "id": "bldg1-suite302-email-2026-07",
+      "title": "Email Blast — Suite 302, Building #1",
+      "category": "Agent Output",
+      "icon": "file-text",
+      "color": "#d97706",
+      "lastUpdated": "2026-04-02",
+      "status": "pending_review",
+      "agentSlug": "vacancy-marketing-agent",
+      "propertySlug": "sanctuary-office-park",
+      "description": "Email announcement for broker contacts and prospect list. 655 SF available July 1, asking $30.37-$32.44/SF/year. Ready for Gmail draft on approval.",
+      "file": "knowledge-base/outputs/vacancy-marketing/bldg1-suite302-email-2026-07.md"
+    },
+    {
+      "id": "market-snapshot-2026-04",
+      "title": "Market Snapshot — April 2026",
+      "category": "Agent Output",
+      "icon": "trending-up",
+      "color": "#0891b2",
+      "lastUpdated": "2026-04-02",
+      "status": "pending_review",
+      "agentSlug": "market-intelligence-agent",
+      "description": "General mode: Monthly market snapshot across all Crosby-relevant asset classes — Northshore office, Metairie/Northshore multi-family, St. Tammany industrial, Mandeville HOA/townhome. Rate benchmarking, headlines, watch items.",
+      "file": "knowledge-base/outputs/market-intelligence/market-snapshot-2026-04.md"
+    },
+    {
+      "id": "comps-sanctuary-office-2026-04",
+      "title": "Comp Report — Sanctuary Office Park",
+      "category": "Agent Output",
+      "icon": "trending-up",
+      "color": "#0891b2",
+      "lastUpdated": "2026-04-02",
+      "status": "pending_review",
+      "agentSlug": "market-intelligence-agent",
+      "propertySlug": "sanctuary-office-park",
+      "description": "Property-specific mode: 6 comparable Northshore office properties for Suite 302 rate validation. Market median $26.50/SF. Recommends narrowing asking range from $30.37-$32.44 to $29.50-$31.00/SF.",
+      "file": "knowledge-base/outputs/market-intelligence/comps-sanctuary-office-2026-04.md"
+    }
+  ],
+  "activity": [
+    {
+      "id": "act-001",
+      "timestamp": "2026-04-02T11:00:00Z",
+      "agent": "market-intelligence-agent",
+      "type": "report",
+      "title": "Market Snapshot — April 2026",
+      "description": "Monthly market snapshot generated across all asset classes. Northshore office, Metairie multi-family, St. Tammany industrial, Mandeville HOA.",
+      "status": "pending_review",
+      "documentId": "market-snapshot-2026-04",
+      "property": null
+    },
+    {
+      "id": "act-002",
+      "timestamp": "2026-04-02T11:15:00Z",
+      "agent": "market-intelligence-agent",
+      "type": "report",
+      "title": "Comp Report — Sanctuary Office Park",
+      "description": "6 comparable Northshore office properties for Suite 302 rate validation. Recommends $29.50-$31.00/SF.",
+      "status": "pending_review",
+      "documentId": "comps-sanctuary-office-2026-04",
+      "property": "sanctuary-office-park"
+    },
+    {
+      "id": "act-003",
+      "timestamp": "2026-04-02T10:00:00Z",
+      "agent": "vacancy-marketing-agent",
+      "type": "report",
+      "title": "Vacancy Listing — Suite 302",
+      "description": "LoopNet listing, leasing brief, and email blast generated for Suite 302 (655 SF). Asking $30.37-$32.44/SF.",
+      "status": "pending_review",
+      "documentId": "bldg1-suite302-listing-2026-07",
+      "property": "sanctuary-office-park"
+    },
+    {
+      "id": "act-004",
+      "timestamp": "2026-04-02T08:00:00Z",
+      "agent": "lease-intelligence-agent",
+      "type": "scan",
+      "title": "Weekly Lease Deadline Scan",
+      "description": "Scanned all Building #1 leases. 1 vacancy confirmed (Suite 302), 2 renewals flagged (Bayou CPR, Nirvana Massage).",
+      "status": "pending_review",
+      "documentId": "bldg1-lease-review-2026-04",
+      "property": "sanctuary-office-park"
+    },
+    {
+      "id": "act-005",
+      "timestamp": "2026-04-01T08:00:00Z",
+      "agent": "lease-intelligence-agent",
+      "type": "letter",
+      "title": "Renewal Letters Drafted",
+      "description": "Draft renewal offers generated for Bayou CPR (Suite 301-A) and Nirvana Massage (Suite 306). Notice deadline: July 4, 2026.",
+      "status": "pending_review",
+      "documentId": "bayoucpr-renewal-2026-04",
+      "property": "sanctuary-office-park"
+    }
+  ]
+}

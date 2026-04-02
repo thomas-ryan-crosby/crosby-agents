@@ -95,7 +95,7 @@ Market Intelligence Agent
 | **Models** | Sonnet 4 (operational agents) / Opus 4 (creative + analytical agents) |
 | **Data access** | Local filesystem via `data/` directory (JSON files) |
 | **External access** | Web search (for Market Intelligence, Acquisitions). Gmail (for email drafts, with approval). No other external APIs. |
-| **State persistence** | All state is in files (data/*.json, knowledge-base/, dashboard.html). No database. Git provides version history. |
+| **State persistence** | All state is in files (data/*.json, knowledge-base/, dashboard.html). `data/dashboard-state.json` is the live state file — agents update it after each run per `DASHBOARD_UPDATE_PROTOCOL.md`. No database. Git provides version history. |
 | **Concurrency** | One agent runs at a time within a session. Multiple sessions could run in parallel if needed. |
 | **Cost model** | Per-token usage. Sonnet for high-frequency ops. Opus for low-frequency, high-value writing. |
 
