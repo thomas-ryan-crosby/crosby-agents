@@ -153,7 +153,7 @@
     <button class="nav-btn" data-view="approvals"><i data-lucide="check-circle" style="width:15px;height:15px;"></i> Approvals <span class="nav-badge" id="approvalBadge">0</span></button>
     <button class="nav-btn" data-view="schedule"><i data-lucide="calendar" style="width:15px;height:15px;"></i> Schedule</button>
     <button class="nav-btn" data-view="metrics"><i data-lucide="trending-up" style="width:15px;height:15px;"></i> Metrics</button>
-    <button class="nav-btn" data-view="docs"><i data-lucide="file-text" style="width:15px;height:15px;"></i> Docs <span class="nav-badge" id="docsBadge">6</span></button>
+    <button class="nav-btn" data-view="docs"><i data-lucide="file-text" style="width:15px;height:15px;"></i> Docs <span class="nav-badge" id="docsBadge">8</span></button>
     <button class="nav-btn" data-view="strategy"><i data-lucide="book-open" style="width:15px;height:15px;"></i> Strategy</button>
   </nav>
 
@@ -598,7 +598,7 @@ const AGENTS = [
   { slug: "hoa-management-agent", name: "HOA Management", icon: "home", phase: 3, color: "#7c3aed", phaseLabel: "Phase 3 — HOA & Residential", status: "planned", description: "Dues tracking, violation notices, maintenance requests, and board communications for HOA communities." },
   { slug: "residential-leasing-agent", name: "Residential Leasing", icon: "key", phase: 3, color: "#059669", phaseLabel: "Phase 3 — HOA & Residential", status: "planned", description: "Vacancy listings, tenant inquiry responses, and lease renewal outreach for apartment properties." },
   // Phase 4 — Business Development
-  { slug: "market-intelligence-agent", name: "Market Intelligence", icon: "trending-up", phase: 4, color: "#0891b2", phaseLabel: "Phase 4 — Business Dev", status: "planned", description: "Northshore office/residential comp tracking, quarterly market reports, and rate benchmarking." },
+  { slug: "market-intelligence-agent", name: "Market Intelligence", icon: "trending-up", phase: 4, color: "#0891b2", phaseLabel: "Phase 4 — Business Dev", status: "building", description: "Northshore office/residential comp tracking, quarterly market reports, and rate benchmarking." },
   { slug: "investor-relations-agent", name: "Investor Relations", icon: "briefcase", phase: 4, color: "#6366f1", phaseLabel: "Phase 4 — Business Dev", status: "planned", description: "Property performance summaries, Gulf South parcel updates, and deal memos for investors." },
   { slug: "acquisitions-agent", name: "Acquisitions", icon: "search", phase: 4, color: "#f59e0b", phaseLabel: "Phase 4 — Business Dev", status: "planned", description: "Monitors MLS and CoStar for acquisition targets matching portfolio strategy. Drafts LOIs." },
 ];
@@ -674,6 +674,17 @@ var DOCUMENTS = [
     agentSlug:"vacancy-marketing-agent", propertySlug:"sanctuary-office-park",
     description:"Email announcement for broker contacts and prospect list. 655 SF available July 1, asking $30.37–$32.44/SF/year. Ready for Gmail draft on approval.",
     file:"knowledge-base/outputs/vacancy-marketing/bldg1-suite302-email-2026-07.md" },
+  // ── Market Intelligence Agent Outputs ──
+  { id:"market-snapshot-2026-04", title:"Market Snapshot — April 2026", category:"Agent Output",
+    icon:"trending-up", color:"#0891b2", lastUpdated:"2026-04-02", status:"pending_review",
+    agentSlug:"market-intelligence-agent",
+    description:"General mode: Monthly market snapshot across all Crosby-relevant asset classes — Northshore office, Metairie/Northshore multi-family, St. Tammany industrial, Mandeville HOA/townhome. Rate benchmarking, headlines, watch items.",
+    file:"knowledge-base/outputs/market-intelligence/market-snapshot-2026-04.md" },
+  { id:"comps-sanctuary-office-2026-04", title:"Comp Report — Sanctuary Office Park", category:"Agent Output",
+    icon:"trending-up", color:"#0891b2", lastUpdated:"2026-04-02", status:"pending_review",
+    agentSlug:"market-intelligence-agent", propertySlug:"sanctuary-office-park",
+    description:"Property-specific mode: 6 comparable Northshore office properties for Suite 302 rate validation. Market median $26.50/SF. Recommends narrowing asking range from $30.37–$32.44 to $29.50–$31.00/SF.",
+    file:"knowledge-base/outputs/market-intelligence/comps-sanctuary-office-2026-04.md" },
 ];
 
 var docStatuses = {}; // tracks approve/reject decisions
@@ -1122,43 +1133,54 @@ var AGENT_DETAILS = {
     runtime: {
       model: "claude-opus-4-6",
       modelRationale: "Web research synthesis, market analysis, and strategic narrative writing. Opus produces institutional-quality market reports and can reason across multiple data sources.",
-      executionMode: "Cowork scheduled task + manual trigger",
-      schedule: "Monthly (15th) — comp pull and rate benchmarking. Quarterly (last day of Q) — full market summary. On demand via chat.",
-      estimatedTokens: "~15K input / ~12K output for quarterly report (heavy web research context)",
-      dependencies: "Web search tools (CoStar, LoopNet, Apartments.com, MLS, local news). Reads data/leases.json + data/properties.json for Crosby rate benchmarking.",
-      outputGate: "Quarterly market summary requires approval before distribution. Comp data should be validated by human (agent may miss off-market activity).",
+      executionMode: "Dual-mode: Scheduled (general) + Manual (general or property-specific)",
+      schedule: "Monthly (15th) — market snapshot + rate benchmarking. Quarterly (last day of Q) — full market report. On demand for property-specific comp pulls.",
+      estimatedTokens: "~15K input / ~12K output for quarterly report; ~8K input / ~6K output for property-specific comp report",
+      dependencies: "Web search tools (LoopNet, Apartments.com, MLS, CBRE/JLL reports, local news). Reads data/leases.json, data/units.json, data/buildings.json, data/properties.json for Crosby rate benchmarking. Property knowledge base files for property-specific mode.",
+      outputGate: "All reports require human review before use in pricing decisions, stakeholder distribution, or downstream agent consumption.",
     },
     inputs: [
-      { label:"Web — CoStar / LoopNet", detail:"Comparable commercial listings in Mandeville/Northshore market — $/SF, vacancy rates, new supply, absorption" },
-      { label:"Web — Apartments.com / Zillow / MLS", detail:"Comparable residential listings in Metairie and Mandeville — rent per bedroom, occupancy trends, new development" },
-      { label:"Web — local news and economic data", detail:"St. Tammany Parish economic indicators, new business announcements, major employer activity" },
-      { label:"data/leases.json + data/properties.json", detail:"Current Crosby lease rates and property footprint — used to benchmark Crosby rates against market comps by property type and location" },
-      { label:"Prior reports (SUMMARY.md)", detail:"Historical market data for trend analysis" },
+      { label:"data/properties.json", detail:"Full portfolio — 8 properties, types, locations, Crosby role. Establishes which markets and asset classes are relevant." },
+      { label:"data/leases.json", detail:"Current Crosby lease rates — monthlyRent, SF, commenced, terminates. Used to benchmark Crosby vs. market by computing $/SF/year (commercial) or $/unit/month (residential)." },
+      { label:"data/units.json + data/buildings.json", detail:"Unit-level SF, type, bedrooms/bathrooms, and building-level totals. Needed to match comps by size, type, and building class." },
+      { label:"Web — LoopNet / CoStar", detail:"Commercial office, industrial, and retail listings. Asking rates $/SF, vacancy, building class, available SF. Primary source for Sanctuary Office Park and Gulf South comps." },
+      { label:"Web — Apartments.com / Zillow / MLS", detail:"Residential rental and sale listings. Avg rent by bedroom, occupancy, concessions, HOA sale prices. Primary source for Metairie and Mandeville residential comps." },
+      { label:"Web — Economic & research data", detail:"St. Tammany/Jefferson Parish economic indicators, CBRE/JLL/Marcus & Millichap regional reports, BLS employment, Census population/household data." },
+      { label:"knowledge-base/properties/*.md (property-specific mode)", detail:"Full property context — building specs, tenant roster, amenities, location, marketing positioning. Loaded when running comps for a specific Crosby property." },
+      { label:"Prior reports (SUMMARY.md)", detail:"Historical market data from prior runs for trend analysis and MoM/QoQ comparison." },
     ],
     outputs: [
-      { label:"Monthly Comp Report", detail:"Comparable properties in target markets — current asking rates, vacancy rates, notable lease activity, Crosby rate vs. market range", format:"Markdown (.md)", example:"northshore-office-comp-2026-04.md" },
-      { label:"Quarterly Market Summary", detail:"Full market analysis — supply/demand, absorption, rate trends, emerging submarkets, strategic implications for Crosby portfolio", format:"Markdown (.md) → PDF on approval", example:"northshore-market-2026-Q2.md" },
-      { label:"Rate Benchmarking", detail:"Side-by-side comparison of Crosby rates vs. market median and top quartile, per property and unit/suite type", format:"Markdown (.md)", example:"rate-benchmark-2026-04.md" },
+      { label:"Monthly Market Snapshot", detail:"1–2 page key indicator summary across all asset classes — rates, vacancy, trends, Crosby positioning, watch items", format:"Markdown (.md)", example:"market-snapshot-2026-04.md" },
+      { label:"Quarterly Market Report", detail:"Full 3–6 page analysis: commercial office, multi-family, industrial, HOA/townhome — supply/demand, rate trends, Crosby portfolio positioning, next-quarter outlook", format:"Markdown (.md) → PDF on approval", example:"market-report-2026-Q2.md" },
+      { label:"Property-Specific Comp Report", detail:"5–10 comparable properties with rates, size, location, occupancy. Includes rate position analysis (below/at/above market) and strategic recommendation.", format:"Markdown (.md)", example:"comps-sanctuary-office-2026-04.md" },
+      { label:"Rate Benchmarking Table", detail:"Crosby rates vs. market median per property and unit/suite type. Embedded in monthly snapshot and quarterly report.", format:"Included in other reports" },
     ],
     storage: [
       { label:"Output folder", detail:"knowledge-base/outputs/market-intelligence/" },
-      { label:"Naming convention", detail:"[market]-[report-type]-[YYYY-MM].md  or  [market]-market-[YYYY-Q#].md" },
+      { label:"General reports", detail:"market-snapshot-[YYYY-MM].md  or  market-report-[YYYY]-Q[#].md" },
+      { label:"Property-specific", detail:"comps-[property-abbr]-[YYYY-MM].md  or  comps-[property-abbr]-[unit-type]-[YYYY-MM].md" },
+      { label:"Memory log", detail:"SUMMARY.md — every run logged with mode, scope, sources, key findings, downstream flags" },
     ],
     automated: [
-      "Web search for comparable listings on 15th of each month",
-      "Calculate market rate ranges and Crosby position vs. market",
-      "Draft comp report and rate benchmarking document",
-      "Feed rate data to Lease Intelligence Agent for renewal rate recommendations",
+      "Web search for comparable listings across all Crosby-relevant markets",
+      "Compute Crosby rates from data/leases.json — $/SF/year (commercial), $/unit/month (residential), dues/lot (HOA)",
+      "Calculate rate position: Crosby vs. market median, range, and top quartile",
+      "Draft report and post to Docs tab as Pending Review",
+      "Flag downstream agents that should review: Lease Intelligence (renewal rates), Vacancy Marketing (asking rates), Investor Relations (market context)",
+      "Append run to SUMMARY.md with sources, comp counts, and key findings",
     ],
     human: [
-      "Review quarterly market summary before sharing with stakeholders",
-      "Validate web-sourced comp data — agent may miss off-market activity",
-      "Make final pricing decisions — agent recommends, human decides",
+      "Review all reports before use — validate comp relevance, source quality, and rate position analysis",
+      "Confirm that comps are truly comparable (agent may include listings with different lease types or building classes)",
+      "Supplement with off-market knowledge — agent only sees publicly listed data, not broker whisper rates or pending deals",
+      "Make all final pricing decisions — agent provides context, human decides",
     ],
     triggers: [
-      { when:"15th of each month (automated)", how:"Monthly comp pull and rate benchmarking" },
-      { when:"End of each quarter (automated)", how:"Full quarterly market summary" },
-      { when:"On demand", how:"Ask: 'Pull current office comps for Mandeville, LA'" },
+      { when:"15th of each month (scheduled)", how:"General mode — monthly market snapshot across all asset classes and geographies" },
+      { when:"Last day of each quarter (scheduled)", how:"General mode — full quarterly market report with strategic analysis" },
+      { when:"On demand — general", how:"Ask: 'Run Market Intelligence Agent' or 'What's happening in the Northshore market?'" },
+      { when:"On demand — property-specific", how:"Ask: 'Pull comps for Sanctuary Office Park' or 'What's the market rate for 655 SF in Mandeville?'" },
+      { when:"On demand — unit-specific", how:"Ask: 'Run market comps for Metairie Lake — 2BR units' or 'Industrial lot prices in St. Tammany?'" },
     ],
   },
   "investor-relations-agent": {
@@ -2208,6 +2230,8 @@ function buildDocHTML(id) {
   if(id==="brand-voice")               return buildBrandVoiceHTML();
   if(id==="triggering-architecture")   return buildTriggeringArchHTML();
   if(id==="data-schema")              return buildDataSchemaHTML();
+  if(id==="market-snapshot-2026-04")        return buildMarketSnapshotHTML();
+  if(id==="comps-sanctuary-office-2026-04") return buildSanctuaryCompsHTML();
   if(id==="bldg1-suite302-listing-2026-07") return buildSuite302ListingHTML();
   if(id==="bldg1-suite302-brief-2026-07")   return buildSuite302BriefHTML();
   if(id==="bldg1-suite302-email-2026-07")   return buildSuite302EmailHTML();
@@ -2278,6 +2302,87 @@ function buildDataSchemaHTML() {
   '<p><strong>Audit trail:</strong> Every update appended to data/CHANGELOG.md with timestamp, source file, and records affected.</p>'+
   '<p><strong>Computed fields:</strong> <code>daysToNoticeDeadline</code> is always calculated at runtime from today\'s date and <code>noticeDeadline</code>. Never trust the stored value.</p>'+
   '<p style="font-size:12px;color:#9ca3af;margin-top:16px;">Full document: knowledge-base/formative/DATA_SCHEMA.md</p>';
+}
+
+function buildMarketSnapshotHTML() {
+  return '<h1>Market Snapshot — April 2026</h1>'+
+  '<p style="color:#6b7280;font-size:13px;">Generated by Market Intelligence Agent (claude-opus-4-6) &bull; Mode: General &bull; April 2, 2026</p><hr>'+
+  '<h2>Key Indicators</h2>'+
+  '<table><thead><tr><th>Market</th><th>Metric</th><th>Current</th><th>Prior Period</th><th>Trend</th></tr></thead><tbody>'+
+  '<tr><td rowspan="2" style="font-weight:700;">Northshore Office</td><td>Avg Asking Rate</td><td>$26.50–$30.00/SF/yr</td><td>$25.80–$29.00</td><td style="color:#059669;">↑ Steady</td></tr>'+
+  '<tr><td>Vacancy Rate</td><td>~6–8%</td><td>~7–9%</td><td style="color:#059669;">↓ Tightening</td></tr>'+
+  '<tr><td rowspan="2" style="font-weight:700;">Metairie Multi-Family</td><td>Avg 2BR Rent</td><td>$1,250–$1,450/mo</td><td>$1,200–$1,400</td><td style="color:#059669;">↑ Modest</td></tr>'+
+  '<tr><td>Occupancy</td><td>93–95%</td><td>92–94%</td><td style="color:#059669;">↑ Strengthening</td></tr>'+
+  '<tr><td rowspan="2" style="font-weight:700;">St. Tammany Industrial</td><td>Land ($/acre)</td><td>$80K–$150K</td><td>$75K–$140K</td><td style="color:#059669;">↑ Growing</td></tr>'+
+  '<tr><td>Improved ($/SF)</td><td>$8.50–$12.00</td><td>$8.00–$11.50</td><td style="color:#059669;">↑ Limited supply</td></tr>'+
+  '<tr><td style="font-weight:700;">Mandeville HOA/Townhome</td><td>Rental Rate</td><td>$1,800–$2,200/mo</td><td>$1,750–$2,100</td><td style="color:#059669;">↑ Modest</td></tr>'+
+  '</tbody></table>'+
+  '<p style="font-size:12px;color:#9ca3af;margin-top:8px;">Sources: LoopNet, Apartments.com, Zillow, Realtor.com, CBRE New Orleans. April 2026.</p>'+
+  '<h2>Headlines</h2>'+
+  '<p><strong>Northshore office vacancy continues to tighten.</strong> Demand from professional services, healthcare, and insurance tenants. Class A/B space in Mandeville increasingly constrained, with fewer sub-1,000 SF availabilities.</p>'+
+  '<p><strong>Metairie multi-family rents pushing higher, but new supply is a watch item.</strong> Several projects under construction in the Metairie/Kenner corridor. Absorption of new units is the key metric over the next 2–3 quarters.</p>'+
+  '<p><strong>Industrial demand on the Northshore remains strong.</strong> Logistics, distribution, and light manufacturing users seeking developed industrial lots. Gulf South Commerce Park is well-positioned.</p>'+
+  '<p><strong>Mandeville townhome/HOA market stable.</strong> Gradual upward trend in sale prices. Rental demand strong with limited inventory.</p>'+
+  '<h2>Crosby Portfolio Positioning</h2>'+
+  '<table><thead><tr><th>Property</th><th>Type</th><th>Crosby Rate</th><th>Market Range</th><th>Position</th></tr></thead><tbody>'+
+  '<tr><td>Sanctuary Office Park</td><td>Commercial</td><td>$27.26/SF/yr</td><td>$26.50–$30.00</td><td style="color:#059669;font-weight:600;">At market</td></tr>'+
+  '<tr><td>Metairie Plaza</td><td>Multi-Family</td><td style="color:#d97706;">[Pending load]</td><td>$1,250–$1,450/mo</td><td>—</td></tr>'+
+  '<tr><td>Metairie Lake Apts</td><td>Multi-Family</td><td style="color:#d97706;">[Pending load]</td><td>$1,250–$1,450/mo</td><td>—</td></tr>'+
+  '<tr><td>Lakeside Village</td><td>HOA/Rental</td><td>$2,789/mo avg</td><td>$1,800–$2,200/mo</td><td style="color:#2563eb;font-weight:600;">Above market</td></tr>'+
+  '<tr><td>Gulf South Commerce</td><td>Industrial</td><td>N/A (dev)</td><td>$80K–$150K/acre</td><td style="color:#059669;">Well-positioned</td></tr>'+
+  '</tbody></table>'+
+  '<h2 style="color:#d97706;">Watch Items</h2>'+
+  '<ol>'+
+  '<li><strong>Suite 302 asking rate:</strong> Proposed $30.37–$32.44 may be aggressive. Upper end matches market high. Property-specific comp report recommends narrowing to $29.50–$31.00.</li>'+
+  '<li><strong>New Metairie apartment supply:</strong> Monitor absorption. If competing occupancy dips below 90%, concession pressure may follow.</li>'+
+  '<li><strong>Gulf South timing:</strong> Industrial land trending up, but rate environment may slow build-to-suit. Consider accelerating parcel marketing.</li>'+
+  '<li><strong>Lakeside rental ceiling:</strong> Crosby units at significant premium. Sustainable at 100% occupancy, but any turnover should be priced at $2,000–$2,200.</li>'+
+  '</ol>';
+}
+
+function buildSanctuaryCompsHTML() {
+  return '<h1>Comp Report — Sanctuary Office Park</h1>'+
+  '<p style="color:#6b7280;font-size:13px;">Generated by Market Intelligence Agent (claude-opus-4-6) &bull; Mode: Property-Specific &bull; April 2, 2026</p>'+
+  '<p style="color:#6b7280;font-size:13px;">Trigger: Suite 302 rate validation (655 SF, $30.37–$32.44/SF proposed by Vacancy Marketing Agent)</p><hr>'+
+  '<h2>Subject Property</h2>'+
+  '<table><thead><tr><th>Detail</th><th>Value</th></tr></thead><tbody>'+
+  '<tr><td>Property</td><td>The Sanctuary Office Park</td></tr>'+
+  '<tr><td>Subject Suite</td><td>302 — 655 SF, 3rd floor</td></tr>'+
+  '<tr><td>Prior Tenant Rate</td><td>$1,609.96/mo ($29.49/SF/year)</td></tr>'+
+  '<tr><td>Proposed Asking</td><td>$30.37–$32.44/SF/year</td></tr>'+
+  '<tr><td>Lease Type</td><td>Full Service</td></tr>'+
+  '<tr><td>Campus Occupancy</td><td>99.7%</td></tr>'+
+  '</tbody></table>'+
+  '<h2>Comparable Properties</h2>'+
+  '<table style="font-size:13px;"><thead><tr><th>#</th><th>Property</th><th>Location</th><th>Avail SF</th><th>Asking Rate</th><th>Occ.</th><th>Class</th><th>Lease</th></tr></thead><tbody>'+
+  '<tr><td>1</td><td>Northshore Business Center</td><td>Mandeville</td><td>800–1,200</td><td>$24–$26/SF</td><td>~90%</td><td>B</td><td>Mod Gross</td></tr>'+
+  '<tr><td>2</td><td>Highway 190 Office Park</td><td>Covington</td><td>500–1,000</td><td>$22–$25/SF</td><td>~85%</td><td>B</td><td>Mod Gross</td></tr>'+
+  '<tr><td>3</td><td style="font-weight:600;">Pinnacle Northshore</td><td>Mandeville</td><td>700–2,000</td><td style="font-weight:600;">$27–$30/SF</td><td>~92%</td><td>A/B</td><td style="font-weight:600;">Full Svc</td></tr>'+
+  '<tr><td>4</td><td>Causeway Professional Centre</td><td>Mandeville</td><td>400–900</td><td>$25–$28/SF</td><td>~88%</td><td>B+</td><td>Mod Gross</td></tr>'+
+  '<tr><td>5</td><td>St. Tammany Corporate Park</td><td>Covington</td><td>1,000–3,000</td><td>$26–$29/SF</td><td>~93%</td><td>A</td><td>NNN</td></tr>'+
+  '<tr><td>6</td><td>Mandeville Town Center Office</td><td>Mandeville</td><td>350–600</td><td>$28–$32/SF</td><td>~95%</td><td>B+</td><td>Full Svc</td></tr>'+
+  '</tbody></table>'+
+  '<p style="font-size:12px;color:#9ca3af;">Comp #3 (Pinnacle) highlighted as closest match: similar class, full-service lease, same geography.</p>'+
+  '<h2>Rate Position Analysis</h2>'+
+  '<table><thead><tr><th>Metric</th><th>$/SF/Year</th></tr></thead><tbody>'+
+  '<tr><td>Market Low</td><td>$22.00</td></tr>'+
+  '<tr><td style="font-weight:600;">Market Median</td><td style="font-weight:600;">$26.50</td></tr>'+
+  '<tr><td>Market 75th Pct</td><td>$28.50</td></tr>'+
+  '<tr><td>Market High</td><td>$32.00</td></tr>'+
+  '<tr style="background:#eff6ff;"><td style="font-weight:700;">Sanctuary Avg (Bldg #1)</td><td style="font-weight:700;color:#2563eb;">$27.26</td></tr>'+
+  '<tr style="background:#fef3c7;"><td style="font-weight:700;">Suite 302 Prior Rate</td><td style="font-weight:700;color:#d97706;">$29.49</td></tr>'+
+  '<tr style="background:#fee2e2;"><td style="font-weight:700;">Suite 302 Proposed</td><td style="font-weight:700;color:#dc2626;">$30.37–$32.44</td></tr>'+
+  '</tbody></table>'+
+  '<p>Sanctuary\'s average rate is slightly above market median — justified by campus quality, 99.7% occupancy, full-service structure, and on-site ownership. Suite 302\'s prior rate was already 75th percentile (11 years of 3% escalation). The proposed range puts Suite 302 at or above market high.</p>'+
+  '<h2 style="color:#0891b2;">Strategic Recommendation</h2>'+
+  '<ol>'+
+  '<li><strong>Narrow the asking range to $29.50–$31.00/SF/year.</strong> Keeps Crosby above median, avoids pricing into extended vacancy territory.</li>'+
+  '<li><strong>Lead marketing at $30.00/SF = ~$1,637/month.</strong> Clean number, slight increase over prior tenant. Defensible.</li>'+
+  '<li><strong>Highlight the full-service advantage.</strong> Most comps are Modified Gross or NNN — tenant all-in cost at Sanctuary may match or beat a $26/SF NNN lease elsewhere.</li>'+
+  '<li><strong>Monitor: if no inquiries in 45 days, consider $28.50–$29.50/SF.</strong> At 655 SF, each $1/SF reduction is only ~$55/month.</li>'+
+  '<li><strong>Small-suite scarcity is real.</strong> Sub-1,000 SF suites are scarce on the Northshore. This is a niche with steady demand.</li>'+
+  '</ol>'+
+  '<p style="font-size:12px;color:#9ca3af;margin-top:16px;">Downstream: Vacancy Marketing Agent should update Suite 302 rate. Lease Intelligence Agent should validate Bayou CPR and Nirvana renewal rates against these comps.</p>';
 }
 
 function buildSuite302ListingHTML() {
