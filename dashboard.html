@@ -138,7 +138,7 @@
       </div>
     </div>
     <div class="header-right">
-      <button class="alert-btn" id="alertBtn" onclick="switchView('approvals')">
+      <button class="alert-btn" id="alertBtn" onclick="switchView('outputs')">
         <i data-lucide="alert-circle" style="width:14px;height:14px;"></i>
         <span id="alertText"></span>
       </button>
@@ -154,13 +154,10 @@
 <div class="container">
   <nav class="nav" id="mainNav">
     <button class="nav-btn active" data-view="portfolio"><i data-lucide="layout-dashboard" style="width:15px;height:15px;"></i> Portfolio</button>
-    <button class="nav-btn" data-view="activity"><i data-lucide="activity" style="width:15px;height:15px;"></i> Activity</button>
     <button class="nav-btn" data-view="agents"><i data-lucide="bot" style="width:15px;height:15px;"></i> Agents</button>
-    <button class="nav-btn" data-view="approvals"><i data-lucide="check-circle" style="width:15px;height:15px;"></i> Approvals <span class="nav-badge" id="approvalBadge">0</span></button>
-    <button class="nav-btn" data-view="schedule"><i data-lucide="calendar" style="width:15px;height:15px;"></i> Schedule</button>
+    <button class="nav-btn" data-view="outputs"><i data-lucide="file-check" style="width:15px;height:15px;"></i> Outputs <span class="nav-badge" id="outputsBadge">0</span></button>
+    <button class="nav-btn" data-view="kb"><i data-lucide="book-open" style="width:15px;height:15px;"></i> Knowledge Base</button>
     <button class="nav-btn" data-view="metrics"><i data-lucide="trending-up" style="width:15px;height:15px;"></i> Metrics</button>
-    <button class="nav-btn" data-view="docs"><i data-lucide="file-text" style="width:15px;height:15px;"></i> Docs <span class="nav-badge" id="docsBadge">8</span></button>
-    <button class="nav-btn" data-view="strategy"><i data-lucide="book-open" style="width:15px;height:15px;"></i> Strategy</button>
   </nav>
 
   <!-- ═══ PORTFOLIO ═══ -->
@@ -171,59 +168,25 @@
     <div class="card">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
         <span class="card-title" style="margin-bottom:0;">Recent Activity</span>
-        <button class="link-btn" onclick="switchView('activity')" style="font-size:12px;color:#2563eb;font-weight:500;cursor:pointer;">View all →</button>
+        <button class="link-btn" onclick="switchView('outputs')" style="font-size:12px;color:#2563eb;font-weight:500;cursor:pointer;">View all outputs →</button>
       </div>
       <div id="recentActivity"></div>
     </div>
   </div>
 
-  <!-- ═══ ACTIVITY ═══ -->
-  <div class="view" id="view-activity">
-    <div class="filters">
-      <div class="filter-select">
-        <i data-lucide="filter" style="width:14px;height:14px;color:#9ca3af;"></i>
-        <select id="filterAgent" onchange="renderActivity()"><option value="all">All Agents</option></select>
-      </div>
-      <div class="filter-select">
-        <select id="filterStatus" onchange="renderActivity()">
-          <option value="all">All Statuses</option>
-          <option value="approved">Approved</option>
-          <option value="pending_review">Pending Review</option>
-          <option value="revision_requested">Revision Requested</option>
-        </select>
-      </div>
-      <span id="filterCount" style="font-size:12px;color:#9ca3af;"></span>
-    </div>
-    <div class="card" id="activityList"></div>
-  </div>
-
-  <!-- ═══ AGENTS ═══ -->
+  <!-- ═══ AGENTS (+ Schedule) ═══ -->
   <div class="view" id="view-agents">
     <div id="agentsContent"></div>
   </div>
 
-  <!-- ═══ APPROVALS ═══ -->
-  <div class="view" id="view-approvals">
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">
-      <span class="card-title" style="margin-bottom:0;">Approval Queue</span>
-      <span class="badge badge-pending" id="approvalCount">0 items</span>
-    </div>
-    <div class="grid-2" id="approvalGrid" style="display:none;"></div>
-    <div class="card empty-state" id="approvalEmpty">
-      <i data-lucide="check-circle" style="width:32px;height:32px;color:#34d399;"></i>
-      <p>No items pending review. Activity will appear here as agents produce outputs.</p>
-    </div>
+  <!-- ═══ OUTPUTS (unified: activity + approvals + agent docs) ═══ -->
+  <div class="view" id="view-outputs">
+    <div id="outputsContent"></div>
   </div>
 
-  <!-- ═══ SCHEDULE ═══ -->
-  <div class="view" id="view-schedule">
-    <h2 class="card-title">Scheduled Agent Tasks</h2>
-    <div class="card" style="padding:0;overflow:hidden;">
-      <table class="sched-table" id="scheduleTable"></table>
-    </div>
-    <div class="card" style="margin-top:16px;">
-      <p style="font-size:13px;color:#6b7280;">Scheduled tasks will activate as agents are deployed during each implementation phase. Configure recurring tasks through the agent system once the knowledge base and property data are complete.</p>
-    </div>
+  <!-- ═══ KNOWLEDGE BASE (formative docs + strategy) ═══ -->
+  <div class="view" id="view-kb">
+    <div id="kbContent"></div>
   </div>
 
   <!-- ═══ METRICS ═══ -->
@@ -276,16 +239,6 @@
       <div class="card-title">Portfolio Summary</div>
       <div id="portfolioSummaryGrid"></div>
     </div>
-  </div>
-
-  <!-- ═══ DOCS ═══ -->
-  <div class="view" id="view-docs">
-    <div id="docsContent"></div>
-  </div>
-
-  <!-- ═══ STRATEGY ═══ -->
-  <div class="view" id="view-strategy">
-    <div id="strategyContent"></div>
   </div>
 
   <!-- ═══ PROPERTY DETAIL ═══ -->
@@ -745,10 +698,15 @@ function refreshDashboard() {
   loadDashboardState(function(changed) {
     if(changed) {
       renderPortfolio();
-      renderSchedule();
       updateCounts();
-      updateDocBadge();
-      // Update the last-refreshed timestamp
+      updateOutputsBadge();
+      // Re-render active view if it's data-driven
+      var activeView = document.querySelector(".view.active");
+      if(activeView) {
+        var id = activeView.id.replace("view-","");
+        if(id==="agents") renderAgents(null);
+        if(id==="outputs") renderOutputs(null);
+      }
       var el = document.getElementById("lastRefresh");
       if(el) el.innerHTML = '<span class="live-dot"></span>Updated ' + new Date().toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"});
       lucide.createIcons();
@@ -760,11 +718,10 @@ var docStatuses = {}; // tracks approve/reject decisions
 
 function getDoc(id) { return DOCUMENTS.find(function(d){return d.id===id;}); }
 
-function pendingDocs() { return DOCUMENTS.filter(function(d){ return d.status==="pending_review" && docStatuses[d.id]!=="approved" && docStatuses[d.id]!=="rejected"; }); }
-
-function updateDocBadge() {
-  var el = document.getElementById("docsBadge");
-  if(el) el.textContent = pendingDocs().length;
+function updateOutputsBadge() {
+  var p = pendingOutputs().length;
+  var el = document.getElementById("outputsBadge");
+  if(el) el.textContent = p;
 }
 
 // ── HELPERS ──────────────────────────────────────────────────────────────────
@@ -779,13 +736,14 @@ function statusBadge(s) {
 function iconSvg(name, size, color) {
   return '<i data-lucide="'+name+'" style="width:'+size+'px;height:'+size+'px;'+(color?'color:'+color+';':'')+'"></i>';
 }
-function pendingItems() { return activities.filter(a => a.status==="pending_review"||a.status==="revision_requested"); }
+function pendingOutputs() {
+  return DOCUMENTS.filter(function(d){ return d.category==="Agent Output" && (docStatuses[d.id]||d.status)==="pending_review"; });
+}
 function updateCounts() {
-  var p = pendingItems().length;
-  var el = document.getElementById("approvalBadge"); if(el) el.textContent = p;
-  var el2 = document.getElementById("alertText"); if(el2) el2.textContent = p+" items need review";
+  var p = pendingOutputs().length;
+  var el = document.getElementById("outputsBadge"); if(el) el.textContent = p;
+  var el2 = document.getElementById("alertText"); if(el2) el2.textContent = p+" outputs need review";
   var el3 = document.getElementById("alertBtn"); if(el3) el3.style.display = p>0?"flex":"none";
-  var el4 = document.getElementById("approvalCount"); if(el4) el4.textContent = p+" items";
 }
 
 // ── NAV ─────────────────────────────────────────────────────────────────────
@@ -796,11 +754,9 @@ function switchView(id) {
   var btn = document.querySelector('.nav-btn[data-view="'+id+'"]');
   if(btn) btn.classList.add("active");
   if(id==="agents") renderAgents(null);
-  if(id==="approvals") renderApprovals();
+  if(id==="outputs") renderOutputs(null);
+  if(id==="kb") renderKB(null);
   if(id==="metrics") renderMetrics();
-  if(id==="activity") renderActivity();
-  if(id==="strategy") renderStrategy();
-  if(id==="docs") renderDocs(null);
   lucide.createIcons();
 }
 
@@ -830,7 +786,7 @@ function renderPortfolio() {
   var totalOccupied = residential.reduce(function(s,p){return s+(p.occupied||0);},0);
   var totalSF = commercial.reduce(function(s,p){return s+(p.totalSF||0);},0);
   var occSF = commercial.reduce(function(s,p){return s+(p.occupiedSF||0);},0);
-  var pending = pendingItems().length;
+  var pending = pendingOutputs().length;
 
   document.getElementById("portfolioStats").innerHTML = [
     statCardHTML("building-2","Total Properties",PROPERTIES.length, dataLoaded+" with data loaded"),
@@ -885,19 +841,162 @@ function activityRowHTML(item) {
   return '<div class="activity-row"><div class="activity-icon" style="background:'+(agent?agent.color:"#666")+'15;">'+iconSvg(agent?agent.icon:"activity",14,agent?agent.color:null)+'</div><div style="flex:1;min-width:0;"><div style="font-size:14px;color:#1f2937;">'+item.task+'</div><div class="activity-meta"><span>'+(agent?agent.name:"")+'</span><span class="sep">|</span><span>'+(prop?prop.name:"")+'</span><span class="sep">|</span><span>'+fmtTime(item.timestamp)+'</span></div></div>'+statusBadge(item.status)+'</div>';
 }
 
-// ── ACTIVITY ────────────────────────────────────────────────────────────────
-function renderActivity() {
-  var agentF = document.getElementById("filterAgent").value;
-  var statusF = document.getElementById("filterStatus").value;
-  var filtered = activities.filter(function(a) { return (agentF==="all"||a.agent===agentF) && (statusF==="all"||a.status===statusF); });
-  document.getElementById("filterCount").textContent = filtered.length+" items";
-  if(filtered.length===0) {
-    document.getElementById("activityList").innerHTML = '<div class="empty-state"><i data-lucide="inbox" style="width:28px;height:28px;color:#d1d5db;"></i><div class="empty-title">No Activity Yet</div><p>Agent outputs will appear here as they are produced. Deploy your first agent to get started.</p></div>';
-  } else {
-    document.getElementById("activityList").innerHTML = filtered.map(activityRowHTML).join("");
+// ── OUTPUTS (unified view) ──────────────────────────────────────────────────
+var outputFilterAgent = "all";
+var outputFilterStatus = "all";
+
+function renderOutputs(selectedId) {
+  var el = document.getElementById("outputsContent");
+  if(!el) return;
+
+  // Detail view — show full document content with approval controls
+  if(selectedId) {
+    var doc = getDoc(selectedId);
+    if(!doc) return;
+    var effectiveStatus = docStatuses[doc.id] || doc.status;
+    var isPending = effectiveStatus === "pending_review";
+    var isApproved = effectiveStatus === "approved";
+    var isRejected = effectiveStatus === "rejected";
+    var agent = getAgent(doc.agentSlug);
+
+    var html = '<div style="display:flex;align-items:center;gap:8px;margin-bottom:20px;">';
+    html += '<button class="btn btn-review" onclick="renderOutputs(null)" style="padding:6px 10px;">← All Outputs</button>';
+    if(agent) {
+      html += '<div style="margin-left:8px;display:flex;align-items:center;gap:6px;">'+iconSvg(agent.icon,14,doc.color)+'<span style="font-size:13px;color:'+doc.color+';font-weight:600;">'+agent.name+'</span></div>';
+    }
+    html += '</div>';
+
+    if(isPending) {
+      html += '<div class="doc-pending-banner">';
+      html += '<div style="display:flex;align-items:center;gap:8px;">'+iconSvg("alert-circle",16,"#92400e")+'<span style="font-size:13px;font-weight:600;color:#92400e;">Pending Review — do not send until approved</span></div>';
+      html += '<div style="display:flex;gap:8px;">';
+      html += '<button class="btn btn-approve" onclick="approveOutput(\''+doc.id+'\')">'+iconSvg("check",13,"#065f46")+' Approve</button>';
+      html += '<button class="btn btn-regen" onclick="reviseOutput(\''+doc.id+'\')">'+iconSvg("edit-2",13,"#1d4ed8")+' Request Revision</button>';
+      html += '<button class="btn btn-reject" onclick="rejectOutput(\''+doc.id+'\')">'+iconSvg("x",13,"#991b1b")+' Reject</button>';
+      html += '</div></div>';
+    } else if(isApproved) {
+      html += '<div style="background:#d1fae5;border:1px solid #6ee7b7;border-radius:8px;padding:10px 16px;margin-bottom:16px;display:flex;align-items:center;gap:8px;">'+iconSvg("check-circle",16,"#065f46")+'<span style="font-size:13px;font-weight:600;color:#065f46;">Approved — ready to convert and send</span></div>';
+    } else if(isRejected) {
+      html += '<div style="background:#fee2e2;border:1px solid #fca5a5;border-radius:8px;padding:10px 16px;margin-bottom:16px;display:flex;align-items:center;gap:8px;">'+iconSvg("x-circle",16,"#991b1b")+'<span style="font-size:13px;font-weight:600;color:#991b1b;">Rejected</span></div>';
+    }
+
+    html += '<div class="card" style="padding:28px;">';
+    html += '<div class="doc-detail-body">' + buildDocHTML(doc.id) + '</div>';
+    if(isPending) {
+      html += '<div style="display:flex;gap:8px;padding-top:20px;border-top:1px solid #e5e7eb;margin-top:20px;">';
+      html += '<button class="btn btn-approve" onclick="approveOutput(\''+doc.id+'\')">'+iconSvg("check",13,"#065f46")+' Approve & Mark Ready</button>';
+      html += '<button class="btn btn-regen" onclick="reviseOutput(\''+doc.id+'\')">'+iconSvg("edit-2",13,"#1d4ed8")+' Request Revision</button>';
+      html += '<button class="btn btn-reject" style="margin-left:auto;" onclick="rejectOutput(\''+doc.id+'\')">'+iconSvg("x",13,"#991b1b")+' Reject</button>';
+      html += '</div>';
+    }
+    if(isApproved && doc.agentSlug==="lease-intelligence-agent") {
+      html += '<div style="padding-top:20px;border-top:1px solid #e5e7eb;margin-top:20px;">';
+      html += '<p style="font-size:13px;color:#374151;margin-bottom:8px;font-weight:500;">Next steps for approved letters:</p>';
+      html += '<div style="display:flex;gap:8px;">';
+      html += '<button class="btn" style="background:#eff6ff;color:#1d4ed8;" onclick="alert(\'Letter conversion to DOCX coming soon — Docx Skill integration\')">'+iconSvg("file-text",13,"#1d4ed8")+' Convert to DOCX</button>';
+      html += '<button class="btn" style="background:#f0fdf4;color:#065f46;" onclick="alert(\'Gmail draft creation coming soon — Gmail MCP integration\')">'+iconSvg("mail",13,"#065f46")+' Create Gmail Draft</button>';
+      html += '</div></div>';
+    }
+    html += '</div>';
+    el.innerHTML = html;
+    lucide.createIcons();
+    return;
   }
+
+  // List view — all agent outputs with filters and inline status
+  var agentOutputs = DOCUMENTS.filter(function(d){ return d.category==="Agent Output"; });
+  var filtered = agentOutputs.filter(function(d) {
+    var effStatus = docStatuses[d.id] || d.status;
+    var agentMatch = outputFilterAgent==="all" || d.agentSlug===outputFilterAgent;
+    var statusMatch = outputFilterStatus==="all" || effStatus===outputFilterStatus;
+    return agentMatch && statusMatch;
+  });
+
+  var pending = pendingOutputs();
+  var html = '';
+
+  // Header with counts
+  html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">';
+  html += '<div style="display:flex;align-items:center;gap:12px;">';
+  html += '<span style="font-size:16px;font-weight:700;color:#111827;">Agent Outputs</span>';
+  if(pending.length > 0) {
+    html += '<span class="badge badge-pending" style="font-weight:600;">'+pending.length+' pending review</span>';
+  } else {
+    html += '<span class="badge badge-approved">All clear</span>';
+  }
+  html += '</div>';
+  html += '<span style="font-size:12px;color:#9ca3af;">'+filtered.length+' of '+agentOutputs.length+' outputs</span>';
+  html += '</div>';
+
+  // Filters
+  html += '<div style="display:flex;gap:12px;margin-bottom:16px;">';
+  html += '<div class="filter-select"><select id="outputAgentFilter" onchange="outputFilterAgent=this.value;renderOutputs(null)"><option value="all">All Agents</option>';
+  var seenAgents = {};
+  agentOutputs.forEach(function(d) {
+    if(d.agentSlug && !seenAgents[d.agentSlug]) {
+      seenAgents[d.agentSlug] = true;
+      var ag = getAgent(d.agentSlug);
+      html += '<option value="'+d.agentSlug+'"'+(outputFilterAgent===d.agentSlug?' selected':'')+'>'+( ag?ag.name:d.agentSlug)+'</option>';
+    }
+  });
+  html += '</select></div>';
+  html += '<div class="filter-select"><select id="outputStatusFilter" onchange="outputFilterStatus=this.value;renderOutputs(null)">';
+  html += '<option value="all"'+(outputFilterStatus==="all"?' selected':'')+'>All Statuses</option>';
+  html += '<option value="pending_review"'+(outputFilterStatus==="pending_review"?' selected':'')+'>Pending Review</option>';
+  html += '<option value="approved"'+(outputFilterStatus==="approved"?' selected':'')+'>Approved</option>';
+  html += '<option value="rejected"'+(outputFilterStatus==="rejected"?' selected':'')+'>Rejected</option>';
+  html += '</select></div></div>';
+
+  if(filtered.length === 0) {
+    html += '<div class="card empty-state"><i data-lucide="inbox" style="width:28px;height:28px;color:#d1d5db;"></i><div class="empty-title">No Outputs</div><p>Agent outputs will appear here as they are produced.</p></div>';
+  } else {
+    html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px;">';
+    filtered.forEach(function(doc) {
+      var effectiveStatus = docStatuses[doc.id] || doc.status;
+      var agent = getAgent(doc.agentSlug);
+      var prop = doc.propertySlug ? getProp(doc.propertySlug) : null;
+
+      var statusBdg = "";
+      if(effectiveStatus==="pending_review") statusBdg = '<span style="font-size:11px;background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:9999px;font-weight:600;">Pending Review</span>';
+      else if(effectiveStatus==="approved") statusBdg = '<span style="font-size:11px;background:#d1fae5;color:#065f46;padding:2px 8px;border-radius:9999px;font-weight:600;">Approved</span>';
+      else if(effectiveStatus==="rejected") statusBdg = '<span style="font-size:11px;background:#fee2e2;color:#991b1b;padding:2px 8px;border-radius:9999px;font-weight:600;">Rejected</span>';
+
+      html += '<div class="doc-card" onclick="renderOutputs(\''+doc.id+'\')" style="border-left:3px solid '+doc.color+';">';
+      html += '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:8px;">';
+      html += '<div style="display:flex;align-items:center;gap:8px;">';
+      html += '<div style="padding:6px;border-radius:6px;background:'+doc.color+'15;flex-shrink:0;">'+iconSvg(doc.icon,14,doc.color)+'</div>';
+      html += '<span style="font-size:13px;font-weight:600;color:#111827;line-height:1.3;">'+doc.title+'</span>';
+      html += '</div>';
+      html += statusBdg+'</div>';
+      html += '<p style="font-size:12px;color:#6b7280;line-height:1.4;margin-bottom:8px;">'+doc.description+'</p>';
+      html += '<div style="display:flex;align-items:center;justify-content:space-between;">';
+      html += '<div style="font-size:11px;color:#9ca3af;display:flex;align-items:center;gap:4px;">';
+      if(agent) html += iconSvg(agent.icon,11,agent.color)+' '+agent.name;
+      if(prop) html += '<span style="margin:0 4px;color:#d1d5db;">|</span>'+prop.name;
+      html += '</div>';
+      html += '<span style="font-size:11px;color:#9ca3af;">'+doc.lastUpdated+'</span>';
+      html += '</div>';
+
+      // Inline quick actions for pending items
+      if(effectiveStatus==="pending_review") {
+        html += '<div style="display:flex;gap:6px;margin-top:8px;padding-top:8px;border-top:1px solid #f3f4f6;" onclick="event.stopPropagation();">';
+        html += '<button class="btn btn-approve" onclick="event.stopPropagation();approveOutput(\''+doc.id+'\')">'+iconSvg("check",11,"#065f46")+' Approve</button>';
+        html += '<button class="btn btn-reject" onclick="event.stopPropagation();rejectOutput(\''+doc.id+'\')">'+iconSvg("x",11,"#991b1b")+' Reject</button>';
+        html += '<button class="btn btn-review" onclick="renderOutputs(\''+doc.id+'\')" style="margin-left:auto;">Review →</button>';
+        html += '</div>';
+      }
+      html += '</div>';
+    });
+    html += '</div>';
+  }
+
+  el.innerHTML = html;
   lucide.createIcons();
 }
+
+function approveOutput(id) { docStatuses[id]="approved"; updateCounts(); renderOutputs(null); }
+function rejectOutput(id)  { docStatuses[id]="rejected"; updateCounts(); renderOutputs(null); }
+function reviseOutput(id)  { alert("To request a revision: describe your changes in chat and ask the agent to regenerate this document."); }
 
 // ── AGENTS ──────────────────────────────────────────────────────────────────
 var AGENT_DETAILS = {
@@ -1538,7 +1637,17 @@ function renderAgents(selectedSlug) {
     html += '</div></div>';
   });
 
+  // ── Scheduled Tasks (embedded in Agents view) ──
+  html += '<div style="margin-top:32px;">';
+  html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">'+iconSvg("calendar",18,"#6b7280")+'<span style="font-size:16px;font-weight:700;color:#111827;">Scheduled Tasks</span></div>';
+  html += '<div class="card" style="padding:0;overflow:hidden;">';
+  html += '<table class="sched-table" id="scheduleTable"></table>';
+  html += '</div>';
+  html += '<p style="font-size:12px;color:#9ca3af;margin-top:10px;">Scheduled tasks run automatically via Cowork. Tasks activate as agents are deployed in each phase.</p>';
+  html += '</div>';
+
   el.innerHTML = html;
+  renderSchedule();
   lucide.createIcons();
 }
 
@@ -1639,27 +1748,7 @@ function toggleAgentPrompt(slug) {
 }
 
 // ── APPROVALS ───────────────────────────────────────────────────────────────
-function renderApprovals() {
-  var items = pendingItems();
-  if(items.length===0) {
-    document.getElementById("approvalGrid").style.display = "none";
-    document.getElementById("approvalEmpty").style.display = "block";
-  } else {
-    document.getElementById("approvalGrid").style.display = "grid";
-    document.getElementById("approvalEmpty").style.display = "none";
-    document.getElementById("approvalGrid").innerHTML = items.map(function(item) {
-      var agent = getAgent(item.agent);
-      var prop = getProp(item.property);
-      return '<div class="approval-card"><div style="display:flex;align-items:flex-start;gap:12px;"><div class="agent-icon" style="background:'+(agent?agent.color:"#666")+'15;">'+iconSvg(agent?agent.icon:"activity",16,agent?agent.color:null)+'</div><div style="flex:1;min-width:0;"><div style="font-weight:600;font-size:14px;color:#111827;">'+item.task+'</div><div style="font-size:12px;color:#9ca3af;margin-top:3px;">'+(agent?agent.name:"")+" &middot; "+(prop?prop.name:"")+" &middot; "+fmtTime(item.timestamp)+'</div><div class="approval-file">'+item.output+'</div></div></div><div class="approval-actions"><button class="btn btn-approve" onclick="approveItem('+item.id+')">'+iconSvg("check",13,"#065f46")+' Approve</button><button class="btn btn-review">'+iconSvg("eye",13,"#4b5563")+' Review</button><button class="btn btn-regen" onclick="regenItem('+item.id+')">'+iconSvg("rotate-ccw",13,"#1d4ed8")+' Regenerate</button><button class="btn btn-reject" onclick="rejectItem('+item.id+')">'+iconSvg("x",13,"#991b1b")+' Reject</button></div></div>';
-    }).join("");
-  }
-  updateCounts();
-  lucide.createIcons();
-}
-
-function approveItem(id) { activities = activities.map(function(a){return a.id===id?Object.assign({},a,{status:"approved"}):a;}); renderApprovals(); renderPortfolio(); }
-function rejectItem(id) { activities = activities.filter(function(a){return a.id!==id;}); renderApprovals(); renderPortfolio(); }
-function regenItem(id) { activities = activities.map(function(a){return a.id===id?Object.assign({},a,{status:"pending_review",timestamp:new Date().toISOString()}):a;}); renderApprovals(); }
+// (Approvals consolidated into Outputs view)
 
 // ── SCHEDULE ────────────────────────────────────────────────────────────────
 function renderSchedule() {
@@ -2149,7 +2238,71 @@ function renderDetailCharts(p) {
 }
 
 // ── STRATEGY ───────────────────────────────────────────────────────────────
-function renderStrategy() {
+function renderKB(selectedId) {
+  var el = document.getElementById("kbContent");
+  if(!el) return;
+
+  // Detail view — show a specific formative document
+  if(selectedId) {
+    var doc = getDoc(selectedId);
+    // If not a doc, might be "strategy" — handle that
+    if(selectedId==="strategy-overview") {
+      var html = '<div style="display:flex;align-items:center;gap:8px;margin-bottom:20px;">';
+      html += '<button class="btn btn-review" onclick="renderKB(null)" style="padding:6px 10px;">← Knowledge Base</button>';
+      html += '</div>';
+      html += '<div class="card" style="padding:28px;"><div class="doc-detail-body">';
+      html += buildStrategyHTML();
+      html += '</div></div>';
+      el.innerHTML = html;
+      lucide.createIcons();
+      return;
+    }
+    if(!doc) { renderKB(null); return; }
+
+    var html = '<div style="display:flex;align-items:center;gap:8px;margin-bottom:20px;">';
+    html += '<button class="btn btn-review" onclick="renderKB(null)" style="padding:6px 10px;">← Knowledge Base</button>';
+    html += '</div>';
+    html += '<div class="card" style="padding:28px;">';
+    html += '<div class="doc-detail-body">' + buildDocHTML(doc.id) + '</div>';
+    html += '</div>';
+    el.innerHTML = html;
+    lucide.createIcons();
+    return;
+  }
+
+  // List view — Strategy hero card + Formative docs grid
+  var formDocs = DOCUMENTS.filter(function(d){ return d.category==="Formative"; });
+  var html = '';
+
+  // Strategy card (hero)
+  html += '<div class="doc-card" onclick="renderKB(\'strategy-overview\')" style="margin-bottom:24px;border-left:4px solid #2563eb;cursor:pointer;">';
+  html += '<div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">';
+  html += '<div style="padding:10px;border-radius:8px;background:#2563eb15;">'+iconSvg("target",20,"#2563eb")+'</div>';
+  html += '<div><div style="font-size:16px;font-weight:700;color:#111827;">Company Strategy & Implementation Plan</div>';
+  html += '<div style="font-size:12px;color:#6b7280;margin-top:2px;">Strategic vision, phased rollout, technology stack, and data sources</div></div>';
+  html += '<span style="font-size:11px;background:#f3f4f6;color:#374151;padding:2px 8px;border-radius:4px;font-weight:500;margin-left:auto;">View →</span>';
+  html += '</div></div>';
+
+  // Formative docs
+  html += '<div style="font-size:12px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:12px;">Formative Documents</div>';
+  html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;">';
+  formDocs.forEach(function(doc) {
+    html += '<div class="doc-card" onclick="renderKB(\''+doc.id+'\')">';
+    html += '<div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:10px;">';
+    html += '<div style="padding:8px;border-radius:8px;background:'+doc.color+'15;flex-shrink:0;">'+iconSvg(doc.icon,16,doc.color)+'</div>';
+    html += '<div><span style="font-size:14px;font-weight:600;color:#111827;line-height:1.3;">'+doc.title+'</span>';
+    html += '<p style="font-size:12px;color:#6b7280;line-height:1.4;margin-top:4px;">'+doc.description+'</p></div>';
+    html += '</div>';
+    html += '<div style="font-size:11px;color:#9ca3af;display:flex;align-items:center;gap:4px;">'+iconSvg("calendar",11,"#9ca3af")+' Updated '+doc.lastUpdated+'</div>';
+    html += '</div>';
+  });
+  html += '</div>';
+
+  el.innerHTML = html;
+  lucide.createIcons();
+}
+
+function buildStrategyHTML() {
   var html = '';
 
   // ── Section 1: Strategic Vision ──
@@ -2292,116 +2445,10 @@ function renderStrategy() {
 
   html += '</tbody></table></div>';
 
-  document.getElementById("strategyContent").innerHTML = html;
-  lucide.createIcons();
+  return html;
 }
 
-// ── DOCS ─────────────────────────────────────────────────────────────────────
-function renderDocs(selectedId) {
-  var el = document.getElementById("docsContent");
-  if(!el) return;
-
-  if(selectedId) {
-    var doc = getDoc(selectedId);
-    if(!doc) return;
-    var effectiveStatus = docStatuses[doc.id] || doc.status;
-    var isAgent = doc.category === "Agent Output";
-    var isPending = isAgent && effectiveStatus === "pending_review";
-    var isApproved = effectiveStatus === "approved";
-    var isRejected = effectiveStatus === "rejected";
-
-    var html = '<div style="display:flex;align-items:center;gap:8px;margin-bottom:20px;">';
-    html += '<button class="btn btn-review" onclick="renderDocs(null)" style="padding:6px 10px;">← Back to Documents</button>';
-    if(isAgent) {
-      var agent = getAgent(doc.agentSlug);
-      html += '<div style="margin-left:8px;display:flex;align-items:center;gap:6px;">'+iconSvg(agent?agent.icon:"activity",14,doc.color)+'<span style="font-size:13px;color:'+doc.color+';font-weight:600;">'+(agent?agent.name:"Agent Output")+'</span></div>';
-    }
-    html += '</div>';
-
-    if(isPending) {
-      html += '<div class="doc-pending-banner">';
-      html += '<div style="display:flex;align-items:center;gap:8px;">'+iconSvg("alert-circle",16,"#92400e")+'<span style="font-size:13px;font-weight:600;color:#92400e;">Pending Review — do not send until approved</span></div>';
-      html += '<div style="display:flex;gap:8px;">';
-      html += '<button class="btn btn-approve" onclick="approveDoc(\''+doc.id+'\')">'+iconSvg("check",13,"#065f46")+' Approve</button>';
-      html += '<button class="btn btn-regen" onclick="reviseDoc(\''+doc.id+'\')">'+iconSvg("edit-2",13,"#1d4ed8")+' Request Revision</button>';
-      html += '<button class="btn btn-reject" onclick="rejectDoc(\''+doc.id+'\')">'+iconSvg("x",13,"#991b1b")+' Reject</button>';
-      html += '</div></div>';
-    } else if(isApproved) {
-      html += '<div style="background:#d1fae5;border:1px solid #6ee7b7;border-radius:8px;padding:10px 16px;margin-bottom:16px;display:flex;align-items:center;gap:8px;">'+iconSvg("check-circle",16,"#065f46")+'<span style="font-size:13px;font-weight:600;color:#065f46;">Approved — ready to convert and send</span></div>';
-    } else if(isRejected) {
-      html += '<div style="background:#fee2e2;border:1px solid #fca5a5;border-radius:8px;padding:10px 16px;margin-bottom:16px;display:flex;align-items:center;gap:8px;">'+iconSvg("x-circle",16,"#991b1b")+'<span style="font-size:13px;font-weight:600;color:#991b1b;">Rejected</span></div>';
-    }
-
-    html += '<div class="card" style="padding:28px;">';
-    html += '<div class="doc-detail-body">' + buildDocHTML(doc.id) + '</div>';
-    if(isPending) {
-      html += '<div style="display:flex;gap:8px;padding-top:20px;border-top:1px solid #e5e7eb;margin-top:20px;">';
-      html += '<button class="btn btn-approve" onclick="approveDoc(\''+doc.id+'\')">'+iconSvg("check",13,"#065f46")+' Approve & Mark Ready</button>';
-      html += '<button class="btn btn-regen" onclick="reviseDoc(\''+doc.id+'\')">'+iconSvg("edit-2",13,"#1d4ed8")+' Request Revision</button>';
-      html += '<button class="btn btn-reject" style="margin-left:auto;" onclick="rejectDoc(\''+doc.id+'\')">'+iconSvg("x",13,"#991b1b")+' Reject</button>';
-      html += '</div>';
-    }
-    if(isApproved && doc.agentSlug==="lease-intelligence-agent") {
-      html += '<div style="padding-top:20px;border-top:1px solid #e5e7eb;margin-top:20px;">';
-      html += '<p style="font-size:13px;color:#374151;margin-bottom:8px;font-weight:500;">Next steps for approved letters:</p>';
-      html += '<div style="display:flex;gap:8px;">';
-      html += '<button class="btn" style="background:#eff6ff;color:#1d4ed8;" onclick="alert(\'Letter conversion to DOCX coming soon — Docx Skill integration\')">'+iconSvg("file-text",13,"#1d4ed8")+' Convert to DOCX</button>';
-      html += '<button class="btn" style="background:#f0fdf4;color:#065f46;" onclick="alert(\'Gmail draft creation coming soon — Gmail MCP integration\')">'+iconSvg("mail",13,"#065f46")+' Create Gmail Draft</button>';
-      html += '</div></div>';
-    }
-    html += '</div>';
-    el.innerHTML = html;
-    lucide.createIcons();
-    return;
-  }
-
-  // List view
-  updateDocBadge();
-  var categories = ["Agent Output","Formative"];
-  var html = '';
-
-  var pending = pendingDocs();
-  if(pending.length > 0) {
-    html += '<div style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;">';
-    html += '<div style="display:flex;align-items:center;gap:8px;">'+iconSvg("alert-circle",16,"#92400e")+'<span style="font-size:13px;font-weight:600;color:#92400e;">'+pending.length+' document'+(pending.length>1?'s':'')+' pending your review</span></div>';
-    html += '<span style="font-size:12px;color:#92400e;">Review required before any external action</span>';
-    html += '</div>';
-  }
-
-  categories.forEach(function(cat) {
-    var docs = DOCUMENTS.filter(function(d){ return d.category===cat; });
-    if(!docs.length) return;
-    html += '<div style="margin-bottom:24px;">';
-    html += '<div style="font-size:12px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:12px;">'+cat+'</div>';
-    html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;">';
-    docs.forEach(function(doc) {
-      var effectiveStatus = docStatuses[doc.id] || doc.status;
-      var statusBdg = "";
-      if(effectiveStatus==="pending_review") statusBdg = '<span style="font-size:11px;background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:9999px;font-weight:600;">Pending Review</span>';
-      else if(effectiveStatus==="approved") statusBdg = '<span style="font-size:11px;background:#d1fae5;color:#065f46;padding:2px 8px;border-radius:9999px;font-weight:600;">Approved</span>';
-      else if(effectiveStatus==="rejected") statusBdg = '<span style="font-size:11px;background:#fee2e2;color:#991b1b;padding:2px 8px;border-radius:9999px;font-weight:600;">Rejected</span>';
-      else statusBdg = '<span style="font-size:11px;background:#f3f4f6;color:#6b7280;padding:2px 8px;border-radius:9999px;font-weight:600;">Reference</span>';
-      html += '<div class="doc-card" onclick="renderDocs(\''+doc.id+'\')">';
-      html += '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:10px;">';
-      html += '<div style="display:flex;align-items:center;gap:8px;">'+
-                '<div style="padding:8px;border-radius:8px;background:'+doc.color+'15;flex-shrink:0;">'+iconSvg(doc.icon,16,doc.color)+'</div>'+
-                '<span style="font-size:14px;font-weight:600;color:#111827;line-height:1.3;">'+doc.title+'</span>'+
-              '</div>';
-      html += statusBdg + '</div>';
-      html += '<p style="font-size:12px;color:#6b7280;line-height:1.5;margin-bottom:10px;">'+doc.description+'</p>';
-      html += '<div style="font-size:11px;color:#9ca3af;display:flex;align-items:center;gap:4px;">'+iconSvg("calendar",11,"#9ca3af")+' Updated '+doc.lastUpdated+'</div>';
-      html += '</div>';
-    });
-    html += '</div></div>';
-  });
-
-  el.innerHTML = html;
-  lucide.createIcons();
-}
-
-function approveDoc(id) { docStatuses[id]="approved"; updateDocBadge(); renderDocs(id); }
-function rejectDoc(id)  { docStatuses[id]="rejected"; updateDocBadge(); renderDocs(id); }
-function reviseDoc(id)  { alert("To request a revision: describe your changes in chat and ask the Lease Intelligence Agent to regenerate this document."); }
+// (renderDocs, approveDoc, rejectDoc, reviseDoc removed — consolidated into renderOutputs and renderKB)
 
 function buildDocHTML(id) {
   if(id==="bldg1-lease-review-2026-04") return buildLeaseReviewHTML();
@@ -2959,8 +3006,6 @@ function buildBrandVoiceHTML() {
 // ── INIT ────────────────────────────────────────────────────────────────────
 function init() {
   document.getElementById("todayDate").textContent = new Date().toLocaleDateString("en-US",{weekday:"long",year:"numeric",month:"long",day:"numeric"});
-  var sel = document.getElementById("filterAgent");
-  AGENTS.forEach(function(a) { var o = document.createElement("option"); o.value = a.slug; o.textContent = a.name; sel.appendChild(o); });
 
   // Compute nextRun for the default SCHEDULED array (functions are now defined)
   SCHEDULED.forEach(function(t){ t.nextRun = formatNextRun(t.cron, t.status); });
@@ -2968,9 +3013,8 @@ function init() {
   // Load dynamic state from JSON (overrides defaults if served via HTTP), then render
   loadDashboardState(function() {
     renderPortfolio();
-    renderSchedule();
     updateCounts();
-    updateDocBadge();
+    updateOutputsBadge();
     var el = document.getElementById("lastRefresh");
     if(el) el.innerHTML = '<span class="live-dot"></span>Updated ' + new Date().toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"});
     lucide.createIcons();
