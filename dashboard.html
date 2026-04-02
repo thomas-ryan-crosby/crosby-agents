@@ -193,23 +193,7 @@
 
   <!-- ═══ AGENTS ═══ -->
   <div class="view" id="view-agents">
-    <div class="grid-2-1">
-      <div class="card">
-        <div class="card-title">Agent Status</div>
-        <div id="agentStatusList"></div>
-      </div>
-      <div>
-        <div class="card" style="margin-bottom:16px;">
-          <div class="card-title">Output by Agent</div>
-          <div id="pieArea"></div>
-          <div class="pie-legend" id="pieLegend"></div>
-        </div>
-        <div class="card">
-          <div class="card-title">Deployment Phases</div>
-          <div id="phaseGroups"></div>
-        </div>
-      </div>
-    </div>
+    <div id="agentsContent"></div>
   </div>
 
   <!-- ═══ APPROVALS ═══ -->
@@ -705,7 +689,7 @@ function switchView(id) {
   document.getElementById("view-"+id).classList.add("active");
   var btn = document.querySelector('.nav-btn[data-view="'+id+'"]');
   if(btn) btn.classList.add("active");
-  if(id==="agents") renderAgents();
+  if(id==="agents") renderAgents(null);
   if(id==="approvals") renderApprovals();
   if(id==="metrics") renderMetrics();
   if(id==="activity") renderActivity();
@@ -810,33 +794,443 @@ function renderActivity() {
 }
 
 // ── AGENTS ──────────────────────────────────────────────────────────────────
-function renderAgents() {
-  var html = "";
-  AGENTS.forEach(function(a) {
-    var acts = activities.filter(function(x){return x.agent===a.slug;});
-    var last = acts.length>0?acts[0]:null;
+var AGENT_DETAILS = {
+  "lease-intelligence-agent": {
+    inputs: [
+      { label:"LEASE_TERMS (dashboard)", detail:"Embedded lease schedule: 13 tenants, Building #1 — suite, SF, rent, commenced, terminates, notice days, notice deadline, vacating/MTM/owner flags" },
+      { label:"rentinfo#1–5.xls (OFFICE RENTS folder)", detail:"Monthly rent roll spreadsheets per building — Jan–Dec rent columns, commencement, termination, escalation rate, auto-renew flag" },
+      { label:"Lease PDF documents (Leases_Claude folder)", detail:"9 scanned/signed lease documents for Building #1 tenants — initial leases and amendments (AMD2, AMD3)" },
+      { label:"LEASING_PLAYBOOK.md", detail:"Standard renewal terms, urgency tiers, notice period rules, vacancy response procedure" },
+    ],
+    outputs: [
+      { label:"Lease Review Summary Report", detail:"Full tenant schedule with urgency color-coding, action items, 12-month calendar", format:"Markdown (.md)", example:"bldg1-lease-review-2026-04.md" },
+      { label:"Renewal Offer Letters", detail:"Professional business letter per urgent tenant — current rate, proposed new rate (3% escalation), 1-year and 2-year options, response deadline", format:"Markdown (.md) → DOCX on approval", example:"bayoucpr-renewal-2026-04.md" },
+      { label:"Vacancy Alert", detail:"Notification when a confirmed vacancy is detected — includes SF, suite, last tenant, estimated availability date", format:"Markdown (.md)", example:"bldg1-suite302-vacancy-alert.md" },
+      { label:"Notice Deadline Warning", detail:"Weekly scan output flagging any tenant whose notice deadline enters the 90-day urgency window", format:"Dashboard badge + Markdown (.md) note" },
+    ],
+    storage: [
+      { label:"Output folder", detail:"knowledge-base/outputs/lease-intelligence/" },
+      { label:"Naming convention", detail:"[property-abbr]-[task-type]-[YYYY-MM].md  e.g. bldg1-lease-review-2026-04.md  or  bayoucpr-renewal-2026-04.md" },
+      { label:"Memory log", detail:"knowledge-base/outputs/lease-intelligence/SUMMARY.md — rolling log of all runs, feedback received, and lessons learned" },
+      { label:"Dashboard", detail:"All outputs appear in the Docs tab as Pending Review immediately after generation" },
+    ],
+    automated: [
+      "Weekly scan of all LEASE_TERMS data — identifies deadlines entering urgency windows",
+      "Calculates days-to-deadline for every tenant and updates urgency tier (Critical / Urgent / Watch / Stable)",
+      "Auto-generates draft renewal letters for all tenants in the Urgent tier",
+      "Flags confirmed vacancies (vacating: true) and queues a trigger to Vacancy Marketing Agent",
+      "Updates lease review summary report and posts to Docs tab as Pending Review",
+      "Logs all activity to SUMMARY.md with timestamp and tenants affected",
+    ],
+    human: [
+      "Review and approve renewal offer letters before converting to DOCX — fill in letter date and response deadline",
+      "Decide whether to pursue renewal vs. allow auto-renewal vs. let lease expire for each urgent tenant",
+      "Approve vacancy alerts before Vacancy Marketing Agent is triggered",
+      "Resolve any discrepancies between LEASE_TERMS data and the actual signed lease document",
+      "Final sign-off before any letter is emailed, mailed, or hand-delivered to tenant",
+    ],
+    triggers: [
+      { when:"Every Monday (automated)", how:"Scheduled task — weekly lease deadline scan across all LEASE_TERMS data" },
+      { when:"1st of every month (automated)", how:"Scheduled task — generate monthly renewal letter drafts for all Urgent-tier tenants" },
+      { when:"Notice deadline enters <90 days (automated)", how:"Event trigger — auto-drafts renewal offer and flags in dashboard" },
+      { when:"Vacating flag set (automated)", how:"Event trigger — generates vacancy alert and notifies Vacancy Marketing Agent" },
+      { when:"On demand", how:"Ask in chat: 'Run Lease Intelligence Agent for Building #1'" },
+    ],
+  },
+  "vacancy-marketing-agent": {
+    inputs: [
+      { label:"LEASE_TERMS vacancy flags", detail:"Reads vacating:true entries — suite, SF, last tenant, confirmed vacancy date" },
+      { label:"Property knowledge base", detail:"knowledge-base/properties/sanctuary-office-park.md — building specs, floor descriptions, amenities, parking, location advantages" },
+      { label:"BRAND_VOICE.md", detail:"Commercial tone guidelines, approved language, what to avoid, Crosby identity" },
+      { label:"Market comps (from Market Intelligence Agent)", detail:"Comparable SF rates in Mandeville office market — used to position listing price competitively" },
+      { label:"Lease Intelligence output", detail:"Vacancy alert document that triggered this agent — suite details, availability date" },
+    ],
+    outputs: [
+      { label:"LoopNet/CoStar Listing Copy", detail:"Headline, property description (100-word summary + 500-word full), suite highlights, asking rate, availability date, contact info", format:"Markdown (.md) → plain text on approval", example:"bldg1-suite302-listing-2026-07.md" },
+      { label:"One-Page Leasing Brief", detail:"Print/email-ready brief: building overview, suite specs, floor plan description, amenities, location map notes, contact CTA", format:"Markdown (.md) → PDF/DOCX on approval", example:"bldg1-suite302-brief-2026-07.md" },
+      { label:"Email Blast Copy", detail:"Short-form announcement to broker contacts and prospect list — suite available, key specs, call to action", format:"Markdown (.md) → Gmail draft on approval", example:"bldg1-suite302-email-2026-07.md" },
+    ],
+    storage: [
+      { label:"Output folder", detail:"knowledge-base/outputs/vacancy-marketing/" },
+      { label:"Naming convention", detail:"[property-abbr]-[suite]-[output-type]-[YYYY-MM].md  e.g. bldg1-suite302-listing-2026-07.md" },
+      { label:"Memory log", detail:"knowledge-base/outputs/vacancy-marketing/SUMMARY.md — tracks what was listed, approved copy, posting dates" },
+    ],
+    automated: [
+      "Reads vacancy trigger from Lease Intelligence Agent output",
+      "Pulls suite and building specs from property knowledge base",
+      "Drafts all three output types (listing, brief, email) in one run",
+      "Posts all three to Docs tab as Pending Review",
+      "Logs vacancy event and draft status to SUMMARY.md",
+    ],
+    human: [
+      "Review listing copy for accuracy — verify SF, asking rate, availability date",
+      "Approve listing copy before posting to LoopNet/CoStar",
+      "Approve leasing brief before distributing to brokers",
+      "Approve email copy before Gmail draft is created",
+      "Set the asking rate (agent proposes based on comps, human confirms)",
+      "Post to LoopNet/CoStar — agent prepares the content, human executes the post",
+    ],
+    triggers: [
+      { when:"Vacancy confirmed (event-driven)", how:"Triggered automatically when Lease Intelligence Agent sets vacating:true and runs a vacancy alert" },
+      { when:"On demand", how:"Ask: 'Generate vacancy listing for Suite 302, Building #1, available July 1'" },
+    ],
+  },
+  "rent-roll-intelligence-agent": {
+    inputs: [
+      { label:"rentinfo#1–5.xls (OFFICE RENTS)", detail:"Monthly commercial rent rolls for all 5 Sanctuary Office Park buildings — all tenant columns, all 12 months" },
+      { label:"Metairie Plaza rent roll (.wdb)", detail:"Residential rent roll — unit, tenant, monthly rent, lease dates" },
+      { label:"Metairie Lake rent roll (.wdb)", detail:"Residential rent roll — 108 units, all active leases" },
+      { label:"Mandeville Lake rent roll (pending)", detail:"Will be added when data file is provided" },
+      { label:"Lakeside Village CSV", detail:"HOA controller file — 45 lots, owner vs. renter, Crosby-owned units, monthly rent, dues" },
+      { label:"Prior month summary (SUMMARY.md)", detail:"Previous month's figures for month-over-month comparison" },
+    ],
+    outputs: [
+      { label:"Monthly Portfolio Summary", detail:"Total revenue across all properties, occupancy rates, MoM changes, units added/removed, delinquency flags", format:"Markdown (.md)", example:"portfolio-summary-2026-04.md" },
+      { label:"Property-Level Report", detail:"Per-property breakdown: occupancy %, total rent, SF leased, vacant units/suites, top changes vs. last month", format:"Markdown (.md)", example:"sanctuary-bldg1-report-2026-04.md" },
+      { label:"Anomaly Alert", detail:"Flags unusual changes — rate drops >5%, unexpected vacancy, new tenant not in prior roll, rent amount inconsistency", format:"Markdown (.md) — urgent, posted immediately", example:"anomaly-alert-2026-04-15.md" },
+    ],
+    storage: [
+      { label:"Output folder", detail:"knowledge-base/outputs/rent-roll-intelligence/" },
+      { label:"Naming convention", detail:"portfolio-summary-[YYYY-MM].md  or  [property-abbr]-report-[YYYY-MM].md  or  anomaly-alert-[YYYY-MM-DD].md" },
+      { label:"Memory log", detail:"SUMMARY.md — historical monthly figures for trend tracking" },
+    ],
+    automated: [
+      "Reads all rent roll files at start of each month",
+      "Calculates total monthly revenue per property and portfolio-wide",
+      "Computes occupancy rates and vacancy counts",
+      "Flags MoM changes exceeding defined thresholds",
+      "Generates draft summary report and posts to Docs tab",
+      "Immediately posts anomaly alerts (no waiting for monthly cycle)",
+    ],
+    human: [
+      "Review monthly summary before sharing with stakeholders or investors",
+      "Investigate flagged anomalies — confirm whether change is intentional or an error",
+      "Update rent roll data files each month (save new XLS to OFFICE RENTS folder)",
+    ],
+    triggers: [
+      { when:"1st of every month (automated)", how:"Scheduled task — runs after new rent roll files are expected to be available" },
+      { when:"Anomaly detected (automated)", how:"Any time a data change exceeds threshold during manual data update" },
+      { when:"On demand", how:"Ask: 'Run rent roll summary for April 2026'" },
+    ],
+  },
+  "hoa-management-agent": {
+    inputs: [
+      { label:"Lakeside Village CSV (controller file)", detail:"Full owner/renter roster — 45 lots, owner names, tenant names, lot type (townhome/cottage), Crosby vs. third-party managed, monthly dues, contact info" },
+      { label:"HOA governing documents (pending)", detail:"CC&Rs, bylaws, rules and regulations for Lakeside Village" },
+      { label:"BRAND_VOICE.md", detail:"HOA community tone — collaborative, respectful, community steward" },
+      { label:"Dues schedule", detail:"Monthly dues by lot type — current: $91,880/mo total across 45 lots" },
+    ],
+    outputs: [
+      { label:"Monthly Dues Reminder", detail:"Per-owner notice with lot number, amount due, due date, payment instructions", format:"Markdown (.md) → email/PDF on approval", example:"lakeside-dues-notice-2026-05.md" },
+      { label:"Violation Notice", detail:"Formal notice referencing specific CC&R provision, description of violation, required remedy, deadline", format:"Markdown (.md) → DOCX on approval", example:"lakeside-violation-lot12-2026-04-15.md" },
+      { label:"Board Meeting Agenda", detail:"Structured agenda with standing items, open issues, financials summary, new business", format:"Markdown (.md) → DOCX/PDF on approval", example:"lakeside-agenda-2026-05-01.md" },
+      { label:"Annual HOA Report", detail:"Year-end community report — financials, maintenance completed, delinquency summary, upcoming projects", format:"Markdown (.md) → PDF on approval", example:"lakeside-annual-2026.md" },
+    ],
+    storage: [
+      { label:"Output folder", detail:"knowledge-base/outputs/hoa-management/" },
+      { label:"Naming convention", detail:"[community]-[doc-type]-[scope]-[YYYY-MM-DD].md" },
+      { label:"Scope note", detail:"Lakeside Village is first. DeLimon Place and The Sanctuary added in later build cycle." },
+    ],
+    automated: [
+      "Monthly dues reminder generation on 25th of prior month",
+      "Flag overdue accounts (dues not confirmed paid by 10th of month)",
+      "Log violation reports and draft notices when violation is reported",
+      "Draft board meeting agenda from standing template + open items",
+    ],
+    human: [
+      "ALL outgoing communications require approval — dues notices, violation letters, board agendas",
+      "Confirm delinquency list before any overdue notice is sent",
+      "Report violations to agent (agent drafts the notice, human confirms details and sends)",
+      "Board president reviews and approves all meeting agendas",
+      "Legal review for any formal enforcement action",
+    ],
+    triggers: [
+      { when:"25th of each month (automated)", how:"Generate dues reminders for following month" },
+      { when:"10th of each month (automated)", how:"Flag accounts with no payment confirmation" },
+      { when:"Violation reported (on demand)", how:"Ask: 'Draft a violation notice for Lot 12, Lakeside Village — [violation description]'" },
+      { when:"Board meeting scheduled (on demand)", how:"Ask: 'Draft agenda for Lakeside Village board meeting on [date]'" },
+    ],
+  },
+  "residential-leasing-agent": {
+    inputs: [
+      { label:"Residential rent rolls", detail:"Metairie Plaza (66 units, .wdb), Metairie Lake (108 units, .wdb), Mandeville Lake (pending), Lakeside Village rentals (11 Crosby units, CSV)" },
+      { label:"Unit mix data", detail:"Per-property: floor plans, bedroom/bath counts, SF ranges, standard rent by unit type" },
+      { label:"BRAND_VOICE.md", detail:"Residential tone — warm, community-oriented, Fair Housing language required" },
+      { label:"LEASING_PLAYBOOK.md", detail:"Residential leasing procedures — turnover, screening, renewal timelines, Fair Housing compliance" },
+    ],
+    outputs: [
+      { label:"Unit Listing Copy", detail:"Headline, description (25-word tag, 100-word summary, 500-word full), bedroom/bath/SF, amenities, pricing, availability — adaptable for Apartments.com, Zillow, website", format:"Markdown (.md) → platform-specific text on approval", example:"metairie-plaza-apt14b-listing-2026-05.md" },
+      { label:"Lease Renewal Outreach Letter", detail:"Personalized letter to resident — current rent, proposed renewal rate (3% escalation), new term options, response deadline", format:"Markdown (.md) → DOCX/email on approval", example:"metairie-plaza-unit14b-renewal-2026-05.md" },
+      { label:"Prospect Inquiry Response Template", detail:"Property-specific email template for responding to prospect inquiries — key selling points, tour scheduling CTA, Fair Housing disclaimer", format:"Markdown (.md) → Gmail draft on approval", example:"metairie-plaza-inquiry-template.md" },
+      { label:"Move-Out Notice Acknowledgment", detail:"Formal acknowledgment of resident's notice with key dates — final day, inspection date, deposit refund timeline", format:"Markdown (.md) → DOCX on approval", example:"metairie-plaza-unit14b-moveout-2026-05.md" },
+    ],
+    storage: [
+      { label:"Output folder", detail:"knowledge-base/outputs/residential-leasing/" },
+      { label:"Naming convention", detail:"[property-abbr]-[unit]-[doc-type]-[YYYY-MM].md" },
+    ],
+    automated: [
+      "Monitor rent rolls for vacancies and expiring leases (renewals within 60 days)",
+      "Auto-generate listing copy when vacancy flag is set",
+      "Auto-generate renewal outreach letters for leases expiring within 60 days",
+      "Apply Fair Housing disclaimer to all residential output automatically",
+    ],
+    human: [
+      "ALL tenant communications require approval before sending",
+      "Set final rental rates — agent proposes based on unit type and market, human confirms",
+      "Approve listing copy before posting to Apartments.com, Zillow, or website",
+      "Review renewal terms — agent calculates 3% escalation, human may override",
+      "Conduct actual tenant screening and qualification (not automated)",
+    ],
+    triggers: [
+      { when:"Vacancy detected in rent roll (automated)", how:"Event trigger on data update — generates listing within same run" },
+      { when:"Lease expiry within 60 days (automated)", how:"Monthly rent roll scan on 1st — flags renewals due" },
+      { when:"Move-out notice received (on demand)", how:"Ask: 'Draft move-out acknowledgment for Unit 14B, Metairie Plaza'" },
+    ],
+  },
+  "market-intelligence-agent": {
+    inputs: [
+      { label:"Web — CoStar / LoopNet", detail:"Comparable commercial listings in Mandeville/Northshore market — $/SF, vacancy rates, new supply, absorption" },
+      { label:"Web — Apartments.com / Zillow / MLS", detail:"Comparable residential listings in Metairie and Mandeville — rent per bedroom, occupancy trends, new development" },
+      { label:"Web — local news and economic data", detail:"St. Tammany Parish economic indicators, new business announcements, major employer activity" },
+      { label:"Existing property data", detail:"Current LEASE_TERMS and rent roll data — used to benchmark Crosby rates against market" },
+      { label:"Prior reports (SUMMARY.md)", detail:"Historical market data for trend analysis" },
+    ],
+    outputs: [
+      { label:"Monthly Comp Report", detail:"Comparable properties in target markets — current asking rates, vacancy rates, notable lease activity, Crosby rate vs. market range", format:"Markdown (.md)", example:"northshore-office-comp-2026-04.md" },
+      { label:"Quarterly Market Summary", detail:"Full market analysis — supply/demand, absorption, rate trends, emerging submarkets, strategic implications for Crosby portfolio", format:"Markdown (.md) → PDF on approval", example:"northshore-market-2026-Q2.md" },
+      { label:"Rate Benchmarking", detail:"Side-by-side comparison of Crosby rates vs. market median and top quartile, per property and unit/suite type", format:"Markdown (.md)", example:"rate-benchmark-2026-04.md" },
+    ],
+    storage: [
+      { label:"Output folder", detail:"knowledge-base/outputs/market-intelligence/" },
+      { label:"Naming convention", detail:"[market]-[report-type]-[YYYY-MM].md  or  [market]-market-[YYYY-Q#].md" },
+    ],
+    automated: [
+      "Web search for comparable listings on 15th of each month",
+      "Calculate market rate ranges and Crosby position vs. market",
+      "Draft comp report and rate benchmarking document",
+      "Feed rate data to Lease Intelligence Agent for renewal rate recommendations",
+    ],
+    human: [
+      "Review quarterly market summary before sharing with stakeholders",
+      "Validate web-sourced comp data — agent may miss off-market activity",
+      "Make final pricing decisions — agent recommends, human decides",
+    ],
+    triggers: [
+      { when:"15th of each month (automated)", how:"Monthly comp pull and rate benchmarking" },
+      { when:"End of each quarter (automated)", how:"Full quarterly market summary" },
+      { when:"On demand", how:"Ask: 'Pull current office comps for Mandeville, LA'" },
+    ],
+  },
+  "investor-relations-agent": {
+    inputs: [
+      { label:"All property data (portfolio-wide)", detail:"Rent rolls, occupancy rates, lease terms, HOA financials — all 8 properties" },
+      { label:"Approved market intelligence reports", detail:"Quarterly market summaries from Market Intelligence Agent — used for context in investor narratives" },
+      { label:"Gulf South Commerce Park data", detail:"Parcel map, sold parcels (Parcel 1-A), pending sales, horizontal development status" },
+      { label:"Historical summaries (SUMMARY.md)", detail:"Prior quarterly reports for year-over-year comparison" },
+    ],
+    outputs: [
+      { label:"Quarterly Portfolio Performance Summary", detail:"Revenue by property, occupancy rates, notable lease events, market commentary, outlook for next quarter", format:"Markdown (.md) → PDF on approval", example:"portfolio-summary-2026-Q2.md" },
+      { label:"Deal Memo", detail:"Summary of a specific transaction — acquisition, disposition, parcel sale — with background, terms, financial impact", format:"Markdown (.md) → DOCX on approval", example:"deal-memo-gulf-south-parcel2-2026-05.md" },
+      { label:"Gulf South Development Update", detail:"Progress report on horizontal development — lots graded, utilities installed, parcels listed/under contract/sold", format:"Markdown (.md)", example:"gulf-south-update-2026-04.md" },
+    ],
+    storage: [
+      { label:"Output folder", detail:"knowledge-base/outputs/investor-relations/" },
+      { label:"Naming convention", detail:"portfolio-summary-[YYYY-Q#].md  or  deal-memo-[property]-[YYYY-MM-DD].md" },
+    ],
+    automated: [
+      "Compile portfolio revenue and occupancy figures from all data sources",
+      "Draft quarterly summary from compiled data + approved market report",
+      "Monitor Gulf South parcel status and draft update when changes detected",
+    ],
+    human: [
+      "ALL stakeholder-facing documents require approval and financial verification",
+      "Confirm all revenue figures against actual accounting records before approving",
+      "Review Gulf South parcel status updates with Crosby project team before distributing",
+      "Legal review for any deal memos before distribution to investors",
+    ],
+    triggers: [
+      { when:"End of each quarter (automated)", how:"Compiles data and drafts quarterly summary on last day of Q" },
+      { when:"Deal closes (on demand)", how:"Ask: 'Draft a deal memo for [transaction]'" },
+      { when:"Gulf South activity (on demand)", how:"Ask: 'Update the Gulf South development brief'" },
+    ],
+  },
+  "acquisitions-agent": {
+    inputs: [
+      { label:"Web — CoStar / LoopNet / MLS", detail:"Active listings in Greater New Orleans and Northshore — commercial, multi-family, industrial — filtered by criteria matching Crosby strategy" },
+      { label:"AGENT_CHARTER.md", detail:"Portfolio strategy and asset class focus — guides which acquisition targets are relevant" },
+      { label:"Market Intelligence reports", detail:"Current cap rates, pricing benchmarks, and market conditions to inform opportunity assessment" },
+      { label:"Portfolio overview (dashboard data)", detail:"Existing holdings and geographic concentration — for diversification context" },
+    ],
+    outputs: [
+      { label:"Opportunity Brief", detail:"Property overview, asking price, cap rate estimate, location analysis, strategic fit with Crosby portfolio, recommended next step", format:"Markdown (.md)", example:"opportunity-brief-1234-highway22-2026-04-18.md" },
+      { label:"Pipeline Summary", detail:"All active opportunities tracked — status (monitoring / under review / pursuing / passed), key metrics side-by-side", format:"Markdown (.md)", example:"pipeline-2026-04.md" },
+      { label:"Letter of Intent (LOI) Draft", detail:"Standard LOI template pre-filled with property details, proposed terms, contingencies, closing timeline", format:"Markdown (.md) → DOCX on approval (legal review required)", example:"loi-1234-highway22-2026-04-20.md" },
+    ],
+    storage: [
+      { label:"Output folder", detail:"knowledge-base/outputs/acquisitions/" },
+      { label:"Naming convention", detail:"opportunity-brief-[address-slug]-[YYYY-MM-DD].md  or  loi-[address-slug]-[YYYY-MM-DD].md" },
+    ],
+    automated: [
+      "Weekly web scan for new listings matching acquisition criteria",
+      "Score each opportunity against portfolio strategy fit",
+      "Draft opportunity brief for properties exceeding threshold score",
+      "Update pipeline summary with new opportunities and status changes",
+    ],
+    human: [
+      "ALL acquisition decisions require Ryan Crosby approval — agent surfaces opportunities, human decides",
+      "Physical property inspection — never automated",
+      "LOI submission requires legal review before sending",
+      "Financial due diligence and closing process — entirely human-led with professional advisors",
+      "Set acquisition criteria thresholds — what asset classes, geographies, and price ranges to target",
+    ],
+    triggers: [
+      { when:"Every Friday (automated)", how:"Weekly market scan for new listings" },
+      { when:"On demand", how:"Ask: 'Search for multi-family acquisition opportunities in Mandeville under $5M'" },
+      { when:"On demand — LOI", how:"Ask: 'Draft an LOI for [property address]'" },
+    ],
+  },
+};
+
+function renderAgents(selectedSlug) {
+  var el = document.getElementById("agentsContent");
+  if(!el) return;
+
+  if(selectedSlug) {
+    var a = getAgent(selectedSlug);
+    var d = AGENT_DETAILS[selectedSlug];
+    if(!a || !d) { renderAgents(null); return; }
+
     var statusBdg = a.status==="building"
-      ? '<span style="font-size:11px;font-weight:600;background:#fee2e2;color:#991b1b;padding:2px 8px;border-radius:9999px;">Building Now</span>'
-      : '<span class="badge badge-idle">Planned</span>';
-    html += '<div class="agent-row"><div class="agent-icon" style="background:'+a.color+'15;">'+iconSvg(a.icon,18,a.color)+'</div><div style="flex:1;min-width:0;"><div style="display:flex;align-items:center;gap:8px;"><span class="agent-name">'+a.name+'</span><span class="agent-phase">'+(a.phaseLabel||"Phase "+a.phase)+'</span></div><div class="agent-last">'+(last?"Last: "+last.task:(a.description||"Not yet deployed"))+'</div></div><div style="text-align:right;flex-shrink:0;">'+statusBdg+'</div></div>';
-  });
-  document.getElementById("agentStatusList").innerHTML = html;
+      ? '<span style="font-size:12px;font-weight:700;background:#fee2e2;color:#991b1b;padding:3px 10px;border-radius:9999px;">Building Now</span>'
+      : '<span style="font-size:12px;font-weight:700;background:#f3f4f6;color:#6b7280;padding:3px 10px;border-radius:9999px;">Planned</span>';
 
-  // No pie chart when no outputs
-  document.getElementById("pieArea").innerHTML = '<div style="text-align:center;padding:40px 0;color:#d1d5db;font-size:13px;"><i data-lucide="pie-chart" style="width:32px;height:32px;color:#e5e7eb;display:block;margin:0 auto 8px;"></i>Output distribution will appear<br>once agents begin producing work.</div>';
-  document.getElementById("pieLegend").innerHTML = "";
+    var html = '<div style="display:flex;align-items:center;gap:8px;margin-bottom:20px;">';
+    html += '<button class="btn btn-review" onclick="renderAgents(null)" style="padding:6px 10px;">← All Agents</button>';
+    html += '</div>';
 
-  var phaseHTML = "";
+    html += '<div class="card" style="margin-bottom:20px;border-left:4px solid '+a.color+';">';
+    html += '<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">';
+    html += '<div style="display:flex;align-items:center;gap:14px;">';
+    html += '<div style="padding:14px;border-radius:12px;background:'+a.color+'15;">'+iconSvg(a.icon,28,a.color)+'</div>';
+    html += '<div><div style="font-size:20px;font-weight:700;color:#111827;">'+a.name+' Agent</div>';
+    html += '<div style="font-size:13px;color:#6b7280;margin-top:2px;">'+a.phaseLabel+'</div></div></div>';
+    html += '<div style="display:flex;gap:8px;align-items:center;">'+statusBdg+'</div></div>';
+    html += '<p style="font-size:14px;color:#374151;margin-top:14px;line-height:1.6;">'+a.description+'</p>';
+    html += '</div>';
+
+    function detailSection(iconName, color, title, items, renderFn) {
+      var s = '<div class="card" style="margin-bottom:16px;">';
+      s += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">'+iconSvg(iconName,16,color)+'<span style="font-size:14px;font-weight:700;color:#111827;">'+title+'</span></div>';
+      s += items.map(renderFn).join("");
+      s += '</div>';
+      return s;
+    }
+
+    // Grid layout: 2 columns on desktop
+    html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">';
+
+    // Data Inputs
+    html += detailSection("database","#2563eb","Data Inputs", d.inputs, function(item) {
+      return '<div style="padding:10px 12px;background:#f9fafb;border-radius:8px;margin-bottom:8px;">' +
+             '<div style="font-size:13px;font-weight:600;color:#374151;">'+item.label+'</div>' +
+             '<div style="font-size:12px;color:#6b7280;margin-top:3px;line-height:1.5;">'+item.detail+'</div>' +
+             '</div>';
+    });
+
+    // Outputs
+    html += detailSection("file-text","#059669","Outputs Produced", d.outputs, function(item) {
+      return '<div style="padding:10px 12px;background:#f0fdf4;border-radius:8px;margin-bottom:8px;">' +
+             '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;">' +
+             '<div style="font-size:13px;font-weight:600;color:#374151;">'+item.label+'</div>' +
+             (item.format?'<span style="font-size:11px;background:#fff;border:1px solid #d1fae5;color:#059669;padding:1px 6px;border-radius:4px;white-space:nowrap;">'+item.format+'</span>':'') +
+             '</div>' +
+             '<div style="font-size:12px;color:#6b7280;margin-top:3px;line-height:1.5;">'+item.detail+'</div>' +
+             (item.example?'<div style="font-family:monospace;font-size:11px;color:#9ca3af;margin-top:4px;">e.g. '+item.example+'</div>':'') +
+             '</div>';
+    });
+
+    // Storage
+    html += detailSection("folder","#d97706","Storage & Filing", d.storage, function(item) {
+      return '<div style="padding:10px 12px;background:#fffbeb;border-radius:8px;margin-bottom:8px;">' +
+             '<div style="font-size:13px;font-weight:600;color:#374151;">'+item.label+'</div>' +
+             '<div style="font-family:monospace;font-size:12px;color:#6b7280;margin-top:3px;word-break:break-all;">'+item.detail+'</div>' +
+             '</div>';
+    });
+
+    // Triggers
+    html += detailSection("clock","#7c3aed","Triggers", d.triggers, function(item) {
+      return '<div style="padding:10px 12px;background:#faf5ff;border-radius:8px;margin-bottom:8px;display:flex;gap:10px;">' +
+             '<div style="flex-shrink:0;width:6px;height:6px;border-radius:50%;background:#7c3aed;margin-top:5px;"></div>' +
+             '<div><div style="font-size:13px;font-weight:600;color:#374151;">'+item.when+'</div>' +
+             '<div style="font-size:12px;color:#6b7280;margin-top:2px;">'+item.how+'</div></div>' +
+             '</div>';
+    });
+
+    // Automated Actions
+    html += detailSection("zap","#0891b2","Automated — No Approval Needed", d.automated, function(item) {
+      return '<div style="padding:8px 12px;display:flex;gap:10px;border-bottom:1px solid #f0f9ff;">' +
+             '<div style="flex-shrink:0;color:#0891b2;margin-top:1px;">'+iconSvg("check",13,"#0891b2")+'</div>' +
+             '<div style="font-size:13px;color:#374151;">'+item+'</div>' +
+             '</div>';
+    });
+
+    // Human-in-the-loop
+    html += detailSection("user-check","#dc2626","Human Approval Required", d.human, function(item) {
+      return '<div style="padding:8px 12px;display:flex;gap:10px;border-bottom:1px solid #fff1f2;">' +
+             '<div style="flex-shrink:0;color:#dc2626;margin-top:1px;">'+iconSvg("user-check",13,"#dc2626")+'</div>' +
+             '<div style="font-size:13px;color:#374151;">'+item+'</div>' +
+             '</div>';
+    });
+
+    html += '</div>'; // end grid
+    el.innerHTML = html;
+    lucide.createIcons();
+    return;
+  }
+
+  // ── List view ──────────────────────────────────────────────────────────────
   var phaseNames = {2:"Phase 2 — Operations Core",3:"Phase 3 — HOA & Residential",4:"Phase 4 — Business Development"};
+  var phaseColors = {2:"#dc2626",3:"#7c3aed",4:"#059669"};
+  var html = '';
+
   [2,3,4].forEach(function(phase) {
     var agents = AGENTS.filter(function(a){return a.phase===phase;});
     if(!agents.length) return;
-    phaseHTML += '<div class="phase-group"><div class="phase-label">'+(phaseNames[phase]||"Phase "+phase)+'</div><div class="phase-tags">'+agents.map(function(a){
-      var statusStyle = a.status==="building" ? "background:#fee2e2;color:#991b1b;border:1px solid #fca5a5;" : "background:"+a.color+"15;color:"+a.color+";";
-      return '<span class="phase-tag" style="'+statusStyle+'">'+a.name+(a.status==="building"?" ▶":"")+'</span>';
-    }).join("")+'</div></div>';
+    html += '<div style="margin-bottom:24px;">';
+    html += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">';
+    html += '<span style="background:'+phaseColors[phase]+';color:#fff;font-size:11px;font-weight:700;padding:3px 10px;border-radius:9999px;">'+(phaseNames[phase]||"Phase "+phase)+'</span></div>';
+    html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px;">';
+
+    agents.forEach(function(a) {
+      var statusBdg = a.status==="building"
+        ? '<span style="font-size:11px;font-weight:600;background:#fee2e2;color:#991b1b;padding:2px 8px;border-radius:9999px;">Building Now ▶</span>'
+        : '<span style="font-size:11px;background:#f3f4f6;color:#6b7280;padding:2px 8px;border-radius:9999px;font-weight:500;">Planned</span>';
+      var acts = activities.filter(function(x){return x.agent===a.slug;});
+      var lastRun = acts.length>0?'Last run: '+fmtTime(acts[0].timestamp):'No runs yet';
+
+      html += '<div class="doc-card" onclick="renderAgents(\''+a.slug+'\')" style="border-left:3px solid '+a.color+';">';
+      html += '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:10px;">';
+      html += '<div style="display:flex;align-items:center;gap:10px;">';
+      html += '<div style="padding:10px;border-radius:8px;background:'+a.color+'15;flex-shrink:0;">'+iconSvg(a.icon,20,a.color)+'</div>';
+      html += '<div><div style="font-size:14px;font-weight:700;color:#111827;">'+a.name+'</div>';
+      html += '<div style="font-size:12px;color:#9ca3af;margin-top:2px;">'+lastRun+'</div></div></div>';
+      html += statusBdg+'</div>';
+      html += '<p style="font-size:12px;color:#6b7280;line-height:1.5;margin-bottom:10px;">'+a.description+'</p>';
+      html += '<div style="display:flex;gap:6px;flex-wrap:wrap;">';
+      var d = AGENT_DETAILS[a.slug];
+      if(d) {
+        html += '<span style="font-size:11px;background:#eff6ff;color:#2563eb;padding:2px 7px;border-radius:4px;">'+d.inputs.length+' inputs</span>';
+        html += '<span style="font-size:11px;background:#f0fdf4;color:#059669;padding:2px 7px;border-radius:4px;">'+d.outputs.length+' output types</span>';
+        html += '<span style="font-size:11px;background:#fafafe;color:#7c3aed;padding:2px 7px;border-radius:4px;">'+d.triggers.length+' triggers</span>';
+      }
+      html += '<span style="font-size:11px;background:#f9fafb;color:#374151;padding:2px 7px;border-radius:4px;margin-left:auto;font-weight:500;">View details →</span>';
+      html += '</div></div>';
+    });
+
+    html += '</div></div>';
   });
-  document.getElementById("phaseGroups").innerHTML = phaseHTML;
+
+  el.innerHTML = html;
   lucide.createIcons();
 }
 
