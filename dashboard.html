@@ -607,12 +607,14 @@ const AGENTS = [
 let activities = [];
 
 const SCHEDULED = [
-  { agent: "lease-intelligence-agent", property: "Sanctuary Office Park", task: "Lease expiration & notice deadline scan", frequency: "Weekly (Monday)", nextRun: "Pending deploy", status: "Phase 2" },
-  { agent: "lease-intelligence-agent", property: "Sanctuary Office Park", task: "Monthly renewal offer letters", frequency: "Monthly (1st)", nextRun: "Pending deploy", status: "Phase 2" },
-  { agent: "vacancy-marketing-agent", property: "All properties", task: "Vacancy listing refresh", frequency: "On vacancy change", nextRun: "Pending deploy", status: "Phase 2" },
-  { agent: "rent-roll-intelligence-agent", property: "All properties", task: "Monthly portfolio summary", frequency: "Monthly (1st)", nextRun: "Pending deploy", status: "Phase 2" },
-  { agent: "hoa-management-agent", property: "Lakeside Village", task: "Monthly dues reconciliation", frequency: "Monthly (1st)", nextRun: "Pending deploy", status: "Phase 3" },
-  { agent: "market-intelligence-agent", property: "All properties", task: "Quarterly market report", frequency: "Quarterly", nextRun: "Pending deploy", status: "Phase 4" },
+  { agent: "lease-intelligence-agent", property: "All properties", task: "Lease expiration & notice deadline scan", frequency: "Weekly (Monday 8am)", nextRun: "Mon, Apr 6", status: "Live", taskId: "lease-intelligence-weekly" },
+  { agent: "lease-intelligence-agent", property: "All properties", task: "Monthly renewal letter drafts", frequency: "Monthly (1st, 8am)", nextRun: "Fri, May 1", status: "Live", taskId: "lease-intelligence-monthly-renewals" },
+  { agent: "market-intelligence-agent", property: "All properties", task: "Monthly market snapshot + rate benchmarking", frequency: "Monthly (15th, 8am)", nextRun: "Wed, Apr 15", status: "Live", taskId: "market-intelligence-monthly" },
+  { agent: "vacancy-marketing-agent", property: "All properties", task: "Vacancy listing on confirmed vacancy", frequency: "Event-driven", nextRun: "On trigger", status: "Manual" },
+  { agent: "rent-roll-intelligence-agent", property: "All properties", task: "Monthly portfolio summary", frequency: "Monthly (1st)", nextRun: "Pending build", status: "Pending" },
+  { agent: "hoa-management-agent", property: "Lakeside Village", task: "Monthly dues reminders", frequency: "Monthly (25th)", nextRun: "Pending build", status: "Pending" },
+  { agent: "market-intelligence-agent", property: "All properties", task: "Quarterly market report", frequency: "Quarterly (end of Q)", nextRun: "Jun 30", status: "Manual" },
+  { agent: "acquisitions-agent", property: "All properties", task: "Weekly acquisition scan", frequency: "Weekly (Friday)", nextRun: "Pending build", status: "Pending" },
 ];
 
 // ── DOCUMENTS ───────────────────────────────────────────────────────────────
@@ -1594,7 +1596,9 @@ function renderSchedule() {
   var html = '<thead><tr><th>Agent</th><th>Scope</th><th>Task</th><th>Frequency</th><th>Next Run</th><th>Status</th></tr></thead><tbody>';
   SCHEDULED.forEach(function(t) {
     var agent = getAgent(t.agent);
-    html += '<tr><td><div style="display:flex;align-items:center;gap:8px;">'+iconSvg(agent?agent.icon:"activity",14,agent?agent.color:null)+'<span style="font-weight:500;color:#1f2937;">'+(agent?agent.name:"")+'</span></div></td><td style="color:#4b5563;">'+t.property+'</td><td style="color:#1f2937;">'+t.task+'</td><td><span class="freq-badge">'+t.frequency+'</span></td><td class="mono">'+t.nextRun+'</td><td><span class="badge badge-idle">'+t.status+'</span></td></tr>';
+    var statusClass = t.status==="Live"?"badge-approved":t.status==="Manual"?"badge-pending":"badge-idle";
+    var nextRunStyle = t.status==="Live"?'font-weight:600;color:#059669;':'color:#9ca3af;';
+    html += '<tr><td><div style="display:flex;align-items:center;gap:8px;">'+iconSvg(agent?agent.icon:"activity",14,agent?agent.color:null)+'<span style="font-weight:500;color:#1f2937;">'+(agent?agent.name:"")+'</span></div></td><td style="color:#4b5563;">'+t.property+'</td><td style="color:#1f2937;">'+t.task+'</td><td><span class="freq-badge">'+t.frequency+'</span></td><td class="mono" style="'+nextRunStyle+'">'+t.nextRun+'</td><td><span class="badge '+statusClass+'">'+t.status+'</span></td></tr>';
   });
   html += "</tbody>";
   document.getElementById("scheduleTable").innerHTML = html;

@@ -31,21 +31,30 @@ The agent reads its AGENT_PROMPT.md, loads the required data files, executes its
 
 Cowork supports scheduled tasks that run at defined intervals. These replace traditional cron jobs. Each schedule entry defines: what agent to run, what prompt to execute, and how often.
 
-| Agent | Task | Schedule | Priority |
-|-------|------|----------|----------|
-| Lease Intelligence | Weekly deadline scan | Every Monday | Phase 2 |
-| Lease Intelligence | Monthly renewal letter drafts | 1st of each month | Phase 2 |
-| Rent Roll Intelligence | Monthly portfolio summary | 1st of each month | Phase 2 |
-| HOA Management | Dues reminders | 25th of each month | Phase 3 |
-| HOA Management | Delinquency flags | 10th of each month | Phase 3 |
-| Market Intelligence | Monthly comp pull | 15th of each month | Phase 4 |
-| Market Intelligence | Quarterly market summary | Last day of Q | Phase 4 |
-| Investor Relations | Quarterly portfolio summary | Last day of Q | Phase 4 |
-| Acquisitions | Weekly market scan | Every Friday | Phase 4 |
+| Task ID | Agent | Task | Cron | Status |
+|---------|-------|------|------|--------|
+| `lease-intelligence-weekly` | Lease Intelligence | Weekly deadline scan | `0 8 * * 1` (Mon 8am) | ✅ LIVE |
+| `lease-intelligence-monthly-renewals` | Lease Intelligence | Monthly renewal letters | `0 8 1 * *` (1st, 8am) | ✅ LIVE |
+| `market-intelligence-monthly` | Market Intelligence | Monthly market snapshot | `0 8 15 * *` (15th, 8am) | ✅ LIVE |
+| — | Rent Roll Intelligence | Monthly portfolio summary | `0 7 1 * *` (1st, 7am) | Pending agent build |
+| — | HOA Management | Dues reminders | `0 8 25 * *` (25th, 8am) | Pending agent build |
+| — | HOA Management | Delinquency flags | `0 8 10 * *` (10th, 8am) | Pending agent build |
+| — | Market Intelligence | Quarterly market report | End of Q | Pending (manual for now) |
+| — | Investor Relations | Quarterly portfolio summary | End of Q | Pending agent build |
+| — | Acquisitions | Weekly market scan | Fridays | Pending agent build |
 
-**Implementation:** Each scheduled task is created via the Cowork `schedule` skill. The task stores the agent prompt and schedule interval. When the schedule fires, it opens a Cowork session, runs the prompt, and posts output to the Docs tab.
+**Implementation:** Each scheduled task is created via the Cowork scheduler. The task stores a complete agent prompt. When the schedule fires, Cowork opens a new session, executes the prompt (reading data files, doing web research as needed), and writes output to the knowledge-base. The operator is notified on completion.
 
-**Not yet deployed.** Scheduled tasks will be set up as agents move from "building" to "active" status.
+**Task files are stored at:** `C:\Users\thoma\OneDrive\Documents\Claude\Scheduled\[task-id]\SKILL.md`
+
+**First run recommendation:** Run each new task manually once ("Run now") to pre-approve any tool permissions it needs. This prevents future automatic runs from pausing on permission prompts.
+
+**How the operator interacts:**
+1. Scheduled tasks run automatically — no action needed
+2. Operator receives a notification when each task completes
+3. Output files appear in the knowledge-base and (eventually) in the dashboard Docs tab
+4. Operator reviews, approves, or requests revision on outputs
+5. Approved outputs feed into downstream agents (e.g., market comps → vacancy asking rates)
 
 ### 3. Event-Driven (Agent Chains)
 
