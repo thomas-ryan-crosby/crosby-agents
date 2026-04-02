@@ -1,0 +1,1884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crosby Development — Agent Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://unpkg.com/lucide@0.383.0/dist/umd/lucide.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif; background: #f9fafb; color: #111827; line-height: 1.5; }
+    button { font-family: inherit; cursor: pointer; border: none; background: none; }
+    select { font-family: inherit; }
+    .header { background: #fff; border-bottom: 1px solid #e5e7eb; position: sticky; top: 0; z-index: 10; }
+    .header-inner { max-width: 1200px; margin: 0 auto; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; }
+    .header-left { display: flex; align-items: center; gap: 12px; }
+    .header-logo { width: 36px; height: 36px; border-radius: 8px; background: #2563eb; display: flex; align-items: center; justify-content: center; color: #fff; }
+    .header-title { font-size: 18px; font-weight: 700; color: #111827; }
+    .header-sub { font-size: 12px; color: #9ca3af; }
+    .header-right { display: flex; align-items: center; gap: 8px; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 24px; }
+    .nav { display: flex; gap: 4px; margin-bottom: 24px; background: #fff; border-radius: 12px; padding: 4px; border: 1px solid #e5e7eb; width: fit-content; }
+    .nav-btn { display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 500; padding: 8px 16px; border-radius: 8px; color: #6b7280; transition: all 150ms; }
+    .nav-btn:hover { background: #f3f4f6; color: #111827; }
+    .nav-btn.active { background: #2563eb; color: #fff; }
+    .nav-badge { font-size: 11px; padding: 1px 6px; border-radius: 9999px; background: #fef3c7; color: #92400e; }
+    .nav-btn.active .nav-badge { background: rgba(255,255,255,0.25); color: #fff; }
+    .card { background: #fff; border-radius: 12px; border: 1px solid #e5e7eb; padding: 20px; }
+    .card-title { font-size: 14px; font-weight: 600; color: #374151; margin-bottom: 12px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+    .grid-2-1 { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; }
+    .stat-card { background: #fff; border-radius: 12px; border: 1px solid #e5e7eb; padding: 20px; display: flex; align-items: flex-start; gap: 16px; }
+    .stat-icon { padding: 10px; border-radius: 8px; background: #eff6ff; color: #2563eb; display: flex; }
+    .stat-label { font-size: 13px; color: #6b7280; font-weight: 500; }
+    .stat-value { font-size: 28px; font-weight: 700; color: #111827; margin-top: 2px; }
+    .stat-sub { font-size: 12px; color: #9ca3af; margin-top: 4px; }
+    .badge { font-size: 12px; font-weight: 500; padding: 2px 10px; border-radius: 9999px; white-space: nowrap; }
+    .badge-approved { background: #d1fae5; color: #065f46; }
+    .badge-pending { background: #fef3c7; color: #92400e; }
+    .badge-revision { background: #fee2e2; color: #991b1b; }
+    .badge-idle { background: #f3f4f6; color: #6b7280; }
+    .activity-row { display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; border-bottom: 1px solid #f9fafb; }
+    .activity-row:last-child { border-bottom: none; }
+    .activity-icon { padding: 6px; border-radius: 6px; display: flex; margin-top: 2px; flex-shrink: 0; }
+    .activity-meta { display: flex; align-items: center; gap: 8px; margin-top: 4px; font-size: 12px; color: #9ca3af; }
+    .activity-meta .sep { color: #d1d5db; }
+    .agent-row { display: flex; align-items: center; gap: 16px; padding: 14px 0; border-bottom: 1px solid #f3f4f6; }
+    .agent-row:last-child { border-bottom: none; }
+    .agent-icon { padding: 8px; border-radius: 8px; display: flex; flex-shrink: 0; }
+    .agent-name { font-weight: 600; font-size: 14px; color: #111827; }
+    .agent-phase { font-size: 11px; padding: 2px 6px; border-radius: 4px; background: #f3f4f6; color: #6b7280; }
+    .agent-last { font-size: 12px; color: #9ca3af; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 2px; }
+    .prop-card { background: #fff; border-radius: 12px; border: 1px solid #e5e7eb; padding: 16px; transition: border-color 150ms; }
+    .prop-card:hover { border-color: #93c5fd; }
+    .prop-name { font-weight: 600; font-size: 14px; color: #111827; }
+    .prop-loc { font-size: 12px; color: #9ca3af; margin-top: 2px; }
+    .prop-stats { display: flex; align-items: center; gap: 24px; margin-top: 12px; }
+    .prop-stat-val { font-size: 20px; font-weight: 700; }
+    .prop-stat-label { font-size: 11px; color: #9ca3af; }
+    .prop-unconfigured { font-size: 12px; color: #d1d5db; font-style: italic; margin-top: 12px; }
+    .approval-card { background: #fff; border-radius: 12px; border: 1px solid #e5e7eb; padding: 16px; }
+    .approval-actions { display: flex; gap: 8px; margin-top: 12px; padding-top: 12px; border-top: 1px solid #f3f4f6; }
+    .btn { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; padding: 6px 12px; border-radius: 8px; transition: all 150ms; }
+    .btn-approve { background: #d1fae5; color: #065f46; } .btn-approve:hover { background: #a7f3d0; }
+    .btn-review { background: #f3f4f6; color: #4b5563; } .btn-review:hover { background: #e5e7eb; }
+    .btn-regen { background: #dbeafe; color: #1d4ed8; } .btn-regen:hover { background: #bfdbfe; }
+    .btn-reject { background: #fee2e2; color: #991b1b; margin-left: auto; } .btn-reject:hover { background: #fecaca; }
+    .sched-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .sched-table thead { background: #f9fafb; }
+    .sched-table th { text-align: left; padding: 12px 20px; font-size: 11px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid #e5e7eb; }
+    .sched-table td { padding: 12px 20px; border-bottom: 1px solid #f9fafb; }
+    .sched-table tr:hover td { background: #f9fafb; }
+    .freq-badge { font-size: 12px; background: #eff6ff; color: #1d4ed8; padding: 4px 8px; border-radius: 4px; }
+    .mono { font-family: monospace; font-size: 12px; color: #6b7280; }
+    .filters { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+    .filter-select { display: flex; align-items: center; gap: 8px; background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 6px 12px; }
+    .filter-select select { font-size: 14px; color: #374151; border: none; outline: none; background: transparent; }
+    .pie-legend { margin-top: 8px; }
+    .pie-legend-row { display: flex; justify-content: space-between; align-items: center; font-size: 12px; padding: 3px 0; }
+    .pie-legend-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 8px; }
+    .phase-group { margin-bottom: 12px; }
+    .phase-label { font-size: 12px; font-weight: 500; color: #6b7280; margin-bottom: 4px; }
+    .phase-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .phase-tag { font-size: 12px; padding: 4px 8px; border-radius: 6px; }
+    .snapshot-box { text-align: center; padding: 16px; border-radius: 8px; }
+    .snapshot-val { font-size: 28px; font-weight: 700; }
+    .snapshot-label { font-size: 12px; color: #6b7280; margin-top: 4px; }
+    .empty-state { text-align: center; padding: 60px 20px; color: #9ca3af; }
+    .empty-state p { font-size: 14px; margin-top: 8px; }
+    .empty-state .empty-title { font-size: 16px; font-weight: 600; color: #6b7280; margin-top: 12px; }
+    .chart-container { position: relative; height: 250px; }
+    .unit-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 12px; }
+    .unit-table th { text-align: left; padding: 8px 12px; font-size: 11px; font-weight: 600; color: #6b7280; text-transform: uppercase; border-bottom: 1px solid #e5e7eb; background: #f9fafb; }
+    .unit-table td { padding: 8px 12px; border-bottom: 1px solid #f3f4f6; }
+    .unit-table tr:last-child td { font-weight: 700; border-top: 2px solid #e5e7eb; }
+    .prop-expand { font-size: 11px; color: #2563eb; display: flex; align-items: center; gap: 4px; margin-top: 10px; font-weight: 500; }
+    .prop-card:hover .prop-expand { color: #1d4ed8; }
+    .view { display: none; }
+    .view.active { display: block; }
+    .alert-btn { display: none; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; padding: 8px 12px; border-radius: 8px; background: #fffbeb; color: #92400e; border: 1px solid #fde68a; cursor: pointer; }
+    .alert-btn:hover { background: #fef3c7; }
+    .doc-card { background:#fff;border-radius:12px;border:1px solid #e5e7eb;padding:16px;cursor:pointer;transition:border-color 150ms,box-shadow 150ms; }
+    .doc-card:hover { border-color:#93c5fd;box-shadow:0 2px 8px rgba(0,0,0,0.06); }
+    .doc-detail-body { font-size:14px;color:#374151;line-height:1.7; }
+    .doc-detail-body h1 { font-size:20px;font-weight:700;color:#111827;margin:0 0 4px; }
+    .doc-detail-body h2 { font-size:16px;font-weight:700;color:#111827;margin:20px 0 8px;padding-bottom:6px;border-bottom:1px solid #e5e7eb; }
+    .doc-detail-body h3 { font-size:14px;font-weight:700;color:#374151;margin:14px 0 6px; }
+    .doc-detail-body table { width:100%;border-collapse:collapse;font-size:13px;margin:10px 0; }
+    .doc-detail-body th { text-align:left;padding:8px 10px;font-size:11px;font-weight:600;color:#6b7280;text-transform:uppercase;background:#f9fafb;border-bottom:1px solid #e5e7eb; }
+    .doc-detail-body td { padding:8px 10px;border-bottom:1px solid #f3f4f6;vertical-align:top; }
+    .doc-detail-body p { margin:8px 0; }
+    .doc-detail-body blockquote { border-left:3px solid #2563eb;margin:10px 0;padding:8px 14px;background:#eff6ff;color:#1e40af;font-size:13px;border-radius:0 6px 6px 0; }
+    .doc-detail-body ul { margin:6px 0 6px 20px; }
+    .doc-detail-body li { margin:3px 0; }
+    .doc-detail-body code { font-family:monospace;font-size:12px;background:#f3f4f6;padding:1px 5px;border-radius:3px; }
+    .doc-detail-body hr { border:none;border-top:1px solid #e5e7eb;margin:16px 0; }
+    .doc-pending-banner { background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:12px; }
+    @media (max-width: 900px) {
+      .grid-4 { grid-template-columns: repeat(2, 1fr); }
+      .grid-2-1 { grid-template-columns: 1fr; }
+      .nav { flex-wrap: wrap; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <div class="header-left">
+      <div class="header-logo"><i data-lucide="building-2" style="width:20px;height:20px;"></i></div>
+      <div>
+        <div class="header-title">Crosby Development</div>
+        <div class="header-sub">Agent Interaction Dashboard</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <button class="alert-btn" id="alertBtn" onclick="switchView('approvals')">
+        <i data-lucide="alert-circle" style="width:14px;height:14px;"></i>
+        <span id="alertText"></span>
+      </button>
+      <span style="font-size:12px;color:#9ca3af;margin-left:8px;" id="todayDate"></span>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+  <nav class="nav" id="mainNav">
+    <button class="nav-btn active" data-view="portfolio"><i data-lucide="layout-dashboard" style="width:15px;height:15px;"></i> Portfolio</button>
+    <button class="nav-btn" data-view="activity"><i data-lucide="activity" style="width:15px;height:15px;"></i> Activity</button>
+    <button class="nav-btn" data-view="agents"><i data-lucide="bot" style="width:15px;height:15px;"></i> Agents</button>
+    <button class="nav-btn" data-view="approvals"><i data-lucide="check-circle" style="width:15px;height:15px;"></i> Approvals <span class="nav-badge" id="approvalBadge">0</span></button>
+    <button class="nav-btn" data-view="schedule"><i data-lucide="calendar" style="width:15px;height:15px;"></i> Schedule</button>
+    <button class="nav-btn" data-view="metrics"><i data-lucide="trending-up" style="width:15px;height:15px;"></i> Metrics</button>
+    <button class="nav-btn" data-view="docs"><i data-lucide="file-text" style="width:15px;height:15px;"></i> Docs <span class="nav-badge" id="docsBadge">3</span></button>
+    <button class="nav-btn" data-view="strategy"><i data-lucide="book-open" style="width:15px;height:15px;"></i> Strategy</button>
+  </nav>
+
+  <!-- ═══ PORTFOLIO ═══ -->
+  <div class="view active" id="view-portfolio">
+    <div class="grid-4" id="portfolioStats"></div>
+    <h2 class="card-title">Properties</h2>
+    <div class="grid-2" id="propertyGrid" style="margin-bottom:24px;"></div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <span class="card-title" style="margin-bottom:0;">Recent Activity</span>
+        <button class="link-btn" onclick="switchView('activity')" style="font-size:12px;color:#2563eb;font-weight:500;cursor:pointer;">View all →</button>
+      </div>
+      <div id="recentActivity"></div>
+    </div>
+  </div>
+
+  <!-- ═══ ACTIVITY ═══ -->
+  <div class="view" id="view-activity">
+    <div class="filters">
+      <div class="filter-select">
+        <i data-lucide="filter" style="width:14px;height:14px;color:#9ca3af;"></i>
+        <select id="filterAgent" onchange="renderActivity()"><option value="all">All Agents</option></select>
+      </div>
+      <div class="filter-select">
+        <select id="filterStatus" onchange="renderActivity()">
+          <option value="all">All Statuses</option>
+          <option value="approved">Approved</option>
+          <option value="pending_review">Pending Review</option>
+          <option value="revision_requested">Revision Requested</option>
+        </select>
+      </div>
+      <span id="filterCount" style="font-size:12px;color:#9ca3af;"></span>
+    </div>
+    <div class="card" id="activityList"></div>
+  </div>
+
+  <!-- ═══ AGENTS ═══ -->
+  <div class="view" id="view-agents">
+    <div class="grid-2-1">
+      <div class="card">
+        <div class="card-title">Agent Status</div>
+        <div id="agentStatusList"></div>
+      </div>
+      <div>
+        <div class="card" style="margin-bottom:16px;">
+          <div class="card-title">Output by Agent</div>
+          <div id="pieArea"></div>
+          <div class="pie-legend" id="pieLegend"></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Deployment Phases</div>
+          <div id="phaseGroups"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ APPROVALS ═══ -->
+  <div class="view" id="view-approvals">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">
+      <span class="card-title" style="margin-bottom:0;">Approval Queue</span>
+      <span class="badge badge-pending" id="approvalCount">0 items</span>
+    </div>
+    <div class="grid-2" id="approvalGrid" style="display:none;"></div>
+    <div class="card empty-state" id="approvalEmpty">
+      <i data-lucide="check-circle" style="width:32px;height:32px;color:#34d399;"></i>
+      <p>No items pending review. Activity will appear here as agents produce outputs.</p>
+    </div>
+  </div>
+
+  <!-- ═══ SCHEDULE ═══ -->
+  <div class="view" id="view-schedule">
+    <h2 class="card-title">Scheduled Agent Tasks</h2>
+    <div class="card" style="padding:0;overflow:hidden;">
+      <table class="sched-table" id="scheduleTable"></table>
+    </div>
+    <div class="card" style="margin-top:16px;">
+      <p style="font-size:13px;color:#6b7280;">Scheduled tasks will activate as agents are deployed during each implementation phase. Configure recurring tasks through the agent system once the knowledge base and property data are complete.</p>
+    </div>
+  </div>
+
+  <!-- ═══ METRICS ═══ -->
+  <div class="view" id="view-metrics">
+    <div class="grid-4" id="metricsStats"></div>
+    <div class="grid-2" style="margin-bottom:24px;">
+      <div class="card">
+        <div class="card-title">Metairie Plaza — Unit Mix</div>
+        <table class="unit-table">
+          <thead><tr><th>Floor Plan</th><th>Beds/Baths</th><th>Sq Ft</th><th>Rent Range</th><th>Count</th><th>Vacant</th></tr></thead>
+          <tbody id="mpUnitTable"></tbody>
+        </table>
+      </div>
+      <div class="card">
+        <div class="card-title">Metairie Lake — Unit Mix</div>
+        <table class="unit-table">
+          <thead><tr><th>Floor Plan</th><th>Beds/Baths</th><th>Sq Ft</th><th>Rent Range</th><th>Count</th><th>Vacant</th></tr></thead>
+          <tbody id="mlUnitTable"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:24px;">
+      <div class="card-title">Sanctuary Office Park — Building Breakdown</div>
+      <table class="unit-table">
+        <thead><tr><th>Building</th><th>Rentable SF</th><th>Occupied SF</th><th>Vacant SF</th><th>Tenants</th><th>Monthly Rent</th></tr></thead>
+        <tbody id="sopBuildingTable"></tbody>
+      </table>
+    </div>
+    <div class="grid-2" style="margin-bottom:24px;">
+      <div class="card">
+        <div class="card-title">Sanctuary Office Park — Rent by Building</div>
+        <div style="position:relative;height:250px;"><canvas id="sopRentChart"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Sanctuary Office Park — SF by Building</div>
+        <div style="position:relative;height:250px;"><canvas id="sopSFChart"></canvas></div>
+      </div>
+    </div>
+    <div class="grid-2" style="margin-bottom:24px;">
+      <div class="card">
+        <div class="card-title">Metairie Plaza — Occupancy</div>
+        <div style="position:relative;height:220px;"><canvas id="mpOccChart"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Metairie Lake — Occupancy</div>
+        <div style="position:relative;height:220px;"><canvas id="mlOccChart"></canvas></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Portfolio Summary</div>
+      <div id="portfolioSummaryGrid"></div>
+    </div>
+  </div>
+
+  <!-- ═══ DOCS ═══ -->
+  <div class="view" id="view-docs">
+    <div id="docsContent"></div>
+  </div>
+
+  <!-- ═══ STRATEGY ═══ -->
+  <div class="view" id="view-strategy">
+    <div id="strategyContent"></div>
+  </div>
+
+  <!-- ═══ PROPERTY DETAIL ═══ -->
+  <div class="view" id="view-property-detail">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:20px;">
+      <button class="btn btn-review" onclick="switchView('portfolio')" style="padding:6px 10px;">← Back to Portfolio</button>
+      <h2 id="detailPropName" style="font-size:20px;font-weight:700;margin:0;"></h2>
+      <span id="detailPropBadge" class="badge" style="margin-left:auto;"></span>
+    </div>
+    <div class="grid-4" id="detailStats"></div>
+    <div id="detailContent"></div>
+  </div>
+</div>
+
+<script>
+// ── REAL DATA ONLY ──────────────────────────────────────────────────────────
+const PROPERTIES = [
+  { slug: "metairie-plaza", name: "Metairie Plaza", location: "Metairie, LA", units: 66, occupied: 60, vacant: 4, turnover: 2, occupancy: 91, cls: "Multi-Family", status: "data-loaded",
+    unitMix: [
+      { plan: "2 BR Flat", beds: "2/2", sqft: "1,040", rent: "$955–$1,300", count: 16, vacant: 1 },
+      { plan: "2 BR Flat CP", beds: "2/2", sqft: "1,080", rent: "$970–$1,250", count: 6, vacant: 1 },
+      { plan: "2 BR Townhome", beds: "2/1.5", sqft: "1,054", rent: "$980–$1,250", count: 14, vacant: 1 },
+      { plan: "2 BR Townhome CP", beds: "2/1.5–2", sqft: "1,054–1,150", rent: "$920–$1,250", count: 12, vacant: 1 },
+      { plan: "3 BR Townhome", beds: "3/2", sqft: "1,150", rent: "$1,150–$1,600", count: 8, vacant: 0 },
+      { plan: "3 BR Townhome CP", beds: "3/2", sqft: "1,150", rent: "$1,150–$1,350", count: 6, vacant: 0 },
+      { plan: "EX 3 BR Townhome", beds: "3/2.5", sqft: "1,735", rent: "$1,200–$2,200", count: 4, vacant: 1 },
+    ]},
+  { slug: "metairie-lake-apartments", name: "Metairie Lake Apartments", location: "Metairie, LA", units: 108, occupied: 98, vacant: 9, turnover: 1, occupancy: 91, cls: "Multi-Family", status: "data-loaded",
+    unitMix: [
+      { plan: "1 Bedroom", beds: "1/1", sqft: "696–699", rent: "$800–$1,475", count: 80, vacant: 7 },
+      { plan: "2 Bedroom", beds: "2/2", sqft: "1,044–1,230", rent: "$1,030–$1,600", count: 28, vacant: 2 },
+    ]},
+  { slug: "sanctuary-office-park", name: "Sanctuary Office Park", location: "Mandeville, LA", units: 5, occupied: 5, vacant: 0, turnover: 0, cls: "Commercial", status: "data-loaded",
+    isCommercial: true, totalSF: 91602, occupiedSF: 91352, vacantSF: 250, occupancy: 99.7, tenantCount: 38, monthlyRent: 173452.80, annualRent: 2081433.60, avgRentSF: 27.26,
+    buildings: [
+      { name: "Sanctuary #1", sf: 10228, occupiedSF: 10228, vacantSF: 0, tenants: 12, monthly: 23085.94 },
+      { name: "Sanctuary #2", sf: 20133, occupiedSF: 20133, vacantSF: 0, tenants: 14, monthly: 36844.59 },
+      { name: "Sanctuary #3", sf: 20385, occupiedSF: 20385, vacantSF: 0, tenants: 2, monthly: 41245.24 },
+      { name: "Sanctuary #4", sf: 20289, occupiedSF: 20039, vacantSF: 250, tenants: 7, monthly: 35472.86 },
+      { name: "Sanctuary #5", sf: 20567, occupiedSF: 20567, vacantSF: 0, tenants: 4, monthly: 36804.17 },
+    ]},
+  { slug: "mandeville-lake-apartments", name: "Mandeville Lake Apartments", location: "Mandeville, LA", units: 0, occupancy: 0, cls: "Multi-Family", status: "pending" },
+  { slug: "lakeside-village-townhomes", name: "Lakeside Village Townhomes", location: "Mandeville, LA", units: 45, occupied: 45, vacant: 0, turnover: 0, occupancy: 100, cls: "HOA / Mixed", status: "data-loaded",
+    isHOA: true, totalLots: 45, townhomes: 31, cottages: 14, rented: 15, ownerOccupied: 30, crosbyOwned: 11, crosbyManaged: 11, thirdPartyManaged: 4, monthlyRent: 30675, monthlyDues: 91880,
+    unitMix: [
+      { plan: "Townhome", beds: "N/A", sqft: "2,041–3,366", rent: "$1,500–$3,200/mo", count: 31, vacant: 0 },
+      { plan: "Cottage", beds: "N/A", sqft: "2,072", rent: "$3,200/mo", count: 14, vacant: 0 },
+    ]},
+  { slug: "gulf-south-commerce-park", name: "Gulf South Commerce Park", location: "St. Tammany Parish, LA", units: 0, occupancy: 0, cls: "Industrial", status: "pending" },
+  { slug: "delimon-place", name: "DeLimon Place", location: "Old Metairie, LA", units: 0, occupancy: 0, cls: "Townhome / Mixed", status: "pending" },
+  { slug: "the-sanctuary", name: "The Sanctuary", location: "Mandeville, LA", units: 0, occupancy: 0, cls: "HOA / Single-Family", status: "pending" },
+];
+
+// ── PROPERTY PROFILES ──────────────────────────────────────────────────────
+const PROPERTY_PROFILES = {
+  "metairie-plaza": {
+    type: "Apartment Complex", address: "1046 Lake Avenue, Metairie, LA 70005",
+    website: "metairieplaza.com", phone: "(504) 565-2664", yearBuilt: 1972, stories: 2, totalUnits: 66,
+    involvement: "Ground-up development complete — owned rental apartment complex",
+    description: "Centrally located in Metairie, minutes from the New Orleans CBD. Features 2 & 3 bedroom units (1,040–1,735 SF) including flats, townhomes, and executive townhomes. Amenities include a private swimming pool, ample off-street parking, covered carports, outdoor storage lockers, and professional on-site management.",
+    sqftRange: "1,040–1,735 SF", rentRange: "$955–$2,200/mo",
+  },
+  "metairie-lake-apartments": {
+    type: "Apartment Complex", address: "1309 Carrollton Avenue, Metairie, LA 70005",
+    website: "metairielake.com", phone: "(504) 285-5221", yearBuilt: 1978, stories: 3, totalUnits: 108,
+    involvement: "Ground-up development complete — owned rental apartment complex",
+    description: "Spacious 1 & 2 bedroom floor plans (696–1,230 SF) near New Orleans CBD, medical schools, and universities. Amenities include a swimming pool, courtyard, clubhouse, controlled access, fitness center, walk-in closets, and private patios/balconies. 10.7 miles from Louis Armstrong International Airport.",
+    sqftRange: "696–1,230 SF", rentRange: "$800–$1,600/mo",
+  },
+  "sanctuary-office-park": {
+    type: "Commercial Office Park", address: "1 Sanctuary Blvd, Mandeville, LA 70471",
+    website: "sanctuaryofficepark.com", phone: "(985) 373-2383", yearBuilt: 1995, stories: 3, totalUnits: null,
+    involvement: "Ground-up development complete — owned rental office complex",
+    description: "Five Class A commercial office buildings with beautifully landscaped grounds. Suites range from 200 to 13,455 SF. Full-service lease structure includes janitorial, trash, property maintenance, and HVAC — no CAM charges, no year-end adjustments. Fixed 3% annual rent increases. Located 2 miles from the Causeway Bridge with easy access to New Orleans and Baton Rouge. 38 active tenants, 91,602 total rentable SF, 99.7% leased.",
+    sqftRange: "200–13,455 SF", rentRange: "$309–$27,564/mo",
+  },
+  "mandeville-lake-apartments": {
+    type: "Apartment Complex", address: "4840 Highway 22, Mandeville, LA 70471",
+    website: "mandevillelake.com", phone: null, yearBuilt: null, stories: null, totalUnits: null,
+    involvement: "Ground-up development complete — owned rental apartment complex",
+    description: "Luxury apartment community in Mandeville offering 1–3 bedroom units (840–1,482 SF) starting at $1,525/mo. Features elevators in every building, trash chutes on every floor, 9-ft ceilings, crown molding, fireplaces, ceiling fans, and open-concept kitchens with custom cabinetry. Amenities include a clubhouse, two pools, tennis courts, car washing station, 24-hour fitness center, and playground. 5 minutes from the Causeway Bridge.",
+    sqftRange: "840–1,482 SF", rentRange: "From $1,525/mo",
+  },
+  "lakeside-village-townhomes": {
+    type: "HOA Community — Townhomes & Cottages", address: "1100 Mandeville High Blvd, Mandeville, LA 70471",
+    website: "lakesidevillage.org", phone: null, yearBuilt: null, stories: null, totalUnits: null,
+    involvement: "Ground-up development complete — partial unit ownership, partial property management contracts, full HOA management",
+    description: "Gated luxury townhome and cottage community in the heart of Mandeville, just steps from the Causeway. Upgraded amenities include well-equipped kitchens, crown molding, granite countertops, double-car garages, controlled access, private pool, club room with fitness center, pond, and community center. Located off Rue Renoir, directly across from Mandeville High School.",
+    sqftRange: "N/A", rentRange: "N/A",
+  },
+  "gulf-south-commerce-park": {
+    type: "Industrial Mega Site", address: "I-12 & LA Hwy 1088, St. Tammany Parish, LA",
+    website: "gulfsouthcommercepark.com", phone: null, yearBuilt: null, stories: null, totalUnits: null,
+    involvement: "Horizontal development — selling building pads. One plat sold (Parcel 1-A)",
+    description: "919-acre industrial mega site in St. Tammany Parish, less than 50 miles north of New Orleans. Master-planned for Advanced Manufacturing and Logistics. Located at I-12 & Hwy 1088 with access to ports, rail, and major highways. Developed in partnership with St. Tammany Corporation and Parish Government. Selected as a Louisiana FastSites project (2026) under the $150M Site Investment & Infrastructure Fund. Parcels available from 1 to 189 acres — currently doing horizontal development and selling building pads.",
+    sqftRange: "919 total acres", rentRange: "Land sales — pad-ready parcels",
+  },
+  "delimon-place": {
+    type: "Townhome Community & Apartment Complexes", address: "800 Rue Rampart, Old Metairie, LA 70005",
+    website: "delimonoldmetairie.com", phone: null, yearBuilt: 1981, stories: 3, totalUnits: 125,
+    involvement: "Limited remaining ownership — a few units + on-site office building. 3 separate HOAs. No HOA or property management involvement.",
+    description: "Established in 1981, DeLimon Place is an Old Metairie icon. Townhomes and two apartment complexes across 3 separate HOAs on a single site. Townhomes are ~3,000 SF (3-story). Pristine common areas, inground pool, party room. Easy access to City Park, Downtown New Orleans, the French Quarter, and the airport.",
+    sqftRange: "~3,000 SF (townhomes)", rentRange: "N/A",
+  },
+  "the-sanctuary": {
+    type: "Luxury Single-Family Community", address: "Sanctuary Blvd, Mandeville, LA 70471",
+    website: "thesanctuaryneighborhood.org", phone: null, yearBuilt: 1995, stories: null, totalUnits: 400,
+    involvement: "HOA management. One owned rental property. Multiple family members reside in the community.",
+    description: "Private gated community established in 1995 by Crosby Development Company on 1,170 acres less than 2 miles from Lake Pontchartrain. 400+ homesites surrounded by native wetlands, cypress marshes, and nature preserves. Amenities include a Health and Activity Center with tournament-sized pool, tennis courts, fitness facilities, and miles of walking/jogging/nature trails. Underground utilities. Lots from $215K–$676K; homes from $750K–$3.2M.",
+    sqftRange: "Custom homes", rentRange: "Lots $215K–$676K; Homes $750K–$3.2M",
+  },
+};
+
+// ── TENANT / UNIT DATA ──────────────────────────────────────────────────────
+const UNIT_ROSTER = {
+  "metairie-plaza": [
+    {unit:'1034 A',plan:'3 BR TH',name:'Bernadette Patterson',phone:'301-8033',email:'bpatterson@cox.net',status:'Occupied'},{unit:'1034 B',plan:'2 BR TH',name:'Kaitlyn Sorbel',phone:'504-756-3327',email:'ksorbel1994@live.com',status:'Occupied'},{unit:'1034 C',plan:'2 BR TH',name:'Priscilla Shepack',phone:'504-914-3589',email:'shepackpriscilla@gmail.com',status:'Occupied'},{unit:'1034 D',plan:'2 BR TH',name:'Mary/Reese Ellis/ Bourdais',phone:'504-421-8596',email:'mgellis2020@gmail.com',status:'Occupied'},
+    {unit:'1034 E',plan:'3 BR TH',name:'Jerry/William White/Thornton',phone:'606-3729',email:'',status:'Occupied'},{unit:'1041 A',plan:'2 BR FL',name:'Bryan Hartman',phone:'256-9438',email:'bryankhartman@gmail.com',status:'Occupied'},{unit:'1041 B',plan:'2 BR FL',name:'Christon Saik',phone:'',email:'cornut531@gmail.com',status:'Occupied'},{unit:'1041 C',plan:'2 BR FL',name:'from Met. Lake',phone:'',email:'',status:'Vacant'},
+    {unit:'1041 D',plan:'2 BR FL',name:'Mitchell Temple',phone:'',email:'mitchell.temple@ochsner.org',status:'Occupied'},{unit:'1041 E',plan:'2 BR FL',name:'Whitney Wortham',phone:'318-235-8968',email:'whitney_wortham@yahoo.com',status:'Occupied'},{unit:'1041 F',plan:'2 BR FL',name:'Sharon Callegan',phone:'835-0695',email:'',status:'Occupied'},{unit:'1041 G',plan:'2 BR FL',name:'Devonica Deal',phone:'377-4628',email:'devonicad@gmail.com',status:'Moved Out'},
+    {unit:'1041 H',plan:'2 BR FL',name:'Norma Velasquez',phone:'504-505-4862',email:'nlizeth35@hotmail.com',status:'Occupied'},{unit:'1044 A',plan:'2 BR FL',name:'Laura Romero',phone:'504-250-2063',email:'',status:'Occupied'},{unit:'1044 B',plan:'2 BR FL',name:'Julia Shane',phone:'504-523-1927',email:'mariecaj2@ymail.com',status:'Occupied'},{unit:'1044 C',plan:'2 BR FL',name:'Carlette Hayes',phone:'225-328-5069',email:'Carlette.I.Hayes@usps.gov',status:'Occupied'},
+    {unit:'1044 D',plan:'2 BR FL',name:'Elizabeth Bernard',phone:'504-874-3549',email:'elizpbernard@gmail.com',status:'Moving'},{unit:'1044 E',plan:'2 BR FL',name:'Janet Mouledous',phone:'504-453-9475',email:'janetmouledous@gmail.com',status:'Occupied'},{unit:'1044 F',plan:'2 BR FL',name:'Lauren Giraud-Lotz',phone:'432-9319',email:'laurenglotz@gmail.com',status:'Occupied'},{unit:'1044 G',plan:'2 BR FL',name:'Nathan/Caitlin Reveley/Murphy',phone:'',email:'sunsetswamp@gmail.com',status:'Occupied'},
+    {unit:'1044 H',plan:'2 BR FL',name:'Laurie Gendron',phone:'',email:'lauriebg7@gmail.com',status:'Occupied'},{unit:'1048 A',plan:'3 BR TH',name:'Ronald Olivier',phone:'520-9734',email:'rolivier8486@yahoo.com',status:'Occupied'},{unit:'1048 B',plan:'2 BR TH',name:'Christina Kapsos-Munch',phone:'628-9033',email:'ckapsosmunch@yahoo.com',status:'Occupied'},{unit:'1048 C',plan:'2 BR TH',name:'Kathryn Picone',phone:'504-444-5591',email:'berkana1@gmail.com',status:'Occupied'},
+    {unit:'1048 D',plan:'2 BR TH',name:'Rogers Joyce',phone:'',email:'rogersnorton@gmail.com',status:'Occupied'},{unit:'1048 E',plan:'3 BR TH',name:'Noel Cipriano',phone:'833-1046',email:'',status:'Occupied'},{unit:'209 A',plan:'2 BR FL CP',name:'Kenneth Dedrick',phone:'504-982-7117',email:'kennethdedrick4@yahoo.com',status:'Occupied'},{unit:'209 B',plan:'2 BR TH CP',name:'Joseph Faroldi',phone:'504-913-2596',email:'',status:'Occupied'},
+    {unit:'209 C',plan:'2 BR TH CP',name:'Abigail Richard',phone:'985-551-1353',email:'abigailamyrichard@gmail.com',status:'Occupied'},{unit:'209 D',plan:'3 BR TH CP',name:'Paula Jackson',phone:'722-7405',email:'pjackson5656@gmail.com',status:'Occupied'},{unit:'210 A',plan:'2 BR FL CP',name:'Calvin/Abigail Idom/Lonigro',phone:'',email:'calvinidom@gmail.com',status:'Occupied'},{unit:'210 B',plan:'2 BR TH CP',name:'Patricia Frost-Chiek',phone:'874-1561',email:'trishafrost22@gmail.com',status:'Occupied'},
+    {unit:'210 C',plan:'2 BR TH CP',name:'Dado Papich',phone:'504-616-0541',email:'dpapic24@yahoo.com',status:'Occupied'},{unit:'210 D',plan:'3 BR TH CP',name:'Kenneth/Mira Foxworth/Jones',phone:'',email:'kenf1988@yahoo.com',status:'Occupied'},{unit:'217 A',plan:'2 BR FL CP',name:'Tomas/Kristel Aparicio/Hurtado',phone:'',email:'tomas.aparicio@ritzcarlton.com',status:'Occupied'},{unit:'217 B',plan:'2 BR TH CP',name:'Vaja\'e Parker',phone:'504-458-9284',email:'vparker504@icloud.com',status:'Occupied'},
+    {unit:'217 C',plan:'2 BR TH CP',name:'Cornell Manuel',phone:'504-325-6636',email:'cjmanpha1993@gmail.com',status:'Occupied'},{unit:'217 D',plan:'3 BR TH CP',name:'Linda Morgan',phone:'864-9455',email:'linda@nolasport.net',status:'Occupied'},{unit:'218 A',plan:'2 BR FL CP',name:'Thanh Duong',phone:'985-859-2614',email:'thanh42390@yahoo.com',status:'Occupied'},{unit:'218 B',plan:'2 BR TH CP',name:'Ivan Duong',phone:'',email:'',status:'Vacant'},
+    {unit:'218 C',plan:'2 BR TH CP',name:'Herman Lombos',phone:'833-6599',email:'hlombas@cox.net',status:'Occupied'},{unit:'218 D',plan:'3 BR TH CP',name:'Ken Susan',phone:'838-9425',email:'',status:'Occupied'},{unit:'225 A',plan:'2 BR FL CP',name:'Helen Harris',phone:'504-874-1079',email:'mz_honey504@yahoo.com',status:'Occupied'},{unit:'225 B',plan:'2BR TH CP',name:'Jazmine/Allie King/King',phone:'985-351-2818',email:'jking16@tulane.edu',status:'Occupied'},
+    {unit:'225 C',plan:'2 BR TH CP',name:'Monica Mora',phone:'504-717-3449',email:'mlm682@hotmail.com',status:'Occupied'},{unit:'225 D',plan:'3 BR TH CP',name:'Alexandra Raskina Alexander',phone:'828-8173',email:'sasha.raskina@gmail.com',status:'Occupied'},{unit:'226 A',plan:'2 BR FL CP',name:'Joshua Vivas Gomez',phone:'305-570-7426',email:'joshuavivas89@gmail.com',status:'Occupied'},{unit:'226 B',plan:'2 BR TH CP',name:'Debra James',phone:'710-0563',email:'debrajames12555@gmail.com',status:'Occupied'},
+    {unit:'226 C',plan:'2 BR TH CP',name:'Brock/Batuhan Dogan/Zorluturk',phone:'504-677-6344',email:'doganbrock@gmail.com',status:'Occupied'},{unit:'226 D',plan:'3 BR TH CP',name:'Karen Lachney',phone:'504-920-4962',email:'kklachney@hotmail.com',status:'Occupied'},{unit:'233 A',plan:'3 BR TH',name:'Esperanza Jorge',phone:'219-0125',email:'basilioacevedo029@gmail.com',status:'Occupied'},{unit:'233 B',plan:'2 BR TH',name:'Evan/Judah Keller/Wolf',phone:'',email:'kellerevanw@gmail.com',status:'Occupied'},
+    {unit:'233 C',plan:'2 BR TH',name:'Mary Ellen Remi',phone:'504-723-1835',email:'remielise16@yahoo.com',status:'Occupied'},{unit:'233 D',plan:'2 BR TH',name:'Allan Richards',phone:'225-371-9036',email:'allanrichards@hotmail.com',status:'Occupied'},{unit:'233 E',plan:'2 BR TH',name:'Michael Nuber',phone:'985-685-8547',email:'mike.nuber78@gmail.com',status:'Occupied'},{unit:'233 F',plan:'3 BR TH',name:'Elainey/Bryson Heltz/Parker',phone:'985-703-0837',email:'emheltz00@gmail.com',status:'Occupied'},
+    {unit:'234 A',plan:'3 BR TH',name:'Kevin Davis',phone:'',email:'image1025@gmail.com',status:'Occupied'},{unit:'234 B',plan:'',name:'',phone:'',email:'',status:''},{unit:'234 C',plan:'2 BR TH',name:'Earl/Rachel Lightell',phone:'985-774-7052',email:'earllightell@yahoo.com',status:'Occupied'},{unit:'234 D',plan:'2 BR TH',name:'Barbara Nye',phone:'419-344-3657',email:'barbyn@icloud.com',status:'Occupied'},
+    {unit:'234 E',plan:'2 BR TH',name:'Stephanie Rose',phone:'504-722-0240',email:'stephanierose504@gmail.com',status:'Occupied'},{unit:'234 F',plan:'3 BR TH',name:'',phone:'',email:'',status:'Vacant'},
+  ],
+  "metairie-lake-apartments": [
+    {unit:'1',plan:'1BR',name:'Dinah Mestier',phone:'504-357-7953',email:'dmestier@icloud.com',status:'Occupied'},{unit:'2',plan:'1BR',name:'atrick Soden',phone:'985-201-3644',email:'patricksoden@gmail.com',status:'Occupied'},{unit:'3',plan:'2BR',name:'Jennifer Burns',phone:'228-2038',email:'',status:'Occupied'},{unit:'4',plan:'2BR',name:'am Taranto',phone:'504-439-5553',email:'',status:'Occupied'},
+    {unit:'5',plan:'2BR',name:'Charlotte',phone:'832-1866',email:'',status:'Occupied'},{unit:'6',plan:'1BR',name:'Monique Goutierrez',phone:'337-251-0453',email:'nickigt444@gmail.com',status:'Occupied'},{unit:'7',plan:'1BR',name:'ona Bernard',phone:'402-3232',email:'',status:'Occupied'},{unit:'8',plan:'1BR',name:'Keyli apalo',phone:'504-617-8073',email:'',status:'Occupied'},
+    {unit:'9',plan:'1BR',name:'',phone:'',email:'',status:'Vacant'},{unit:'10',plan:'1BR',name:'Ken Kulik',phone:'782-9932',email:'',status:'Occupied'},{unit:'11',plan:'1BR',name:'JoAnn Lartigue',phone:'835-2559',email:'joannlartigue504@gmail.com',status:'Occupied'},{unit:'12',plan:'1BR',name:'icole Lopiparo',phone:'615-5775',email:'',status:'Occupied'},
+    {unit:'13',plan:'2BR',name:'Jose',phone:'504-283-8822',email:'taitaguejose93@gmail.com',status:'Occupied'},{unit:'14',plan:'2BR',name:'JB/Eli Landrum/Tidewell',phone:'',email:'',status:'Occupied'},{unit:'15',plan:'1BR',name:'Marc A Demma',phone:'388-0427',email:'',status:'Occupied'},{unit:'16',plan:'1BR',name:'Thomas ipchinski',phone:'',email:'',status:'Occupied'},
+    {unit:'17',plan:'1BR',name:'Dawn Leaumont',phone:'504-380-5530',email:'dawnleaumont@gmail.com',status:'Occupied'},{unit:'18',plan:'1BR',name:'Cameron',phone:'504-428-5616',email:'',status:'Occupied'},{unit:'19',plan:'1BR',name:'David Hall',phone:'343-6564',email:'dwhtoo@hotmail.com',status:'Occupied'},{unit:'20',plan:'2BR',name:'Lisa Wong',phone:'225-773-1419',email:'lwong1009@yahoo.com',status:'Occupied'},
+    {unit:'21',plan:'2BR',name:'Dralene Sintes',phone:'504-914-1472',email:'darlenesintes@gmail.com',status:'Occupied'},{unit:'22',plan:'1BR',name:'Jana',phone:'504-430-3573',email:'',status:'Occupied'},{unit:'23',plan:'2BR',name:'Gabriela Dalazen',phone:'504-508-9778',email:'gabrieladalszen@gmail.com',status:'Occupied'},{unit:'24',plan:'1BR',name:'Jacqulyn Chad',phone:'318-977-2497',email:'jacqymuller@yahoo.com',status:'Occupied'},
+    {unit:'25',plan:'2BR',name:'Alice Mayeaux',phone:'225-330-1112',email:'',status:'Occupied'},{unit:'26',plan:'1BR',name:'`@ Louis',phone:'837-9233',email:'',status:'Occupied'},{unit:'27',plan:'1BR',name:'Steven',phone:'957-3977',email:'steven.voorhies@michelin.com',status:'Occupied'},{unit:'28',plan:'1BR',name:'`@ Lynn',phone:'421-6865',email:'',status:'Occupied'},
+    {unit:'29',plan:'1BR',name:'William Thompson',phone:'504-296-1663',email:'wdthompsgrey@gmail.com',status:'Occupied'},{unit:'30',plan:'1BR',name:'Sherry Migaud',phone:'504-215-0372',email:'',status:'Occupied'},{unit:'31',plan:'1BR',name:'Christine Johnson',phone:'504-294-9750',email:'johnson2147@bellsouth.net',status:'Occupied'},{unit:'32',plan:'1BR',name:'Jaquil Lovett',phone:'',email:'jtl129@rutgers.edu',status:'Occupied'},
+    {unit:'33',plan:'1BR',name:'Allie (jane) Avery',phone:'504-339-9806',email:'jayneavery@me.com',status:'Occupied'},{unit:'34',plan:'1BR',name:'a@ Savannah',phone:'',email:'',status:'Occupied'},{unit:'35',plan:'1BR',name:'i@ Breyanah',phone:'',email:'',status:'Occupied'},{unit:'36',plan:'1BR',name:'Dane',phone:'504-402-1063',email:'',status:'Occupied'},
+    {unit:'37',plan:'2BR',name:'Arnold',phone:'813-7570',email:'',status:'Occupied'},{unit:'38',plan:'2BR',name:'Douglas/Brian osenthal',phone:'606-3576',email:'',status:'Occupied'},{unit:'39',plan:'2BR',name:'',phone:'337-258-6277',email:'',status:'Vacant'},{unit:'40',plan:'2BR',name:'Swayze Landry',phone:'985-870-5408',email:'landryswayze@gmail.com',status:'Occupied'},
+    {unit:'41',plan:'1BR',name:'Gabriel Woodson',phone:'',email:'',status:'Occupied'},{unit:'42',plan:'1BR',name:'Dien guyen-Bui',phone:'504-375-8430',email:'dien2000@gmail.com',status:'Occupied'},{unit:'43',plan:'1BR',name:'j@ Daniel',phone:'813-1082',email:'',status:'Occupied'},{unit:'44',plan:'1BR',name:'Tim',phone:'225-207-9432',email:'',status:'Occupied'},
+    {unit:'45',plan:'1BR',name:'Candace',phone:'337-303-5974',email:'',status:'Occupied'},{unit:'46',plan:'1BR',name:'Wes Thibodeaux',phone:'504-444-7116',email:'westhib@gmail.com',status:'Occupied'},{unit:'47',plan:'2BR',name:'Bairagi audei',phone:'504-508-6270',email:'',status:'Occupied'},{unit:'48',plan:'2BR',name:'Clemmiette/Kyle Fairley/Martin',phone:'228-235-3011',email:'clemmiette.fairley@yahoo.com',status:'Occupied'},
+    {unit:'49',plan:'1BR',name:'Jaci Ward',phone:'',email:'jaciward12@yahoo.com',status:'Occupied'},{unit:'50',plan:'1BR',name:'Annette oth',phone:'939-1065',email:'',status:'Occupied'},{unit:'51',plan:'1BR',name:'k@ Carol',phone:'985-707-8524',email:'',status:'Occupied'},{unit:'52',plan:'1BR',name:'Luciana',phone:'504-266-3273',email:'',status:'Occupied'},
+    {unit:'53',plan:'1BR',name:'Clementina',phone:'450-5276',email:'',status:'Occupied'},{unit:'54',plan:'1BR',name:'Alexander owe',phone:'',email:'alexanderlmg@gmail.com',status:'Occupied'},{unit:'55',plan:'1BR',name:'Trey Tramell',phone:'427-5769',email:'',status:'Occupied'},{unit:'56',plan:'1BR',name:'yan Foret',phone:'504-919-3515',email:'rforet316@aol.com',status:'Occupied'},
+    {unit:'57',plan:'2BR',name:'andhini Eswar',phone:'504-203-9517',email:'',status:'Occupied'},{unit:'58',plan:'2BR',name:'Giovenda/Nikita Kafle/Dhkal',phone:'504-892-6832',email:'',status:'Vacant'},{unit:'59',plan:'1BR',name:'l@ Jason',phone:'390-9759',email:'',status:'Occupied'},{unit:'60',plan:'2BR',name:'Jaron /Joanna',phone:'228-206-5432',email:'',status:'Moving'},
+    {unit:'61',plan:'1BR',name:'Allen',phone:'',email:'allenslee3@gmail.com',status:'Occupied'},{unit:'62',plan:'2BR',name:'Spouse Francine/Gad',phone:'',email:'',status:'Occupied'},{unit:'63',plan:'1BR',name:'Justin LeBlanc',phone:'985-804-0916',email:'',status:'Occupied'},{unit:'64',plan:'1BR',name:'Trinh Bui',phone:'225-456-0219',email:'',status:'Occupied'},
+    {unit:'65',plan:'1BR',name:'Manuel apale',phone:'',email:'manuelpapale@hotmail.com',status:'Occupied'},{unit:'66',plan:'1BR',name:'',phone:'237-7734',email:'morettiniamanda@gmail.com',status:'Vacant'},{unit:'67',plan:'1BR',name:'m@ Alec',phone:'',email:'',status:'Occupied'},{unit:'68',plan:'1BR',name:'Maria',phone:'512-3018',email:'',status:'Occupied'},
+    {unit:'69',plan:'1BR',name:'20 21 30 31 33',phone:'985-870-9662',email:'',status:'Vacant'},{unit:'70',plan:'1BR',name:'Anna Lisa odney',phone:'',email:'',status:'Occupied'},{unit:'71',plan:'1BR',name:'Jacob Burris',phone:'',email:'',status:'Occupied'},{unit:'72',plan:'1BR',name:'Brooke Simon',phone:'504-312-2207',email:'brookea328@gmail.com',status:'Occupied'},
+    {unit:'73',plan:'1BR',name:'Keith Brown',phone:'504-813-1350',email:'keith@kmbcounseling.com',status:'Occupied'},{unit:'74',plan:'2BR',name:'Shambhu Joshi',phone:'504-503-3077',email:'sjoshi3@tulane.edu',status:'Occupied'},{unit:'75',plan:'2BR',name:'Chelethea Thompson',phone:'601-395-8372',email:'',status:'Occupied'},{unit:'76',plan:'2BR',name:'Bipul oudel',phone:'',email:'bipulpoudel1991@gmail.com',status:'Occupied'},
+    {unit:'77',plan:'1BR',name:'s@ Shalika',phone:'504-547-2309',email:'',status:'Occupied'},{unit:'78',plan:'1BR',name:'Annie Dupuy',phone:'225-235-3848',email:'dupuyannie3@gmail.com',status:'Occupied'},{unit:'79',plan:'1BR',name:'eid',phone:'225-385-5183',email:'',status:'Occupied'},{unit:'80',plan:'1BR',name:'',phone:'318-578-8038',email:'',status:'Vacant'},
+    {unit:'81',plan:'1BR',name:'',phone:'',email:'',status:'Vacant'},{unit:'82',plan:'1BR',name:'Cory',phone:'504-615-2649',email:'',status:'Occupied'},{unit:'83',plan:'1BR',name:'Michael Abadie',phone:'504-315-9098',email:'',status:'Occupied'},{unit:'84',plan:'2BR',name:'Hui Zhang',phone:'504-766-0089',email:'',status:'Occupied'},
+    {unit:'85',plan:'2BR',name:'LiJun Baojun',phone:'',email:'baojun.888rachel@gmail.com',status:'Occupied'},{unit:'86',plan:'1BR',name:'ofio ecoraro',phone:'',email:'',status:'Vacant'},{unit:'87',plan:'1BR',name:'Mahya Sabour',phone:'',email:'mahya.sabour@mail.mlg.or',status:'Occupied'},{unit:'88',plan:'1BR',name:'Jaden Davis',phone:'985-520-7986',email:'',status:'Occupied'},
+    {unit:'89',plan:'1BR',name:'Ivelina Tihomir',phone:'666-5900',email:'',status:'Occupied'},{unit:'90',plan:'1BR',name:'Alexander/Nicolas Harrington/Gennuca',phone:'',email:'',status:'Occupied'},{unit:'91',plan:'1BR',name:'Jacob awlings',phone:'',email:'jrawlings@tulane.edu',status:'Occupied'},{unit:'92',plan:'1BR',name:'Alexander Wong',phone:'225-773-0235',email:'',status:'Occupied'},
+    {unit:'93',plan:'1BR',name:'t@ Sheryl',phone:'837-6860',email:'',status:'Occupied'},{unit:'94',plan:'2BR',name:'Ireland/Sarah Cotes/Rader',phone:'225-287-8199',email:'',status:'Occupied'},{unit:'95',plan:'2BR',name:'Aiyana',phone:'985-264-1495',email:'hotardaw@gmail.com',status:'Occupied'},{unit:'96',plan:'1BR',name:'Sara',phone:'',email:'sara.karnes2019@gmail.com',status:'Occupied'},
+    {unit:'97',plan:'2BR',name:'Angela',phone:'504-912-3394',email:'greentiger538@gmail.com',status:'Occupied'},{unit:'98',plan:'1BR',name:'Tyler',phone:'601-408-8341',email:'tylerstuart15@gmail.com',status:'Occupied'},{unit:'99',plan:'2BR',name:'Catherine Alesich',phone:'669-3677',email:'calesich@aol.com',status:'Occupied'},{unit:'100',plan:'1BR',name:'Jasjeet Singh',phone:'318-372-5266',email:'',status:'Occupied'},
+    {unit:'101',plan:'1BR',name:'Jackson Cross',phone:'',email:'tjcross311@gmail.com',status:'Occupied'},{unit:'102',plan:'1BR',name:'Lakia Smith',phone:'504-729-0039',email:'',status:'Occupied'},{unit:'103',plan:'1BR',name:'Andrea Hysaw',phone:'648-9690',email:'mariehysaw83@gmail.com',status:'Occupied'},{unit:'104',plan:'1BR',name:'Sabina Baral',phone:'',email:'',status:'Occupied'},
+    {unit:'105',plan:'1BR',name:'Christopher Lindeman',phone:'',email:'',status:'Occupied'},{unit:'106',plan:'1BR',name:'Xin Miao',phone:'',email:'xnmiao@gmail.com',status:'Occupied'},{unit:'107',plan:'1BR',name:'Dylan',phone:'225-235-0144',email:'',status:'Occupied'},{unit:'108',plan:'1BR',name:'',phone:'',email:'juliekarcia@gmail.com',status:'Vacant'},
+  ],
+  "lakeside-village-townhomes": [
+    {unit:'1',plan:'Townhome',address:'1225 Rue Degas',owner:'Charlie Bateman',ownerPhone:'9856743650',ownerEmail:'operations@patobriens.com',dues:'$1,880',status:'Owner-Occupied',role:'Owner-Occupied'},
+    {unit:'2',plan:'Townhome',address:'1223 Rue Degas',owner:'LSV/Crosby',dues:'$1,880',status:'Rented',role:'Crosby Managed',name:'Nancy Coffey',phone:'5046506406',email:'coffeynancy504@gmail.com',rent:'$2,650'},
+    {unit:'3',plan:'Townhome',address:'1221 Rue Degas',owner:'Jason Gillard',ownerPhone:'5046358414',ownerEmail:'jgillard100@gmail.com',dues:'$1,880',status:'Owner-Occupied',role:'Owner-Occupied'},
+    {unit:'4',plan:'Townhome',address:'1219 Rue Degas',owner:'Michael Romig',ownerPhone:'5046214809',ownerEmail:'mtt75007@gmail.com',dues:'$1,880',status:'Owner-Occupied',role:'Owner-Occupied'},
+    {unit:'5',plan:'Townhome',address:'1217 Rue Degas',owner:'LSV/Crosby',dues:'$1,880',status:'Rented',role:'Crosby Managed',name:'Marshall Delesdernier',phone:'5044323387',email:'Marshall.delesdernier@yahoo.com',rent:'$3,200'},
+    {unit:'6',plan:'Townhome',address:'1215 Rue Degas',owner:'Kulwinder Banipal',ownerEmail:'Kbanipal@hotmail.com',dues:'$1,880',status:'Rented',role:'Crosby Managed',name:'Kris Keith',phone:'8043567348',email:'podleshs3@yahoo.com',rent:'$2,775'},
+    {unit:'7',plan:'Townhome',address:'1213 Rue Degas',owner:'John Kavanaugh',ownerPhone:'3183472870',ownerEmail:'L.m.kavanaugh@gmail.com',dues:'$1,880',status:'Owner-Occupied',role:'Owner-Occupied'},
+    {unit:'8',plan:'Townhome',address:'1211 Rue Degas',owner:'Sidney Beaumont',ownerPhone:'5042329578',ownerEmail:'sydney.beaumont@gmail.com',dues:'$1,880',status:'Owner-Occupied',role:'Owner-Occupied'},
+    {unit:'9',plan:'Townhome',address:'1209 Rue Degas',owner:'Kimberly Kelly',ownerPhone:'9852641058',ownerEmail:'meilet@bellsouth.net',dues:'$1,880',status:'Owner-Occupied',role:'Owner-Occupied'},
+    {unit:'10',plan:'Townhome',address:'1207 Rue Degas',owner:'Michael Dorris',ownerPhone:'5048103964',ownerEmail:'mdorris@delsol-consulting.com',dues:'$1,880',status:'Owner-Occupied',role:'Owner-Occupied'},
+    {unit:'11',plan:'Townhome',address:'1205 Rue Degas',owner:'Spencer Graham-Winkles',ownerPhone:'5043603020',ownerEmail:'winkcrain@gmail.com',dues:'$1,880',status:'Owner-Occupied',role:'Owner-Occupied'},
+    {unit:'12',plan:'Townhome',address:'1203 Rue Degas',owner:'Christopher Mora',ownerPhone:'9853732727',ownerEmail:'cmora@one-louisiana.com',dues:'$1,880',status:'Owner-Occupied',role:'Owner-Occupied'},
+    {unit:'13',plan:'Townhome',address:'1201 Rue Degas',owner:'Kevin Schabel Bayhi',ownerPhone:'5044305033',ownerEmail:'kbayhi@bellsouth.net',dues:'$1,880',status:'Owner-Occupied',role:'Owner-Occupied'},
+    {unit:'14',plan:'Townhome',address:'1200 Rue Degas',owner:'Gigi/David Leblanc/Rosenfeld',ownerPhone:'5047564916',ownerEmail:'drose70471@gmail.com',dues:'$1,880',status:'Owner-Occupied',role:'Owner-Occupied'},
+    {unit:'15',plan:'Townhome',address:'1202 Rue Degas',owner:'Mary Gayle Adams',ownerPhone:'9857783809',ownerEmail:'gayleadams59@msn.com',dues:'$1,880',status:'Owner-Occupied',role:'Owner-Occupied'},
+    {unit:'16',plan:'Townhome',address:'1204 Rue Degas',owner:'Ross Quartano',ownerPhone:'9858696402',ownerEmail:'rossquartano@gmail.com',dues:'$1,880',status:'Rented',role:'Third-Party Managed',name:'Shermetrius Mack-Grey',phone:'9857072571',email:'smackgray@gmail.com'},
+    {unit:'17',plan:'Townhome',address:'1206 Rue Degas',owner:'Taranjeet Banipal',ownerPhone:'6019411540',dues:'$1,880',status:'Rented',role:'Crosby Managed',name:'Kasey Fontenot',phone:'9857783148',email:'kasey.fontenot@yahoo.com',rent:'$2,850'},
+    {unit:'18',plan:'Townhome',address:'1208 Rue Degas',owner:'Scott Gutterman',ownerPhone:'9856307029',ownerEmail:'scottgu58@gmail.com',dues:'$1,880',status:'Rented',role:'Third-Party Managed',name:'Karla Kite',phone:'9852318865',email:'ammiekite@gmail.com'},
+    {unit:'19',plan:'Townhome',address:'1210 Rue Degas',owner:'Scott Swanner',ownerPhone:'5044514361',dues:'$1,880',status:'Rented',role:'Third-Party Managed',name:'Chet Vaughn',phone:'5045599928',email:'Vaughn.chester@gmail.com'},
+    {unit:'20',plan:'Townhome',address:'201 Rue Esplanade',owner:'Joseph Bartels',ownerPhone:'504-439-2901',ownerEmail:'Joeb@jcbartels.com',dues:'$1,880',status:'Owner-Occupied',role:'Owner-Occupied'},
+    {unit:'21',plan:'Townhome',address:'205 Rue Esplanade',owner:'LSV/Crosby',dues:'$1,880',status:'Rented',role:'Crosby Managed',name:'Shane Lecocq',phone:'9852153645',email:'shanelecocq@yahoo.com',rent:'$3,200'},
+    {unit:'22',plan:'Townhome',address:'209 Rue Esplanade',owner:'LSV/Crosby',dues:'$1,880',status:'Rented',role:'Crosby Managed',name:'Jeff Anderson',phone:'5046168055',email:'jeff.business@icloud.com',rent:'$3,200'},
+    {unit:'23',plan:'Townhome',address:'213 Rue Esplanade',owner:'LSV/Crosby',dues:'$1,880',status:'Rented',role:'Crosby Managed',name:'Daniel Dipol',phone:'9857786782',email:'danieldipol6782@gmail.com',rent:'$1,500'},
+    {unit:'24',plan:'Townhome',address:'217 Rue Esplanade',owner:'LSV/Crosby',dues:'$1,880',status:'Rented',role:'Crosby Managed',name:'Rosalyn Jackson',phone:'8325630976',email:'jrosalyn54@gmail.com',rent:'$3,200'},
+    {unit:'25',plan:'Townhome',address:'221 Rue Esplanade',owner:'Amie Willis',ownerPhone:'5044163836',ownerEmail:'ame1680@icloud.com',dues:'$1,880',status:'Owner-Occupied',role:'Owner-Occupied'},
+    {unit:'26',plan:'Townhome',address:'1211 Rue Renoir',owner:'Angelina Burst',ownerPhone:'5042508508',ownerEmail:'angelina@directmail.io',dues:'$1,880',status:'Owner-Occupied',role:'Owner-Occupied'},
+    {unit:'27',plan:'Townhome',address:'1209 Rue Renoir',owner:'Holly Haik',ownerPhone:'5044005290',ownerEmail:'LSUHaikLSU@gmail.com',dues:'$1,880',status:'Owner-Occupied',role:'Owner-Occupied'},
+    {unit:'28',plan:'Townhome',address:'1207 Rue Renoir',owner:'LSV/Crosby',dues:'$1,880',status:'Rented',role:'Crosby Managed',name:'Scott Morgan',phone:'3144979281',email:'morgans68@gmail.com',rent:'$2,400'},
+    {unit:'29',plan:'Townhome',address:'1205 Rue Renoir',owner:'Jane Walls',ownerPhone:'5042368880',ownerEmail:'janemwalls@yahoo.com',dues:'$1,880',status:'Owner-Occupied',role:'Owner-Occupied'},
+    {unit:'30',plan:'Townhome',address:'1203 Rue Renoir',owner:'Gregory Schenck',ownerPhone:'5049757165',ownerEmail:'3whodatz@gmail.com',dues:'$1,880',status:'Owner-Occupied',role:'Owner-Occupied'},
+    {unit:'31',plan:'Townhome',address:'1201 Rue Renoir',owner:'Jag Banipal',ownerPhone:'6015737147',ownerEmail:'jagwinder@msn.com',dues:'$1,880',status:'Rented',role:'Crosby Managed',name:'Allison Groves',phone:'4153850386',email:'Littlestar.alg@gmail.com',rent:'$2,500'},
+    {unit:'32A',plan:'Cottage',address:'1200 Rue Renoir',owner:'Eddy Nana-Tankeu',ownerPhone:'9096886',ownerEmail:'ecnana@live.com',dues:'$2,400',status:'Owner-Occupied',role:'Owner-Occupied'},
+    {unit:'33A',plan:'Cottage',address:'1204 Rue Renoir',owner:'Tommy Crosby',ownerPhone:'9857896252',ownerEmail:'tommy@crosbydevelopment.com',dues:'$2,400',status:'Rented',role:'Crosby Managed',name:'Paula Sperry',phone:'9853029646',email:'paula.sperry@yahoo.com',rent:'$3,200'},
+    {unit:'34A',plan:'Cottage',address:'1206 Rue Renoir',owner:'Marshall/Susan Thompson',ownerPhone:'8506879453',ownerEmail:'mthompson621@hotmail.com',dues:'$2,400',status:'Owner-Occupied',role:'Owner-Occupied'},
+    {unit:'35A',plan:'Cottage',address:'225 Rue Esplanade',owner:'Beth Seamon',ownerPhone:'5044600253',ownerEmail:'beth@shopsilverplum.com',dues:'$2,400',status:'Owner-Occupied',role:'Owner-Occupied'},
+    {unit:'36A',plan:'Cottage',address:'229 Rue Esplanade',owner:'Cathy Crosby',ownerPhone:'5048843443',ownerEmail:'Cathy@crosbydevelopment.com',dues:'$2,400',status:'Owner-Occupied',role:'Owner-Occupied'},
+    {unit:'37A',plan:'Cottage',address:'233 Rue Esplanade',owner:'Cathy Crosby',ownerPhone:'5048843443',ownerEmail:'Cathy@crosbydevelopment.com',dues:'$2,400',status:'Owner-Occupied',role:'Owner-Occupied'},
+    {unit:'38A',plan:'Cottage',address:'1207 Rue Monet',owner:'Scott Swanner',ownerPhone:'5044514361',ownerEmail:'suswanner@gmail.com',dues:'$2,400',status:'Owner-Occupied',role:'Owner-Occupied'},
+    {unit:'39A',plan:'Cottage',address:'1205 Rue Monet',owner:'Ed Clark',ownerPhone:'4043530414',ownerEmail:'edwardclark66@gmail.com',dues:'$2,400',status:'Owner-Occupied',role:'Owner-Occupied'},
+    {unit:'40A',plan:'Cottage',address:'1201 Rue Monet',owner:'Colton Acosta',ownerPhone:'9855029510',ownerEmail:'coltonvacosta@gmail.com',dues:'$2,400',status:'Owner-Occupied',role:'Owner-Occupied'},
+    {unit:'41A',plan:'Cottage',address:'1210 Rue Monet',owner:'Joseph Jeanmarie, Sr.',ownerPhone:'5044212035',ownerEmail:'joejam@cox.net',dues:'$2,400',status:'Owner-Occupied',role:'Owner-Occupied'},
+    {unit:'42A',plan:'Cottage',address:'1208 Rue Monet',owner:'Pat Flower',ownerPhone:'6013374824',ownerEmail:'pcflower@bellsouth.net',dues:'$2,400',status:'Owner-Occupied',role:'Owner-Occupied'},
+    {unit:'43A',plan:'Cottage',address:'1206 Rue Monet',owner:'Kristin Core',ownerPhone:'9852646500',ownerEmail:'corekristin@gmail.com',dues:'$2,400',status:'Rented',role:'Third-Party Managed',name:'Eric Westenberger',phone:'5048587643',email:'emwest@bellsouth.net'},
+    {unit:'44A',plan:'Cottage',address:'1202 Rue Monet',owner:'Eli Crosby',ownerPhone:'9852647675',ownerEmail:'eli@elicrosbyhomes.com',dues:'$2,400',status:'Owner-Occupied',role:'Owner-Occupied'},
+    {unit:'45A',plan:'Cottage',address:'1200 Rue Monet',owner:'Patty Lala',ownerPhone:'9853207231',ownerEmail:'dupreelala1919@yahoo.com',dues:'$2,400',status:'Owner-Occupied',role:'Owner-Occupied'},
+  ],
+};
+
+const TENANT_ROSTER = {
+  "sanctuary-office-park": {
+    "Sanctuary #1": [
+      {tenant:"M Squared",suite:"300",sf:1445,rent:2250.00},
+      {tenant:"Bayou CPR",suite:"301-A",sf:400,rent:692.12},
+      {tenant:"Acorn",suite:"301-B",sf:300,rent:437.09},
+      {tenant:"Travelers",suite:"210 & 202",sf:5573,rent:12754.36},
+      {tenant:"Nirvana",suite:"306",sf:610,rent:1331.65},
+      {tenant:"Dianne's",suite:"305B",sf:300,rent:550.00},
+      {tenant:"Sec National",suite:"302",sf:655,rent:1609.96},
+      {tenant:"Christine West",suite:"100",sf:500,rent:1500.00},
+      {tenant:"Mand Tech",suite:"300A",sf:275,rent:504.76},
+      {tenant:"Detox",suite:"307",sf:250,rent:575.00},
+      {tenant:"Brandner",suite:"303B",sf:235,rent:431.00},
+      {tenant:"Body Remedy",suite:"303A",sf:300,rent:450.00},
+    ],
+    "Sanctuary #2": [
+      {tenant:"Wells Fargo",suite:"101",sf:2500,rent:4641.43},
+      {tenant:"Penzato",suite:"103",sf:1710,rent:3009.00},
+      {tenant:"Thomas",suite:"304",sf:1225,rent:1948.86},
+      {tenant:"NS Laser",suite:"302C",sf:200,rent:309.00},
+      {tenant:"Hartford",suite:"301",sf:2350,rent:4213.62},
+      {tenant:"4 Your Eyes",suite:"303+302A&B",sf:2600,rent:4304.39},
+      {tenant:"Pazos",suite:"202",sf:450,rent:950.07},
+      {tenant:"Cypress Key",suite:"204",sf:700,rent:1392.43},
+      {tenant:"Standard",suite:"201",sf:1690,rent:3265.27},
+      {tenant:"Assured Part.",suite:"206",sf:1962,rent:3842.25},
+      {tenant:"Central Title",suite:"102",sf:1400,rent:2784.86},
+      {tenant:"Nationwide",suite:"203",sf:1006,rent:1867.18},
+      {tenant:"Benjamin",suite:"100",sf:1240,rent:2144.65},
+      {tenant:"Carver",suite:"205",sf:1100,rent:2171.58},
+    ],
+    "Sanctuary #3": [
+      {tenant:"Galloway",suite:"101, 102 & 310",sf:13455,rent:27564.26},
+      {tenant:"Baker Donelson",suite:"201 & 202",sf:6930,rent:13680.98},
+    ],
+    "Sanctuary #4": [
+      {tenant:"JCM II",suite:"306",sf:250,rent:0,vacant:true},
+      {tenant:"St. Paul",suite:"305",sf:684,rent:1026.46},
+      {tenant:"Edelman",suite:"200",sf:2350,rent:4468.12},
+      {tenant:"Watch Systems",suite:"101 & 201",sf:11850,rent:20225.74},
+      {tenant:"MedSouth",suite:"302",sf:750,rent:1375.00},
+      {tenant:"Menard",suite:"304",sf:2640,rent:5377.54},
+      {tenant:"Detox",suite:"301",sf:1765,rent:3000.00},
+    ],
+    "Sanctuary #5": [
+      {tenant:"Audubon",suite:"300",sf:6507,rent:10834.63},
+      {tenant:"Monson",suite:"101 & 202",sf:7385,rent:13513.30},
+      {tenant:"MAPS",suite:"103",sf:1830,rent:3279.27},
+      {tenant:"Ceco",suite:"201",sf:4845,rent:9176.97},
+    ],
+  },
+};
+
+// ── LEASE TERMS ─────────────────────────────────────────────────────────────
+// Source: rentinfo#1.xls — Commencement, Termination, Escalation, Notice requirements
+// daysLeft computed from April 1, 2026. noticeDeadline = termination minus notice days.
+const LEASE_TERMS = {
+  "sanctuary-office-park": {
+    "Sanctuary #1": [
+      { tenant:"M Squared",              suite:"300",       sf:1445, commenced:"2026-03-15", terminates:"2028-03-15", daysLeft:714,  escalation:"3.0%", autoRenew:true,  noticeDays:90,  noticeDeadline:"2027-12-15", noticeDeadlineDays:988, additional:"90 Day Notice to Terminate or lease Auto Renews" },
+      { tenant:"Bayou CPR",              suite:"301-A",     sf:400,  commenced:"2015-09-15", terminates:"2026-12-31", daysLeft:274,  escalation:"3.0%", autoRenew:true,  noticeDays:180, noticeDeadline:"2026-07-04", noticeDeadlineDays:94,  additional:"180 Day Notice to Cancel or Terminate" },
+      { tenant:"Acorn",                  suite:"301-B",     sf:300,  commenced:"2007-08-31", terminates:"2027-02-28", daysLeft:333,  escalation:"3.0%", autoRenew:true,  noticeDays:90,  noticeDeadline:"2026-11-30", noticeDeadlineDays:243, additional:"90 Day Notice to Terminate or lease Auto Renews" },
+      { tenant:"Travelers",              suite:"210 & 202", sf:5573, commenced:"1996-11-15", terminates:"2029-04-30", daysLeft:1125, escalation:"3.0%", autoRenew:false, noticeDays:null,noticeDeadline:null,          noticeDeadlineDays:null,additional:"1 (5) Year Option" },
+      { tenant:"Nirvana",                suite:"306",       sf:610,  commenced:"2013-06-30", terminates:"2026-12-31", daysLeft:274,  escalation:"3.0%", autoRenew:true,  noticeDays:180, noticeDeadline:"2026-07-04", noticeDeadlineDays:94,  additional:"180 Day Notice to Cancel or Terminate" },
+      { tenant:"Dianne's",               suite:"305B",      sf:300,  commenced:"2025-12-01", terminates:"2026-11-30", daysLeft:243,  escalation:"3.0%", autoRenew:true,  noticeDays:90,  noticeDeadline:"2026-09-01", noticeDeadlineDays:153, additional:"90 Day Notice to Terminate or lease Auto Renews" },
+      { tenant:"Sec National",           suite:"302",       sf:655,  commenced:"2015-07-01", terminates:"2026-06-30", daysLeft:90,   escalation:"3.0%", autoRenew:true,  noticeDays:180, noticeDeadline:"2025-12-31", noticeDeadlineDays:-91, additional:"180 Day Notice — VACATING Jun 30 2026", vacating:true },
+      { tenant:"Fine Southern Properties",suite:"100",     sf:500,  commenced:"2020-03-01", terminates:"Month-to-Month", daysLeft:null,escalation:"None",autoRenew:true,noticeDays:null,noticeDeadline:null,          noticeDeadlineDays:null,additional:"Month-to-Month", mtm:true },
+      { tenant:"Crosby Development",     suite:"101",       sf:4000, commenced:"—",          terminates:"Owner Occupant",  daysLeft:null,escalation:"—",  autoRenew:false, noticeDays:null,noticeDeadline:null,          noticeDeadlineDays:null,additional:"Owner Occupant", ownerOccupant:true },
+      { tenant:"Mand Tech",              suite:"300A",      sf:275,  commenced:"2021-04-01", terminates:"2027-04-01", daysLeft:365,  escalation:"3.0%", autoRenew:true,  noticeDays:90,  noticeDeadline:"2027-01-01", noticeDeadlineDays:275, additional:"90 Day Notice to Terminate or lease Auto Renews" },
+      { tenant:"Detox",                  suite:"307",       sf:250,  commenced:"2026-04-01", terminates:"2028-08-01", daysLeft:853,  escalation:"3.5%", autoRenew:true,  noticeDays:90,  noticeDeadline:"2028-05-03", noticeDeadlineDays:763, additional:"90 Day Notice to Terminate or lease Auto Renews" },
+      { tenant:"Brandner",               suite:"303B",      sf:235,  commenced:"2025-11-24", terminates:"2028-11-24", daysLeft:968,  escalation:"3.0%", autoRenew:true,  noticeDays:90,  noticeDeadline:"2028-08-26", noticeDeadlineDays:878, additional:"90 Day Notice to Terminate or lease Auto Renews" },
+      { tenant:"Body Remedy",            suite:"303A",      sf:300,  commenced:"2026-04-01", terminates:"2027-03-31", daysLeft:364,  escalation:"3.0%", autoRenew:true,  noticeDays:90,  noticeDeadline:"2026-12-31", noticeDeadlineDays:274, additional:"90 Day Notice to Terminate or lease Auto Renews" },
+    ],
+  },
+};
+
+// ── LEASE DOCUMENTS ─────────────────────────────────────────────────────────
+// Maps tenant slugs to their lease files. File paths relative to Leases_Claude folder.
+// docType: "Init" = original lease, "AMD" = amendment (number = amendment #)
+const LEASE_DOCS = {
+  "sanctuary-office-park": {
+    "Sanctuary #1": [
+      { tenant: "M Squared",      suite: "300",   file: "Bldg 1 Suite 300 Lease.pdf",                          docType: "Init" },
+      { tenant: "Bayou CPR",      suite: "301-A", file: "BayouCPR_AMD2.pdf",                                   docType: "AMD2" },
+      { tenant: "Acorn",          suite: "301-B", file: "leases_2F1768525513380_2FAcornAdoption_AMD2.pdf",      docType: "AMD2" },
+      { tenant: "Sec National",   suite: "302",   file: "SecurityNational_AMD3_11_2025.pdf",                   docType: "AMD3" },
+      { tenant: "Brandner",       suite: "303B",  file: "Brandner Law Firm signed.pdf",                        docType: "Init" },
+      { tenant: "Dianne's",       suite: "305B",  file: "BLDG1_FLR3_305B_Diane's Esthetic and Waxing.pdf",    docType: "Init" },
+      { tenant: "Nirvana",        suite: "306",   file: "NirvanaMassage_AMD3.pdf",                             docType: "AMD3" },
+      { tenant: "Mand Tech",      suite: "300A",  file: "MandevilleTechnology_Init.pdf",                       docType: "Init" },
+      { tenant: "FSP",            suite: "TBD",   file: "FSP_Init.pdf",                                        docType: "Init" },
+    ],
+  },
+};
+
+const AGENTS = [
+  // Phase 2 — Operations Core
+  { slug: "lease-intelligence-agent", name: "Lease Intelligence", icon: "clock", phase: 2, color: "#dc2626", phaseLabel: "Phase 2 — Ops Core", status: "building", description: "Monitors lease expirations, notice deadlines & auto-renewals. Generates renewal offer letters and vacancy alerts." },
+  { slug: "vacancy-marketing-agent", name: "Vacancy Marketing", icon: "file-text", phase: 2, color: "#d97706", phaseLabel: "Phase 2 — Ops Core", status: "planned", description: "Triggers on confirmed vacancy. Writes LoopNet/CoStar listing copy and generates leasing brief PDFs." },
+  { slug: "rent-roll-intelligence-agent", name: "Rent Roll Intelligence", icon: "bar-chart-2", phase: 2, color: "#2563eb", phaseLabel: "Phase 2 — Ops Core", status: "planned", description: "Monitors rent rolls across all buildings, flags anomalies, and produces monthly portfolio summary reports." },
+  // Phase 3 — HOA & Residential
+  { slug: "hoa-management-agent", name: "HOA Management", icon: "home", phase: 3, color: "#7c3aed", phaseLabel: "Phase 3 — HOA & Residential", status: "planned", description: "Dues tracking, violation notices, maintenance requests, and board communications for HOA communities." },
+  { slug: "residential-leasing-agent", name: "Residential Leasing", icon: "key", phase: 3, color: "#059669", phaseLabel: "Phase 3 — HOA & Residential", status: "planned", description: "Vacancy listings, tenant inquiry responses, and lease renewal outreach for apartment properties." },
+  // Phase 4 — Business Development
+  { slug: "market-intelligence-agent", name: "Market Intelligence", icon: "trending-up", phase: 4, color: "#0891b2", phaseLabel: "Phase 4 — Business Dev", status: "planned", description: "Northshore office/residential comp tracking, quarterly market reports, and rate benchmarking." },
+  { slug: "investor-relations-agent", name: "Investor Relations", icon: "briefcase", phase: 4, color: "#6366f1", phaseLabel: "Phase 4 — Business Dev", status: "planned", description: "Property performance summaries, Gulf South parcel updates, and deal memos for investors." },
+  { slug: "acquisitions-agent", name: "Acquisitions", icon: "search", phase: 4, color: "#f59e0b", phaseLabel: "Phase 4 — Business Dev", status: "planned", description: "Monitors MLS and CoStar for acquisition targets matching portfolio strategy. Drafts LOIs." },
+];
+
+// Activity starts empty — populated as agents run
+let activities = [];
+
+const SCHEDULED = [
+  { agent: "lease-intelligence-agent", property: "Sanctuary Office Park", task: "Lease expiration & notice deadline scan", frequency: "Weekly (Monday)", nextRun: "Pending deploy", status: "Phase 2" },
+  { agent: "lease-intelligence-agent", property: "Sanctuary Office Park", task: "Monthly renewal offer letters", frequency: "Monthly (1st)", nextRun: "Pending deploy", status: "Phase 2" },
+  { agent: "vacancy-marketing-agent", property: "All properties", task: "Vacancy listing refresh", frequency: "On vacancy change", nextRun: "Pending deploy", status: "Phase 2" },
+  { agent: "rent-roll-intelligence-agent", property: "All properties", task: "Monthly portfolio summary", frequency: "Monthly (1st)", nextRun: "Pending deploy", status: "Phase 2" },
+  { agent: "hoa-management-agent", property: "Lakeside Village", task: "Monthly dues reconciliation", frequency: "Monthly (1st)", nextRun: "Pending deploy", status: "Phase 3" },
+  { agent: "market-intelligence-agent", property: "All properties", task: "Quarterly market report", frequency: "Quarterly", nextRun: "Pending deploy", status: "Phase 4" },
+];
+
+// ── DOCUMENTS ───────────────────────────────────────────────────────────────
+var DOCUMENTS = [
+  // ── Formative ──────────────────────────────────────────────────────────────
+  { id:"agent-charter", title:"Agent Charter", category:"Formative", icon:"shield", color:"#2563eb",
+    lastUpdated:"2026-04-01", status:"active",
+    description:"Mission, 8-agent roster, operating principles, approval workflow, and external tool policy. The constitution of this agentic company.",
+    file:"knowledge-base/formative/AGENT_CHARTER.md" },
+  { id:"leasing-playbook", title:"Leasing Playbook", category:"Formative", icon:"book-open", color:"#059669",
+    lastUpdated:"2026-04-01", status:"active",
+    description:"Commercial and residential leasing procedures — notice timelines, urgency tiers, renewal standard terms, vacancy response, and HOA leasing rules.",
+    file:"knowledge-base/formative/LEASING_PLAYBOOK.md" },
+  { id:"operations-playbook", title:"Operations Playbook", category:"Formative", icon:"settings", color:"#7c3aed",
+    lastUpdated:"2026-04-01", status:"active",
+    description:"How to operate through the dashboard — daily workflow, triggering agents, reviewing outputs, data update procedures, and GitHub commit conventions.",
+    file:"knowledge-base/formative/OPERATIONS_PLAYBOOK.md" },
+  { id:"brand-voice", title:"Brand Voice & Identity", category:"Formative", icon:"pen-tool", color:"#d97706",
+    lastUpdated:"2026-04-01", status:"active",
+    description:"Crosby Development brand personality, voice by audience (residential, commercial, HOA, prospects), writing standards, Fair Housing language, and asset status.",
+    file:"knowledge-base/formative/BRAND_VOICE.md" },
+  // ── Agent Outputs ──────────────────────────────────────────────────────────
+  { id:"bldg1-lease-review-2026-04", title:"Building #1 Lease Review — April 2026", category:"Agent Output",
+    icon:"clock", color:"#dc2626", lastUpdated:"2026-04-01", status:"pending_review",
+    agentSlug:"lease-intelligence-agent", propertySlug:"sanctuary-office-park",
+    description:"Full lease schedule for all 13 Building #1 tenants with urgency tiers, upcoming 12-month calendar, and action items. One vacancy confirmed, two renewal letters required.",
+    file:"knowledge-base/outputs/lease-intelligence/bldg1-lease-review-2026-04.md" },
+  { id:"bayoucpr-renewal-2026-04", title:"Renewal Offer — Bayou CPR, Suite 301-A", category:"Agent Output",
+    icon:"clock", color:"#dc2626", lastUpdated:"2026-04-01", status:"pending_review",
+    agentSlug:"lease-intelligence-agent", propertySlug:"sanctuary-office-park",
+    description:"Draft renewal offer letter for Bayou CPR (Suite 301-A, 400 SF). Proposes 2-year extension at $713/mo (Year 1) + $734/mo (Year 2). Notice deadline: July 4, 2026 (94 days).",
+    file:"knowledge-base/outputs/lease-intelligence/bayoucpr-renewal-2026-04.md" },
+  { id:"nirvana-renewal-2026-04", title:"Renewal Offer — Nirvana Massage, Suite 306", category:"Agent Output",
+    icon:"clock", color:"#dc2626", lastUpdated:"2026-04-01", status:"pending_review",
+    agentSlug:"lease-intelligence-agent", propertySlug:"sanctuary-office-park",
+    description:"Draft renewal offer letter for Nirvana Massage (Suite 306, 610 SF). Proposes 2-year extension at $1,372/mo (Year 1) + $1,413/mo (Year 2). Notice deadline: July 4, 2026 (94 days).",
+    file:"knowledge-base/outputs/lease-intelligence/nirvana-renewal-2026-04.md" },
+];
+
+var docStatuses = {}; // tracks approve/reject decisions
+
+function getDoc(id) { return DOCUMENTS.find(function(d){return d.id===id;}); }
+
+function pendingDocs() { return DOCUMENTS.filter(function(d){ return d.status==="pending_review" && docStatuses[d.id]!=="approved" && docStatuses[d.id]!=="rejected"; }); }
+
+function updateDocBadge() {
+  var el = document.getElementById("docsBadge");
+  if(el) el.textContent = pendingDocs().length;
+}
+
+// ── HELPERS ──────────────────────────────────────────────────────────────────
+const getAgent = s => AGENTS.find(a => a.slug === s);
+const getProp = s => PROPERTIES.find(p => p.slug === s);
+const fmtTime = iso => { const d = new Date(iso); return d.toLocaleDateString("en-US",{month:"short",day:"numeric"})+" "+d.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"}); };
+function statusBadge(s) {
+  const m = { approved:["Approved","badge-approved"], pending_review:["Pending Review","badge-pending"], revision_requested:["Revision Requested","badge-revision"] };
+  const [label,cls] = m[s]||[s,"badge-idle"];
+  return '<span class="badge '+cls+'">'+label+'</span>';
+}
+function iconSvg(name, size, color) {
+  return '<i data-lucide="'+name+'" style="width:'+size+'px;height:'+size+'px;'+(color?'color:'+color+';':'')+'"></i>';
+}
+function pendingItems() { return activities.filter(a => a.status==="pending_review"||a.status==="revision_requested"); }
+function updateCounts() {
+  var p = pendingItems().length;
+  var el = document.getElementById("approvalBadge"); if(el) el.textContent = p;
+  var el2 = document.getElementById("alertText"); if(el2) el2.textContent = p+" items need review";
+  var el3 = document.getElementById("alertBtn"); if(el3) el3.style.display = p>0?"flex":"none";
+  var el4 = document.getElementById("approvalCount"); if(el4) el4.textContent = p+" items";
+}
+
+// ── NAV ─────────────────────────────────────────────────────────────────────
+function switchView(id) {
+  document.querySelectorAll(".view").forEach(function(v) { v.classList.remove("active"); });
+  document.querySelectorAll(".nav-btn").forEach(function(b) { b.classList.remove("active"); });
+  document.getElementById("view-"+id).classList.add("active");
+  var btn = document.querySelector('.nav-btn[data-view="'+id+'"]');
+  if(btn) btn.classList.add("active");
+  if(id==="agents") renderAgents();
+  if(id==="approvals") renderApprovals();
+  if(id==="metrics") renderMetrics();
+  if(id==="activity") renderActivity();
+  if(id==="strategy") renderStrategy();
+  if(id==="docs") renderDocs(null);
+  lucide.createIcons();
+}
+
+function openPropertyDetail(slug) {
+  var p = getProp(slug);
+  if(!p || p.status !== "data-loaded") return;
+  document.querySelectorAll(".view").forEach(function(v) { v.classList.remove("active"); });
+  document.querySelectorAll(".nav-btn").forEach(function(b) { b.classList.remove("active"); });
+  document.getElementById("view-property-detail").classList.add("active");
+  renderPropertyDetail(p);
+  lucide.createIcons();
+}
+document.querySelectorAll(".nav-btn").forEach(function(b) {
+  b.addEventListener("click", function() { switchView(b.dataset.view); });
+});
+
+// ── PORTFOLIO ───────────────────────────────────────────────────────────────
+function statCardHTML(icon, label, value, sub) {
+  return '<div class="stat-card"><div class="stat-icon">'+iconSvg(icon,20)+'</div><div><div class="stat-label">'+label+'</div><div class="stat-value">'+value+'</div><div class="stat-sub">'+sub+'</div></div></div>';
+}
+
+function renderPortfolio() {
+  var dataLoaded = PROPERTIES.filter(function(p){return p.status==="data-loaded";}).length;
+  var residential = PROPERTIES.filter(function(p){return !p.isCommercial;});
+  var commercial = PROPERTIES.filter(function(p){return p.isCommercial;});
+  var totalUnits = residential.reduce(function(s,p){return s+(p.units||0);},0);
+  var totalOccupied = residential.reduce(function(s,p){return s+(p.occupied||0);},0);
+  var totalSF = commercial.reduce(function(s,p){return s+(p.totalSF||0);},0);
+  var occSF = commercial.reduce(function(s,p){return s+(p.occupiedSF||0);},0);
+  var pending = pendingItems().length;
+
+  document.getElementById("portfolioStats").innerHTML = [
+    statCardHTML("building-2","Total Properties",PROPERTIES.length, dataLoaded+" with data loaded"),
+    statCardHTML("home","Total Units",totalUnits, totalOccupied+" occupied"),
+    statCardHTML("ruler","Total Sq Ft",(totalSF/1000).toFixed(0)+"K SF", occSF>0?Math.round(occSF/totalSF*100)+"% leased":"No data"),
+    statCardHTML("clock","Pending Review",pending, pending===0?"All clear":"Action needed"),
+  ].join("");
+
+  var propHTML = "";
+  PROPERTIES.forEach(function(p, idx) {
+    var acts = activities.filter(function(a){return a.property===p.slug;});
+    var clickAction = p.status==="data-loaded" ? "openPropertyDetail('"+p.slug+"')" : '';
+    propHTML += '<div class="prop-card" onclick="'+clickAction+'" id="prop-'+idx+'" style="'+(p.status==="data-loaded"?"cursor:pointer;":"cursor:default;")+'"><div style="display:flex;justify-content:space-between;align-items:center;"><div><div class="prop-name">'+p.name+'</div><div class="prop-loc">'+p.location+' &middot; '+p.cls+'</div></div>';
+    if(p.status==="data-loaded") {
+      propHTML += '<span class="badge badge-approved">Data Loaded</span>';
+    } else {
+      propHTML += '<span class="badge badge-idle">Pending Data</span>';
+    }
+    propHTML += '</div>';
+    if(p.isHOA && p.status==="data-loaded") {
+      propHTML += '<div class="prop-stats"><div><div class="prop-stat-val" style="color:#111827;">'+p.totalLots+'</div><div class="prop-stat-label">Total Lots</div></div><div><div class="prop-stat-val" style="color:#2563eb;">'+p.crosbyOwned+'</div><div class="prop-stat-label">Crosby Owned</div></div><div><div class="prop-stat-val" style="color:#059669;">'+p.rented+'</div><div class="prop-stat-label">Rented</div></div><div><div class="prop-stat-val" style="color:#d97706;">$'+(p.monthlyRent/1000).toFixed(1)+'K</div><div class="prop-stat-label">Monthly Rent</div></div></div>';
+      propHTML += '<div class="prop-expand">'+iconSvg("arrow-right",12)+'<span>View property details</span></div>';
+    } else if(p.isCommercial && p.status==="data-loaded") {
+      propHTML += '<div class="prop-stats"><div><div class="prop-stat-val" style="color:#111827;">'+(p.totalSF/1000).toFixed(0)+'K</div><div class="prop-stat-label">Sq Ft</div></div><div><div class="prop-stat-val" style="color:#059669;">'+p.occupancy+'%</div><div class="prop-stat-label">Leased</div></div><div><div class="prop-stat-val" style="color:#2563eb;">$'+(p.monthlyRent/1000).toFixed(0)+'K</div><div class="prop-stat-label">Monthly Rent</div></div><div><div class="prop-stat-val" style="color:#d97706;">'+(p.vacantSF/1000).toFixed(1)+'K</div><div class="prop-stat-label">Vacant SF</div></div></div>';
+      // Drill-down: building breakdown
+      propHTML += '<div class="prop-expand">'+iconSvg("arrow-right",12)+'<span>View property details</span></div>';
+    } else if(p.units>0) {
+      propHTML += '<div class="prop-stats"><div><div class="prop-stat-val" style="color:#111827;">'+p.units+'</div><div class="prop-stat-label">Units</div></div><div><div class="prop-stat-val" style="color:#059669;">'+p.occupancy+'%</div><div class="prop-stat-label">Occupied</div></div><div><div class="prop-stat-val" style="color:#d97706;">'+(p.vacant||0)+'</div><div class="prop-stat-label">Vacant</div></div><div><div class="prop-stat-val" style="color:#111827;">'+acts.length+'</div><div class="prop-stat-label">Outputs</div></div></div>';
+      // Drill-down: unit mix table
+      if(p.unitMix) {
+        propHTML += '<div class="prop-expand">'+iconSvg("arrow-right",12)+'<span>View property details</span></div>';
+      }
+    } else {
+      propHTML += '<div class="prop-unconfigured">Awaiting rent roll data and property details</div>';
+    }
+    propHTML += '</div>';
+  });
+  document.getElementById("propertyGrid").innerHTML = propHTML;
+
+  // Recent Activity
+  if(activities.length === 0) {
+    document.getElementById("recentActivity").innerHTML = '<div class="empty-state" style="padding:30px;"><i data-lucide="inbox" style="width:24px;height:24px;color:#d1d5db;"></i><p>No agent activity yet. Activity will appear here once agents are deployed and begin producing outputs.</p></div>';
+  } else {
+    document.getElementById("recentActivity").innerHTML = activities.slice(0,5).map(activityRowHTML).join("");
+  }
+  lucide.createIcons();
+}
+
+function activityRowHTML(item) {
+  var agent = getAgent(item.agent);
+  var prop = getProp(item.property);
+  return '<div class="activity-row"><div class="activity-icon" style="background:'+(agent?agent.color:"#666")+'15;">'+iconSvg(agent?agent.icon:"activity",14,agent?agent.color:null)+'</div><div style="flex:1;min-width:0;"><div style="font-size:14px;color:#1f2937;">'+item.task+'</div><div class="activity-meta"><span>'+(agent?agent.name:"")+'</span><span class="sep">|</span><span>'+(prop?prop.name:"")+'</span><span class="sep">|</span><span>'+fmtTime(item.timestamp)+'</span></div></div>'+statusBadge(item.status)+'</div>';
+}
+
+// ── ACTIVITY ────────────────────────────────────────────────────────────────
+function renderActivity() {
+  var agentF = document.getElementById("filterAgent").value;
+  var statusF = document.getElementById("filterStatus").value;
+  var filtered = activities.filter(function(a) { return (agentF==="all"||a.agent===agentF) && (statusF==="all"||a.status===statusF); });
+  document.getElementById("filterCount").textContent = filtered.length+" items";
+  if(filtered.length===0) {
+    document.getElementById("activityList").innerHTML = '<div class="empty-state"><i data-lucide="inbox" style="width:28px;height:28px;color:#d1d5db;"></i><div class="empty-title">No Activity Yet</div><p>Agent outputs will appear here as they are produced. Deploy your first agent to get started.</p></div>';
+  } else {
+    document.getElementById("activityList").innerHTML = filtered.map(activityRowHTML).join("");
+  }
+  lucide.createIcons();
+}
+
+// ── AGENTS ──────────────────────────────────────────────────────────────────
+function renderAgents() {
+  var html = "";
+  AGENTS.forEach(function(a) {
+    var acts = activities.filter(function(x){return x.agent===a.slug;});
+    var last = acts.length>0?acts[0]:null;
+    var statusBdg = a.status==="building"
+      ? '<span style="font-size:11px;font-weight:600;background:#fee2e2;color:#991b1b;padding:2px 8px;border-radius:9999px;">Building Now</span>'
+      : '<span class="badge badge-idle">Planned</span>';
+    html += '<div class="agent-row"><div class="agent-icon" style="background:'+a.color+'15;">'+iconSvg(a.icon,18,a.color)+'</div><div style="flex:1;min-width:0;"><div style="display:flex;align-items:center;gap:8px;"><span class="agent-name">'+a.name+'</span><span class="agent-phase">'+(a.phaseLabel||"Phase "+a.phase)+'</span></div><div class="agent-last">'+(last?"Last: "+last.task:(a.description||"Not yet deployed"))+'</div></div><div style="text-align:right;flex-shrink:0;">'+statusBdg+'</div></div>';
+  });
+  document.getElementById("agentStatusList").innerHTML = html;
+
+  // No pie chart when no outputs
+  document.getElementById("pieArea").innerHTML = '<div style="text-align:center;padding:40px 0;color:#d1d5db;font-size:13px;"><i data-lucide="pie-chart" style="width:32px;height:32px;color:#e5e7eb;display:block;margin:0 auto 8px;"></i>Output distribution will appear<br>once agents begin producing work.</div>';
+  document.getElementById("pieLegend").innerHTML = "";
+
+  var phaseHTML = "";
+  var phaseNames = {2:"Phase 2 — Operations Core",3:"Phase 3 — HOA & Residential",4:"Phase 4 — Business Development"};
+  [2,3,4].forEach(function(phase) {
+    var agents = AGENTS.filter(function(a){return a.phase===phase;});
+    if(!agents.length) return;
+    phaseHTML += '<div class="phase-group"><div class="phase-label">'+(phaseNames[phase]||"Phase "+phase)+'</div><div class="phase-tags">'+agents.map(function(a){
+      var statusStyle = a.status==="building" ? "background:#fee2e2;color:#991b1b;border:1px solid #fca5a5;" : "background:"+a.color+"15;color:"+a.color+";";
+      return '<span class="phase-tag" style="'+statusStyle+'">'+a.name+(a.status==="building"?" ▶":"")+'</span>';
+    }).join("")+'</div></div>';
+  });
+  document.getElementById("phaseGroups").innerHTML = phaseHTML;
+  lucide.createIcons();
+}
+
+// ── APPROVALS ───────────────────────────────────────────────────────────────
+function renderApprovals() {
+  var items = pendingItems();
+  if(items.length===0) {
+    document.getElementById("approvalGrid").style.display = "none";
+    document.getElementById("approvalEmpty").style.display = "block";
+  } else {
+    document.getElementById("approvalGrid").style.display = "grid";
+    document.getElementById("approvalEmpty").style.display = "none";
+    document.getElementById("approvalGrid").innerHTML = items.map(function(item) {
+      var agent = getAgent(item.agent);
+      var prop = getProp(item.property);
+      return '<div class="approval-card"><div style="display:flex;align-items:flex-start;gap:12px;"><div class="agent-icon" style="background:'+(agent?agent.color:"#666")+'15;">'+iconSvg(agent?agent.icon:"activity",16,agent?agent.color:null)+'</div><div style="flex:1;min-width:0;"><div style="font-weight:600;font-size:14px;color:#111827;">'+item.task+'</div><div style="font-size:12px;color:#9ca3af;margin-top:3px;">'+(agent?agent.name:"")+" &middot; "+(prop?prop.name:"")+" &middot; "+fmtTime(item.timestamp)+'</div><div class="approval-file">'+item.output+'</div></div></div><div class="approval-actions"><button class="btn btn-approve" onclick="approveItem('+item.id+')">'+iconSvg("check",13,"#065f46")+' Approve</button><button class="btn btn-review">'+iconSvg("eye",13,"#4b5563")+' Review</button><button class="btn btn-regen" onclick="regenItem('+item.id+')">'+iconSvg("rotate-ccw",13,"#1d4ed8")+' Regenerate</button><button class="btn btn-reject" onclick="rejectItem('+item.id+')">'+iconSvg("x",13,"#991b1b")+' Reject</button></div></div>';
+    }).join("");
+  }
+  updateCounts();
+  lucide.createIcons();
+}
+
+function approveItem(id) { activities = activities.map(function(a){return a.id===id?Object.assign({},a,{status:"approved"}):a;}); renderApprovals(); renderPortfolio(); }
+function rejectItem(id) { activities = activities.filter(function(a){return a.id!==id;}); renderApprovals(); renderPortfolio(); }
+function regenItem(id) { activities = activities.map(function(a){return a.id===id?Object.assign({},a,{status:"pending_review",timestamp:new Date().toISOString()}):a;}); renderApprovals(); }
+
+// ── SCHEDULE ────────────────────────────────────────────────────────────────
+function renderSchedule() {
+  var html = '<thead><tr><th>Agent</th><th>Scope</th><th>Task</th><th>Frequency</th><th>Next Run</th><th>Status</th></tr></thead><tbody>';
+  SCHEDULED.forEach(function(t) {
+    var agent = getAgent(t.agent);
+    html += '<tr><td><div style="display:flex;align-items:center;gap:8px;">'+iconSvg(agent?agent.icon:"activity",14,agent?agent.color:null)+'<span style="font-weight:500;color:#1f2937;">'+(agent?agent.name:"")+'</span></div></td><td style="color:#4b5563;">'+t.property+'</td><td style="color:#1f2937;">'+t.task+'</td><td><span class="freq-badge">'+t.frequency+'</span></td><td class="mono">'+t.nextRun+'</td><td><span class="badge badge-idle">'+t.status+'</span></td></tr>';
+  });
+  html += "</tbody>";
+  document.getElementById("scheduleTable").innerHTML = html;
+  lucide.createIcons();
+}
+
+// ── METRICS ─────────────────────────────────────────────────────────────────
+function renderMetrics() {
+  var total = activities.length;
+  var approved = activities.filter(function(a){return a.status==="approved";}).length;
+  var rate = total>0?Math.round(approved/total*100):0;
+  var revisions = activities.filter(function(a){return a.status==="revision_requested";}).length;
+
+  document.getElementById("metricsStats").innerHTML = [
+    statCardHTML("file-text","Agent Outputs",total, total===0?"No agents deployed yet":"All time"),
+    statCardHTML("check-circle","Approval Rate", total>0?rate+"%":"—", total===0?"No data yet":"First-draft approval"),
+    statCardHTML("clock","Avg Turnaround","—", "Will calculate after first outputs"),
+    statCardHTML("rotate-ccw","Revisions",revisions, revisions===0?"None":"Currently pending"),
+  ].join("");
+
+  // Metairie Plaza unit table
+  var mp = getProp("metairie-plaza");
+  var mpHTML = "";
+  if(mp && mp.unitMix) {
+    mp.unitMix.forEach(function(u) { mpHTML += '<tr><td>'+u.plan+'</td><td>'+u.beds+'</td><td>'+u.sqft+'</td><td>'+u.rent+'</td><td>'+u.count+'</td><td>'+u.vacant+'</td></tr>'; });
+    mpHTML += '<tr><td>Total</td><td></td><td></td><td></td><td>66</td><td>4</td></tr>';
+  }
+  document.getElementById("mpUnitTable").innerHTML = mpHTML;
+
+  // Metairie Lake unit table
+  var ml = getProp("metairie-lake-apartments");
+  var mlHTML = "";
+  if(ml && ml.unitMix) {
+    ml.unitMix.forEach(function(u) { mlHTML += '<tr><td>'+u.plan+'</td><td>'+u.beds+'</td><td>'+u.sqft+'</td><td>'+u.rent+'</td><td>'+u.count+'</td><td>'+u.vacant+'</td></tr>'; });
+    mlHTML += '<tr><td>Total</td><td></td><td></td><td></td><td>108</td><td>9</td></tr>';
+  }
+  document.getElementById("mlUnitTable").innerHTML = mlHTML;
+
+  // Sanctuary Office Park building table
+  var sop = getProp("sanctuary-office-park");
+  var sopHTML = "";
+  if(sop && sop.buildings) {
+    sop.buildings.forEach(function(b) {
+      var occPct = b.sf > 0 ? Math.round((b.occupiedSF||b.sf) / b.sf * 100) : 0;
+      sopHTML += '<tr><td>'+b.name+'</td><td>'+b.sf.toLocaleString()+'</td><td>'+((b.occupiedSF||b.sf)).toLocaleString()+' <span style="color:#9ca3af;font-size:11px;">('+occPct+'%)</span></td><td style="color:'+((b.vacantSF||0)>0?"#d97706":"#059669")+';">'+((b.vacantSF||0)).toLocaleString()+'</td><td>'+b.tenants+'</td><td>$'+b.monthly.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})+'</td></tr>';
+    });
+    sopHTML += '<tr><td>Total</td><td>'+sop.totalSF.toLocaleString()+'</td><td>'+sop.occupiedSF.toLocaleString()+' <span style="color:#9ca3af;font-size:11px;">('+Math.round(sop.occupancy)+'%)</span></td><td style="color:'+(sop.vacantSF>0?"#d97706":"#059669")+';">'+sop.vacantSF.toLocaleString()+'</td><td>'+sop.tenantCount+'</td><td>$'+sop.monthlyRent.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})+'</td></tr>';
+  }
+  document.getElementById("sopBuildingTable").innerHTML = sopHTML;
+
+  // Sanctuary rent by building bar chart
+  if(sop && sop.buildings) {
+    renderBarChart("sopRentChart", sop.buildings.map(function(b){return b.name.replace("Sanctuary ","");}), sop.buildings.map(function(b){return b.monthly;}), "Monthly Rent ($)", ["#2563eb","#7c3aed","#059669","#d97706","#dc2626"]);
+    renderBarChart("sopSFChart", sop.buildings.map(function(b){return b.name.replace("Sanctuary ","");}), sop.buildings.map(function(b){return b.sf;}), "Rentable SF", ["#3b82f6","#8b5cf6","#10b981","#f59e0b","#ef4444"]);
+  }
+
+  // Occupancy doughnuts
+  renderOccChart("mpOccChart", 60, 4, 2, "Metairie Plaza");
+  renderOccChart("mlOccChart", 98, 9, 1, "Metairie Lake");
+
+  // Dynamic portfolio summary
+  var resProps = PROPERTIES.filter(function(p){return !p.isCommercial && p.status==="data-loaded";});
+  var comProps = PROPERTIES.filter(function(p){return p.isCommercial && p.status==="data-loaded";});
+  var rUnits = resProps.reduce(function(s,p){return s+(p.units||0);},0);
+  var rOcc = resProps.reduce(function(s,p){return s+(p.occupied||0);},0);
+  var rVac = resProps.reduce(function(s,p){return s+(p.vacant||0);},0);
+  var rTurn = resProps.reduce(function(s,p){return s+(p.turnover||0);},0);
+  var rOccRate = rUnits>0?Math.round(rOcc/rUnits*100):0;
+  var cSF = comProps.reduce(function(s,p){return s+(p.totalSF||0);},0);
+  var cTenants = comProps.reduce(function(s,p){return s+(p.tenantCount||0);},0);
+  var cMonthly = comProps.reduce(function(s,p){return s+(p.monthlyRent||0);},0);
+
+  var sumHTML = '<div style="margin-bottom:16px;"><div style="font-size:12px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;">Residential</div><div style="display:grid;grid-template-columns:repeat(5,1fr);gap:16px;">';
+  sumHTML += '<div class="snapshot-box" style="background:#f9fafb;"><div class="snapshot-val" style="color:#111827;">'+rUnits+'</div><div class="snapshot-label">Total Units</div></div>';
+  sumHTML += '<div class="snapshot-box" style="background:#ecfdf5;"><div class="snapshot-val" style="color:#059669;">'+rOcc+'</div><div class="snapshot-label">Occupied</div></div>';
+  sumHTML += '<div class="snapshot-box" style="background:#fffbeb;"><div class="snapshot-val" style="color:#d97706;">'+rVac+'</div><div class="snapshot-label">Vacant</div></div>';
+  sumHTML += '<div class="snapshot-box" style="background:#fee2e2;"><div class="snapshot-val" style="color:#dc2626;">'+rTurn+'</div><div class="snapshot-label">In Turnover</div></div>';
+  sumHTML += '<div class="snapshot-box" style="background:#eff6ff;"><div class="snapshot-val" style="color:#2563eb;">'+rOccRate+'%</div><div class="snapshot-label">Occupancy</div></div>';
+  sumHTML += '</div></div>';
+
+  if(cSF>0) {
+    sumHTML += '<div style="margin-bottom:16px;"><div style="font-size:12px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;">Commercial</div><div style="display:grid;grid-template-columns:repeat(5,1fr);gap:16px;">';
+    sumHTML += '<div class="snapshot-box" style="background:#f9fafb;"><div class="snapshot-val" style="color:#111827;">'+(cSF/1000).toFixed(0)+'K</div><div class="snapshot-label">Total SF</div></div>';
+    sumHTML += '<div class="snapshot-box" style="background:#ecfdf5;"><div class="snapshot-val" style="color:#059669;">'+cTenants+'</div><div class="snapshot-label">Active Tenants</div></div>';
+    sumHTML += '<div class="snapshot-box" style="background:#eff6ff;"><div class="snapshot-val" style="color:#2563eb;">$'+(cMonthly/1000).toFixed(0)+'K</div><div class="snapshot-label">Monthly Rent</div></div>';
+    sumHTML += '<div class="snapshot-box" style="background:#f0fdf4;"><div class="snapshot-val" style="color:#059669;">$'+(cMonthly*12/1000).toFixed(0)+'K</div><div class="snapshot-label">Annual Rent</div></div>';
+    sumHTML += '<div class="snapshot-box" style="background:#f9fafb;"><div class="snapshot-val" style="color:#111827;">'+activities.length+'</div><div class="snapshot-label">Agent Outputs</div></div>';
+    sumHTML += '</div></div>';
+  }
+
+  document.getElementById("portfolioSummaryGrid").innerHTML = sumHTML;
+
+  lucide.createIcons();
+}
+
+var barCharts = {};
+function renderBarChart(canvasId, labels, data, label, colors) {
+  if(barCharts[canvasId]) barCharts[canvasId].destroy();
+  barCharts[canvasId] = new Chart(document.getElementById(canvasId), {
+    type: "bar",
+    data: {
+      labels: labels,
+      datasets: [{ label: label, data: data, backgroundColor: colors, borderRadius: 6, borderSkipped: false }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false },
+        tooltip: { callbacks: { label: function(ctx) { return label.indexOf("$")>=0 ? "$"+ctx.raw.toLocaleString() : ctx.raw.toLocaleString()+" SF"; } } }
+      },
+      scales: {
+        y: { beginAtZero: true, ticks: { callback: function(v) { return label.indexOf("$")>=0 ? "$"+(v/1000).toFixed(0)+"K" : (v/1000).toFixed(0)+"K"; } }, grid: { color: "#f3f4f6" } },
+        x: { grid: { display: false } }
+      }
+    }
+  });
+}
+
+var occCharts = {};
+function renderOccChart(canvasId, occupied, vacant, turnover, label) {
+  if(occCharts[canvasId]) occCharts[canvasId].destroy();
+  occCharts[canvasId] = new Chart(document.getElementById(canvasId), {
+    type: "doughnut",
+    data: {
+      labels: ["Occupied", "Vacant", "In Turnover"],
+      datasets: [{ data: [occupied, vacant, turnover], backgroundColor: ["#059669","#d97706","#dc2626"], borderWidth: 2, borderColor: "#fff" }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false, cutout: "60%",
+      plugins: {
+        legend: { position: "bottom", labels: { usePointStyle: true, pointStyle: "circle", font: { size: 12 }, padding: 16 } },
+        tooltip: { callbacks: { label: function(ctx) { return ctx.label+": "+ctx.raw+" units"; } } }
+      }
+    }
+  });
+}
+
+// ── PROPERTY DETAIL ─────────────────────────────────────────────────────────
+var detailCharts = {};
+function renderPropertyDetail(p) {
+  document.getElementById("detailPropName").textContent = p.name;
+  document.getElementById("detailPropBadge").innerHTML = p.cls;
+  document.getElementById("detailPropBadge").className = "badge badge-approved";
+
+  var statsHTML = "";
+  if(p.isHOA) {
+    statsHTML = [
+      statCardHTML("home","Total Lots",p.totalLots, p.townhomes+" townhomes, "+p.cottages+" cottages"),
+      statCardHTML("key","Crosby Owned",p.crosbyOwned, (p.crosbyManaged+p.thirdPartyManaged)+" rented, "+p.ownerOccupied+" owner-occupied"),
+      statCardHTML("dollar-sign","Rental Income","$"+(p.monthlyRent/1000).toFixed(1)+"K/mo", p.rented+" units rented"),
+      statCardHTML("building-2","HOA Dues","$"+(p.monthlyDues/1000).toFixed(1)+"K/mo", "$"+(p.monthlyDues*12/1000).toFixed(0)+"K annually"),
+    ].join("");
+  } else if(p.isCommercial) {
+    statsHTML = [
+      statCardHTML("ruler","Total Rentable SF",p.totalSF.toLocaleString(), p.buildings.length+" buildings"),
+      statCardHTML("check-circle","Occupied SF",p.occupiedSF.toLocaleString(), Math.round(p.occupancy)+"% leased"),
+      statCardHTML("alert-triangle","Vacant SF",p.vacantSF.toLocaleString(), p.vacantSF>0?"Available for lease":"Fully leased"),
+      statCardHTML("dollar-sign","Monthly Rent","$"+(p.monthlyRent/1000).toFixed(1)+"K", "$"+(p.annualRent/1000).toFixed(0)+"K annualized"),
+    ].join("");
+  } else {
+    statsHTML = [
+      statCardHTML("home","Total Units",p.units, p.cls),
+      statCardHTML("check-circle","Occupied",p.occupied, p.occupancy+"% occupancy"),
+      statCardHTML("alert-triangle","Vacant",p.vacant||0, (p.turnover||0)+" in turnover"),
+      statCardHTML("dollar-sign","Avg Rent","~$1,120", "Per unit/month"),
+    ].join("");
+  }
+  document.getElementById("detailStats").innerHTML = statsHTML;
+
+  var html = "";
+
+  if(p.isHOA) {
+    // ── HOA detail: ownership breakdown + full roster ──
+    var roster = UNIT_ROSTER[p.slug];
+    if(roster) {
+      // Ownership summary cards
+      html += '<div class="grid-3" style="margin-bottom:16px;">';
+      html += '<div class="card" style="text-align:center;"><div style="font-size:28px;font-weight:700;color:#2563eb;">'+p.crosbyOwned+'</div><div style="font-size:12px;color:#6b7280;margin-top:4px;">Crosby-Owned Lots</div></div>';
+      html += '<div class="card" style="text-align:center;"><div style="font-size:28px;font-weight:700;color:#059669;">'+p.crosbyManaged+'</div><div style="font-size:12px;color:#6b7280;margin-top:4px;">Crosby-Managed Rentals</div></div>';
+      html += '<div class="card" style="text-align:center;"><div style="font-size:28px;font-weight:700;color:#d97706;">'+p.thirdPartyManaged+'</div><div style="font-size:12px;color:#6b7280;margin-top:4px;">Third-Party Managed</div></div>';
+      html += '</div>';
+
+      // Full roster table
+      html += '<div class="card" style="margin-bottom:16px;">';
+      html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;"><span class="card-title" style="margin-bottom:0;">HOA Roster — '+roster.length+' Lots</span>';
+      html += '<div style="display:flex;gap:12px;font-size:12px;">';
+      html += '<span style="display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:50%;background:#2563eb;display:inline-block;"></span> Crosby Managed</span>';
+      html += '<span style="display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:50%;background:#d97706;display:inline-block;"></span> Third-Party Managed</span>';
+      html += '<span style="display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:50%;background:#059669;display:inline-block;"></span> Owner-Occupied</span>';
+      html += '</div></div>';
+      html += '<table class="unit-table"><thead><tr><th>Lot</th><th>Type</th><th>Address</th><th>Owner</th><th>Tenant/Occupant</th><th>Phone</th><th>Email</th><th>Rent</th><th>Dues</th><th>Role</th></tr></thead><tbody>';
+      roster.forEach(function(u) {
+        var roleBadge = u.role==='Crosby Managed'?'badge-approved':u.role==='Third-Party Managed'?'badge-pending':'badge-idle';
+        var displayName = u.name || u.owner || '—';
+        var displayPhone = u.phone || u.ownerPhone || '—';
+        var displayEmail = u.email || u.ownerEmail || '—';
+        var emailLink = displayEmail !== '—' ? '<a href="mailto:'+displayEmail+'" style="color:#2563eb;">'+displayEmail+'</a>' : '—';
+        html += '<tr><td style="font-weight:500;">'+u.unit+'</td><td>'+u.plan+'</td><td style="font-size:12px;">'+u.address+'</td><td style="font-size:12px;">'+(u.owner||'—')+'</td><td style="font-weight:500;">'+(u.name||'<span style="color:#9ca3af;font-style:italic;">Owner</span>')+'</td><td style="font-size:12px;">'+displayPhone+'</td><td style="font-size:12px;">'+emailLink+'</td><td>'+(u.rent||'—')+'</td><td style="font-size:12px;">'+u.dues+'</td><td><span class="badge '+roleBadge+'">'+u.role+'</span></td></tr>';
+      });
+      html += '</tbody></table></div>';
+
+      // Charts
+      html += '<div class="grid-2" style="margin-top:8px;">';
+      html += '<div class="card"><div class="card-title">Ownership Breakdown</div><div style="position:relative;height:260px;"><canvas id="detailOccPie"></canvas></div></div>';
+      html += '<div class="card"><div class="card-title">Unit Type Distribution</div><div style="position:relative;height:260px;"><canvas id="detailPlanChart"></canvas></div></div>';
+      html += '</div>';
+    }
+
+  } else if(p.isCommercial) {
+    // ── Commercial detail: building cards with full tenant rosters ──
+    var tenantData = TENANT_ROSTER[p.slug];
+    if(tenantData && p.buildings) {
+      p.buildings.forEach(function(b) {
+        var bTenants = tenantData[b.name] || [];
+        var bOccPct = b.sf > 0 ? Math.round(b.occupiedSF / b.sf * 100) : 0;
+        html += '<div class="card" style="margin-bottom:16px;">';
+        html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">';
+        html += '<div><span class="card-title" style="margin-bottom:0;">'+b.name+'</span>';
+        html += '<span style="font-size:12px;color:#9ca3af;margin-left:12px;">'+b.sf.toLocaleString()+' SF &middot; '+bOccPct+'% leased &middot; $'+b.monthly.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})+'/mo</span></div>';
+        if(b.vacantSF > 0) {
+          html += '<span class="badge badge-pending">'+b.vacantSF.toLocaleString()+' SF vacant</span>';
+        } else {
+          html += '<span class="badge badge-approved">Fully leased</span>';
+        }
+        html += '</div>';
+        // Build lease doc lookup for this building
+        var buildingLeases = (LEASE_DOCS[p.slug] && LEASE_DOCS[p.slug][b.name]) || [];
+        var leaseByTenant = {};
+        buildingLeases.forEach(function(l) { leaseByTenant[l.tenant] = l; });
+        var hasLeases = buildingLeases.length > 0;
+
+        var leaseCol = hasLeases ? '<th>Lease</th>' : '';
+        html += '<table class="unit-table"><thead><tr><th>Tenant</th><th>Suite</th><th>Square Feet</th><th>Monthly Rent</th><th>$/SF/Yr</th><th>Status</th>'+leaseCol+'</tr></thead><tbody>';
+        var bTotal = 0, bRent = 0;
+        bTenants.forEach(function(t) {
+          bTotal += t.sf;
+          bRent += t.rent;
+          var sfyr = t.sf > 0 && t.rent > 0 ? "$"+(t.rent * 12 / t.sf).toFixed(2) : "—";
+          var statusBdg = t.vacant ? '<span class="badge badge-pending">Vacant</span>' : '<span class="badge badge-approved">Active</span>';
+          var leaseCell = '';
+          if(hasLeases) {
+            var ld = leaseByTenant[t.tenant];
+            if(ld) {
+              var leaseFile = 'computer:///sessions/confident-blissful-archimedes/mnt/Leases_Claude/' + encodeURIComponent(ld.file);
+              var typeColor = ld.docType === 'Init' ? '#059669' : '#7c3aed';
+              leaseCell = '<td><a href="'+leaseFile+'" style="display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;color:'+typeColor+';text-decoration:none;background:'+(ld.docType==='Init'?'#ecfdf5':'#f5f3ff')+';padding:2px 7px;border-radius:4px;">'+iconSvg('file-text',11,typeColor)+' '+ld.docType+'</a></td>';
+            } else {
+              leaseCell = '<td><span style="font-size:11px;color:#d1d5db;">—</span></td>';
+            }
+          }
+          html += '<tr><td style="font-weight:500;">'+t.tenant+'</td><td>'+t.suite+'</td><td>'+t.sf.toLocaleString()+'</td><td>'+(t.rent>0?'$'+t.rent.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}):'—')+'</td><td>'+sfyr+'</td><td>'+statusBdg+'</td>'+leaseCell+'</tr>';
+        });
+        html += '<tr><td style="font-weight:700;">Total ('+bTenants.length+' tenants)</td><td></td><td>'+bTotal.toLocaleString()+'</td><td>$'+bRent.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})+'</td><td></td><td></td>'+(hasLeases?'<td></td>':'')+'</tr>';
+        html += '</tbody></table>';
+
+        // Documents panel for buildings that have leases on file
+        if(hasLeases) {
+          html += '<div style="margin-top:14px;padding-top:14px;border-top:1px solid #f3f4f6;">';
+          html += '<div style="font-size:11px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;">'+iconSvg('folder',12,'#9ca3af')+' <span style="margin-left:4px;">Lease Documents on File ('+buildingLeases.length+')</span></div>';
+          html += '<div style="display:flex;flex-wrap:wrap;gap:8px;">';
+          buildingLeases.forEach(function(ld) {
+            var leaseFile = 'computer:///sessions/confident-blissful-archimedes/mnt/Leases_Claude/' + encodeURIComponent(ld.file);
+            var typeColor = ld.docType === 'Init' ? '#059669' : '#7c3aed';
+            var typeBg = ld.docType === 'Init' ? '#ecfdf5' : '#f5f3ff';
+            html += '<a href="'+leaseFile+'" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:#374151;text-decoration:none;background:#f9fafb;border:1px solid #e5e7eb;padding:5px 10px;border-radius:6px;" title="'+ld.file+'">';
+            html += iconSvg('file-text',13,'#6b7280');
+            html += '<span>'+ld.tenant+' — Suite '+ld.suite+'</span>';
+            html += '<span style="font-size:10px;font-weight:700;color:'+typeColor+';background:'+typeBg+';padding:1px 5px;border-radius:3px;">'+ld.docType+'</span>';
+            html += '</a>';
+          });
+          html += '</div></div>';
+        }
+
+        html += '</div>';
+      });
+    }
+
+    // Lease Timeline / Renewal Tracker
+    var allLeaseTerms = LEASE_TERMS[p.slug] || {};
+    var allTermsFlat = [];
+    Object.keys(allLeaseTerms).forEach(function(bname) {
+      allLeaseTerms[bname].forEach(function(t) { allTermsFlat.push(Object.assign({building: bname}, t)); });
+    });
+    if(allTermsFlat.length > 0) {
+      // Sort by urgency: notice deadline first, then termination
+      var active = allTermsFlat.filter(function(t){ return t.daysLeft !== null && !t.ownerOccupant; });
+      var mtm = allTermsFlat.filter(function(t){ return t.mtm; });
+      var owner = allTermsFlat.filter(function(t){ return t.ownerOccupant; });
+      // Sort by notice deadline days (most urgent first)
+      active.sort(function(a,b){
+        var da = a.noticeDeadlineDays !== null ? a.noticeDeadlineDays : 9999;
+        var db = b.noticeDeadlineDays !== null ? b.noticeDeadlineDays : 9999;
+        return da - db;
+      });
+
+      html += '<div class="card" style="margin-bottom:16px;">';
+      html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">'+iconSvg("calendar-clock",18,"#2563eb")+'<span class="card-title" style="margin-bottom:0;">Lease Timeline & Renewal Tracker — Building #1</span></div>';
+
+      // Summary action bar
+      var vacating = active.filter(function(t){ return t.vacating; });
+      var urgent_notice = active.filter(function(t){ return !t.vacating && t.noticeDeadlineDays !== null && t.noticeDeadlineDays <= 120; });
+      if(vacating.length || urgent_notice.length || mtm.length) {
+        html += '<div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:#c2410c;">';
+        html += iconSvg("alert-triangle",14,"#ea580c")+' <strong style="margin-left:4px;">Action Required:</strong> ';
+        var actions = [];
+        vacating.forEach(function(t){ actions.push('<strong>'+t.tenant+'</strong> (Suite '+t.suite+') vacating '+t.terminates+' — confirm replacement tenant'); });
+        urgent_notice.forEach(function(t){ actions.push('<strong>'+t.tenant+'</strong> notice deadline <strong>'+t.noticeDeadline+'</strong> ('+t.noticeDeadlineDays+' days)'); });
+        if(mtm.length) actions.push('<strong>'+mtm.map(function(t){return t.tenant;}).join(', ')+'</strong> on Month-to-Month — consider formalizing term');
+        html += actions.join(' &nbsp;|&nbsp; ');
+        html += '</div>';
+      }
+
+      html += '<table class="unit-table"><thead><tr><th>Building</th><th>Tenant</th><th>Suite</th><th>SF</th><th>Commenced</th><th>Terminates</th><th>Days Left</th><th>Notice Deadline</th><th>Notice Days</th><th>Escalation</th><th>Auto-Renew</th></tr></thead><tbody>';
+
+      active.forEach(function(t) {
+        // Color by notice deadline urgency
+        var nd = t.noticeDeadlineDays;
+        var rowStyle = '';
+        var urgencyBadge = '';
+        if(t.vacating) {
+          rowStyle = 'background:#fff1f2;';
+          urgencyBadge = '<span class="badge badge-revision">Vacating</span>';
+        } else if(nd !== null && nd < 0) {
+          rowStyle = 'background:#fff1f2;';
+          urgencyBadge = '<span class="badge badge-revision">Notice Passed</span>';
+        } else if(nd !== null && nd <= 90) {
+          rowStyle = 'background:#fff7ed;';
+          urgencyBadge = '<span class="badge badge-pending">'+nd+'d to notice</span>';
+        } else if(nd !== null && nd <= 180) {
+          rowStyle = 'background:#fefce8;';
+          urgencyBadge = '<span style="font-size:11px;color:#a16207;background:#fef9c3;padding:2px 7px;border-radius:9999px;font-weight:600;">'+nd+'d to notice</span>';
+        } else {
+          urgencyBadge = '<span style="font-size:11px;color:#059669;background:#dcfce7;padding:2px 7px;border-radius:9999px;font-weight:600;">'+(nd !== null ? nd+'d' : '—')+'</span>';
+        }
+        var daysLeftStr = t.daysLeft !== null ? t.daysLeft+'d ('+t.terminates+')' : t.terminates;
+        html += '<tr style="'+rowStyle+'"><td style="font-size:12px;color:#6b7280;">'+t.building.replace('Sanctuary ','#')+'</td><td style="font-weight:600;">'+t.tenant+'</td><td>'+t.suite+'</td><td>'+t.sf.toLocaleString()+'</td><td style="font-size:12px;">'+t.commenced+'</td><td style="font-size:12px;font-weight:500;">'+t.terminates+'</td><td style="font-size:12px;">'+daysLeftStr.split('(')[0].trim()+'</td><td style="font-size:12px;">'+urgencyBadge+'</td><td style="font-size:12px;color:#6b7280;">'+(t.noticeDays ? t.noticeDays+' days' : '—')+'</td><td style="font-size:12px;">'+t.escalation+'</td><td style="font-size:12px;">'+(t.autoRenew?'<span style="color:#059669;">✓ Yes</span>':'<span style="color:#dc2626;">✗ No</span>')+'</td></tr>';
+      });
+      mtm.forEach(function(t) {
+        html += '<tr style="background:#f0f9ff;"><td style="font-size:12px;color:#6b7280;">'+t.building.replace('Sanctuary ','#')+'</td><td style="font-weight:600;">'+t.tenant+'</td><td>'+t.suite+'</td><td>'+t.sf.toLocaleString()+'</td><td style="font-size:12px;">'+t.commenced+'</td><td colspan="5" style="font-size:12px;font-style:italic;color:#0369a1;">Month-to-Month — no fixed expiration</td><td style="font-size:12px;color:#059669;">✓ Yes</td></tr>';
+      });
+      owner.forEach(function(t) {
+        html += '<tr style="background:#f9fafb;"><td style="font-size:12px;color:#6b7280;">'+t.building.replace('Sanctuary ','#')+'</td><td style="font-weight:600;">'+t.tenant+'</td><td>'+t.suite+'</td><td>'+t.sf.toLocaleString()+'</td><td colspan="7" style="font-size:12px;color:#9ca3af;font-style:italic;">Owner Occupant</td></tr>';
+      });
+
+      html += '</tbody></table></div>';
+    }
+
+    // Rent distribution chart
+    html += '<div class="grid-2" style="margin-top:8px;">';
+    html += '<div class="card"><div class="card-title">Monthly Rent by Building</div><div style="position:relative;height:280px;"><canvas id="detailRentChart"></canvas></div></div>';
+    html += '<div class="card"><div class="card-title">Occupancy by Building</div><div style="position:relative;height:280px;"><canvas id="detailOccChart"></canvas></div></div>';
+    html += '</div>';
+
+  } else {
+    // ── Residential detail: unit mix + unit roster ──
+    if(p.unitMix) {
+      html += '<div class="card" style="margin-bottom:16px;">';
+      html += '<div class="card-title">Unit Mix Summary</div>';
+      html += '<table class="unit-table"><thead><tr><th>Floor Plan</th><th>Beds/Baths</th><th>Sq Ft</th><th>Rent Range</th><th>Count</th><th>Occupied</th><th>Vacant</th></tr></thead><tbody>';
+      var totC = 0, totV = 0;
+      p.unitMix.forEach(function(u) {
+        totC += u.count; totV += u.vacant;
+        html += '<tr><td>'+u.plan+'</td><td>'+u.beds+'</td><td>'+u.sqft+'</td><td>'+u.rent+'</td><td>'+u.count+'</td><td style="color:#059669;">'+(u.count - u.vacant)+'</td><td style="color:'+(u.vacant>0?"#d97706":"#059669")+';">'+u.vacant+'</td></tr>';
+      });
+      html += '<tr><td>Total</td><td></td><td></td><td></td><td>'+totC+'</td><td style="color:#059669;">'+(totC - totV)+'</td><td>'+totV+'</td></tr>';
+      html += '</tbody></table></div>';
+    }
+
+    // Unit roster
+    var roster = UNIT_ROSTER[p.slug];
+    if(roster) {
+      html += '<div class="card" style="margin-bottom:16px;">';
+      html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;"><span class="card-title" style="margin-bottom:0;">Unit Roster — April 2026</span>';
+      html += '<div style="display:flex;gap:12px;font-size:12px;">';
+      html += '<span style="display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:50%;background:#059669;display:inline-block;"></span> Occupied</span>';
+      html += '<span style="display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:50%;background:#d97706;display:inline-block;"></span> Vacant</span>';
+      html += '<span style="display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:50%;background:#dc2626;display:inline-block;"></span> Turnover</span>';
+      html += '</div></div>';
+      html += '<table class="unit-table"><thead><tr><th>Unit #</th><th>Floor Plan</th><th>Resident</th><th>Phone</th><th>Email</th><th>Status</th></tr></thead><tbody>';
+      roster.forEach(function(u) {
+        var sColor = u.status==="Occupied"?"#059669":(u.status==="Vacant"?"#d97706":"#dc2626");
+        var sBadge = u.status==="Occupied"?"badge-approved":(u.status==="Vacant"?"badge-pending":"badge-revision");
+        html += '<tr><td style="font-weight:500;">'+u.unit+'</td><td>'+u.plan+'</td><td>'+(u.name||"—")+'</td><td>'+(u.phone||"—")+'</td><td>'+(u.email?'<a href="mailto:'+u.email+'" style="color:#2563eb;">'+u.email+'</a>':"—")+'</td><td><span class="badge '+sBadge+'">'+u.status+'</span></td></tr>';
+      });
+      html += '</tbody></table></div>';
+    } else {
+      html += '<div class="card" style="margin-bottom:16px;"><div class="empty-state" style="padding:30px;">'+iconSvg("file-text",24,"#d1d5db")+'<div class="empty-title">Unit Roster Not Yet Available</div><p>Individual unit data will be populated once the rent roll is fully parsed. Unit mix summary is shown above.</p></div></div>';
+    }
+
+    // Occupancy chart
+    html += '<div class="grid-2" style="margin-top:8px;">';
+    html += '<div class="card"><div class="card-title">Occupancy Breakdown</div><div style="position:relative;height:260px;"><canvas id="detailOccPie"></canvas></div></div>';
+    html += '<div class="card"><div class="card-title">Units by Floor Plan</div><div style="position:relative;height:260px;"><canvas id="detailPlanChart"></canvas></div></div>';
+    html += '</div>';
+  }
+
+  document.getElementById("detailContent").innerHTML = html;
+  lucide.createIcons();
+
+  // Render charts after DOM is ready
+  setTimeout(function() { renderDetailCharts(p); }, 50);
+}
+
+function renderDetailCharts(p) {
+  // Destroy old charts
+  Object.keys(detailCharts).forEach(function(k) { detailCharts[k].destroy(); });
+  detailCharts = {};
+
+  if(p.isHOA) {
+    // Ownership breakdown doughnut
+    var op = document.getElementById("detailOccPie");
+    if(op) {
+      detailCharts.occPie = new Chart(op, {
+        type:"doughnut", data:{ labels:["Crosby Managed","Third-Party Managed","Owner-Occupied"], datasets:[{data:[p.crosbyManaged,p.thirdPartyManaged,p.ownerOccupied],backgroundColor:["#2563eb","#d97706","#059669"],borderWidth:2,borderColor:"#fff"}]},
+        options:{responsive:true,maintainAspectRatio:false,cutout:"60%",plugins:{legend:{position:"bottom",labels:{usePointStyle:true,pointStyle:"circle",font:{size:12},padding:16}},tooltip:{callbacks:{label:function(ctx){return ctx.label+": "+ctx.raw+" lots";}}}}}
+      });
+    }
+    // Unit type bar chart
+    var pc = document.getElementById("detailPlanChart");
+    if(pc) {
+      detailCharts.plan = new Chart(pc, {
+        type:"bar", data:{ labels:["Townhomes","Cottages"], datasets:[
+          {label:"Crosby-Owned",data:[8,3],backgroundColor:"#2563eb",borderRadius:6},
+          {label:"Third-Party",data:[23,11],backgroundColor:"#9ca3af",borderRadius:6},
+        ]},
+        options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:"bottom",labels:{usePointStyle:true,pointStyle:"circle",font:{size:12}}},tooltip:{callbacks:{label:function(ctx){return ctx.dataset.label+": "+ctx.raw+" lots";}}}},scales:{y:{stacked:true,beginAtZero:true,grid:{color:"#f3f4f6"}},x:{stacked:true,grid:{display:false}}}}
+      });
+    }
+
+  } else if(p.isCommercial && p.buildings) {
+    var labels = p.buildings.map(function(b){return b.name.replace("Sanctuary ","");});
+    var colors = ["#2563eb","#7c3aed","#059669","#d97706","#dc2626"];
+
+    // Rent chart
+    var rc = document.getElementById("detailRentChart");
+    if(rc) {
+      detailCharts.rent = new Chart(rc, {
+        type:"bar", data:{ labels:labels, datasets:[{label:"Monthly Rent ($)",data:p.buildings.map(function(b){return b.monthly;}),backgroundColor:colors,borderRadius:6}]},
+        options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){return "$"+ctx.raw.toLocaleString(undefined,{minimumFractionDigits:2});}}}},scales:{y:{beginAtZero:true,ticks:{callback:function(v){return "$"+(v/1000).toFixed(0)+"K";}},grid:{color:"#f3f4f6"}},x:{grid:{display:false}}}}
+      });
+    }
+
+    // Occupancy chart (stacked bar: occupied vs vacant SF)
+    var oc = document.getElementById("detailOccChart");
+    if(oc) {
+      detailCharts.occ = new Chart(oc, {
+        type:"bar", data:{ labels:labels, datasets:[
+          {label:"Occupied SF",data:p.buildings.map(function(b){return b.occupiedSF;}),backgroundColor:"#059669",borderRadius:6},
+          {label:"Vacant SF",data:p.buildings.map(function(b){return b.vacantSF;}),backgroundColor:"#fbbf24",borderRadius:6},
+        ]},
+        options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:"bottom",labels:{usePointStyle:true,pointStyle:"circle",font:{size:12}}},tooltip:{callbacks:{label:function(ctx){return ctx.dataset.label+": "+ctx.raw.toLocaleString()+" SF";}}}},scales:{y:{stacked:true,beginAtZero:true,ticks:{callback:function(v){return (v/1000).toFixed(0)+"K";}},grid:{color:"#f3f4f6"}},x:{stacked:true,grid:{display:false}}}}
+      });
+    }
+  } else {
+    // Residential occupancy pie
+    var op = document.getElementById("detailOccPie");
+    if(op) {
+      detailCharts.occPie = new Chart(op, {
+        type:"doughnut", data:{ labels:["Occupied","Vacant","Turnover"], datasets:[{data:[p.occupied,p.vacant||0,p.turnover||0],backgroundColor:["#059669","#d97706","#dc2626"],borderWidth:2,borderColor:"#fff"}]},
+        options:{responsive:true,maintainAspectRatio:false,cutout:"60%",plugins:{legend:{position:"bottom",labels:{usePointStyle:true,pointStyle:"circle",font:{size:12},padding:16}},tooltip:{callbacks:{label:function(ctx){return ctx.label+": "+ctx.raw+" units";}}}}}
+      });
+    }
+
+    // Units by plan bar chart
+    var pc = document.getElementById("detailPlanChart");
+    if(pc && p.unitMix) {
+      var planColors = ["#2563eb","#3b82f6","#7c3aed","#8b5cf6","#059669","#10b981","#d97706"];
+      detailCharts.plan = new Chart(pc, {
+        type:"bar", data:{ labels:p.unitMix.map(function(u){return u.plan;}), datasets:[
+          {label:"Occupied",data:p.unitMix.map(function(u){return u.count - u.vacant;}),backgroundColor:"#059669",borderRadius:6},
+          {label:"Vacant",data:p.unitMix.map(function(u){return u.vacant;}),backgroundColor:"#fbbf24",borderRadius:6},
+        ]},
+        options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:"bottom",labels:{usePointStyle:true,pointStyle:"circle",font:{size:12}}},tooltip:{callbacks:{label:function(ctx){return ctx.dataset.label+": "+ctx.raw+" units";}}}},scales:{y:{stacked:true,beginAtZero:true,grid:{color:"#f3f4f6"}},x:{stacked:true,grid:{display:false},ticks:{font:{size:10}}}}}
+      });
+    }
+  }
+}
+
+// ── STRATEGY ───────────────────────────────────────────────────────────────
+function renderStrategy() {
+  var html = '';
+
+  // ── Section 1: Strategic Vision ──
+  html += '<div class="card" style="margin-bottom:16px;border-left:4px solid #2563eb;">';
+  html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">'+iconSvg("target",20,"#2563eb")+'<span style="font-size:16px;font-weight:700;color:#111827;">Strategic Vision</span></div>';
+  html += '<p style="font-size:14px;color:#374151;line-height:1.7;margin-bottom:12px;">Crosby Development Company, L.L.C. — founded in 1954 by John L. Crosby, Sr. — develops and manages residential, commercial, and industrial properties across the Greater New Orleans area and Louisiana\'s Northshore. This AI agent system is being built to centralize portfolio intelligence, automate marketing and reporting workflows, and provide a single operational dashboard for all properties.</p>';
+  html += '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px;">';
+  html += '<div style="background:#eff6ff;border-radius:8px;padding:14px;"><div style="font-size:12px;font-weight:600;color:#2563eb;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;">Mission</div><div style="font-size:13px;color:#374151;">Leverage AI agents to automate property marketing, tenant communications, market analysis, and portfolio reporting — freeing staff to focus on high-value decision-making.</div></div>';
+  html += '<div style="background:#f0fdf4;border-radius:8px;padding:14px;"><div style="font-size:12px;font-weight:600;color:#059669;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;">Scope</div><div style="font-size:13px;color:#374151;">8 properties across 5 asset classes: multi-family apartments, commercial office, industrial land, HOA-managed communities, and mixed townhome/condo developments.</div></div>';
+  html += '<div style="background:#fefce8;border-radius:8px;padding:14px;"><div style="font-size:12px;font-weight:600;color:#a16207;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;">Headquarters</div><div style="font-size:13px;color:#374151;">1 Sanctuary Blvd, Mandeville, LA 70471<br><a href="https://www.crosbydevelopment.com" style="color:#2563eb;font-size:12px;">crosbydevelopment.com</a></div></div>';
+  html += '</div></div>';
+
+  // ── Section 2: Implementation Plan ──
+  html += '<div class="card" style="margin-bottom:16px;border-left:4px solid #7c3aed;">';
+  html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">'+iconSvg("layers",20,"#7c3aed")+'<span style="font-size:16px;font-weight:700;color:#111827;">Implementation Plan</span></div>';
+  html += '<p style="font-size:13px;color:#6b7280;margin-bottom:16px;">Full-circle real estate operations — building from data foundation through operations agents to business development automation.</p>';
+
+  // Phase 1 — Foundation
+  html += '<div style="margin-bottom:20px;">';
+  html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><span style="background:#2563eb;color:#fff;font-size:11px;font-weight:700;padding:2px 10px;border-radius:9999px;">PHASE 1 — FOUNDATION</span><span class="badge badge-approved">In Progress</span></div>';
+  html += '<div style="margin-left:16px;font-size:13px;color:#374151;line-height:1.8;">';
+  html += '<div style="display:flex;align-items:baseline;gap:8px;"><span style="color:#059669;">✓</span> Build portfolio knowledge base from rent roll files (XLS, XLSX, WDB formats)</div>';
+  html += '<div style="display:flex;align-items:baseline;gap:8px;"><span style="color:#059669;">✓</span> Parse commercial tenant rosters — Sanctuary Office Park (5 buildings, 38 tenants, April 2026)</div>';
+  html += '<div style="display:flex;align-items:baseline;gap:8px;"><span style="color:#059669;">✓</span> Parse residential unit rosters — Metairie Plaza (62/66 units) and Metairie Lake (108 units)</div>';
+  html += '<div style="display:flex;align-items:baseline;gap:8px;"><span style="color:#059669;">✓</span> Load lease terms from rentinfo#1.xls — expiration dates, escalations, notice deadlines, auto-renew</div>';
+  html += '<div style="display:flex;align-items:baseline;gap:8px;"><span style="color:#059669;">✓</span> Store 9 Building #1 lease PDFs with direct-open links in tenant dashboard</div>';
+  html += '<div style="display:flex;align-items:baseline;gap:8px;"><span style="color:#059669;">✓</span> Load HOA controller data — Lakeside Village (45 lots, 11 Crosby-owned, 15 rented)</div>';
+  html += '<div style="display:flex;align-items:baseline;gap:8px;"><span style="color:#059669;">✓</span> Build interactive dashboard with portfolio stats, property drill-downs, lease tracker, charts</div>';
+  html += '<div style="display:flex;align-items:baseline;gap:8px;"><span style="color:#d97706;">○</span> Load lease terms for Buildings #2–5 (rentinfo#2–5.xls)</div>';
+  html += '<div style="display:flex;align-items:baseline;gap:8px;"><span style="color:#d97706;">○</span> Load remaining property rent rolls (Mandeville Lake, Gulf South, DeLimon, The Sanctuary)</div>';
+  html += '</div></div>';
+
+  // Phase 2 — Operations Core
+  html += '<div style="margin-bottom:20px;">';
+  html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><span style="background:#dc2626;color:#fff;font-size:11px;font-weight:700;padding:2px 10px;border-radius:9999px;">PHASE 2 — OPERATIONS CORE</span><span class="badge badge-pending">Building Now</span></div>';
+  html += '<p style="margin-left:16px;font-size:12px;color:#6b7280;margin-bottom:6px;">Real estate operations agents — portfolio management, leasing, and rent roll intelligence.</p>';
+  html += '<div style="margin-left:16px;font-size:13px;color:#374151;line-height:1.8;">';
+  html += '<div style="display:flex;align-items:baseline;gap:8px;"><span style="color:#dc2626;font-weight:700;">▶</span> <strong>Agent 1: Lease Intelligence Agent</strong> — monitors expirations, generates renewal/termination letters, flags notice deadlines. <span style="font-size:12px;color:#dc2626;font-weight:600;">URGENT: Sec National vacating Jun 30 (90 days); Bayou CPR/Nirvana notice deadline Jul 4 (94 days)</span></div>';
+  html += '<div style="display:flex;align-items:baseline;gap:8px;"><span style="color:#9ca3af;">○</span> Agent 2: Vacancy Marketing Agent — triggers on confirmed vacancy, writes LoopNet/CoStar listing copy, generates leasing brief PDF</div>';
+  html += '<div style="display:flex;align-items:baseline;gap:8px;"><span style="color:#9ca3af;">○</span> Agent 3: Rent Roll Intelligence Agent — monitors all buildings for changes, delinquencies, new tenants; produces monthly portfolio summary</div>';
+  html += '</div></div>';
+
+  // Phase 3 — HOA & Residential
+  html += '<div style="margin-bottom:20px;">';
+  html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><span style="background:#7c3aed;color:#fff;font-size:11px;font-weight:700;padding:2px 10px;border-radius:9999px;">PHASE 3 — HOA & RESIDENTIAL</span><span class="badge badge-idle">Planned</span></div>';
+  html += '<p style="margin-left:16px;font-size:12px;color:#6b7280;margin-bottom:6px;">HOA community management and residential leasing automation.</p>';
+  html += '<div style="margin-left:16px;font-size:13px;color:#374151;line-height:1.8;">';
+  html += '<div style="display:flex;align-items:baseline;gap:8px;"><span style="color:#9ca3af;">○</span> Agent 4: HOA Management Agent — dues tracking, violation notices, maintenance request drafts, board communications (Lakeside Village first, then DeLimon + The Sanctuary)</div>';
+  html += '<div style="display:flex;align-items:baseline;gap:8px;"><span style="color:#9ca3af;">○</span> Agent 5: Residential Leasing Agent — vacancy listings, tenant inquiry responses, lease renewal outreach (Metairie Plaza, Metairie Lake, Mandeville Lake, Lakeside Village)</div>';
+  html += '<div style="display:flex;align-items:baseline;gap:8px;"><span style="color:#9ca3af;">○</span> Integrate approval workflow — human-in-the-loop review before any agent output is sent or published</div>';
+  html += '</div></div>';
+
+  // Phase 4 — Business Development
+  html += '<div style="margin-bottom:8px;">';
+  html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><span style="background:#059669;color:#fff;font-size:11px;font-weight:700;padding:2px 10px;border-radius:9999px;">PHASE 4 — BUSINESS DEVELOPMENT</span><span class="badge badge-idle">Planned</span></div>';
+  html += '<p style="margin-left:16px;font-size:12px;color:#6b7280;margin-bottom:6px;">Market intelligence, investor relations, and acquisition pipeline — the full-circle operations layer.</p>';
+  html += '<div style="margin-left:16px;font-size:13px;color:#374151;line-height:1.8;">';
+  html += '<div style="display:flex;align-items:baseline;gap:8px;"><span style="color:#9ca3af;">○</span> Agent 6: Market Intelligence Agent — Northshore office/residential comp tracking, quarterly market reports, rate benchmarking</div>';
+  html += '<div style="display:flex;align-items:baseline;gap:8px;"><span style="color:#9ca3af;">○</span> Agent 7: Investor Relations Agent — property performance summaries, Gulf South Commerce Park parcel sale updates, deal memos</div>';
+  html += '<div style="display:flex;align-items:baseline;gap:8px;"><span style="color:#9ca3af;">○</span> Agent 8: Acquisitions Agent — monitors MLS and CoStar for acquisition targets, drafts LOIs, flags off-market opportunities</div>';
+  html += '<div style="display:flex;align-items:baseline;gap:8px;"><span style="color:#9ca3af;">○</span> Enable scheduled automation and full metrics/ROI tracking across all agent outputs</div>';
+  html += '</div></div>';
+  html += '</div>';
+
+  // ── Section 3: Technology Stack ──
+  html += '<div class="card" style="margin-bottom:16px;border-left:4px solid #059669;">';
+  html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">'+iconSvg("cpu",20,"#059669")+'<span style="font-size:16px;font-weight:700;color:#111827;">Technology & Architecture</span></div>';
+  html += '<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px;">';
+
+  html += '<div style="background:#f9fafb;border-radius:8px;padding:14px;">';
+  html += '<div style="font-size:12px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;">Dashboard</div>';
+  html += '<div style="font-size:13px;color:#374151;line-height:1.7;">Vanilla HTML/CSS/JavaScript — zero build step, no framework dependencies. Chart.js v4.4.1 for data visualization. Lucide Icons v0.383.0 for UI iconography. Single-file architecture for maximum portability.</div>';
+  html += '</div>';
+
+  html += '<div style="background:#f9fafb;border-radius:8px;padding:14px;">';
+  html += '<div style="font-size:12px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;">Data Pipeline</div>';
+  html += '<div style="font-size:13px;color:#374151;line-height:1.7;">Rent roll ingestion from XLS (xlrd), XLSX (openpyxl), and WDB (olefile) files. Excel date serial number parsing for time-period matching. Multi-section spreadsheet scanning for current-period data extraction.</div>';
+  html += '</div>';
+
+  html += '<div style="background:#f9fafb;border-radius:8px;padding:14px;">';
+  html += '<div style="font-size:12px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;">AI Agent Framework</div>';
+  html += '<div style="font-size:13px;color:#374151;line-height:1.7;">Claude (Anthropic) powers all agent tasks via the Claude Agent SDK. Agents operate through a human-in-the-loop approval workflow — every output is reviewed before publication. Knowledge base stored as structured Markdown files per property.</div>';
+  html += '</div>';
+
+  html += '<div style="background:#f9fafb;border-radius:8px;padding:14px;">';
+  html += '<div style="font-size:12px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;">Key Data Sources</div>';
+  html += '<div style="font-size:13px;color:#374151;line-height:1.7;">Commercial rent rolls: monthly XLS spreadsheets per building (Sanctuary #1–#5). Residential rent rolls: Microsoft Works Database (.wdb) files (OLE2 compound documents). Property detail pages from public websites supplemented with owner-provided operational data.</div>';
+  html += '</div>';
+
+  html += '</div></div>';
+
+  // ── Section 4: Property Profiles ──
+  html += '<div class="card" style="margin-bottom:16px;border-left:4px solid #d97706;">';
+  html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">'+iconSvg("map-pin",20,"#d97706")+'<span style="font-size:16px;font-weight:700;color:#111827;">Property Profiles</span></div>';
+
+  PROPERTIES.forEach(function(p) {
+    var prof = PROPERTY_PROFILES[p.slug];
+    if(!prof) return;
+    var statusBdg = p.status === "data-loaded" ? '<span class="badge badge-approved">Data Loaded</span>' : '<span class="badge badge-idle">Pending Data</span>';
+    html += '<div style="border:1px solid #e5e7eb;border-radius:8px;padding:16px;margin-bottom:12px;">';
+    html += '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">';
+    html += '<div><div style="font-size:15px;font-weight:700;color:#111827;">'+p.name+'</div>';
+    html += '<div style="font-size:12px;color:#9ca3af;margin-top:2px;">'+prof.type+' &middot; '+prof.address+'</div></div>';
+    html += '<div style="display:flex;gap:6px;align-items:center;">'+statusBdg+'</div></div>';
+
+    html += '<div style="background:#f0f9ff;border-radius:6px;padding:10px 12px;margin-bottom:8px;font-size:12px;color:#1e40af;font-weight:500;">'+iconSvg("briefcase",13,"#1e40af")+' <span style="margin-left:4px;">'+prof.involvement+'</span></div>';
+    html += '<p style="font-size:13px;color:#374151;line-height:1.6;margin-bottom:8px;">'+prof.description+'</p>';
+
+    html += '<div style="display:flex;flex-wrap:wrap;gap:16px;font-size:12px;color:#6b7280;">';
+    if(prof.website) html += '<span>'+iconSvg("globe",12,"#9ca3af")+' <a href="https://'+prof.website+'" style="color:#2563eb;margin-left:3px;" target="_blank">'+prof.website+'</a></span>';
+    if(prof.phone) html += '<span>'+iconSvg("phone",12,"#9ca3af")+' <span style="margin-left:3px;">'+prof.phone+'</span></span>';
+    if(prof.yearBuilt) html += '<span>'+iconSvg("calendar",12,"#9ca3af")+' <span style="margin-left:3px;">Est. '+prof.yearBuilt+'</span></span>';
+    html += '<span>'+iconSvg("ruler",12,"#9ca3af")+' <span style="margin-left:3px;">'+prof.sqftRange+'</span></span>';
+    html += '<span>'+iconSvg("dollar-sign",12,"#9ca3af")+' <span style="margin-left:3px;">'+prof.rentRange+'</span></span>';
+    html += '</div></div>';
+  });
+
+  html += '</div>';
+
+  // ── Section 5: Data Status ──
+  html += '<div class="card" style="border-left:4px solid #dc2626;">';
+  html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">'+iconSvg("database",20,"#dc2626")+'<span style="font-size:16px;font-weight:700;color:#111827;">Data Ingestion Status</span></div>';
+  html += '<table class="unit-table"><thead><tr><th>Property</th><th>Asset Class</th><th>Data Source</th><th>Status</th><th>Notes</th></tr></thead><tbody>';
+
+  html += '<tr><td style="font-weight:500;">Metairie Plaza</td><td>Multi-Family</td><td>WDB rent roll</td><td><span class="badge badge-approved">Loaded</span></td><td style="font-size:12px;color:#6b7280;">62 of 66 units parsed (4 boundary units pending)</td></tr>';
+  html += '<tr><td style="font-weight:500;">Metairie Lake Apartments</td><td>Multi-Family</td><td>WDB rent roll</td><td><span class="badge badge-approved">Loaded</span></td><td style="font-size:12px;color:#6b7280;">108 units — some names have binary noise from WDB parsing</td></tr>';
+  html += '<tr><td style="font-weight:500;">Sanctuary Office Park</td><td>Commercial</td><td>XLS rent rolls (#1–#5) + Lease PDFs</td><td><span class="badge badge-approved">Loaded</span></td><td style="font-size:12px;color:#6b7280;">38 tenants, 91,602 SF, April 2026 data verified. 9 lease documents on file for Building #1.</td></tr>';
+  html += '<tr><td style="font-weight:500;">Mandeville Lake Apartments</td><td>Multi-Family</td><td>Pending</td><td><span class="badge badge-idle">Pending</span></td><td style="font-size:12px;color:#6b7280;">Rent roll file needed</td></tr>';
+  html += '<tr><td style="font-weight:500;">Lakeside Village Townhomes</td><td>HOA / Mixed</td><td>CSV controller file</td><td><span class="badge badge-approved">Loaded</span></td><td style="font-size:12px;color:#6b7280;">45 lots — 31 townhomes, 14 cottages. 11 Crosby-owned, 15 rented, 30 owner-occupied.</td></tr>';
+  html += '<tr><td style="font-weight:500;">Gulf South Commerce Park</td><td>Industrial</td><td>PDF site plan</td><td><span class="badge badge-pending">Partial</span></td><td style="font-size:12px;color:#6b7280;">Parcel 1-A sold; parcel map & sales data pending</td></tr>';
+  html += '<tr><td style="font-weight:500;">DeLimon Place</td><td>Townhome / Mixed</td><td>Pending</td><td><span class="badge badge-idle">Pending</span></td><td style="font-size:12px;color:#6b7280;">Limited involvement — owned units + office building inventory needed</td></tr>';
+  html += '<tr><td style="font-weight:500;">The Sanctuary</td><td>HOA / Single-Family</td><td>Pending</td><td><span class="badge badge-idle">Pending</span></td><td style="font-size:12px;color:#6b7280;">HOA management data + rental property details needed</td></tr>';
+
+  html += '</tbody></table></div>';
+
+  document.getElementById("strategyContent").innerHTML = html;
+  lucide.createIcons();
+}
+
+// ── DOCS ─────────────────────────────────────────────────────────────────────
+function renderDocs(selectedId) {
+  var el = document.getElementById("docsContent");
+  if(!el) return;
+
+  if(selectedId) {
+    var doc = getDoc(selectedId);
+    if(!doc) return;
+    var effectiveStatus = docStatuses[doc.id] || doc.status;
+    var isAgent = doc.category === "Agent Output";
+    var isPending = isAgent && effectiveStatus === "pending_review";
+    var isApproved = effectiveStatus === "approved";
+    var isRejected = effectiveStatus === "rejected";
+
+    var html = '<div style="display:flex;align-items:center;gap:8px;margin-bottom:20px;">';
+    html += '<button class="btn btn-review" onclick="renderDocs(null)" style="padding:6px 10px;">← Back to Documents</button>';
+    if(isAgent) {
+      var agent = getAgent(doc.agentSlug);
+      html += '<div style="margin-left:8px;display:flex;align-items:center;gap:6px;">'+iconSvg(agent?agent.icon:"activity",14,doc.color)+'<span style="font-size:13px;color:'+doc.color+';font-weight:600;">'+(agent?agent.name:"Agent Output")+'</span></div>';
+    }
+    html += '</div>';
+
+    if(isPending) {
+      html += '<div class="doc-pending-banner">';
+      html += '<div style="display:flex;align-items:center;gap:8px;">'+iconSvg("alert-circle",16,"#92400e")+'<span style="font-size:13px;font-weight:600;color:#92400e;">Pending Review — do not send until approved</span></div>';
+      html += '<div style="display:flex;gap:8px;">';
+      html += '<button class="btn btn-approve" onclick="approveDoc(\''+doc.id+'\')">'+iconSvg("check",13,"#065f46")+' Approve</button>';
+      html += '<button class="btn btn-regen" onclick="reviseDoc(\''+doc.id+'\')">'+iconSvg("edit-2",13,"#1d4ed8")+' Request Revision</button>';
+      html += '<button class="btn btn-reject" onclick="rejectDoc(\''+doc.id+'\')">'+iconSvg("x",13,"#991b1b")+' Reject</button>';
+      html += '</div></div>';
+    } else if(isApproved) {
+      html += '<div style="background:#d1fae5;border:1px solid #6ee7b7;border-radius:8px;padding:10px 16px;margin-bottom:16px;display:flex;align-items:center;gap:8px;">'+iconSvg("check-circle",16,"#065f46")+'<span style="font-size:13px;font-weight:600;color:#065f46;">Approved — ready to convert and send</span></div>';
+    } else if(isRejected) {
+      html += '<div style="background:#fee2e2;border:1px solid #fca5a5;border-radius:8px;padding:10px 16px;margin-bottom:16px;display:flex;align-items:center;gap:8px;">'+iconSvg("x-circle",16,"#991b1b")+'<span style="font-size:13px;font-weight:600;color:#991b1b;">Rejected</span></div>';
+    }
+
+    html += '<div class="card" style="padding:28px;">';
+    html += '<div class="doc-detail-body">' + buildDocHTML(doc.id) + '</div>';
+    if(isPending) {
+      html += '<div style="display:flex;gap:8px;padding-top:20px;border-top:1px solid #e5e7eb;margin-top:20px;">';
+      html += '<button class="btn btn-approve" onclick="approveDoc(\''+doc.id+'\')">'+iconSvg("check",13,"#065f46")+' Approve & Mark Ready</button>';
+      html += '<button class="btn btn-regen" onclick="reviseDoc(\''+doc.id+'\')">'+iconSvg("edit-2",13,"#1d4ed8")+' Request Revision</button>';
+      html += '<button class="btn btn-reject" style="margin-left:auto;" onclick="rejectDoc(\''+doc.id+'\')">'+iconSvg("x",13,"#991b1b")+' Reject</button>';
+      html += '</div>';
+    }
+    if(isApproved && doc.agentSlug==="lease-intelligence-agent") {
+      html += '<div style="padding-top:20px;border-top:1px solid #e5e7eb;margin-top:20px;">';
+      html += '<p style="font-size:13px;color:#374151;margin-bottom:8px;font-weight:500;">Next steps for approved letters:</p>';
+      html += '<div style="display:flex;gap:8px;">';
+      html += '<button class="btn" style="background:#eff6ff;color:#1d4ed8;" onclick="alert(\'Letter conversion to DOCX coming soon — Docx Skill integration\')">'+iconSvg("file-text",13,"#1d4ed8")+' Convert to DOCX</button>';
+      html += '<button class="btn" style="background:#f0fdf4;color:#065f46;" onclick="alert(\'Gmail draft creation coming soon — Gmail MCP integration\')">'+iconSvg("mail",13,"#065f46")+' Create Gmail Draft</button>';
+      html += '</div></div>';
+    }
+    html += '</div>';
+    el.innerHTML = html;
+    lucide.createIcons();
+    return;
+  }
+
+  // List view
+  updateDocBadge();
+  var categories = ["Agent Output","Formative"];
+  var html = '';
+
+  var pending = pendingDocs();
+  if(pending.length > 0) {
+    html += '<div style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;">';
+    html += '<div style="display:flex;align-items:center;gap:8px;">'+iconSvg("alert-circle",16,"#92400e")+'<span style="font-size:13px;font-weight:600;color:#92400e;">'+pending.length+' document'+(pending.length>1?'s':'')+' pending your review</span></div>';
+    html += '<span style="font-size:12px;color:#92400e;">Review required before any external action</span>';
+    html += '</div>';
+  }
+
+  categories.forEach(function(cat) {
+    var docs = DOCUMENTS.filter(function(d){ return d.category===cat; });
+    if(!docs.length) return;
+    html += '<div style="margin-bottom:24px;">';
+    html += '<div style="font-size:12px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:12px;">'+cat+'</div>';
+    html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;">';
+    docs.forEach(function(doc) {
+      var effectiveStatus = docStatuses[doc.id] || doc.status;
+      var statusBdg = "";
+      if(effectiveStatus==="pending_review") statusBdg = '<span style="font-size:11px;background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:9999px;font-weight:600;">Pending Review</span>';
+      else if(effectiveStatus==="approved") statusBdg = '<span style="font-size:11px;background:#d1fae5;color:#065f46;padding:2px 8px;border-radius:9999px;font-weight:600;">Approved</span>';
+      else if(effectiveStatus==="rejected") statusBdg = '<span style="font-size:11px;background:#fee2e2;color:#991b1b;padding:2px 8px;border-radius:9999px;font-weight:600;">Rejected</span>';
+      else statusBdg = '<span style="font-size:11px;background:#f3f4f6;color:#6b7280;padding:2px 8px;border-radius:9999px;font-weight:600;">Reference</span>';
+      html += '<div class="doc-card" onclick="renderDocs(\''+doc.id+'\')">';
+      html += '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:10px;">';
+      html += '<div style="display:flex;align-items:center;gap:8px;">'+
+                '<div style="padding:8px;border-radius:8px;background:'+doc.color+'15;flex-shrink:0;">'+iconSvg(doc.icon,16,doc.color)+'</div>'+
+                '<span style="font-size:14px;font-weight:600;color:#111827;line-height:1.3;">'+doc.title+'</span>'+
+              '</div>';
+      html += statusBdg + '</div>';
+      html += '<p style="font-size:12px;color:#6b7280;line-height:1.5;margin-bottom:10px;">'+doc.description+'</p>';
+      html += '<div style="font-size:11px;color:#9ca3af;display:flex;align-items:center;gap:4px;">'+iconSvg("calendar",11,"#9ca3af")+' Updated '+doc.lastUpdated+'</div>';
+      html += '</div>';
+    });
+    html += '</div></div>';
+  });
+
+  el.innerHTML = html;
+  lucide.createIcons();
+}
+
+function approveDoc(id) { docStatuses[id]="approved"; updateDocBadge(); renderDocs(id); }
+function rejectDoc(id)  { docStatuses[id]="rejected"; updateDocBadge(); renderDocs(id); }
+function reviseDoc(id)  { alert("To request a revision: describe your changes in chat and ask the Lease Intelligence Agent to regenerate this document."); }
+
+function buildDocHTML(id) {
+  if(id==="bldg1-lease-review-2026-04") return buildLeaseReviewHTML();
+  if(id==="bayoucpr-renewal-2026-04")   return buildBayouCPRHTML();
+  if(id==="nirvana-renewal-2026-04")    return buildNirvanaHTML();
+  if(id==="agent-charter")             return buildAgentCharterHTML();
+  if(id==="leasing-playbook")          return buildLeasingPlaybookHTML();
+  if(id==="operations-playbook")       return buildOperationsPlaybookHTML();
+  if(id==="brand-voice")               return buildBrandVoiceHTML();
+  return "<p>Content not found.</p>";
+}
+
+function buildLeaseReviewHTML() {
+  return '<h1>Lease Intelligence Report — Building #1, Sanctuary Office Park</h1>'+
+  '<p style="color:#6b7280;font-size:13px;">Generated by Lease Intelligence Agent &bull; April 1, 2026 &bull; Sanctuary Office Park, Mandeville, LA</p><hr>'+
+  '<h2>Executive Summary</h2>'+
+  '<p>Building #1 has <strong>13 tenants</strong> occupying approximately <strong>15,643 SF</strong>. One tenant is vacating in 90 days, two tenants have urgent notice deadlines in 94 days, and one tenant is month-to-month with no fixed commitment.</p>'+
+  '<table><thead><tr><th>Urgency</th><th>Count</th><th>Tenants</th></tr></thead><tbody>'+
+  '<tr><td style="color:#dc2626;font-weight:700;">&#x1F534; Vacating / Critical</td><td>1</td><td>Sec National — Jun 30, 2026</td></tr>'+
+  '<tr><td style="color:#d97706;font-weight:700;">&#x1F7E0; Urgent (&lt;90 days to notice deadline)</td><td>2</td><td>Bayou CPR, Nirvana — Jul 4, 2026</td></tr>'+
+  '<tr><td style="color:#ca8a04;font-weight:700;">&#x1F7E1; Watch (90–180 days)</td><td>1</td><td>Dianne\'s — Sep 1, 2026 deadline</td></tr>'+
+  '<tr><td style="color:#2563eb;font-weight:700;">&#x1F535; Month-to-Month</td><td>1</td><td>Fine Southern Properties</td></tr>'+
+  '<tr><td style="color:#059669;font-weight:700;">&#x1F7E2; Stable (&gt;180 days)</td><td>7</td><td>M Squared, Acorn, Travelers, Mand Tech, Detox, Brandner, Body Remedy</td></tr>'+
+  '<tr><td style="color:#6b7280;">&#x26AB; Owner Occupant</td><td>1</td><td>Crosby Development</td></tr>'+
+  '</tbody></table>'+
+  '<blockquote><strong>At-risk monthly revenue:</strong> $3,634/mo (Sec National $1,610 + Bayou CPR $692 + Nirvana $1,332)</blockquote>'+
+  '<h2>&#x26A0;&#xFE0F; Immediate Action Items</h2>'+
+  '<h3>1. Sec National — Suite 302 (655 SF) — VACANCY CONFIRMED</h3>'+
+  '<ul><li><strong>Vacating June 30, 2026 (90 days from today)</strong></li>'+
+  '<li>Notice deadline: December 31, 2025 — already passed</li>'+
+  '<li>Monthly revenue lost: $1,610/mo</li>'+
+  '<li><strong>Action:</strong> Begin vacancy marketing immediately. Trigger Vacancy Marketing Agent for Suite 302.</li></ul>'+
+  '<h3>2. Bayou CPR — Suite 301-A (400 SF) — RENEWAL DECISION DUE</h3>'+
+  '<ul><li>Lease expires December 31, 2026 &bull; Notice deadline: <strong>July 4, 2026 (94 days)</strong></li>'+
+  '<li>Current rent: $692/mo &bull; Proposed renewal: $713/mo (2027) / $734/mo (2028)</li>'+
+  '<li><strong>Action:</strong> Review and approve draft renewal letter (see <em>Renewal Offer — Bayou CPR</em> document)</li></ul>'+
+  '<h3>3. Nirvana Massage — Suite 306 (610 SF) — RENEWAL DECISION DUE</h3>'+
+  '<ul><li>Lease expires December 31, 2026 &bull; Notice deadline: <strong>July 4, 2026 (94 days)</strong></li>'+
+  '<li>Current rent: $1,332/mo &bull; Proposed renewal: $1,372/mo (2027) / $1,413/mo (2028)</li>'+
+  '<li><strong>Action:</strong> Review and approve draft renewal letter (see <em>Renewal Offer — Nirvana Massage</em> document)</li></ul>'+
+  '<h2>Full Tenant Schedule</h2>'+
+  '<table><thead><tr><th>Tenant</th><th>Suite</th><th>SF</th><th>Rent/mo</th><th>Expires</th><th>Notice Deadline</th><th>Days</th><th>Status</th></tr></thead><tbody>'+
+  '<tr style="background:#fff1f2;"><td><strong>Sec National</strong></td><td>302</td><td>655</td><td>$1,610</td><td>Jun 30, 2026</td><td>Dec 31, 2025</td><td style="color:#dc2626;font-weight:700;">PAST</td><td style="color:#dc2626;font-weight:700;">&#x1F534; VACATING</td></tr>'+
+  '<tr style="background:#fffbeb;"><td><strong>Bayou CPR</strong></td><td>301-A</td><td>400</td><td>$692</td><td>Dec 31, 2026</td><td>Jul 4, 2026</td><td style="color:#d97706;font-weight:700;">94</td><td style="color:#d97706;font-weight:700;">&#x1F7E0; URGENT</td></tr>'+
+  '<tr style="background:#fffbeb;"><td><strong>Nirvana</strong></td><td>306</td><td>610</td><td>$1,332</td><td>Dec 31, 2026</td><td>Jul 4, 2026</td><td style="color:#d97706;font-weight:700;">94</td><td style="color:#d97706;font-weight:700;">&#x1F7E0; URGENT</td></tr>'+
+  '<tr style="background:#fefce8;"><td>Dianne\'s</td><td>305B</td><td>300</td><td>$550</td><td>Nov 30, 2026</td><td>Sep 1, 2026</td><td>153</td><td style="color:#ca8a04;">&#x1F7E1; Watch</td></tr>'+
+  '<tr><td>Fine Southern</td><td>100</td><td>500</td><td>$1,500</td><td>MTM</td><td>—</td><td>—</td><td style="color:#2563eb;">&#x1F535; MTM</td></tr>'+
+  '<tr><td>Acorn</td><td>301-B</td><td>300</td><td>$437</td><td>Feb 28, 2027</td><td>Nov 30, 2026</td><td>243</td><td style="color:#059669;">&#x1F7E2; Stable</td></tr>'+
+  '<tr><td>Body Remedy</td><td>303A</td><td>300</td><td>$450</td><td>Mar 31, 2027</td><td>Dec 31, 2026</td><td>274</td><td style="color:#059669;">&#x1F7E2; Stable</td></tr>'+
+  '<tr><td>Mand Tech</td><td>300A</td><td>275</td><td>$505</td><td>Apr 1, 2027</td><td>Jan 1, 2027</td><td>275</td><td style="color:#059669;">&#x1F7E2; Stable</td></tr>'+
+  '<tr><td>M Squared</td><td>300</td><td>1,445</td><td>$2,250</td><td>Mar 15, 2028</td><td>Dec 15, 2027</td><td>988</td><td style="color:#059669;">&#x1F7E2; Stable</td></tr>'+
+  '<tr><td>Travelers</td><td>210/202</td><td>5,573</td><td>$13,137</td><td>Apr 30, 2029</td><td>—</td><td>—</td><td style="color:#059669;">&#x1F7E2; Stable</td></tr>'+
+  '<tr><td>Detox</td><td>307</td><td>250</td><td>$575</td><td>Aug 1, 2028</td><td>May 3, 2028</td><td>763</td><td style="color:#059669;">&#x1F7E2; Stable</td></tr>'+
+  '<tr><td>Brandner</td><td>303B</td><td>235</td><td>$431</td><td>Nov 24, 2028</td><td>Aug 26, 2028</td><td>878</td><td style="color:#059669;">&#x1F7E2; Stable</td></tr>'+
+  '<tr><td>Crosby Dev</td><td>101</td><td>4,000</td><td>—</td><td>Owner</td><td>—</td><td>—</td><td style="color:#6b7280;">&#x26AB; Owner</td></tr>'+
+  '</tbody></table>'+
+  '<h2>Upcoming 12-Month Calendar</h2>'+
+  '<table><thead><tr><th>Date</th><th>Event</th><th>Tenant</th><th>Action Required</th></tr></thead><tbody>'+
+  '<tr style="background:#eff6ff;"><td><strong>Apr 1, 2026</strong></td><td>Today</td><td>—</td><td>Send Bayou CPR + Nirvana renewal offers</td></tr>'+
+  '<tr style="background:#fff1f2;"><td><strong>Jun 30, 2026</strong></td><td>Lease expires</td><td>Sec National</td><td>Vacancy begins — Suite 302 (655 SF)</td></tr>'+
+  '<tr style="background:#fffbeb;"><td><strong>Jul 4, 2026</strong></td><td>Notice deadline</td><td>Bayou CPR + Nirvana</td><td>Last day for 180-day notice</td></tr>'+
+  '<tr><td>Sep 1, 2026</td><td>Notice deadline</td><td>Dianne\'s</td><td>90-day window for Nov 30 expiry</td></tr>'+
+  '<tr><td>Nov 30, 2026</td><td>Lease expires</td><td>Dianne\'s</td><td>Confirm renewal or vacancy</td></tr>'+
+  '<tr><td>Nov 30, 2026</td><td>Notice deadline</td><td>Acorn</td><td>90-day window for Feb 28, 2027 expiry</td></tr>'+
+  '<tr><td>Dec 31, 2026</td><td>Lease expires</td><td>Bayou CPR + Nirvana</td><td>Confirm renewal status</td></tr>'+
+  '</tbody></table>'+
+  '<p style="font-size:12px;color:#9ca3af;margin-top:16px;font-style:italic;">Generated by Lease Intelligence Agent | April 1, 2026</p>';
+}
+
+function buildBayouCPRHTML() {
+  return '<h1>Renewal Offer Letter — Bayou CPR, Suite 301-A</h1>'+
+  '<p style="color:#6b7280;font-size:13px;">Generated by Lease Intelligence Agent &bull; April 1, 2026 &bull; Pending review</p><hr>'+
+  '<blockquote><strong>&#x26A0;&#xFE0F; Review before sending.</strong> Fill in the letter date and 21-day response deadline before approving. Notice deadline: July 4, 2026 (94 days).</blockquote>'+
+  '<h2>Draft Letter</h2>'+
+  '<div style="border:1px solid #e5e7eb;border-radius:8px;padding:24px;font-size:13px;line-height:1.8;background:#fcfcfc;">'+
+  '<p>April [DATE], 2026</p>'+
+  '<p>Bayou CPR<br>Suite 301-A<br>#1 Sanctuary Blvd.<br>Mandeville, LA 70471</p>'+
+  '<p><strong>RE: Lease Renewal Offer — Suite 301-A, Sanctuary Office Park</strong></p>'+
+  '<p>Dear Bayou CPR Team,</p>'+
+  '<p>Thank you for your continued tenancy at Sanctuary Office Park. We value your presence as a long-standing member of our professional community and look forward to your continued partnership.</p>'+
+  '<p>Your current lease for Suite 301-A (approximately 400 square feet) is scheduled to expire on <strong>December 31, 2026</strong>. Per the terms of your existing lease, either party may provide written notice of intent not to renew no later than 180 days prior to the expiration date — meaning the notice deadline is <strong>July 4, 2026</strong>.</p>'+
+  '<p>We would like to offer you the opportunity to renew your lease on the following terms:</p>'+
+  '<p><strong>Option 1: Two-Year Extension</strong></p>'+
+  '<table><thead><tr><th></th><th>Year 1 (Jan 1, 2027 – Dec 31, 2027)</th><th>Year 2 (Jan 1, 2028 – Dec 31, 2028)</th></tr></thead><tbody>'+
+  '<tr><td>Monthly Base Rent</td><td><strong>$713.00</strong></td><td><strong>$734.39</strong></td></tr>'+
+  '<tr><td>Annual Escalation</td><td>3.0%</td><td>3.0%</td></tr>'+
+  '<tr><td>Notice to Terminate</td><td>180 days written notice</td><td>180 days written notice</td></tr>'+
+  '</tbody></table>'+
+  '<p><strong>Option 2: One-Year Extension (Jan 1, 2027 – Dec 31, 2027): $713.00/mo</strong></p>'+
+  '<p>All other terms and conditions of your existing lease remain in full force and effect.</p>'+
+  '<p>Please respond with your renewal intentions no later than <strong>[DATE + 21 days]</strong>.</p>'+
+  '<p>We genuinely appreciate your business and hope to continue this relationship for years to come.</p>'+
+  '<p>Sincerely,<br><br><strong>Ryan Crosby</strong><br>Crosby Development Company, L.L.C.<br>#1 Sanctuary Blvd., Mandeville, LA 70471<br>985-674-7500 | info@crosbydevelopment.com</p>'+
+  '</div>'+
+  '<h2>Agent Notes</h2>'+
+  '<table><thead><tr><th>Field</th><th>Value</th></tr></thead><tbody>'+
+  '<tr><td>Current rent</td><td>$692.12/mo ($1.73/SF/mo)</td></tr>'+
+  '<tr><td>Proposed Year 1</td><td>$713.00/mo (+3.0%)</td></tr>'+
+  '<tr><td>Proposed Year 2</td><td>$734.39/mo (+3.0%)</td></tr>'+
+  '<tr><td>Tenant since</td><td>September 15, 2015 (10+ years — priority retention)</td></tr>'+
+  '<tr><td>Notice deadline</td><td><strong style="color:#d97706;">July 4, 2026 — 94 days</strong></td></tr>'+
+  '<tr><td>Recommendation</td><td>Send within 2 weeks; hand-deliver given long relationship</td></tr>'+
+  '</tbody></table>'+
+  '<p style="font-size:12px;color:#9ca3af;margin-top:16px;font-style:italic;">Generated by Lease Intelligence Agent | April 1, 2026</p>';
+}
+
+function buildNirvanaHTML() {
+  return '<h1>Renewal Offer Letter — Nirvana Massage, Suite 306</h1>'+
+  '<p style="color:#6b7280;font-size:13px;">Generated by Lease Intelligence Agent &bull; April 1, 2026 &bull; Pending review</p><hr>'+
+  '<blockquote><strong>&#x26A0;&#xFE0F; Review before sending.</strong> Fill in the letter date and 21-day response deadline before approving. Notice deadline: July 4, 2026 (94 days).</blockquote>'+
+  '<h2>Draft Letter</h2>'+
+  '<div style="border:1px solid #e5e7eb;border-radius:8px;padding:24px;font-size:13px;line-height:1.8;background:#fcfcfc;">'+
+  '<p>April [DATE], 2026</p>'+
+  '<p>Nirvana Massage<br>Suite 306<br>#1 Sanctuary Blvd.<br>Mandeville, LA 70471</p>'+
+  '<p><strong>RE: Lease Renewal Offer — Suite 306, Sanctuary Office Park</strong></p>'+
+  '<p>Dear Nirvana Massage Team,</p>'+
+  '<p>Thank you for your long and valued tenancy at Sanctuary Office Park. It has been a pleasure having you as part of our professional community, and we look forward to the possibility of continuing that relationship.</p>'+
+  '<p>Your current lease for Suite 306 (approximately 610 square feet) is scheduled to expire on <strong>December 31, 2026</strong>. Per your lease terms, written notice of intent not to renew must be received no later than 180 days prior to the expiration date — meaning the notice deadline is <strong>July 4, 2026</strong>.</p>'+
+  '<p>We are pleased to offer the following renewal options:</p>'+
+  '<p><strong>Option 1: Two-Year Extension</strong></p>'+
+  '<table><thead><tr><th></th><th>Year 1 (Jan 1, 2027 – Dec 31, 2027)</th><th>Year 2 (Jan 1, 2028 – Dec 31, 2028)</th></tr></thead><tbody>'+
+  '<tr><td>Monthly Base Rent</td><td><strong>$1,371.60</strong></td><td><strong>$1,412.75</strong></td></tr>'+
+  '<tr><td>Annual Escalation</td><td>3.0%</td><td>3.0%</td></tr>'+
+  '<tr><td>Notice to Terminate</td><td>180 days written notice</td><td>180 days written notice</td></tr>'+
+  '</tbody></table>'+
+  '<p><strong>Option 2: One-Year Extension (Jan 1, 2027 – Dec 31, 2027): $1,371.60/mo</strong></p>'+
+  '<p>All other terms and conditions of your existing lease agreement remain unchanged and in full force and effect.</p>'+
+  '<p>Please provide your written response no later than <strong>[DATE + 21 days]</strong>.</p>'+
+  '<p>We truly appreciate your years of partnership and hope to continue welcoming Nirvana Massage to Sanctuary Office Park for years to come.</p>'+
+  '<p>Sincerely,<br><br><strong>Ryan Crosby</strong><br>Crosby Development Company, L.L.C.<br>#1 Sanctuary Blvd., Mandeville, LA 70471<br>985-674-7500 | info@crosbydevelopment.com</p>'+
+  '</div>'+
+  '<h2>Agent Notes</h2>'+
+  '<table><thead><tr><th>Field</th><th>Value</th></tr></thead><tbody>'+
+  '<tr><td>Current rent</td><td>$1,331.65/mo ($2.18/SF/mo)</td></tr>'+
+  '<tr><td>Proposed Year 1</td><td>$1,371.60/mo (+3.0%)</td></tr>'+
+  '<tr><td>Proposed Year 2</td><td>$1,412.75/mo (+3.0%)</td></tr>'+
+  '<tr><td>Tenant since</td><td>June 30, 2013 (13+ years — longest-running tenant in Building #1)</td></tr>'+
+  '<tr><td>Notice deadline</td><td><strong style="color:#d97706;">July 4, 2026 — 94 days</strong></td></tr>'+
+  '<tr><td>Recommendation</td><td>Send within 2 weeks; wellness buildout creates strong retention incentive</td></tr>'+
+  '</tbody></table>'+
+  '<p style="font-size:12px;color:#9ca3af;margin-top:16px;font-style:italic;">Generated by Lease Intelligence Agent | April 1, 2026</p>';
+}
+
+function buildAgentCharterHTML() {
+  return '<h1>Agent Charter</h1>'+
+  '<p style="color:#6b7280;font-size:13px;">Version 1.0 &bull; April 1, 2026 &bull; The operational constitution of this agentic company</p><hr>'+
+  '<h2>Mission</h2>'+
+  '<p>Deploy a suite of purpose-built AI agents to automate the operational and marketing workflows of Crosby Development\'s full portfolio — reducing time and cost while maintaining brand integrity, market responsiveness, and data accuracy. Every output is reviewed and approved before it reaches tenants, prospects, or the public.</p>'+
+  '<h2>Operating Principles</h2>'+
+  '<ol style="margin-left:20px;line-height:2;"><li><strong>Markdown-first.</strong> Every agent output is produced as a Markdown file before any conversion.</li>'+
+  '<li><strong>Dashboard-primary.</strong> All work is reviewed through the dashboard. External tools only after approval.</li>'+
+  '<li><strong>Human-in-the-loop, no exceptions.</strong> No agent sends, publishes, or transmits anything without explicit approval.</li>'+
+  '<li><strong>Data before drafting.</strong> Agents read current data before generating any output. No hallucinated figures.</li>'+
+  '<li><strong>Log every interaction.</strong> Every task adds an entry to the memory log for that property.</li>'+
+  '<li><strong>Minimal external tool use.</strong> External calls only after approval.</li>'+
+  '<li><strong>Preserve institutional knowledge.</strong> All decisions and feedback logged so context persists.</li></ol>'+
+  '<h2>Agent Roster</h2>'+
+  '<table><thead><tr><th>Phase</th><th>Agent</th><th>Status</th><th>Purpose</th></tr></thead><tbody>'+
+  '<tr style="background:#fff1f2;"><td>2</td><td><strong>Lease Intelligence</strong></td><td style="color:#dc2626;font-weight:700;">Building Now</td><td>Monitor lease expirations, generate renewal letters, flag vacancies</td></tr>'+
+  '<tr><td>2</td><td>Vacancy Marketing</td><td style="color:#6b7280;">Planned</td><td>Generate LoopNet/CoStar listings and leasing briefs on vacancy</td></tr>'+
+  '<tr><td>2</td><td>Rent Roll Intelligence</td><td style="color:#6b7280;">Planned</td><td>Monitor all rent rolls, flag anomalies, monthly portfolio summary</td></tr>'+
+  '<tr><td>3</td><td>HOA Management</td><td style="color:#6b7280;">Planned</td><td>Dues, violations, maintenance, board communications</td></tr>'+
+  '<tr><td>3</td><td>Residential Leasing</td><td style="color:#6b7280;">Planned</td><td>Apartment vacancy listings, inquiry responses, renewals</td></tr>'+
+  '<tr><td>4</td><td>Market Intelligence</td><td style="color:#6b7280;">Planned</td><td>Northshore comp tracking, quarterly market reports</td></tr>'+
+  '<tr><td>4</td><td>Investor Relations</td><td style="color:#6b7280;">Planned</td><td>Performance summaries, Gulf South parcel updates, deal memos</td></tr>'+
+  '<tr><td>4</td><td>Acquisitions</td><td style="color:#6b7280;">Planned</td><td>MLS/CoStar monitoring, LOI drafts, acquisition briefs</td></tr>'+
+  '</tbody></table>'+
+  '<h2>Approval Workflow</h2>'+
+  '<p>Agent generates output (MD file) &rarr; Appears in <strong>Docs tab</strong> as Pending Review &rarr; Ryan reviews &rarr; Approve / Revise / Reject &rarr; Approved outputs converted to final format &rarr; External tool invoked (Gmail, LoopNet, etc.)</p>'+
+  '<p style="font-size:12px;color:#9ca3af;margin-top:16px;">Full document: knowledge-base/formative/AGENT_CHARTER.md</p>';
+}
+
+function buildLeasingPlaybookHTML() {
+  return '<h1>Leasing Playbook</h1>'+
+  '<p style="color:#6b7280;font-size:13px;">Version 1.0 &bull; April 1, 2026 &bull; Commercial and residential leasing procedures</p><hr>'+
+  '<h2>Notice & Auto-Renewal Framework</h2>'+
+  '<table><thead><tr><th>Notice Period</th><th>Meaning</th></tr></thead><tbody>'+
+  '<tr><td><strong>180 days</strong></td><td>Must notify tenant at least 180 days before lease termination date. If no notice: lease auto-renews.</td></tr>'+
+  '<tr><td><strong>90 days</strong></td><td>Must notify tenant at least 90 days before lease termination date.</td></tr>'+
+  '</tbody></table>'+
+  '<p><strong>Rule of thumb:</strong> Send renewal outreach <strong>30 days before the notice deadline</strong> to allow time for negotiation.</p>'+
+  '<h2>Urgency Tiers</h2>'+
+  '<table><thead><tr><th>Tier</th><th>Condition</th><th>Required Action</th></tr></thead><tbody>'+
+  '<tr><td style="color:#dc2626;font-weight:700;">&#x1F534; Critical</td><td>Notice deadline passed or &lt;30 days away</td><td>Act immediately</td></tr>'+
+  '<tr><td style="color:#d97706;font-weight:700;">&#x1F7E0; Urgent</td><td>30–90 days to notice deadline</td><td>Send renewal offer this week</td></tr>'+
+  '<tr><td style="color:#ca8a04;font-weight:700;">&#x1F7E1; Watch</td><td>90–180 days to notice deadline</td><td>Prepare offer, schedule outreach</td></tr>'+
+  '<tr><td style="color:#059669;font-weight:700;">&#x1F7E2; Stable</td><td>&gt;180 days to notice deadline</td><td>Monitor quarterly</td></tr>'+
+  '<tr><td style="color:#2563eb;font-weight:700;">&#x1F535; MTM</td><td>Month-to-Month</td><td>Offer fixed term; 30-day risk</td></tr>'+
+  '</tbody></table>'+
+  '<h2>Renewal Standard Terms</h2>'+
+  '<ul><li><strong>Term:</strong> 2-year renewal preferred; 1-year available</li>'+
+  '<li><strong>Escalation:</strong> 3.0% per annum (consistent with existing leases)</li>'+
+  '<li><strong>Response deadline:</strong> 21 days from letter date</li>'+
+  '<li><strong>Formula:</strong> New Year 1 = Current Rate &times; 1.03 &bull; Year 2 = Year 1 &times; 1.03</li></ul>'+
+  '<h2>Vacancy Response Procedure</h2>'+
+  '<ol style="margin-left:20px;line-height:2;"><li>Confirm vacancy date, update LEASE_TERMS with vacating flag</li>'+
+  '<li>Trigger Vacancy Marketing Agent to generate listing copy</li>'+
+  '<li>Within 3 days: produce one-page leasing brief for brokers</li>'+
+  '<li>Within 7 days: list on LoopNet and CoStar (after approval)</li>'+
+  '<li>Ongoing: weekly leasing activity status update</li></ol>'+
+  '<p><strong>Suite 302 — Sec National — Vacating June 30, 2026 (655 SF):</strong> Begin listing process now.</p>'+
+  '<p style="font-size:12px;color:#9ca3af;margin-top:16px;">Full document: knowledge-base/formative/LEASING_PLAYBOOK.md</p>';
+}
+
+function buildOperationsPlaybookHTML() {
+  return '<h1>Operations Playbook</h1>'+
+  '<p style="color:#6b7280;font-size:13px;">Version 1.0 &bull; April 1, 2026 &bull; How to operate through the dashboard</p><hr>'+
+  '<h2>Dashboard Tab Guide</h2>'+
+  '<table><thead><tr><th>Tab</th><th>Purpose</th></tr></thead><tbody>'+
+  '<tr><td><strong>Portfolio</strong></td><td>Top-level stats across all 8 properties</td></tr>'+
+  '<tr><td><strong>Properties</strong></td><td>Individual property data, tenant rosters, lease timelines</td></tr>'+
+  '<tr><td><strong>Docs</strong></td><td>All agent outputs and formative playbooks — review and approve here</td></tr>'+
+  '<tr><td><strong>Agents</strong></td><td>Status of all 8 agents and phase roadmap</td></tr>'+
+  '<tr><td><strong>Schedule</strong></td><td>Upcoming automated tasks</td></tr>'+
+  '<tr><td><strong>Approvals</strong></td><td>Quick-action queue for pending reviews</td></tr>'+
+  '<tr><td><strong>Strategy</strong></td><td>Implementation plan, tech stack, property profiles</td></tr>'+
+  '</tbody></table>'+
+  '<h2>Daily Workflow</h2>'+
+  '<p><strong>Morning (5 min):</strong> Portfolio tab &rarr; check red/orange urgency badges &rarr; Docs tab &rarr; review Pending items</p>'+
+  '<p><strong>Weekly (Monday):</strong> Review Lease Intelligence weekly scan &rarr; check for deadlines entering 90-day window &rarr; approve renewal letters</p>'+
+  '<p><strong>Monthly (1st):</strong> Review portfolio summary &rarr; review auto-renewal letters &rarr; update rent roll XLS files if available</p>'+
+  '<h2>Triggering Agent Tasks</h2>'+
+  '<p>Ask in chat: <em>"Run the Lease Intelligence Agent for Building #1"</em> — specify the agent, scope, and output type. Result appears in Docs tab as Pending Review.</p>'+
+  '<h2>GitHub Commit Convention</h2>'+
+  '<table><thead><tr><th>Type</th><th>Example</th></tr></thead><tbody>'+
+  '<tr><td>data</td><td>data: add Building #1 April 2026 lease terms</td></tr>'+
+  '<tr><td>agent</td><td>agent: build Lease Intelligence Agent v1</td></tr>'+
+  '<tr><td>dashboard</td><td>dashboard: add Documents viewer tab</td></tr>'+
+  '<tr><td>docs</td><td>docs: update Leasing Playbook with MTM guidance</td></tr>'+
+  '</tbody></table>'+
+  '<p style="font-size:12px;color:#9ca3af;margin-top:16px;">Full document: knowledge-base/formative/OPERATIONS_PLAYBOOK.md</p>';
+}
+
+function buildBrandVoiceHTML() {
+  return '<h1>Brand Voice & Identity Guide</h1>'+
+  '<p style="color:#6b7280;font-size:13px;">Version 1.0 &bull; April 1, 2026 &bull; Applies to all agent-generated content</p><hr>'+
+  '<h2>Company Identity</h2>'+
+  '<p><strong>Crosby Development Company, L.L.C.</strong> &bull; Founded 1954 by John L. Crosby, Sr. &bull; Mandeville, LA &bull; 985-674-7500</p>'+
+  '<h2>Brand Personality</h2>'+
+  '<table><thead><tr><th>Attribute</th><th>Description</th></tr></thead><tbody>'+
+  '<tr><td><strong>Established</strong></td><td>70+ years of experience; stable and trustworthy, not trendy</td></tr>'+
+  '<tr><td><strong>Community-focused</strong></td><td>We build places people want to live and work long-term</td></tr>'+
+  '<tr><td><strong>Professional</strong></td><td>Reliable, responsive, clear communicators</td></tr>'+
+  '<tr><td><strong>Approachable</strong></td><td>Not corporate-cold; we\'re neighbors in the communities we develop</td></tr>'+
+  '<tr><td><strong>Honest</strong></td><td>Straightforward about terms, conditions, and expectations</td></tr>'+
+  '</tbody></table>'+
+  '<h2>Voice by Audience</h2>'+
+  '<table><thead><tr><th>Audience</th><th>Tone</th><th>Focus</th></tr></thead><tbody>'+
+  '<tr><td><strong>Residential tenants</strong></td><td>Warm, welcoming</td><td>Quality of life, community, responsive management</td></tr>'+
+  '<tr><td><strong>Commercial tenants</strong></td><td>Professional, direct</td><td>Location, professional community, reliability</td></tr>'+
+  '<tr><td><strong>HOA members</strong></td><td>Community steward</td><td>Standards, amenities, property values</td></tr>'+
+  '<tr><td><strong>Prospects</strong></td><td>Inviting, confident</td><td>What makes the property unique, lifestyle benefits</td></tr>'+
+  '</tbody></table>'+
+  '<h2>Writing Rules</h2>'+
+  '<ul><li>Full name on first reference: <em>Crosby Development Company, L.L.C.</em></li>'+
+  '<li>Specific accurate figures always — never approximate rent or SF</li>'+
+  '<li>Dates in body copy: June 30, 2026 (not 6/30/26)</li>'+
+  '<li>No hyperbole: "luxury," "world-class," "premier" without specific support</li>'+
+  '<li>No all-caps; use bold for emphasis</li>'+
+  '<li>No exclamation points in formal communications</li></ul>'+
+  '<h2>Fair Housing (Required on All Residential Materials)</h2>'+
+  '<blockquote>Crosby Development Company, L.L.C. is an equal opportunity housing provider. We do not discriminate on the basis of race, color, national origin, religion, sex, familial status, disability, or any other protected class under applicable federal, state, or local law.</blockquote>'+
+  '<h2>Brand Assets Needed</h2>'+
+  '<table><thead><tr><th>Asset</th><th>Status</th><th>Priority</th></tr></thead><tbody>'+
+  '<tr><td>Logo (vector SVG/EPS)</td><td style="color:#dc2626;">Pending</td><td>High</td></tr>'+
+  '<tr><td>Brand color palette</td><td style="color:#dc2626;">Pending</td><td>High</td></tr>'+
+  '<tr><td>Photography library</td><td style="color:#dc2626;">Pending</td><td>High</td></tr>'+
+  '<tr><td>Letterhead template (DOCX)</td><td style="color:#dc2626;">Pending</td><td>High</td></tr>'+
+  '<tr><td>Typography specification</td><td style="color:#dc2626;">Pending</td><td>Medium</td></tr>'+
+  '</tbody></table>'+
+  '<p style="font-size:12px;color:#9ca3af;margin-top:16px;">Full document: knowledge-base/formative/BRAND_VOICE.md</p>';
+}
+
+// ── INIT ────────────────────────────────────────────────────────────────────
+function init() {
+  document.getElementById("todayDate").textContent = new Date().toLocaleDateString("en-US",{weekday:"long",year:"numeric",month:"long",day:"numeric"});
+  var sel = document.getElementById("filterAgent");
+  AGENTS.forEach(function(a) { var o = document.createElement("option"); o.value = a.slug; o.textContent = a.name; sel.appendChild(o); });
+  renderPortfolio();
+  renderSchedule();
+  updateCounts();
+  updateDocBadge();
+  lucide.createIcons();
+}
+
+document.addEventListener("DOMContentLoaded", init);
+</script>
+</body>
+</html>

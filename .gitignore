@@ -1,0 +1,29 @@
+# Raw data files — contain tenant PII, stay in OneDrive
+*.wdb
+*.xls
+*.xlsx
+*.csv
+*.mdb
+
+# Lease PDFs — large binaries, stored locally
+# knowledge-base/outputs/ is tracked (agent outputs)
+# Leases_Claude/ PDFs are NOT tracked (stay in local mounted folder)
+
+# System files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temp files
+*.tmp
+*.bak
+*~
+
+# Node / Python artifacts
+node_modules/
+__pycache__/
+*.pyc
+.env
+
+# Session-specific paths
+/sessions/
