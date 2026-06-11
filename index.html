@@ -280,7 +280,31 @@ const PROPERTIES = [
       { name: "Sanctuary #4", sf: 20289, occupiedSF: 20039, vacantSF: 250, tenants: 7, monthly: 35472.86 },
       { name: "Sanctuary #5", sf: 20567, occupiedSF: 20567, vacantSF: 0, tenants: 4, monthly: 36804.17 },
     ]},
-  { slug: "mandeville-lake-apartments", name: "Mandeville Lake Apartments", location: "Mandeville, LA", units: 0, occupancy: 0, cls: "Multi-Family", status: "pending" },
+  { slug: "mandeville-lake-apartments", name: "Mandeville Lake Apartments", location: "Mandeville, LA", units: 293, occupied: 284, vacant: 9, turnover: 0, occupancy: 96.9, cls: "Multi-Family", status: "data-loaded",
+    totalSF: 340232, monthlyRent: 390799, annualRent: 4689588,
+    buildings: [
+      { name: "Building 1", units: 29, occupied: 29, vacant: 0, monthly: 36680 },
+      { name: "Building 2", units: 29, occupied: 29, vacant: 0, monthly: 37260 },
+      { name: "Building 3", units: 27, occupied: 26, vacant: 1, monthly: 35995 },
+      { name: "Building 4", units: 26, occupied: 26, vacant: 0, monthly: 36255 },
+      { name: "Building 5", units: 13, occupied: 13, vacant: 0, monthly: 18000 },
+      { name: "Building 6", units: 25, occupied: 23, vacant: 2, monthly: 34910 },
+      { name: "Building 7", units: 24, occupied: 23, vacant: 1, monthly: 33249 },
+      { name: "Building 8", units: 30, occupied: 28, vacant: 2, monthly: 36350 },
+      { name: "Building 9", units: 29, occupied: 29, vacant: 0, monthly: 37945 },
+      { name: "Building 10", units: 13, occupied: 12, vacant: 1, monthly: 16705 },
+      { name: "Building 11", units: 25, occupied: 23, vacant: 2, monthly: 34485 },
+      { name: "Building 12", units: 23, occupied: 23, vacant: 0, monthly: 32965 }
+    ],
+    unitMix: [
+      { plan: "Azalea (1BR)", beds: "1/1", sqft: "840", rent: "$1,030–$1,220", count: 60, vacant: 2 },
+      { plan: "Elm (1BR)", beds: "1/1", sqft: "880", rent: "$945–$1,270", count: 41, vacant: 1 },
+      { plan: "Bradford (2BR)", beds: "2/2", sqft: "1,240", rent: "$1,250–$1,625", count: 53, vacant: 2 },
+      { plan: "Cypress (2BR)", beds: "2/2", sqft: "1,200", rent: "$1,120–$1,500", count: 54, vacant: 1 },
+      { plan: "Dogwood (3BR)", beds: "3/2", sqft: "1,482", rent: "$1,070–$1,800", count: 69, vacant: 2 },
+      { plan: "Fern (3BR)", beds: "3/2", sqft: "1,371", rent: "$1,370–$1,650", count: 12, vacant: 0 },
+      { plan: "Other", beds: "—", sqft: "—", rent: "Varies", count: 4, vacant: 1 }
+    ] },
   { slug: "lakeside-village-townhomes", name: "Lakeside Village Townhomes", location: "Mandeville, LA", units: 45, occupied: 45, vacant: 0, turnover: 0, occupancy: 100, cls: "HOA / Mixed", status: "data-loaded",
     isHOA: true, totalLots: 45, townhomes: 31, cottages: 14, rented: 15, ownerOccupied: 30, crosbyOwned: 11, crosbyManaged: 11, thirdPartyManaged: 4, monthlyRent: 30675, monthlyDues: 91880,
     unitMix: [
@@ -549,29 +573,7 @@ const LEASE_DOCS = {
 // ── AGENT ROSTER (static definition — statuses loaded from dashboard-state.json) ──
 const AGENTS = [
   // Phase 1 — Foundation
-  { slug: "clerical-data-agent", name: "Clerical Data", icon: "database", phase: 1, color: "#374151", phaseLabel: "Phase 1 — Foundation", status: "building", description: "The data intake layer. Converts raw source files (XLS, WDB, CSV) into the clean structured data store. The only agent that touches raw files — all other agents read exclusively from data/." },
-  // Phase 2 — Operations Core
-  { slug: "lease-intelligence-agent", name: "Lease Intelligence", icon: "clock", phase: 2, color: "#dc2626", phaseLabel: "Phase 2 — Ops Core", status: "active", lastRun:"2026-04-02T08:00:00Z", description: "Monitors lease expirations, notice deadlines & auto-renewals. Generates renewal offer letters and vacancy alerts." },
-  { slug: "vacancy-marketing-agent", name: "Vacancy Marketing", icon: "file-text", phase: 2, color: "#d97706", phaseLabel: "Phase 2 — Ops Core", status: "active", lastRun:"2026-04-02T10:00:00Z", description: "Triggers on confirmed vacancy. Writes LoopNet/CoStar listing copy and generates leasing brief PDFs." },
-  { slug: "rent-roll-intelligence-agent", name: "Rent Roll Intelligence", icon: "bar-chart-2", phase: 2, color: "#2563eb", phaseLabel: "Phase 2 — Ops Core", status: "planned", description: "Monitors rent rolls across all buildings, flags anomalies, and produces monthly portfolio summary reports." },
-  // Phase 3 — HOA & Residential
-  { slug: "hoa-management-agent", name: "HOA Management", icon: "home", phase: 3, color: "#7c3aed", phaseLabel: "Phase 3 — HOA & Residential", status: "planned", description: "Dues tracking, violation notices, maintenance requests, and board communications for HOA communities." },
-  { slug: "residential-leasing-agent", name: "Residential Leasing", icon: "key", phase: 3, color: "#059669", phaseLabel: "Phase 3 — HOA & Residential", status: "planned", description: "Vacancy listings, tenant inquiry responses, and lease renewal outreach for apartment properties." },
-  // Phase 4 — Business Development
-  { slug: "market-intelligence-agent", name: "Market Intelligence", icon: "trending-up", phase: 4, color: "#0891b2", phaseLabel: "Phase 4 — Business Dev", status: "active", lastRun:"2026-04-02T11:00:00Z", description: "Northshore office/residential comp tracking, quarterly market reports, and rate benchmarking." },
-  { slug: "investor-relations-agent", name: "Investor Relations", icon: "briefcase", phase: 4, color: "#6366f1", phaseLabel: "Phase 4 — Business Dev", status: "planned", description: "Property performance summaries, Gulf South parcel updates, and deal memos for investors." },
-  { slug: "acquisitions-agent", name: "Acquisitions", icon: "search", phase: 4, color: "#f59e0b", phaseLabel: "Phase 4 — Business Dev", status: "planned", description: "Monitors MLS and CoStar for acquisition targets matching portfolio strategy. Drafts LOIs." },
-];
-
-// ── DYNAMIC STATE ───────────────────────────────────────────────────────────
-// Seeded with hardcoded defaults so the dashboard works when opened as file://
-// When served via HTTP (npx serve .), fetch() overrides these with dashboard-state.json
-
-var SCHEDULED = [
-  { taskId:"lease-intelligence-weekly", agent:"lease-intelligence-agent", property:"All properties", task:"Lease expiration & notice deadline scan", frequency:"Weekly (Monday 8am)", cron:"0 8 * * 1", status:"Live", lastRun:"2026-04-02T08:00:00Z", lastResult:"success" },
-  { taskId:"lease-intelligence-monthly-renewals", agent:"lease-intelligence-agent", property:"All properties", task:"Monthly renewal letter drafts", frequency:"Monthly (1st, 8am)", cron:"0 8 1 * *", status:"Live", lastRun:"2026-04-01T08:00:00Z", lastResult:"success" },
-  { taskId:"market-intelligence-monthly", agent:"market-intelligence-agent", property:"All properties", task:"Monthly market snapshot + rate benchmarking", frequency:"Monthly (15th, 8am)", cron:"0 8 15 * *", status:"Live", lastRun:"2026-04-02T11:00:00Z", lastResult:"success" },
-  { taskId:"vacancy-marketing-event", agent:"vacancy-marketing-agent", property:"All properties", task:"Vacancy listing on confirmed vacancy", frequency:"Event-driven", cron:null, status:"Manual", lastRun:"2026-04-02T10:00:00Z", lastResult:"success" },
+  { slug: "clerical-data-agent", name: "Clerical Data", icon: "database", phase: 1, color: "#374151", phaseLabel: "Phase 1 — Foundation", status: "active26-04-02T14:00:00Z", lastResult:"success" },
   { taskId:"rent-roll-monthly", agent:"rent-roll-intelligence-agent", property:"All properties", task:"Monthly portfolio summary", frequency:"Monthly (1st)", cron:"0 7 1 * *", status:"Pending", lastRun:null, lastResult:null },
   { taskId:"hoa-dues-monthly", agent:"hoa-management-agent", property:"Lakeside Village", task:"Monthly dues reminders", frequency:"Monthly (25th)", cron:"0 8 25 * *", status:"Pending", lastRun:null, lastResult:null },
   { taskId:"market-intelligence-quarterly", agent:"market-intelligence-agent", property:"All properties", task:"Quarterly market report", frequency:"Quarterly (end of Q)", cron:null, status:"Manual", lastRun:null, lastResult:null },
@@ -592,19 +594,26 @@ var DOCUMENTS = [
   { id:"bldg1-lease-review-2026-04", title:"Building #1 Lease Review — April 2026", category:"Agent Output", icon:"clock", color:"#dc2626", lastUpdated:"2026-04-01", status:"pending_review", agentSlug:"lease-intelligence-agent", propertySlug:"sanctuary-office-park", description:"Full lease schedule for all 13 Building #1 tenants with urgency tiers, upcoming 12-month calendar, and action items. One vacancy confirmed, two renewal letters required.", file:"knowledge-base/outputs/lease-intelligence/bldg1-lease-review-2026-04.md" },
   { id:"bayoucpr-renewal-2026-04", title:"Renewal Offer — Bayou CPR, Suite 301-A", category:"Agent Output", icon:"clock", color:"#dc2626", lastUpdated:"2026-04-01", status:"pending_review", agentSlug:"lease-intelligence-agent", propertySlug:"sanctuary-office-park", description:"Draft renewal offer letter for Bayou CPR (Suite 301-A, 400 SF). Proposes 2-year extension at $713/mo (Year 1) + $734/mo (Year 2). Notice deadline: July 4, 2026 (94 days).", file:"knowledge-base/outputs/lease-intelligence/bayoucpr-renewal-2026-04.md" },
   { id:"nirvana-renewal-2026-04", title:"Renewal Offer — Nirvana Massage, Suite 306", category:"Agent Output", icon:"clock", color:"#dc2626", lastUpdated:"2026-04-01", status:"pending_review", agentSlug:"lease-intelligence-agent", propertySlug:"sanctuary-office-park", description:"Draft renewal offer letter for Nirvana Massage (Suite 306, 610 SF). Proposes 2-year extension at $1,372/mo (Year 1) + $1,413/mo (Year 2). Notice deadline: July 4, 2026 (94 days).", file:"knowledge-base/outputs/lease-intelligence/nirvana-renewal-2026-04.md" },
-  { id:"bldg1-suite302-listing-2026-07", title:"Vacancy Listing — Suite 302, Building #1", category:"Agent Output", icon:"file-text", color:"#d97706", lastUpdated:"2026-04-02", status:"pending_review", agentSlug:"vacancy-marketing-agent", propertySlug:"sanctuary-office-park", description:"LoopNet/CoStar listing copy for Suite 302 (655 SF, 3rd floor). Sec National vacating June 30. Proposed asking rate: $30.37–$32.44/SF/year. Full-service lease, available July 1, 2026.", file:"knowledge-base/outputs/vacancy-marketing/bldg1-suite302-listing-2026-07.md" },
+  { id:"bldg1-suite302-listing-2026-07", title:"Vacancy Listing — Suite 302, Building #1", category:"Agent Output", icon:"file-text", color:"#d97706", lastUpdated:"2026-04-02", status:"pending_review", agentSlug:"vacancy-marketing-agent", propertySlug:"sanctuary-office-park", description:"LoopNet/CoStar listing copy for Suite 302 (655 SF, 3rd floor). Sec National vacating June 30. Proposed asking rate: $30.37-$32.44/SF/year. Full-service lease, available July 1, 2026.", file:"knowledge-base/outputs/vacancy-marketing/bldg1-suite302-listing-2026-07.md" },
   { id:"bldg1-suite302-brief-2026-07", title:"Leasing Brief — Suite 302, Building #1", category:"Agent Output", icon:"file-text", color:"#d97706", lastUpdated:"2026-04-02", status:"pending_review", agentSlug:"vacancy-marketing-agent", propertySlug:"sanctuary-office-park", description:"One-page leasing brief for broker distribution. Suite 302 specs, building overview, campus amenities, location map notes, lease terms, and contact CTA.", file:"knowledge-base/outputs/vacancy-marketing/bldg1-suite302-brief-2026-07.md" },
-  { id:"bldg1-suite302-email-2026-07", title:"Email Blast — Suite 302, Building #1", category:"Agent Output", icon:"file-text", color:"#d97706", lastUpdated:"2026-04-02", status:"pending_review", agentSlug:"vacancy-marketing-agent", propertySlug:"sanctuary-office-park", description:"Email announcement for broker contacts and prospect list. 655 SF available July 1, asking $30.37–$32.44/SF/year. Ready for Gmail draft on approval.", file:"knowledge-base/outputs/vacancy-marketing/bldg1-suite302-email-2026-07.md" },
-  { id:"market-snapshot-2026-04", title:"Market Snapshot — April 2026", category:"Agent Output", icon:"trending-up", color:"#0891b2", lastUpdated:"2026-04-02", status:"pending_review", agentSlug:"market-intelligence-agent", description:"General mode: Monthly market snapshot across all Crosby-relevant asset classes — Northshore office, Metairie/Northshore multi-family, St. Tammany industrial, Mandeville HOA/townhome.", file:"knowledge-base/outputs/market-intelligence/market-snapshot-2026-04.md" },
-  { id:"comps-sanctuary-office-2026-04", title:"Comp Report — Sanctuary Office Park", category:"Agent Output", icon:"trending-up", color:"#0891b2", lastUpdated:"2026-04-02", status:"pending_review", agentSlug:"market-intelligence-agent", propertySlug:"sanctuary-office-park", description:"Property-specific mode: 6 comparable Northshore office properties for Suite 302 rate validation. Market median $26.50/SF. Recommends narrowing asking range to $29.50–$31.00/SF.", file:"knowledge-base/outputs/market-intelligence/comps-sanctuary-office-2026-04.md" },
+  { id:"bldg1-suite302-email-2026-07", title:"Email Blast — Suite 302, Building #1", category:"Agent Output", icon:"file-text", color:"#d97706", lastUpdated:"2026-04-02", status:"pending_review", agentSlug:"vacancy-marketing-agent", propertySlug:"sanctuary-office-park", description:"Email announcement for broker contacts and prospect list. 655 SF available July 1, asking $30.37-$32.44/SF/year. Ready for Gmail draft on approval.", file:"knowledge-base/outputs/vacancy-marketing/bldg1-suite302-email-2026-07.md" },
+  { id:"market-snapshot-2026-04", title:"Market Snapshot — April 2026", category:"Agent Output", icon:"trending-up", color:"#0891b2", lastUpdated:"2026-04-02", status:"pending_review", agentSlug:"market-intelligence-agent", description:"General mode: Monthly market snapshot across all Crosby-relevant asset classes — Northshore office, Metairie/Northshore multi-family, St. Tammany industrial, Mandeville HOA/townhome. Rate benchmarking, headlines, watch items.", file:"knowledge-base/outputs/market-intelligence/market-snapshot-2026-04.md" },
+  { id:"comps-sanctuary-office-2026-04", title:"Comp Report — Sanctuary Office Park", category:"Agent Output", icon:"trending-up", color:"#0891b2", lastUpdated:"2026-04-02", status:"pending_review", agentSlug:"market-intelligence-agent", propertySlug:"sanctuary-office-park", description:"Property-specific mode: 6 comparable Northshore office properties for Suite 302 rate validation. Market median $26.50/SF. Recommends narrowing asking range from $30.37-$32.44 to $29.50-$31.00/SF.", file:"knowledge-base/outputs/market-intelligence/comps-sanctuary-office-2026-04.md" },
+  { id:"renewal-summary-2026-04", title:"Monthly Renewal Summary — April 2026 — Executive Summary", category:"Agent Output", icon:"clock", color:"#d97706", lastUpdated:"2026-04-02", status:"pending_review", agentSlug:"lease-intelligence-agent", description:"## Urgency Tier Summary", file:"knowledge-base/outputs/lease-intelligence/renewal-summary-2026-04.md" },
+  { id:"weekly-scan-2026-04-02", title:"Lease Intelligence — Weekly Deadline Scan — Sanctuary Office Park, Building #1", category:"Agent Output", icon:"clock", color:"#d97706", lastUpdated:"2026-04-02", status:"pending_review", agentSlug:"lease-intelligence-agent", description:"## Urgency Tier Summary", file:"knowledge-base/outputs/lease-intelligence/weekly-scan-2026-04-02.md" },
+  { id:"weekly-scan-2026-04-12", title:"Lease Intelligence — Weekly Deadline Scan — Sanctuary Office Park, Building #1", category:"Agent Output", icon:"clock", color:"#d97706", lastUpdated:"2026-04-13", status:"pending_review", agentSlug:"lease-intelligence-agent", description:"## Urgency Tier Summary", file:"knowledge-base/outputs/lease-intelligence/weekly-scan-2026-04-12.md" },
 ];
 
 let activities = [
-  { id:"act-001", timestamp:"2026-04-02T11:00:00Z", agent:"market-intelligence-agent", type:"report", title:"Market Snapshot — April 2026", task:"Market Snapshot — April 2026", description:"Monthly market snapshot generated across all asset classes.", status:"pending_review", documentId:"market-snapshot-2026-04", property:null },
-  { id:"act-002", timestamp:"2026-04-02T11:15:00Z", agent:"market-intelligence-agent", type:"report", title:"Comp Report — Sanctuary Office Park", task:"Comp Report — Sanctuary Office Park", description:"6 comparable Northshore office properties. Recommends $29.50–$31.00/SF.", status:"pending_review", documentId:"comps-sanctuary-office-2026-04", property:"sanctuary-office-park" },
-  { id:"act-003", timestamp:"2026-04-02T10:00:00Z", agent:"vacancy-marketing-agent", type:"listing", title:"Vacancy Listing — Suite 302", task:"Vacancy Listing — Suite 302", description:"LoopNet listing, leasing brief, and email blast generated for Suite 302 (655 SF).", status:"pending_review", documentId:"bldg1-suite302-listing-2026-07", property:"sanctuary-office-park" },
-  { id:"act-004", timestamp:"2026-04-02T08:00:00Z", agent:"lease-intelligence-agent", type:"scan", title:"Weekly Lease Deadline Scan", task:"Weekly Lease Deadline Scan", description:"Scanned all Building #1 leases. 1 vacancy confirmed (Suite 302), 2 renewals flagged.", status:"pending_review", documentId:"bldg1-lease-review-2026-04", property:"sanctuary-office-park" },
-  { id:"act-005", timestamp:"2026-04-01T08:00:00Z", agent:"lease-intelligence-agent", type:"letter", title:"Renewal Letters Drafted", task:"Renewal Letters Drafted", description:"Draft renewal offers for Bayou CPR and Nirvana Massage. Notice deadline: July 4, 2026.", status:"pending_review", documentId:"bayoucpr-renewal-2026-04", property:"sanctuary-office-park" },
+  { id:"act-weekly-scan-2026-04-12", timestamp:"2026-04-13T03:20:25Z", agent:"lease-intelligence-agent", type:"scan", title:"Lease Intelligence — Weekly Deadline Scan — Sanctuary Office Park, Building #1", task:"Lease Intelligence — Weekly Deadline Scan — Sanctuary Office Park, Building #1", description:"## Urgency Tier Summary", status:"pending_review", documentId:"weekly-scan-2026-04-12", property:"sanctuary-office-park" },
+  { id:"act-006", timestamp:"2026-04-02T14:00:00Z", agent:"clerical-data-agent", type:"import", title:"Mandeville Lake Apartments — Data Import", task:"Mandeville Lake Apartments — Data Import", description:"Imported full rent roll from 2026 ML RR.xlsx: 12 buildings, 293 units (6 floor plans), 284 tenants, 284 leases. 96.9% occupancy, $393,498/mo gross rent.", status:"completed", documentId:null, property:"mandeville-lake-apartments" },
+  { id:"act-002", timestamp:"2026-04-02T11:15:00Z", agent:"market-intelligence-agent", type:"report", title:"Comp Report — Sanctuary Office Park", task:"Comp Report — Sanctuary Office Park", description:"6 comparable Northshore office properties for Suite 302 rate validation. Recommends $29.50-$31.00/SF.", status:"pending_review", documentId:"comps-sanctuary-office-2026-04", property:"sanctuary-office-park" },
+  { id:"act-001", timestamp:"2026-04-02T11:00:00Z", agent:"market-intelligence-agent", type:"report", title:"Market Snapshot — April 2026", task:"Market Snapshot — April 2026", description:"Monthly market snapshot generated across all asset classes. Northshore office, Metairie multi-family, St. Tammany industrial, Mandeville HOA.", status:"pending_review", documentId:"market-snapshot-2026-04", property:null },
+  { id:"act-003", timestamp:"2026-04-02T10:00:00Z", agent:"vacancy-marketing-agent", type:"report", title:"Vacancy Listing — Suite 302", task:"Vacancy Listing — Suite 302", description:"LoopNet listing, leasing brief, and email blast generated for Suite 302 (655 SF). Asking $30.37-$32.44/SF.", status:"pending_review", documentId:"bldg1-suite302-listing-2026-07", property:"sanctuary-office-park" },
+  { id:"act-004", timestamp:"2026-04-02T08:00:00Z", agent:"lease-intelligence-agent", type:"scan", title:"Weekly Lease Deadline Scan", task:"Weekly Lease Deadline Scan", description:"Scanned all Building #1 leases. 1 vacancy confirmed (Suite 302), 2 renewals flagged (Bayou CPR, Nirvana Massage).", status:"pending_review", documentId:"bldg1-lease-review-2026-04", property:"sanctuary-office-park" },
+  { id:"act-weekly-scan-2026-04-02", timestamp:"2026-04-02T06:46:06Z", agent:"lease-intelligence-agent", type:"scan", title:"Lease Intelligence — Weekly Deadline Scan — Sanctuary Office Park, Building #1", task:"Lease Intelligence — Weekly Deadline Scan — Sanctuary Office Park, Building #1", description:"## Urgency Tier Summary", status:"pending_review", documentId:"weekly-scan-2026-04-02", property:"sanctuary-office-park" },
+  { id:"act-renewal-summary-2026-04", timestamp:"2026-04-02T06:45:53Z", agent:"lease-intelligence-agent", type:"letter", title:"Monthly Renewal Summary — April 2026 — Executive Summary", task:"Monthly Renewal Summary — April 2026 — Executive Summary", description:"## Urgency Tier Summary", status:"pending_review", documentId:"renewal-summary-2026-04", property:"sanctuary-office-park" },
+  { id:"act-005", timestamp:"2026-04-01T08:00:00Z", agent:"lease-intelligence-agent", type:"letter", title:"Renewal Letters Drafted", task:"Renewal Letters Drafted", description:"Draft renewal offers generated for Bayou CPR (Suite 301-A) and Nirvana Massage (Suite 306). Notice deadline: July 4, 2026.", status:"pending_review", documentId:"bayoucpr-renewal-2026-04", property:"sanctuary-office-park" },
 ];
 var _dashboardStateLoaded = false;
 var _lastStateHash = "";
@@ -640,79 +649,58 @@ function formatNextRun(cron, status) {
   return next.toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric"});
 }
 
-// ── STATE LOADER ───────────────────────────────────────────────────────────
-function loadDashboardState(callback) {
-  fetch("data/dashboard-state.json?_t=" + Date.now())
-    .then(function(r) { return r.json(); })
-    .then(function(state) {
-      // Hash check — skip re-render if nothing changed
-      var hash = JSON.stringify(state._meta);
-      if(_dashboardStateLoaded && hash === _lastStateHash) { if(callback) callback(false); return; }
-      _lastStateHash = hash;
-
-      // Apply agent statuses
-      if(state.agentStatuses) {
-        AGENTS.forEach(function(a) {
-          var s = state.agentStatuses[a.slug];
-          if(s) {
-            a.status = s.status;
-            a.lastRun = s.lastRun;
-            a.lastOutput = s.lastOutput;
-          }
-        });
-      }
-
-      // Apply scheduled tasks
-      if(state.scheduled) {
-        SCHEDULED = state.scheduled.map(function(t) {
-          t.nextRun = formatNextRun(t.cron, t.status);
-          return t;
-        });
-      }
-
-      // Apply documents
-      if(state.documents) {
-        DOCUMENTS = state.documents;
-      }
-
-      // Apply activity
-      if(state.activity) {
-        activities = state.activity.map(function(a) {
-          // Normalize: ensure 'task' field exists for activityRowHTML compatibility
-          if(!a.task && a.title) a.task = a.title;
-          return a;
-        });
-      }
-
-      _dashboardStateLoaded = true;
-      if(callback) callback(true);
-    })
-    .catch(function(err) {
-      console.warn("Dashboard state load failed (using defaults):", err);
-      _dashboardStateLoaded = true;
-      if(callback) callback(true);
+// ── STATE APPLIER ──────────────────────────────────────────────────────────
+// Dashboard state (documents / activity / agent statuses / scheduled) now arrives
+// from Firestore via live onSnapshot listeners — or from local data/*.json in
+// fallback mode — pushed in by the <script type="module"> at the end of <body>
+// (see crosby-data.js). This applies a possibly-partial state object onto the
+// in-memory globals the renderers read. Each push is followed by a re-render.
+function applyDashboardState(partial) {
+  if(partial.agentStatuses) {
+    AGENTS.forEach(function(a) {
+      var s = partial.agentStatuses[a.slug];
+      if(s) { a.status = s.status; a.lastRun = s.lastRun; a.lastOutput = s.lastOutput; }
     });
+  }
+  if(partial.scheduled) {
+    SCHEDULED = partial.scheduled.map(function(t) {
+      t.nextRun = formatNextRun(t.cron, t.status);
+      return t;
+    });
+  }
+  if(partial.documents) {
+    DOCUMENTS = partial.documents;
+  }
+  if(partial.activity) {
+    activities = partial.activity.map(function(a) {
+      // Normalize: ensure 'task' field exists for activityRowHTML compatibility
+      if(!a.task && a.title) a.task = a.title;
+      return a;
+    });
+  }
+  _dashboardStateLoaded = true;
 }
 
-function refreshDashboard() {
-  loadDashboardState(function(changed) {
-    if(changed) {
-      renderPortfolio();
-      updateCounts();
-      updateOutputsBadge();
-      // Re-render active view if it's data-driven
-      var activeView = document.querySelector(".view.active");
-      if(activeView) {
-        var id = activeView.id.replace("view-","");
-        if(id==="agents") renderAgents(null);
-        if(id==="outputs") renderOutputs(null);
-      }
-      var el = document.getElementById("lastRefresh");
-      if(el) el.innerHTML = '<span class="live-dot"></span>Updated ' + new Date().toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"});
-      lucide.createIcons();
-    }
-  });
+// Re-render whatever is currently on screen. Called after every data push and by
+// the manual "Refresh" button. With live Firestore listeners the data is already
+// current, so this just repaints.
+function rerenderActiveViews() {
+  renderPortfolio();
+  updateCounts();
+  updateOutputsBadge();
+  var activeView = document.querySelector(".view.active");
+  if(activeView) {
+    var id = activeView.id.replace("view-","");
+    if(id==="agents") renderAgents(null);
+    if(id==="outputs") renderOutputs(null);
+  }
+  var el = document.getElementById("lastRefresh");
+  if(el) el.innerHTML = '<span class="live-dot"></span>Updated ' + new Date().toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"});
+  if(window.lucide) lucide.createIcons();
 }
+
+// The module may override this (e.g. to re-pull local JSON in fallback mode).
+function refreshDashboard() { rerenderActiveViews(); }
 
 var docStatuses = {}; // tracks approve/reject decisions
 
@@ -814,7 +802,9 @@ function renderPortfolio() {
       // Drill-down: building breakdown
       propHTML += '<div class="prop-expand">'+iconSvg("arrow-right",12)+'<span>View property details</span></div>';
     } else if(p.units>0) {
-      propHTML += '<div class="prop-stats"><div><div class="prop-stat-val" style="color:#111827;">'+p.units+'</div><div class="prop-stat-label">Units</div></div><div><div class="prop-stat-val" style="color:#059669;">'+p.occupancy+'%</div><div class="prop-stat-label">Occupied</div></div><div><div class="prop-stat-val" style="color:#d97706;">'+(p.vacant||0)+'</div><div class="prop-stat-label">Vacant</div></div><div><div class="prop-stat-val" style="color:#111827;">'+acts.length+'</div><div class="prop-stat-label">Outputs</div></div></div>';
+      var rentStr = p.monthlyRent ? '$'+(p.monthlyRent/1000).toFixed(0)+'K' : acts.length;
+      var rentLabel = p.monthlyRent ? 'Monthly Rent' : 'Outputs';
+      propHTML += '<div class="prop-stats"><div><div class="prop-stat-val" style="color:#111827;">'+p.units+'</div><div class="prop-stat-label">Units</div></div><div><div class="prop-stat-val" style="color:#059669;">'+p.occupancy+'%</div><div class="prop-stat-label">Occupied</div></div><div><div class="prop-stat-val" style="color:#d97706;">'+(p.vacant||0)+'</div><div class="prop-stat-label">Vacant</div></div><div><div class="prop-stat-val" style="color:#2563eb;">'+rentStr+'</div><div class="prop-stat-label">'+rentLabel+'</div></div></div>';
       // Drill-down: unit mix table
       if(p.unitMix) {
         propHTML += '<div class="prop-expand">'+iconSvg("arrow-right",12)+'<span>View property details</span></div>';
@@ -994,9 +984,25 @@ function renderOutputs(selectedId) {
   lucide.createIcons();
 }
 
-function approveOutput(id) { docStatuses[id]="approved"; updateCounts(); renderOutputs(null); }
-function rejectOutput(id)  { docStatuses[id]="rejected"; updateCounts(); renderOutputs(null); }
-function reviseOutput(id)  { alert("To request a revision: describe your changes in chat and ask the agent to regenerate this document."); }
+function approveOutput(id) { persistDocStatus(id, "approved"); }
+function rejectOutput(id)  { persistDocStatus(id, "rejected"); }
+function reviseOutput(id)  { persistDocStatus(id, "revision_requested"); }
+
+// Persist a document status decision. Optimistically updates the UI, then writes
+// to Firestore via the module bridge (window.__persistDocStatus). In local
+// fallback mode the write is a no-op (not persisted) and only the optimistic
+// in-memory update is shown.
+function persistDocStatus(id, status) {
+  docStatuses[id] = status;                       // local override for fallback mode
+  var d = getDoc(id); if(d) d.status = status;    // optimistic update
+  updateCounts(); updateOutputsBadge(); renderOutputs(null);
+  if(window.__persistDocStatus) {
+    window.__persistDocStatus(id, status).catch(function(err) {
+      console.error("Failed to persist status:", err);
+      alert("Could not save to the server — check your connection and that you're signed in. The change is shown locally but not saved.");
+    });
+  }
+}
 
 // ── AGENTS ──────────────────────────────────────────────────────────────────
 var AGENT_DETAILS = {
@@ -1919,11 +1925,13 @@ function renderPropertyDetail(p) {
       statCardHTML("dollar-sign","Monthly Rent","$"+(p.monthlyRent/1000).toFixed(1)+"K", "$"+(p.annualRent/1000).toFixed(0)+"K annualized"),
     ].join("");
   } else {
+    var avgRent = p.monthlyRent && p.occupied ? "$"+ Math.round(p.monthlyRent / p.occupied).toLocaleString() : "—";
+    var rentSub = p.monthlyRent ? "$"+(p.monthlyRent/1000).toFixed(0)+"K/mo gross" : "Per unit/month";
     statsHTML = [
       statCardHTML("home","Total Units",p.units, p.cls),
       statCardHTML("check-circle","Occupied",p.occupied, p.occupancy+"% occupancy"),
       statCardHTML("alert-triangle","Vacant",p.vacant||0, (p.turnover||0)+" in turnover"),
-      statCardHTML("dollar-sign","Avg Rent","~$1,120", "Per unit/month"),
+      statCardHTML("dollar-sign","Avg Rent",avgRent, rentSub),
     ].join("");
   }
   document.getElementById("detailStats").innerHTML = statsHTML;
@@ -2127,6 +2135,21 @@ function renderPropertyDetail(p) {
       html += '</tbody></table></div>';
     }
 
+    // Building summary table (for multi-family with building data)
+    if(p.buildings && p.buildings.length > 0) {
+      html += '<div class="card" style="margin-bottom:16px;">';
+      html += '<div class="card-title">Building Summary — '+p.buildings.length+' Buildings</div>';
+      html += '<table class="unit-table"><thead><tr><th>Building</th><th>Units</th><th>Occupied</th><th>Vacant</th><th>Occupancy</th><th>Monthly Rent</th></tr></thead><tbody>';
+      var bTotU=0, bTotO=0, bTotV=0, bTotR=0;
+      p.buildings.forEach(function(b) {
+        bTotU+=b.units; bTotO+=b.occupied; bTotV+=b.vacant; bTotR+=b.monthly;
+        var occPct = b.units>0 ? Math.round(b.occupied/b.units*100) : 0;
+        html += '<tr><td style="font-weight:500;">'+b.name+'</td><td>'+b.units+'</td><td style="color:#059669;">'+b.occupied+'</td><td style="color:'+(b.vacant>0?'#d97706':'#059669')+';">'+b.vacant+'</td><td>'+occPct+'%</td><td>$'+b.monthly.toLocaleString()+'</td></tr>';
+      });
+      html += '<tr style="font-weight:700;border-top:2px solid #e5e7eb;"><td>Total</td><td>'+bTotU+'</td><td>'+bTotO+'</td><td>'+bTotV+'</td><td>'+(bTotU>0?Math.round(bTotO/bTotU*100):0)+'%</td><td>$'+bTotR.toLocaleString()+'</td></tr>';
+      html += '</tbody></table></div>';
+    }
+
     // Unit roster
     var roster = UNIT_ROSTER[p.slug];
     if(roster) {
@@ -2153,6 +2176,14 @@ function renderPropertyDetail(p) {
     html += '<div class="card"><div class="card-title">Occupancy Breakdown</div><div style="position:relative;height:260px;"><canvas id="detailOccPie"></canvas></div></div>';
     html += '<div class="card"><div class="card-title">Units by Floor Plan</div><div style="position:relative;height:260px;"><canvas id="detailPlanChart"></canvas></div></div>';
     html += '</div>';
+
+    // Building-level charts (for multi-family with building data)
+    if(p.buildings && p.buildings.length > 0) {
+      html += '<div class="grid-2" style="margin-top:8px;">';
+      html += '<div class="card"><div class="card-title">Monthly Rent by Building</div><div style="position:relative;height:280px;"><canvas id="detailBldgRentChart"></canvas></div></div>';
+      html += '<div class="card"><div class="card-title">Occupancy by Building</div><div style="position:relative;height:280px;"><canvas id="detailBldgOccChart"></canvas></div></div>';
+      html += '</div>';
+    }
   }
 
   document.getElementById("detailContent").innerHTML = html;
@@ -2233,6 +2264,29 @@ function renderDetailCharts(p) {
         ]},
         options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:"bottom",labels:{usePointStyle:true,pointStyle:"circle",font:{size:12}}},tooltip:{callbacks:{label:function(ctx){return ctx.dataset.label+": "+ctx.raw+" units";}}}},scales:{y:{stacked:true,beginAtZero:true,grid:{color:"#f3f4f6"}},x:{stacked:true,grid:{display:false},ticks:{font:{size:10}}}}}
       });
+    }
+
+    // Building-level charts for multi-family
+    if(p.buildings && p.buildings.length > 0) {
+      var bLabels = p.buildings.map(function(b){return b.name.replace("Building ","Bldg ");});
+      var bColors = ["#2563eb","#3b82f6","#60a5fa","#7c3aed","#8b5cf6","#a78bfa","#059669","#10b981","#34d399","#d97706","#f59e0b","#fbbf24"];
+      var brc = document.getElementById("detailBldgRentChart");
+      if(brc) {
+        detailCharts.bldgRent = new Chart(brc, {
+          type:"bar", data:{ labels:bLabels, datasets:[{label:"Monthly Rent ($)",data:p.buildings.map(function(b){return b.monthly;}),backgroundColor:bColors.slice(0,p.buildings.length),borderRadius:6}]},
+          options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){return "$"+ctx.raw.toLocaleString();}}}},scales:{y:{beginAtZero:true,ticks:{callback:function(v){return "$"+(v/1000).toFixed(0)+"K";}},grid:{color:"#f3f4f6"}},x:{grid:{display:false},ticks:{font:{size:10}}}}}
+        });
+      }
+      var boc = document.getElementById("detailBldgOccChart");
+      if(boc) {
+        detailCharts.bldgOcc = new Chart(boc, {
+          type:"bar", data:{ labels:bLabels, datasets:[
+            {label:"Occupied",data:p.buildings.map(function(b){return b.occupied;}),backgroundColor:"#059669",borderRadius:6},
+            {label:"Vacant",data:p.buildings.map(function(b){return b.vacant;}),backgroundColor:"#fbbf24",borderRadius:6},
+          ]},
+          options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:"bottom",labels:{usePointStyle:true,pointStyle:"circle",font:{size:12}}},tooltip:{callbacks:{label:function(ctx){return ctx.dataset.label+": "+ctx.raw+" units";}}}},scales:{y:{stacked:true,beginAtZero:true,grid:{color:"#f3f4f6"}},x:{stacked:true,grid:{display:false},ticks:{font:{size:10}}}}}
+        });
+      }
     }
   }
 }
@@ -2451,6 +2505,12 @@ function buildStrategyHTML() {
 // (renderDocs, approveDoc, rejectDoc, reviseDoc removed — consolidated into renderOutputs and renderKB)
 
 function buildDocHTML(id) {
+  // Prefer the live markdown body stored on the document (Firestore documents/{id}.body).
+  // Falls back to the hardcoded builders below for local preview of seeded docs.
+  var liveDoc = getDoc(id);
+  if(liveDoc && liveDoc.body) {
+    return '<div class="doc-body">' + simpleMarkdownToHTML(liveDoc.body) + '</div>';
+  }
   if(id==="bldg1-lease-review-2026-04") return buildLeaseReviewHTML();
   if(id==="bayoucpr-renewal-2026-04")   return buildBayouCPRHTML();
   if(id==="nirvana-renewal-2026-04")    return buildNirvanaHTML();
@@ -3010,21 +3070,83 @@ function init() {
   // Compute nextRun for the default SCHEDULED array (functions are now defined)
   SCHEDULED.forEach(function(t){ t.nextRun = formatNextRun(t.cron, t.status); });
 
-  // Load dynamic state from JSON (overrides defaults if served via HTTP), then render
-  loadDashboardState(function() {
-    renderPortfolio();
-    updateCounts();
-    updateOutputsBadge();
-    var el = document.getElementById("lastRefresh");
-    if(el) el.innerHTML = '<span class="live-dot"></span>Updated ' + new Date().toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"});
-    lucide.createIcons();
-
-    // Start auto-refresh polling
-    setInterval(refreshDashboard, REFRESH_INTERVAL_MS);
-  });
+  // First paint from defaults (portfolio + hardcoded fallbacks). The module
+  // script below loads live data (Firestore or local JSON) and calls
+  // rerenderActiveViews() when it arrives — no polling; updates are pushed.
+  renderPortfolio();
+  updateCounts();
+  updateOutputsBadge();
+  if(window.lucide) lucide.createIcons();
 }
 
 document.addEventListener("DOMContentLoaded", init);
+</script>
+
+<!-- ── Sign-in gate (Firestore mode only; hidden in local fallback) ─────────── -->
+<div id="authOverlay" style="display:none; position:fixed; inset:0; z-index:1000; background:#f9fafb; align-items:center; justify-content:center;">
+  <div style="background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:40px; max-width:380px; text-align:center; box-shadow:0 4px 24px rgba(0,0,0,0.06);">
+    <div style="width:44px; height:44px; border-radius:10px; background:#2563eb; color:#fff; display:flex; align-items:center; justify-content:center; margin:0 auto 16px; font-weight:700; font-size:18px;">C</div>
+    <div style="font-size:18px; font-weight:700; color:#111827;">Crosby Development</div>
+    <div style="font-size:13px; color:#6b7280; margin-top:4px;">Agent Dashboard</div>
+    <p id="authMsg" style="font-size:13px; color:#6b7280; margin:20px 0;">Sign in with your authorized Google account to continue.</p>
+    <button onclick="window.__signIn && window.__signIn()" style="display:inline-flex; align-items:center; gap:8px; background:#2563eb; color:#fff; font-weight:600; font-size:14px; padding:10px 20px; border-radius:8px; cursor:pointer;">Sign in with Google</button>
+  </div>
+</div>
+
+<script type="module">
+  import { DATA_MODE, startAuth, signIn, signOutUser, loadEntities, subscribeState, setDocumentStatus }
+    from "./crosby-data.js";
+
+  // Bridge module functions to the global handlers used by the classic script.
+  window.__persistDocStatus = (id, status) => setDocumentStatus(id, status, window.__operatorEmail);
+  window.__signIn  = () => signIn().catch((e) => alert("Sign-in failed: " + e.message));
+  window.__signOut = () => signOutUser();
+
+  const overlay = document.getElementById("authOverlay");
+  const authMsg = document.getElementById("authMsg");
+  const showOverlay = (msg) => { if(msg) authMsg.textContent = msg; overlay.style.display = "flex"; };
+  const hideOverlay = () => { overlay.style.display = "none"; };
+
+  let booted = false;
+  async function boot(user) {
+    window.__operatorEmail = user.email;
+    hideOverlay();
+    if(booted) return;            // ignore repeated auth callbacks
+    booted = true;
+
+    // Entity data (properties/buildings/units/tenants/leases) — loaded once and
+    // exposed for the upcoming SOP data-derivation work (Phase 3).
+    try { window.__crosbyEntities = await loadEntities(); }
+    catch(e) { console.error("Entity load failed:", e); }
+
+    // Live state: each collection pushes updates into the globals + re-renders.
+    await subscribeState({
+      onAgentStatuses: (m) => { applyDashboardState({ agentStatuses: m }); rerenderActiveViews(); },
+      onScheduled:     (a) => { applyDashboardState({ scheduled: a });     rerenderActiveViews(); },
+      onDocuments:     (a) => { applyDashboardState({ documents: a });     rerenderActiveViews(); },
+      onActivity:      (a) => { applyDashboardState({ activity: a });      rerenderActiveViews(); },
+    });
+
+    // In local fallback mode, wire the manual Refresh button to re-pull JSON.
+    if(DATA_MODE === "local") {
+      window.refreshDashboard = async () => {
+        await subscribeState({
+          onAgentStatuses: (m) => applyDashboardState({ agentStatuses: m }),
+          onScheduled:     (a) => applyDashboardState({ scheduled: a }),
+          onDocuments:     (a) => applyDashboardState({ documents: a }),
+          onActivity:      (a) => applyDashboardState({ activity: a }),
+        });
+        rerenderActiveViews();
+      };
+    }
+  }
+
+  startAuth((user) => {
+    if(user) boot(user);
+    else showOverlay("Sign in with your authorized Google account to continue.");
+  });
+
+  console.info(`[crosby] data mode: ${DATA_MODE}`);
 </script>
 </body>
 </html>

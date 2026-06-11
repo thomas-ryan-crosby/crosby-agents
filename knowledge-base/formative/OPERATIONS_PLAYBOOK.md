@@ -8,10 +8,10 @@
 
 ## 1. The Dashboard is Home Base
 
-All work flows through the dashboard at:
-```
-knowledge-base/../dashboard.html
-```
+All work flows through the dashboard (`index.html`), served over HTTP — either the
+deployed Vercel URL or a local server (`npm run serve`). It reads live data from
+Firestore; see `SETUP_CHECKLIST.md`. (The old double-click `dashboard.html`
+file:// workflow is retired — ES modules + Firebase Auth require an HTTP origin.)
 
 **Do not use agents directly in chat for tasks the dashboard is designed to handle.** The dashboard is the control surface. Chat is for asking questions, requesting new agent builds, and one-off analysis.
 

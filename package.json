@@ -1,0 +1,15 @@
+{
+  "name": "crosby-agents",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Crosby Development — Claude Agent System: dashboard + Firestore data layer.",
+  "scripts": {
+    "seed": "node scripts/seed-firestore.mjs",
+    "sync": "node scripts/sync-firestore.mjs",
+    "serve": "npx serve ."
+  },
+  "dependencies": {
+    "firebase-admin": "^12.7.0"
+  }
+}

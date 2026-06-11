@@ -1,0 +1,25 @@
+rules_version = '2';
+
+// Crosby Development — Agent Dashboard Firestore rules.
+//
+// Single-operator access model: only the allowlisted, email-verified operator
+// account may read or write ANY document. The data contains tenant PII
+// (names, phones, emails, rents), so there is no public read.
+//
+// To add more operators later: switch isOperator() to check a custom claim
+// (request.auth.token.operator == true) or an allowlist/{email} lookup doc.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isOperator() {
+      return request.auth != null
+          && request.auth.token.email_verified == true
+          && request.auth.token.email == "thomas.ryan.crosby@gmail.com";
+    }
+
+    match /{document=**} {
+      allow read, write: if isOperator();
+    }
+  }
+}

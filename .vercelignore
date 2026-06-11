@@ -1,0 +1,15 @@
+# Vercel deploy = browser-runtime files ONLY.
+#
+# Everything is excluded by default; only the allowlisted files below are
+# deployed. This keeps tenant PII (data/*.json, knowledge-base/ outputs with
+# rents & contacts, etc.) OUT of the public Vercel bundle — in production the
+# dashboard reads that data from Firestore (auth-gated), never from static files.
+#
+# Allowlist syntax: ignore all top-level entries, then re-include specifics.
+
+/*
+
+!index.html
+!firebase-config.js
+!crosby-data.js
+!vercel.json

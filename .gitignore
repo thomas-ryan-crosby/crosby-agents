@@ -24,6 +24,14 @@ node_modules/
 __pycache__/
 *.pyc
 .env
+.env*.local
+
+# Firebase / Vercel — credentials & build artifacts (NEVER commit the service-account key)
+scripts/serviceAccountKey.json
+serviceAccount*.json
+.firebase/
+firebase-debug.log
+.vercel/
 
 # Session-specific paths
 /sessions/

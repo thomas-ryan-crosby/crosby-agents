@@ -1,20 +1,56 @@
 {
   "_meta": {
     "version": "1.0",
-    "lastUpdated": "2026-04-02T12:00:00Z",
-    "updatedBy": "system-init",
+    "lastUpdated": "2026-04-17T12:37:51Z",
+    "updatedBy": "sync-dashboard",
     "description": "Dynamic dashboard state — updated by agents after each run. The dashboard reads this file on load and polls for changes."
   },
   "agentStatuses": {
-    "clerical-data-agent": { "status": "building", "lastRun": null, "lastOutput": null },
-    "lease-intelligence-agent": { "status": "active", "lastRun": "2026-04-02T08:00:00Z", "lastOutput": "bldg1-lease-review-2026-04" },
-    "vacancy-marketing-agent": { "status": "active", "lastRun": "2026-04-02T10:00:00Z", "lastOutput": "bldg1-suite302-listing-2026-07" },
-    "rent-roll-intelligence-agent": { "status": "planned", "lastRun": null, "lastOutput": null },
-    "hoa-management-agent": { "status": "planned", "lastRun": null, "lastOutput": null },
-    "residential-leasing-agent": { "status": "planned", "lastRun": null, "lastOutput": null },
-    "market-intelligence-agent": { "status": "active", "lastRun": "2026-04-02T11:00:00Z", "lastOutput": "market-snapshot-2026-04" },
-    "investor-relations-agent": { "status": "planned", "lastRun": null, "lastOutput": null },
-    "acquisitions-agent": { "status": "planned", "lastRun": null, "lastOutput": null }
+    "clerical-data-agent": {
+      "status": "active",
+      "lastRun": "2026-04-02T14:00:00Z",
+      "lastOutput": "mandeville-lake-data-import"
+    },
+    "lease-intelligence-agent": {
+      "status": "active",
+      "lastRun": "2026-04-13T13:17:35Z",
+      "lastOutput": "weekly-scan-2026-04-12"
+    },
+    "vacancy-marketing-agent": {
+      "status": "active",
+      "lastRun": "2026-04-02T10:00:00Z",
+      "lastOutput": "bldg1-suite302-listing-2026-07"
+    },
+    "rent-roll-intelligence-agent": {
+      "status": "planned",
+      "lastRun": null,
+      "lastOutput": null
+    },
+    "hoa-management-agent": {
+      "status": "planned",
+      "lastRun": null,
+      "lastOutput": null
+    },
+    "residential-leasing-agent": {
+      "status": "planned",
+      "lastRun": null,
+      "lastOutput": null
+    },
+    "market-intelligence-agent": {
+      "status": "active",
+      "lastRun": "2026-04-15T17:13:42Z",
+      "lastOutput": "market-snapshot-2026-04"
+    },
+    "investor-relations-agent": {
+      "status": "planned",
+      "lastRun": null,
+      "lastOutput": null
+    },
+    "acquisitions-agent": {
+      "status": "planned",
+      "lastRun": null,
+      "lastOutput": null
+    }
   },
   "scheduled": [
     {
@@ -25,7 +61,7 @@
       "frequency": "Weekly (Monday 8am)",
       "cron": "0 8 * * 1",
       "status": "Live",
-      "lastRun": "2026-04-02T08:00:00Z",
+      "lastRun": "2026-04-13T13:14:44Z",
       "lastResult": "success"
     },
     {
@@ -36,7 +72,7 @@
       "frequency": "Monthly (1st, 8am)",
       "cron": "0 8 1 * *",
       "status": "Live",
-      "lastRun": "2026-04-01T08:00:00Z",
+      "lastRun": "2026-04-02T06:43:46Z",
       "lastResult": "success"
     },
     {
@@ -286,19 +322,66 @@
       "propertySlug": "sanctuary-office-park",
       "description": "Property-specific mode: 6 comparable Northshore office properties for Suite 302 rate validation. Market median $26.50/SF. Recommends narrowing asking range from $30.37-$32.44 to $29.50-$31.00/SF.",
       "file": "knowledge-base/outputs/market-intelligence/comps-sanctuary-office-2026-04.md"
+    },
+    {
+      "id": "renewal-summary-2026-04",
+      "title": "Monthly Renewal Summary — April 2026 — Executive Summary",
+      "category": "Agent Output",
+      "icon": "clock",
+      "color": "#d97706",
+      "agentSlug": "lease-intelligence-agent",
+      "lastUpdated": "2026-04-02",
+      "status": "pending_review",
+      "description": "## Urgency Tier Summary",
+      "file": "knowledge-base/outputs/lease-intelligence/renewal-summary-2026-04.md"
+    },
+    {
+      "id": "weekly-scan-2026-04-02",
+      "title": "Lease Intelligence — Weekly Deadline Scan — Sanctuary Office Park, Building #1",
+      "category": "Agent Output",
+      "icon": "clock",
+      "color": "#d97706",
+      "agentSlug": "lease-intelligence-agent",
+      "lastUpdated": "2026-04-02",
+      "status": "pending_review",
+      "description": "## Urgency Tier Summary",
+      "file": "knowledge-base/outputs/lease-intelligence/weekly-scan-2026-04-02.md"
+    },
+    {
+      "id": "weekly-scan-2026-04-12",
+      "title": "Lease Intelligence — Weekly Deadline Scan — Sanctuary Office Park, Building #1",
+      "category": "Agent Output",
+      "icon": "clock",
+      "color": "#d97706",
+      "agentSlug": "lease-intelligence-agent",
+      "lastUpdated": "2026-04-13",
+      "status": "pending_review",
+      "description": "## Urgency Tier Summary",
+      "file": "knowledge-base/outputs/lease-intelligence/weekly-scan-2026-04-12.md"
     }
   ],
   "activity": [
     {
-      "id": "act-001",
-      "timestamp": "2026-04-02T11:00:00Z",
-      "agent": "market-intelligence-agent",
-      "type": "report",
-      "title": "Market Snapshot — April 2026",
-      "description": "Monthly market snapshot generated across all asset classes. Northshore office, Metairie multi-family, St. Tammany industrial, Mandeville HOA.",
+      "id": "act-weekly-scan-2026-04-12",
+      "timestamp": "2026-04-13T03:20:25Z",
+      "agent": "lease-intelligence-agent",
+      "type": "scan",
+      "title": "Lease Intelligence — Weekly Deadline Scan — Sanctuary Office Park, Building #1",
+      "description": "## Urgency Tier Summary",
       "status": "pending_review",
-      "documentId": "market-snapshot-2026-04",
-      "property": null
+      "documentId": "weekly-scan-2026-04-12",
+      "property": "sanctuary-office-park"
+    },
+    {
+      "id": "act-006",
+      "timestamp": "2026-04-02T14:00:00Z",
+      "agent": "clerical-data-agent",
+      "type": "import",
+      "title": "Mandeville Lake Apartments — Data Import",
+      "description": "Imported full rent roll from 2026 ML RR.xlsx: 12 buildings, 293 units (6 floor plans), 284 tenants, 284 leases. 96.9% occupancy, $393,498/mo gross rent.",
+      "status": "completed",
+      "documentId": null,
+      "property": "mandeville-lake-apartments"
     },
     {
       "id": "act-002",
@@ -310,6 +393,17 @@
       "status": "pending_review",
       "documentId": "comps-sanctuary-office-2026-04",
       "property": "sanctuary-office-park"
+    },
+    {
+      "id": "act-001",
+      "timestamp": "2026-04-02T11:00:00Z",
+      "agent": "market-intelligence-agent",
+      "type": "report",
+      "title": "Market Snapshot — April 2026",
+      "description": "Monthly market snapshot generated across all asset classes. Northshore office, Metairie multi-family, St. Tammany industrial, Mandeville HOA.",
+      "status": "pending_review",
+      "documentId": "market-snapshot-2026-04",
+      "property": null
     },
     {
       "id": "act-003",
@@ -331,6 +425,28 @@
       "description": "Scanned all Building #1 leases. 1 vacancy confirmed (Suite 302), 2 renewals flagged (Bayou CPR, Nirvana Massage).",
       "status": "pending_review",
       "documentId": "bldg1-lease-review-2026-04",
+      "property": "sanctuary-office-park"
+    },
+    {
+      "id": "act-weekly-scan-2026-04-02",
+      "timestamp": "2026-04-02T06:46:06Z",
+      "agent": "lease-intelligence-agent",
+      "type": "scan",
+      "title": "Lease Intelligence — Weekly Deadline Scan — Sanctuary Office Park, Building #1",
+      "description": "## Urgency Tier Summary",
+      "status": "pending_review",
+      "documentId": "weekly-scan-2026-04-02",
+      "property": "sanctuary-office-park"
+    },
+    {
+      "id": "act-renewal-summary-2026-04",
+      "timestamp": "2026-04-02T06:45:53Z",
+      "agent": "lease-intelligence-agent",
+      "type": "letter",
+      "title": "Monthly Renewal Summary — April 2026 — Executive Summary",
+      "description": "## Urgency Tier Summary",
+      "status": "pending_review",
+      "documentId": "renewal-summary-2026-04",
       "property": "sanctuary-office-park"
     },
     {

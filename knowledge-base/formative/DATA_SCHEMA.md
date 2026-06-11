@@ -164,13 +164,18 @@ properties
 
 ## Current Data Status
 
+*Reconciled 2026-06-11 against the actual files — see `data/CHANGELOG.md`.*
+
 | File | Records | Source | Last Updated | Status |
 |------|---------|--------|-------------|--------|
 | properties.json | 8 | Owner-provided | 2026-04-02 | ✅ Complete |
-| buildings.json | 6 | rentinfo#1–5.xls | 2026-04-02 | ✅ Bldg 1 full; #2–5 partial |
-| units.json | 31 | rentinfo#1.xls | 2026-04-02 | ✅ Bldg 1 full; others pending |
-| tenants.json | 13 | rentinfo#1.xls | 2026-04-02 | ✅ Bldg 1 full; others pending |
-| leases.json | 13 | rentinfo#1.xls + lease PDFs | 2026-04-02 | ✅ Bldg 1 full; others pending |
-| hoa-lots.json | 45 | Lakeside Village CSV | 2026-04-02 | ✅ Complete |
+| buildings.json | 17 | rentinfo#1.xls + Mandeville Lake RR | 2026-04-02 | ◧ SOP #1 full, #2–5 stubs; Mandeville 12 full |
+| units.json | 306 | rentinfo#1.xls + 2026 ML RR.xlsx | 2026-04-02 | ◧ SOP Bldg #1 (13) + Mandeville Lake (293) |
+| tenants.json | 297 | rentinfo#1.xls + 2026 ML RR.xlsx | 2026-04-02 | ◧ SOP Bldg #1 (13) + Mandeville Lake (284) |
+| leases.json | 297 | rentinfo#1.xls + 2026 ML RR.xlsx | 2026-04-02 | ◧ SOP Bldg #1 (13) + Mandeville Lake (284) |
+| hoa-lots.json | 1 | Lakeside Village CSV | 2026-04-02 | ⚠ Summary stub — 45-lot expansion pending |
 
-*Buildings #2–5 and all residential properties require Clerical Data Agent run when source files are provided.*
+**Pending Clerical Data Agent runs (need source files):**
+- Sanctuary Office Park Buildings #2–5 — `rentinfo#2–5.xls`
+- Lakeside Village — per-lot expansion from controller CSV (currently 1 summary record)
+- Metairie Plaza & Metairie Lake — residential rent rolls (currently dashboard-hardcoded only, not in `data/`)

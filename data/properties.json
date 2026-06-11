@@ -23,13 +23,13 @@
     "city": "Mandeville",
     "state": "LA",
     "zip": null,
-    "totalSF": null,
-    "totalUnits": null,
+    "totalSF": 340232,
+    "totalUnits": 293,
     "status": "active",
     "crosbyRole": "Owner-Operator",
-    "notes": "Apartment community on the Northshore. Rent roll data pending.",
-    "dataSource": null,
-    "lastUpdated": null
+    "notes": "12-building apartment community. 284 occupied, 9 vacant. Azalea (1BR/840SF), Elm (1BR/880SF), Bradford (2BR/1240SF), Cypress (2BR/1200SF), Dogwood (3BR/1482SF), Fern (3BR/1371SF).",
+    "dataSource": "2026 ML RR.xlsx",
+    "lastUpdated": "2026-04-02"
   },
   {
     "id": "lakeside-village-townhomes",
@@ -91,7 +91,7 @@
     "totalUnits": null,
     "status": "active",
     "crosbyRole": "Partial",
-    "notes": "Mixed-use development: townhomes, 2 apartment complexes, 3 HOAs. Limited Crosby involvement — owns some units and an office building. Managed alongside community associations.",
+    "notes": "Mixed-use development: townhomes, 2 apartment complexes, 3 HOAs. Limited Crosby involvement \u2014 owns some units and an office building. Managed alongside community associations.",
     "dataSource": null,
     "lastUpdated": null
   },

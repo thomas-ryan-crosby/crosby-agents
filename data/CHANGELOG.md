@@ -27,3 +27,34 @@ Format: `[YYYY-MM-DD] [file] [action] — [description] — [source file]`
 ---
 
 *All future updates appended below this line by the Clerical Data Agent.*
+
+---
+
+## 2026-06-11
+
+### Reconciliation audit — actual record counts
+
+A drift audit found the data files had grown beyond the 2026-04-02 initial load
+without intervening CHANGELOG entries (notably the Mandeville Lake import). No data
+values were changed in this audit — counts recorded for documentation accuracy:
+
+| File | Records | Composition |
+|------|---------|-------------|
+| properties.json | 8 | unchanged |
+| buildings.json | 17 | Sanctuary Office Park #1–5 (5) + Mandeville Lake 1–12 (12) |
+| units.json | 306 | Sanctuary Bldg #1 (13) + Mandeville Lake (293) |
+| tenants.json | 297 | Sanctuary Bldg #1 (13) + Mandeville Lake (284) |
+| leases.json | 297 | Sanctuary Bldg #1 (13) + Mandeville Lake (284) |
+| hoa-lots.json | 1 | summary stub — Lakeside Village 45-lot expansion still pending |
+
+**Sanctuary Building #1 verified:** 13 leases — 10 active, 1 vacating (Security
+National, Suite 302, terminates 2026-06-30), 1 month-to-month (Fine Southern, 100),
+1 owner-occupant (Crosby Development, 101). Notice deadlines confirmed: Bayou CPR
+(301-A) and Nirvana (306) both 2026-07-04.
+
+**Known gaps (pending source files):**
+- Sanctuary Office Park Buildings #2–5 — stub building records only; units/tenants/
+  leases not yet loaded. Requires `rentinfo#2–5.xls` (Clerical Data Agent run).
+- Lakeside Village — 45-lot per-lot expansion pending controller CSV.
+- Metairie Plaza & Metairie Lake — shown on the dashboard from hardcoded values;
+  not yet represented in `data/*.json`.
