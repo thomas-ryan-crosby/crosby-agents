@@ -264,6 +264,7 @@ var UNIT_ROSTER = {};
 var TENANT_ROSTER = {};
 var LEASE_TERMS = {};
 var LEASE_DOCS = {};
+var MOVED_OUT = {};
 
 // ── AGENT ROSTER (static definition — statuses loaded from dashboard-state.json) ──
 const AGENTS = [
@@ -1798,6 +1799,20 @@ function renderPropertyDetail(p) {
       });
     }
 
+    // Moved Out Tenants — former tenants whose leases have terminated/vacated
+    var movedOut = (typeof MOVED_OUT !== 'undefined' && MOVED_OUT[p.slug]) || [];
+    if(movedOut.length) {
+      html += '<div class="card" style="margin-bottom:16px;">';
+      html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">'+iconSvg('log-out',18,'#9ca3af')+'<span class="card-title" style="margin-bottom:0;">Moved Out Tenants — '+movedOut.length+'</span></div>';
+      html += '<table class="unit-table"><thead><tr><th>Former Tenant</th><th>Building</th><th>Suite</th><th>Lease Term</th><th>Rent</th><th>Now Occupied By</th><th>Lease Docs</th></tr></thead><tbody>';
+      movedOut.forEach(function(e){
+        var term = (e.commenced||'?')+' → '+(e.terminated||'?');
+        var docsHtml = e.docs.map(leaseWidget).join('<br>');
+        html += '<tr><td style="font-weight:500;">'+e.tenant+'</td><td style="font-size:12px;color:#6b7280;">'+(e.building||'—')+'</td><td>'+e.suite+'</td><td style="font-size:12px;">'+term+'</td><td style="font-size:12px;">'+(e.rent||'—')+'</td><td style="font-size:12px;color:#6b7280;">'+(e.replacedBy||'—')+'</td><td>'+docsHtml+'</td></tr>';
+      });
+      html += '</tbody></table></div>';
+    }
+
     // Lease Timeline / Renewal Tracker
     var allLeaseTerms = LEASE_TERMS[p.slug] || {};
     var allTermsFlat = [];
@@ -2882,6 +2897,7 @@ document.addEventListener("DOMContentLoaded", init);
       window.TENANT_ROSTER = vm.TENANT_ROSTER;
       window.LEASE_TERMS = vm.LEASE_TERMS;
       window.LEASE_DOCS = vm.LEASE_DOCS;
+      window.MOVED_OUT = vm.MOVED_OUT;
       rerenderActiveViews();
     } catch(e) { console.error("Entity load / derive failed:", e); }
 

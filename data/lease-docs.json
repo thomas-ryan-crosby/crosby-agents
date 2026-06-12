@@ -853,5 +853,59 @@
       "title": "Amendment #1 to Lease — 5 Sanctuary Blvd, Suite 103, Mandeville, LA — Crosby Development Company, LLC &amp; Mediation Arbitration Professional Systems, INC"
     },
     "date": "2025-04-23"
+  },
+  {
+    "id": "leasedoc-movedout-300",
+    "propertyId": "sanctuary-office-park",
+    "building": "Building #1",
+    "tenant": "Creole Operators, INC",
+    "suite": "300",
+    "file": "CONN_BLDG1_AMD1.pdf",
+    "docType": "AMD3",
+    "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2F_terminated%2FCONN_BLDG1_AMD1.pdf?alt=media&token=9f343a68-0655-4628-a28f-245e0afca7c7",
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FCONN_BLDG1_AMD1.html?alt=media&token=56c1fbea-25ea-4300-aca2-3e44c59d852e",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Creole Operators, INC",
+      "property": "Sanctuary Office Park, Building #1, #1 Sanctuary Blvd, Mandeville, LA 70471",
+      "suite": "300",
+      "documentType": "AMD3",
+      "dated": "2021-04-14",
+      "commencement": "2015-11-01",
+      "termination": "2022-04-30",
+      "monthlyRent": "USD 1,852.50 (beginning 2021-05-01)",
+      "escalation": "3% per year, applies to all renewals",
+      "title": "Amendment #3 to Lease — Creole Operators, INC — #1 Sanctuary, Suite 300"
+    },
+    "date": "2021-04-14",
+    "movedOut": true,
+    "replacedBy": "M Squared"
+  },
+  {
+    "id": "leasedoc-movedout-307",
+    "propertyId": "sanctuary-office-park",
+    "building": "Building #1",
+    "tenant": "The Maven Group",
+    "suite": "307",
+    "file": "The Maven Group_Lease.pdf",
+    "docType": "Lease",
+    "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2F_terminated%2FThe%20Maven%20Group_Lease.pdf?alt=media&token=2f79c87d-ecf2-45ad-af37-a416ceefc25f",
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FThe%20Maven%20Group_Lease.html?alt=media&token=ace9d0bd-0840-4c7d-80de-9a4019066cb5",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "The Maven Group",
+      "property": "Sanctuary Office Park, Building #1, #1 Sanctuary Boulevard, Mandeville, LA 70471",
+      "suite": "307",
+      "documentType": "Lease",
+      "dated": "2025-11-20",
+      "commencement": "2025-11-24",
+      "termination": "2028-11-24",
+      "monthlyRent": "USD 550.00",
+      "escalation": "3% over prior year, commencing the second calendar year; applies to renewals",
+      "title": "Lease of Commercial Property — The Maven Group — #1 Sanctuary, Suite 307"
+    },
+    "date": "2025-11-20",
+    "movedOut": true,
+    "replacedBy": "Detox"
   }
 ]

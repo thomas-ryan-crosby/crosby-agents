@@ -102,6 +102,7 @@ export function deriveViewModel(entities) {
   const TENANT_ROSTER = {};
   const LEASE_TERMS = {};
   const LEASE_DOCS = {};
+  const MOVED_OUT = {};
   const PROPERTIES = [];
 
   for (const p of props) {
@@ -135,17 +136,35 @@ export function deriveViewModel(entities) {
     PROPERTIES.push(base);
   }
 
-  // LEASE_DOCS: group the leaseDocs entity by propertyId -> building name.
+  // LEASE_DOCS (active) grouped by propertyId -> building; MOVED_OUT collected separately.
   for (const d of leaseDocsEnt) {
-    if (!d.tenant || !d.propertyId || !d.building) continue; // skip unmatched/unlinked
+    if (!d.tenant || !d.propertyId) continue; // skip unmatched/unlinked
+    const docView = { tenant: d.tenant, suite: d.suite, file: d.file, docType: d.docType,
+      url: d.url, htmlUrl: d.htmlUrl || null, meta: d.meta || null, date: d.date || null };
+    if (d.movedOut) {
+      const arr = MOVED_OUT[d.propertyId] || (MOVED_OUT[d.propertyId] = []);
+      let e = arr.find((x) => x.tenant === d.tenant && x.suite === d.suite);
+      if (!e) {
+        const m = d.meta || {};
+        e = { tenant: d.tenant, suite: d.suite, building: d.building,
+          commenced: m.commencement || null, terminated: m.termination || null,
+          rent: m.monthlyRent || null, replacedBy: d.replacedBy || null, docs: [] };
+        arr.push(e);
+      }
+      e.docs.push(docView);
+      continue;
+    }
+    if (!d.building) continue;
     const byProp = LEASE_DOCS[d.propertyId] || (LEASE_DOCS[d.propertyId] = {});
-    (byProp[d.building] || (byProp[d.building] = [])).push({
-      tenant: d.tenant, suite: d.suite, file: d.file, docType: d.docType, url: d.url, htmlUrl: d.htmlUrl || null,
-      meta: d.meta || null, date: d.date || null,
-    });
+    (byProp[d.building] || (byProp[d.building] = [])).push(docView);
   }
+  // sort each moved-out tenant's docs newest-first; sort tenants by suite
+  Object.keys(MOVED_OUT).forEach((k) => {
+    MOVED_OUT[k].forEach((e) => e.docs.sort((a, b) => String(b.date || "").localeCompare(String(a.date || ""))));
+    MOVED_OUT[k].sort((a, b) => String(a.suite).localeCompare(String(b.suite), undefined, { numeric: true }));
+  });
 
-  return { PROPERTIES, PROPERTY_PROFILES, UNIT_ROSTER, TENANT_ROSTER, LEASE_TERMS, LEASE_DOCS };
+  return { PROPERTIES, PROPERTY_PROFILES, UNIT_ROSTER, TENANT_ROSTER, LEASE_TERMS, LEASE_DOCS, MOVED_OUT };
 }
 
 // ── Commercial (e.g. Sanctuary Office Park) ────────────────────────────────────
