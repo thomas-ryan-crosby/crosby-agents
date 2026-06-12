@@ -1,12 +1,12 @@
 [
   {
     "id": "tenant-m-squared",
-    "name": "M Squared",
+    "name": "M Squared Digital",
     "type": "commercial",
     "contactName": null,
     "email": null,
     "phone": null,
-    "notes": "Suite 300, Building #1. New lease commenced March 2026."
+    "notes": "Building #1, Suite 300 (1,443 SF, 3rd floor). New lease (CDC-L-2026-0014) executed 2026-02-27; term 2026-03-15 to 2028-03-15 @ $2,250/mo, 3% annual, auto-renews 12-mo unless 90-day notice. Deposit $2,500. Address: 45 Tupelo Trace, Mandeville, LA 70471. Full-service gross."
   },
   {
     "id": "tenant-bayou-cpr",
@@ -2845,12 +2845,12 @@
   },
   {
     "id": "tenant-medsouth",
-    "name": "MedSouth",
+    "name": "MedSouth Record Management LLC",
     "type": "commercial",
-    "contactName": null,
+    "contactName": "Maria DeLatte",
     "email": null,
     "phone": null,
-    "notes": "Suite 302, Building #4. Roster-level record; legal name and contacts pending source-file reconciliation."
+    "notes": "Building #4, Suite 302. Original lease 2025-05-01. Per Amendment #1 (2026-06-02): effective 2026-06-01 the lease converts to a 90-day auto-renewing term and rent increased to $1,416.25/mo (3% annual). Full-service gross."
   },
   {
     "id": "tenant-menard",

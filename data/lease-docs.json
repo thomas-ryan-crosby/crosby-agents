@@ -1636,5 +1636,52 @@
       "title": "Amendment #6 to Lease — Building #2 (4 Your Eyes) — add Suite 302B, $4,304.39 eff 2026-04-01, to 2027-03-31 (current)"
     },
     "date": "2026-03-18"
+  },
+  {
+    "id": "leasedoc-msquaredbldg1ste300init",
+    "propertyId": "sanctuary-office-park",
+    "building": "Building #1",
+    "tenant": "M Squared Digital",
+    "suite": "300",
+    "file": "MSquared_BLDG1_STE300_Init.pdf",
+    "docType": "Init",
+    "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FMSquared_BLDG1_STE300_Init.pdf?alt=media&token=befe33f4-057f-4ede-bf44-be6ef3971f33",
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FMSquared_BLDG1_STE300_Init.html?alt=media&token=137c314e-1bed-405f-b728-bf4c3b0a07c2",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "M Squared Digital",
+      "property": "Sanctuary Office Park, Building #1, #1 Sanctuary Boulevard, Suite 300, Mandeville, LA 70471",
+      "suite": "Suite 300",
+      "documentType": "Init",
+      "dated": "2026-02-27",
+      "monthlyRent": "USD 2250.00",
+      "commencement": "2026-03-15",
+      "termination": "2028-03-15",
+      "title": "Lease of Commercial Property — Building #1, Suite 300 (Crosby / M Squared Digital) — 1,443 SF, $2,250, full-service gross (Lease ID CDC-L-2026-0014)"
+    },
+    "date": "2026-02-27"
+  },
+  {
+    "id": "leasedoc-medsouthbldg4ste302amd1",
+    "propertyId": "sanctuary-office-park",
+    "building": "Building #4",
+    "tenant": "MedSouth Record Management LLC",
+    "suite": "302",
+    "file": "MedSouth_BLDG4_STE302_AMD1.pdf",
+    "docType": "Amendment",
+    "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FMedSouth_BLDG4_STE302_AMD1.pdf?alt=media&token=3bbcdfde-30a5-45f9-a7c2-33322fa6923b",
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FMedSouth_BLDG4_STE302_AMD1.html?alt=media&token=42c4208c-5316-4adb-94b0-775221d13a23",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "MedSouth Record Management LLC",
+      "property": "Sanctuary Office Park, Building #4, #4 Sanctuary Boulevard, Suite 302, Mandeville, LA 70471",
+      "suite": "Suite 302",
+      "documentType": "Amendment",
+      "dated": "2026-06-02",
+      "monthlyRent": "USD 1416.25",
+      "commencement": "2026-06-01",
+      "title": "Amendment #1 to Lease — Building #4, Suite 302 (MedSouth Record Management LLC) — converts to 90-day auto-renew term, rent $1,416.25 eff 2026-06-01"
+    },
+    "date": "2026-06-02"
   }
 ]
