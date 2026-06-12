@@ -10,7 +10,7 @@
 // the Firebase SDK directly. Shape-building (PROPERTIES/LEASE_TERMS/etc.) lives
 // in the dashboard, which owns the render contracts; this file is transport only.
 
-import { firebaseConfig, OPERATOR_EMAIL, IS_PLACEHOLDER_CONFIG } from "./firebase-config.js";
+import { firebaseConfig, OPERATOR_EMAIL, IS_PLACEHOLDER_CONFIG, AUTH_ENABLED } from "./firebase-config.js";
 
 const SDK = "https://www.gstatic.com/firebasejs/10.12.0";
 const ENTITY_COLLECTIONS = ["properties", "buildings", "units", "tenants", "leases", "hoaLots"];
@@ -48,6 +48,9 @@ const fetchJson = (url) => fetch(`${url}?_t=${Date.now()}`).then((r) => r.json()
 // dashboard renders without a sign-in gate.
 export async function startAuth(onUser) {
   if (DATA_MODE === "local") { onUser({ email: "local-preview", local: true }); return; }
+  // Auth disabled → boot immediately with a synthetic user; data still comes
+  // from Firestore (DATA_MODE stays "firestore"). Requires public-read rules.
+  if (!AUTH_ENABLED) { onUser({ email: "preview-no-auth", noAuth: true }); return; }
   const fb = await ensureFirebase();
   fb.onAuthStateChanged(fb.auth, (user) => {
     const ok = user && user.emailVerified && user.email === OPERATOR_EMAIL;

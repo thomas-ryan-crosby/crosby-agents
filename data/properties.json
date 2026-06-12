@@ -7,13 +7,13 @@
     "city": "Mandeville",
     "state": "LA",
     "zip": "70471",
-    "totalSF": 91352,
+    "totalSF": 98217,
     "totalUnits": null,
     "status": "active",
     "crosbyRole": "Owner-Operator",
-    "notes": "5-building commercial office campus. Crosby Development occupies Suite 101 in Building #1 as owner-occupant.",
-    "dataSource": "rentinfo#1-5.xls",
-    "lastUpdated": "2026-04-02"
+    "notes": "5-building commercial office campus. Building #1 reconciled from rentinfo#1.xls + lease PDFs; Buildings #2-5 loaded roster-level from the dashboard (lease terms pending rentinfo#2-5.xls). Crosby Development occupies Suite 101 in Building #1 as owner-occupant.",
+    "dataSource": "rentinfo#1.xls (Bldg #1, reconciled) + dashboard TENANT_ROSTER (Bldgs #2-5)",
+    "lastUpdated": "2026-06-11"
   },
   {
     "id": "mandeville-lake-apartments",

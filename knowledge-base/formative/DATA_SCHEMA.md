@@ -168,14 +168,20 @@ properties
 
 | File | Records | Source | Last Updated | Status |
 |------|---------|--------|-------------|--------|
-| properties.json | 8 | Owner-provided | 2026-04-02 | ✅ Complete |
-| buildings.json | 17 | rentinfo#1.xls + Mandeville Lake RR | 2026-04-02 | ◧ SOP #1 full, #2–5 stubs; Mandeville 12 full |
-| units.json | 306 | rentinfo#1.xls + 2026 ML RR.xlsx | 2026-04-02 | ◧ SOP Bldg #1 (13) + Mandeville Lake (293) |
-| tenants.json | 297 | rentinfo#1.xls + 2026 ML RR.xlsx | 2026-04-02 | ◧ SOP Bldg #1 (13) + Mandeville Lake (284) |
-| leases.json | 297 | rentinfo#1.xls + 2026 ML RR.xlsx | 2026-04-02 | ◧ SOP Bldg #1 (13) + Mandeville Lake (284) |
+| properties.json | 8 | Owner-provided | 2026-06-11 | ✅ Complete |
+| buildings.json | 17 | rentinfo#1.xls + dashboard roster (SOP #2–5) + Mandeville Lake RR | 2026-06-11 | ◧ SOP #1 full + #2–5 roster-level; Mandeville 12 full |
+| units.json | 333 | rentinfo#1.xls + dashboard roster + 2026 ML RR.xlsx | 2026-06-11 | ◧ SOP (40: #1 full + #2–5 roster) + Mandeville Lake (293) |
+| tenants.json | 323 | rentinfo#1.xls + dashboard roster + 2026 ML RR.xlsx | 2026-06-11 | ◧ SOP (39) + Mandeville Lake (284) |
+| leases.json | 323 | rentinfo#1.xls + dashboard roster + 2026 ML RR.xlsx | 2026-06-11 | ◧ SOP (39: #1 full terms, #2–5 rent-only) + Mandeville Lake (284) |
 | hoa-lots.json | 1 | Lakeside Village CSV | 2026-04-02 | ⚠ Summary stub — 45-lot expansion pending |
 
+**Roster-level vs. reconciled:** Sanctuary Office Park Buildings #2–5 carry tenant/suite/SF/rent
+but **null lease terms** (commencement, termination, notice, escalation), loaded from the dashboard's
+hardcoded roster on 2026-06-11. They are best-available, not source-verified. The weekly notice-deadline
+scan therefore still covers only Building #1 until `rentinfo#2–5.xls` fills the terms.
+
 **Pending Clerical Data Agent runs (need source files):**
-- Sanctuary Office Park Buildings #2–5 — `rentinfo#2–5.xls`
+- Sanctuary Office Park Buildings #2–5 — `rentinfo#2–5.xls` (fill null lease terms; verify roster SF/rent)
 - Lakeside Village — per-lot expansion from controller CSV (currently 1 summary record)
 - Metairie Plaza & Metairie Lake — residential rent rolls (currently dashboard-hardcoded only, not in `data/`)
+- Mandeville Lake — resolve 8 duplicate unit ids from the original import (see `data/CHANGELOG.md`)

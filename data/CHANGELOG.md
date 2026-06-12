@@ -58,3 +58,40 @@ National, Suite 302, terminates 2026-06-30), 1 month-to-month (Fine Southern, 10
 - Lakeside Village — 45-lot per-lot expansion pending controller CSV.
 - Metairie Plaza & Metairie Lake — shown on the dashboard from hardcoded values;
   not yet represented in `data/*.json`.
+
+---
+
+## 2026-06-11 (later same day)
+
+### Sanctuary Office Park Buildings #2–5 — roster-level load
+
+Buildings #2–5 were promoted from stub records to active by lifting the campus
+roster out of the dashboard's hardcoded `TENANT_ROSTER` (index.html). **This is a
+roster-level load, not a source-file reconciliation:** tenant name, suite, SF, and
+monthly rent are populated; lease *terms* (commencement/termination/notice/escalation)
+are **null** and still require `rentinfo#2–5.xls`.
+
+| File | Action | Detail | Source |
+|------|--------|--------|--------|
+| buildings.json | Updated | SOP #2–5 stubs → active (totalSF/occupiedSF/vacantSF/floors) | dashboard TENANT_ROSTER |
+| units.json | +27 (306→333) | SOP #2–5 suites; Bldg #4 Suite 306 (JCM II) flagged vacant | dashboard TENANT_ROSTER |
+| tenants.json | +26 (297→323) | SOP #2–5 commercial tenants (contacts pending) | dashboard TENANT_ROSTER |
+| leases.json | +26 (297→323) | SOP #2–5 leases — rent only, term dates null | dashboard TENANT_ROSTER |
+| properties.json | Updated | SOP totalSF 91352 → 98217 (sum of building totals) | derived |
+
+**Notes:**
+- Campus now computes from data: 5 buildings, 40 units (1 vacant), 39 leases / tenants,
+  98,217 SF, 99.5% occupancy, $173,835.43/mo. These supersede the stale hardcoded
+  dashboard figures (91,602 SF / 99.7% / $173,452.80), which understated Building #1
+  (used 10,228 SF vs the reconciled 16,843 SF).
+- **Provenance caveat:** the #2–5 SF/rent values share the same hardcoded origin as the
+  (incorrect) Building #1 rollup figure, so they are best-available, not source-verified.
+  Reconcile against `rentinfo#2–5.xls` when available; that pass also fills the null lease
+  terms and enables the weekly notice-deadline scan for #2–5.
+- Building #1 (13 leases, reconciled from rentinfo#1.xls) was not touched.
+- Tenant `Detox` recurs in Buildings #1 and #4; the #4 record is id `tenant-detox-4` to
+  avoid an id collision (may be the same legal entity — confirm at reconciliation).
+- Pre-existing data issue (out of scope, flag for follow-up): 8 duplicate unit ids in the
+  Mandeville Lake import (`ml-b03-34`, `ml-b06-20`, `ml-b06-24`, `ml-b07-30`, `ml-b08-112`,
+  `ml-b08-306`, `ml-b11-12`, `ml-b11-25`).
+- Re-seed Firestore (`npm run seed`) once operator credentials are configured.

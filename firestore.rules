@@ -18,8 +18,13 @@ service cloud.firestore {
           && request.auth.token.email == "thomas.ryan.crosby@gmail.com";
     }
 
+    // ⚠ TEMPORARY: public read for the unauthenticated dashboard preview
+    // (firebase-config.js AUTH_ENABLED = false). This exposes ALL tenant PII
+    // publicly. To re-secure, restore `allow read: if isOperator();` and set
+    // AUTH_ENABLED = true, then redeploy these rules.
     match /{document=**} {
-      allow read, write: if isOperator();
+      allow read: if true;
+      allow write: if isOperator();
     }
   }
 }
