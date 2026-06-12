@@ -5400,16 +5400,17 @@
     "propertyId": "sanctuary-office-park",
     "buildingId": "sanctuary-bldg-2",
     "commenced": "2025-08-01",
-    "terminates": "2026-07-31",
-    "monthlyRent": 1948.86,
+    "terminates": "2027-07-31",
+    "monthlyRent": 2007.32,
     "escalationPct": 3,
-    "autoRenew": null,
+    "autoRenew": true,
     "noticeDays": null,
     "noticeDeadline": null,
     "daysToNoticeDeadline": null,
     "status": "active",
     "docFile": null,
-    "notes": "Terms populated from lease doc (AMD12, 2025-06-06); auto-renew & notice not confirmed."
+    "notes": "Auto-renewed for an additional 12-month term per lease; 3% escalation effective 2026-08-01, new monthly rent $2,007.32. Renewal reminder sent to Gary Thomas, CPA (2026-06).",
+    "escalationMonth": 8
   },
   {
     "id": "lease-bldg2-suite302c-ns-laser",

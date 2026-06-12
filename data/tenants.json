@@ -10,7 +10,7 @@
   },
   {
     "id": "tenant-bayou-cpr",
-    "name": "Bayou CPR",
+    "name": "Bayou CPR Training",
     "type": "commercial",
     "contactName": null,
     "email": null,
@@ -19,7 +19,7 @@
   },
   {
     "id": "tenant-acorn-adoption",
-    "name": "Acorn Adoption",
+    "name": "Acorn Adoption Company LLC",
     "type": "commercial",
     "contactName": null,
     "email": null,
@@ -37,7 +37,7 @@
   },
   {
     "id": "tenant-nirvana-massage",
-    "name": "Nirvana Massage",
+    "name": "Michael & Kathleen Brown dba Nirvana Massage Therapy",
     "type": "commercial",
     "contactName": null,
     "email": null,
@@ -55,7 +55,7 @@
   },
   {
     "id": "tenant-sec-national",
-    "name": "Security National",
+    "name": "Security National Life Insurance Company",
     "type": "commercial",
     "contactName": null,
     "email": null,
@@ -109,7 +109,7 @@
   },
   {
     "id": "tenant-body-remedy",
-    "name": "Body Remedy",
+    "name": "Body Remedy Physical Therapy and Wellness",
     "type": "commercial",
     "contactName": null,
     "email": null,
@@ -2683,7 +2683,7 @@
   },
   {
     "id": "tenant-penzato",
-    "name": "Penzato",
+    "name": "Hon. Allison H. Penzato, Judge — La. First Circuit Court of Appeal",
     "type": "commercial",
     "contactName": null,
     "email": null,
@@ -2692,7 +2692,7 @@
   },
   {
     "id": "tenant-thomas",
-    "name": "Thomas",
+    "name": "Gary M. Thomas, CPA, A Professional Corporation",
     "type": "commercial",
     "contactName": null,
     "email": null,
@@ -2701,7 +2701,7 @@
   },
   {
     "id": "tenant-ns-laser",
-    "name": "NS Laser",
+    "name": "Northshore Laser LLC",
     "type": "commercial",
     "contactName": null,
     "email": null,
@@ -2710,7 +2710,7 @@
   },
   {
     "id": "tenant-hartford",
-    "name": "Hartford",
+    "name": "Hartford Fire Insurance Company",
     "type": "commercial",
     "contactName": null,
     "email": null,
@@ -2719,7 +2719,7 @@
   },
   {
     "id": "tenant-4-your-eyes",
-    "name": "4 Your Eyes",
+    "name": "4 Your Eyes, LLC",
     "type": "commercial",
     "contactName": null,
     "email": null,
@@ -2737,7 +2737,7 @@
   },
   {
     "id": "tenant-cypress-key",
-    "name": "Cypress Key",
+    "name": "Cypress Key Realty LLC",
     "type": "commercial",
     "contactName": null,
     "email": null,
@@ -2755,7 +2755,7 @@
   },
   {
     "id": "tenant-assured-part",
-    "name": "Assured Part.",
+    "name": "AssuredPartners Gulf Coast Insurance Agency, LLC",
     "type": "commercial",
     "contactName": null,
     "email": null,
@@ -2773,7 +2773,7 @@
   },
   {
     "id": "tenant-nationwide",
-    "name": "Nationwide",
+    "name": "Nationwide Mutual Insurance Company",
     "type": "commercial",
     "contactName": null,
     "email": null,
@@ -2791,7 +2791,7 @@
   },
   {
     "id": "tenant-carver",
-    "name": "Carver",
+    "name": "Carver, Darden, Koretzky, Tessier, Finn, Blossman & Areaux, LLC",
     "type": "commercial",
     "contactName": null,
     "email": null,
@@ -2890,7 +2890,7 @@
   },
   {
     "id": "tenant-maps",
-    "name": "MAPS",
+    "name": "Mediation Arbitration Professional Systems, INC",
     "type": "commercial",
     "contactName": null,
     "email": null,
