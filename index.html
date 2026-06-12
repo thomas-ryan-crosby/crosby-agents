@@ -1696,7 +1696,7 @@ function renderPropertyDetail(p) {
         var hasLeases = buildingLeases.length > 0;
 
         var leaseCol = hasLeases ? '<th>Lease</th>' : '';
-        html += '<table class="unit-table"><thead><tr><th>Tenant</th><th>Suite</th><th>Square Feet</th><th>Monthly Rent</th><th>$/SF/Yr</th><th>Status</th>'+leaseCol+'</tr></thead><tbody>';
+        html += '<table class="unit-table"><thead><tr><th>Tenant</th><th>Suite</th><th>Square Feet</th><th>Monthly Rent</th><th>$/SF/Yr</th><th>Status</th><th>Expiry</th><th>Notice</th><th>Action</th>'+leaseCol+'</tr></thead><tbody>';
         var bTotal = 0, bRent = 0;
         bTenants.forEach(function(t) {
           bTotal += t.sf;
@@ -1714,9 +1714,11 @@ function renderPropertyDetail(p) {
               leaseCell = '<td><span style="font-size:11px;color:#d1d5db;">—</span></td>';
             }
           }
-          html += '<tr><td style="font-weight:500;">'+t.tenant+'</td><td>'+t.suite+'</td><td>'+t.sf.toLocaleString()+'</td><td>'+(t.rent>0?'$'+t.rent.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}):'—')+'</td><td>'+sfyr+'</td><td>'+statusBdg+'</td>'+leaseCell+'</tr>';
+          var actTone = {steady:'badge-approved',attention:'badge-pending',urgent:'badge-revision',neutral:'badge-idle'}[(t.action&&t.action.tone)||'neutral'];
+          var actCell = t.action && t.action.label !== '—' ? '<span class="badge '+actTone+'">'+t.action.label+'</span>' : '<span style="color:#d1d5db;">—</span>';
+          html += '<tr><td style="font-weight:500;">'+t.tenant+'</td><td>'+t.suite+'</td><td>'+t.sf.toLocaleString()+'</td><td>'+(t.rent>0?'$'+t.rent.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}):'—')+'</td><td>'+sfyr+'</td><td>'+statusBdg+'</td><td style="font-size:12px;'+(t.expiry==='—'?'color:#d1d5db;':'')+'">'+t.expiry+'</td><td style="font-size:12px;'+(t.notice==='—'?'color:#d1d5db;':'')+'">'+t.notice+'</td><td>'+actCell+'</td>'+leaseCell+'</tr>';
         });
-        html += '<tr><td style="font-weight:700;">Total ('+bTenants.length+' tenants)</td><td></td><td>'+bTotal.toLocaleString()+'</td><td>$'+bRent.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})+'</td><td></td><td></td>'+(hasLeases?'<td></td>':'')+'</tr>';
+        html += '<tr><td style="font-weight:700;">Total ('+bTenants.length+' tenants)</td><td></td><td>'+bTotal.toLocaleString()+'</td><td>$'+bRent.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})+'</td><td></td><td></td><td></td><td></td><td></td>'+(hasLeases?'<td></td>':'')+'</tr>';
         html += '</tbody></table>';
 
         // Documents panel for buildings that have leases on file

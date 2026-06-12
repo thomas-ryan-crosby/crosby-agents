@@ -24,6 +24,38 @@ const docTypeOf = (file) => {
   return m ? "AMD" + m[1] : (/AMD/i.test(file) ? "AMD" : "Init");
 };
 
+// Expiry display for a roster row.
+function leaseExpiry(lease) {
+  if (!lease) return "—";
+  if (lease.status === "mtm") return "MTM";
+  if (lease.status === "owner-occupant") return "Owner";
+  return /^\d{4}-\d{2}-\d{2}$/.test(lease.terminates) ? lease.terminates : "—";
+}
+
+// Leasing action item per suite, inferred from the lease state. tone drives the
+// badge color: steady (green), attention (amber), urgent (red), neutral (gray).
+function leaseAction(lease, vacant, today) {
+  if (vacant) return { label: "Begin Marketing", tone: "urgent" };
+  if (!lease) return { label: "—", tone: "neutral" };
+  if (lease.status === "owner-occupant") return { label: "Owner-Occupied", tone: "neutral" };
+  if (lease.status === "vacating") return { label: "Begin Marketing", tone: "urgent" };
+  if (lease.status === "mtm") return { label: "Formalize Lease", tone: "attention" };
+  const term = /^\d{4}-\d{2}-\d{2}$/.test(lease.terminates) ? lease.terminates : null;
+  if (!term) return { label: "Confirm Lease Terms", tone: "attention" }; // rent on file, dates pending
+  const daysLeft = Math.round((Date.parse(term) - today) / DAY);
+  const ndDays = lease.daysToNoticeDeadline;
+  if (daysLeft < 0) return { label: "Expired — Re-market", tone: "urgent" };
+  if (lease.autoRenew === false) {
+    return daysLeft <= 180 ? { label: "Negotiate Renewal", tone: "attention" } : { label: "Cash Checks", tone: "steady" };
+  }
+  if (lease.autoRenew === true) {
+    return (ndDays != null && ndDays >= 0 && ndDays <= 120)
+      ? { label: "Renewal Decision", tone: "attention" }
+      : { label: "Cash Checks", tone: "steady" };
+  }
+  return { label: "Verify Renewal Terms", tone: "attention" }; // auto-renew unknown
+}
+
 export function deriveViewModel(entities) {
   const today = Date.now();
   const props = entities.properties || [];
@@ -114,6 +146,9 @@ function deriveCommercial(p, pBldgs, unitsByBldg, leaseByUnit, tenantById, pLeas
       roster.push({
         tenant: tenant ? tenant.name : "(Vacant)", suite: u.identifier, sf: u.sf || 0,
         rent: lease ? num(lease.monthlyRent) : 0, vacant,
+        expiry: leaseExpiry(lease),
+        notice: (lease && lease.noticeDeadline) || "—",
+        action: leaseAction(lease, vacant, today),
       });
 
       if (lease) {
