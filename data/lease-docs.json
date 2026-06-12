@@ -194,6 +194,30 @@
     "date": "2025-11-21"
   },
   {
+    "id": "leasedoc-brandnerbldg1ste303breductionnotice",
+    "propertyId": "sanctuary-office-park",
+    "building": "Building #1",
+    "tenant": "Brandner Law Firm",
+    "suite": "303B",
+    "file": "Brandner_BLDG1_STE303B_ReductionNotice.pdf",
+    "docType": "Notice",
+    "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FBrandner_BLDG1_STE303B_ReductionNotice.pdf?alt=media&token=72bdd817-d703-41cf-a4bb-734f22f53533",
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FBrandner_BLDG1_STE303B_ReductionNotice.html?alt=media&token=a9df5ec7-9fbb-47ae-8127-4eb78a20f994",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Brandner Law Firm (Mike Brandner)",
+      "property": "Sanctuary Office Park, Building #1, #1 Sanctuary Boulevard, Suite 303B, Mandeville, LA 70471",
+      "suite": "303B",
+      "documentType": "Premises & Rent Reduction Notice",
+      "dated": "2026-04-01",
+      "monthlyRent": "431.00 (reduced from 862.00)",
+      "termination": "2028-11-30",
+      "escalation": "3% annual (Dec); all other lease terms unchanged",
+      "title": "Notice of Premises & Rent Reduction — Building #1, Suite 303B (Brandner Law Firm) — reduced to 303B (~235 SF) at $431/mo after 303A re-leased; in consideration of tenant's 2025-12-04 termination notice"
+    },
+    "date": "2026-04-01"
+  },
+  {
     "id": "leasedoc-fspinitpdf",
     "propertyId": "sanctuary-office-park",
     "building": "Building #1",

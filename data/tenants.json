@@ -102,10 +102,10 @@
     "id": "tenant-brandner-law",
     "name": "Brandner Law Firm",
     "type": "commercial",
-    "contactName": null,
+    "contactName": "Mike Brandner",
     "email": null,
     "phone": null,
-    "notes": "Suite 303B. Tenant since November 2025."
+    "notes": "Building #1, Suite 303B (~235 SF). Tenant since 2025-11-24 (originally full Suite 303 @ $862). Gave cancellation/termination notice by email 2025-12-04. Per governing reduction notice (eff 2026-04-01): Suite 303A re-leased, premises reduced to 303B only, rent halved to $431/mo. Wind-down: Lessor actively seeking occupants to fully relieve tenant of the remaining space."
   },
   {
     "id": "tenant-body-remedy",
