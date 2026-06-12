@@ -98,6 +98,10 @@
     /* Horizontal scroll for wide tables: fills the card when it fits, scrolls left-right when it doesn't. */
     .table-scroll { overflow-x: auto; overflow-y: visible; margin-top: 12px; -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
     .table-scroll .unit-table { margin-top: 0; min-width: 1180px; }
+    /* Keep the Tenant column pinned while scrolling horizontally. */
+    .table-scroll .unit-table .c-tenant { position: sticky; left: 0; z-index: 2; background: #fff; box-shadow: 1px 0 0 #e5e7eb; }
+    .table-scroll .unit-table thead .c-tenant { z-index: 3; background: #f9fafb; }
+    .table-scroll .unit-table tr:last-child .c-tenant { background: #f9fafb; }
     .table-scroll::-webkit-scrollbar { height: 9px; }
     .table-scroll::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 5px; }
     .table-scroll::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
