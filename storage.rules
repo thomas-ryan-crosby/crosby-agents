@@ -1,0 +1,18 @@
+rules_version = '2';
+
+// Crosby Development — Firebase Storage rules.
+//
+// Lease PDFs in this bucket are surfaced on the dashboard via per-file DOWNLOAD
+// TOKENS (the ?token=… URLs in the leaseDocs collection). Download-token URLs
+// bypass these rules, so the dashboard links keep working while rule-based access
+// is denied: the bucket is not publicly readable or listable, and clients cannot
+// write. Uploads happen out-of-band via the Admin SDK / gsutil (which also bypass
+// rules). This replaces the console's temporary test-mode rules (which allowed
+// public writes and expire).
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

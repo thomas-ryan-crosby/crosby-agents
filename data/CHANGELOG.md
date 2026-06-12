@@ -154,3 +154,18 @@ tenant/building/suite + public URL.
 - Filename suite hint vs. data: `BLDG2_FLR3_302C_BodyRemedy.pdf` was linked to tenant Body
   Remedy (Building #1, Suite 303A per the dashboard data); the filename's B2/302C may be a
   proppli mislabel — confirm.
+
+### Lease PDFs moved to the real Firebase bucket + locked down
+
+Once the operator enabled Firebase Storage, the 38 PDFs were moved from the temporary
+public bucket into the project's Firebase bucket `gs://crosby-agents.firebasestorage.app`
+(path `leases/`), and the temporary `crosby-agents-leases` bucket was **deleted**.
+
+**Access model (improved):** each linked PDF now carries a Firebase **download token**;
+`lease-docs.json` URLs were rewritten to the tokenized
+`firebasestorage.googleapis.com/.../o/leases%2F<file>?alt=media&token=<uuid>` form.
+`storage.rules` (new, deployed) denies all rule-based read/write — download-token URLs
+bypass rules, so the dashboard links work while the bucket is **not** publicly readable or
+listable (verified: tokenized URL → 200, no-token → 403). This replaced the console's
+temporary test-mode rules (which allowed public writes and would have expired). The
+earlier whole-bucket `allUsers` public-read exposure is gone.
