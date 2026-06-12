@@ -198,3 +198,7 @@ by suite; Suite 101 owner-occupant not in the table). Rent, SQFT and escalation 
 the current end-of-month dates (e.g. Bayou `2026-12-31` → table `01 2027`). Treated the
 table as authoritative and used last-day-of-stated-month; correct any specific days if the
 two were meant to describe the same expiry.
+
+**Correction:** the Suite 100 table row labeled "Christine West" is the **broker**, not the
+tenant. Tenant reverted to **Fine Southern Properties**; **Christine Westenberger** recorded
+as `contactName` (broker). The fixed-term lease change (exp 2027-01-31, no auto-renew) stands.
