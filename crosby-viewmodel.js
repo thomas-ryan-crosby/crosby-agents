@@ -119,6 +119,7 @@ export function deriveViewModel(entities) {
       cls: p.cls || p.type || "—", isCommercial: !!p.isCommercial, isHOA: !!p.isHOA,
       status: hasData ? "data-loaded" : "pending",
       unitMix: p.unitMix || null,
+      marketInfoUrl: p.marketInfoUrl || null,
     };
 
     if (p.isCommercial) {

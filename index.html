@@ -1659,6 +1659,31 @@ function sopColToggleBar() {
     '</div></div>';
 }
 
+// Current Market Info modal — shows the hosted market study in an overlay iframe.
+function openMarketInfo(url) {
+  var ov = document.getElementById("marketModal");
+  if(!ov) {
+    ov = document.createElement("div");
+    ov.id = "marketModal";
+    ov.style.cssText = "position:fixed;inset:0;z-index:200;background:rgba(15,23,42,.55);display:flex;align-items:center;justify-content:center;padding:24px;";
+    ov.innerHTML = '<div style="background:#fff;width:100%;max-width:980px;height:90vh;border-radius:14px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 24px 70px rgba(0,0,0,.45);">'+
+      '<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid #e5e7eb;">'+
+      '<span style="font-weight:700;font-size:14px;color:#0f172a;">Current Market Info — St. Tammany Office Leasing</span>'+
+      '<div style="display:flex;align-items:center;gap:14px;"><a id="marketNewTab" href="#" target="_blank" rel="noopener" style="font-size:12px;color:#2563eb;text-decoration:none;">Open in new tab &#8599;</a>'+
+      '<button onclick="closeMarketInfo()" style="border:none;background:#f1f5f9;border-radius:6px;width:28px;height:28px;cursor:pointer;font-size:18px;line-height:1;color:#334155;">&times;</button></div></div>'+
+      '<iframe id="marketFrame" title="Market study" style="border:0;width:100%;flex:1;"></iframe></div>';
+    ov.addEventListener("click", function(e){ if(e.target === ov) closeMarketInfo(); });
+    document.body.appendChild(ov);
+  }
+  document.getElementById("marketFrame").src = url;
+  document.getElementById("marketNewTab").href = url;
+  ov.style.display = "flex";
+}
+function closeMarketInfo() {
+  var ov = document.getElementById("marketModal");
+  if(ov) { ov.style.display = "none"; document.getElementById("marketFrame").src = "about:blank"; }
+}
+
 function renderPropertyDetail(p) {
   document.getElementById("detailPropName").textContent = p.name;
   document.getElementById("detailPropBadge").innerHTML = p.cls;
@@ -1692,6 +1717,9 @@ function renderPropertyDetail(p) {
   document.getElementById("detailStats").innerHTML = statsHTML;
 
   var html = "";
+  if(p.marketInfoUrl) {
+    html += '<div style="margin-bottom:16px;"><button onclick="openMarketInfo(\''+p.marketInfoUrl+'\')" style="display:inline-flex;align-items:center;gap:8px;background:#2563eb;color:#fff;border:none;border-radius:8px;padding:9px 16px;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 2px 8px rgba(37,99,235,.28);">'+iconSvg("trending-up",16)+' Current Market Info</button></div>';
+  }
 
   if(p.isHOA) {
     // ── HOA detail: ownership breakdown + full roster ──

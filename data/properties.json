@@ -30,7 +30,9 @@
       "description": "Five Class A commercial office buildings with beautifully landscaped grounds. Suites range from 200 to 13,455 SF. Full-service lease structure includes janitorial, trash, property maintenance, and HVAC — no CAM charges, no year-end adjustments. Fixed 3% annual rent increases. Located 2 miles from the Causeway Bridge with easy access to New Orleans and Baton Rouge.",
       "sqftRange": "200–13,455 SF",
       "rentRange": "$309–$27,564/mo"
-    }
+    },
+    "marketInfoUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/market%2Fsanctuary-market-study.html?alt=media&token=9299e6b6-bda2-4fae-8d0d-6fc8cc086151",
+    "marketInfoUpdated": "2026-06"
   },
   {
     "id": "mandeville-lake-apartments",
