@@ -2728,12 +2728,12 @@
   },
   {
     "id": "tenant-pazos",
-    "name": "Pazos",
+    "name": "J. Chris Pazos Insurance Agency LLC",
     "type": "commercial",
-    "contactName": null,
+    "contactName": "Chris Pazos",
     "email": null,
     "phone": null,
-    "notes": "Suite 202, Building #2. Roster-level record; legal name and contacts pending source-file reconciliation."
+    "notes": "Suite 202, Building #2. Name per lease/directory. Tenant since 2017-06-15 (Init lease, 450 SF, $750); Amendment #1 2018 set auto-renew; auto-renews annually each June (current term to 2026-06-13 @ $922.40, next $950.07). In-solido guaranty by American National Insurance Co. Full-service gross."
   },
   {
     "id": "tenant-cypress-key",

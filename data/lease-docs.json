@@ -1260,5 +1260,77 @@
       "title": "Sublease (2017, legacy) — Standard Mortgage subleased part of Suite 201 to Margaret Benjamin LLC"
     },
     "date": "2017-09-28"
+  },
+  {
+    "id": "leasedoc-pazosbldg2ste202init",
+    "propertyId": "sanctuary-office-park",
+    "building": "Building #2",
+    "tenant": "J. Chris Pazos Insurance Agency LLC",
+    "suite": "202",
+    "file": "Pazos_BLDG2_STE202_Init.pdf",
+    "docType": "Init",
+    "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FPazos_BLDG2_STE202_Init.pdf?alt=media&token=ea2d9888-2c8b-4b40-9e83-48214b3ff772",
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FPazos_BLDG2_STE202_Init.html?alt=media&token=854dc5f6-2667-4d3f-bbd8-9eb388d80275",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "J. Chris Pazos Insurance Agency LLC",
+      "property": "Sanctuary Office Park, Building #2, #2 Sanctuary Boulevard, Mandeville, LA 70471",
+      "suite": "Suite 202",
+      "documentType": "Init",
+      "dated": "2017-04-09",
+      "monthlyRent": "USD 750.00",
+      "commencement": "2017-06-15",
+      "termination": "2019-06-14",
+      "title": "Lease of Commercial Property — Building #2, Suite 202 (Crosby / J. Chris Pazos Insurance Agency LLC) — full-service gross"
+    },
+    "date": "2017-04-09"
+  },
+  {
+    "id": "leasedoc-pazosbldg2ste202amd1",
+    "propertyId": "sanctuary-office-park",
+    "building": "Building #2",
+    "tenant": "J. Chris Pazos Insurance Agency LLC",
+    "suite": "202",
+    "file": "Pazos_BLDG2_STE202_AMD1.pdf",
+    "docType": "Amendment",
+    "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FPazos_BLDG2_STE202_AMD1.pdf?alt=media&token=09f38ac9-450e-43fb-ac80-16e658310ade",
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FPazos_BLDG2_STE202_AMD1.html?alt=media&token=a7340ab3-0c6b-41e8-a04b-39247d55c2ff",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "J. Chris Pazos Insurance Agency LLC",
+      "property": "Sanctuary Office Park, Building #2, #2 Sanctuary Boulevard, Mandeville, LA 70471",
+      "suite": "Suite 202",
+      "documentType": "Amendment",
+      "dated": "2018-12-28",
+      "monthlyRent": "USD 795.67",
+      "commencement": "2019-06-15",
+      "termination": "2020-06-14",
+      "title": "Amendment #1 to Lease — Building #2, Suite 202 (Pazos) — rent $795.67, auto-renew 12-mo"
+    },
+    "date": "2018-12-28"
+  },
+  {
+    "id": "leasedoc-pazosbldg2ste202renewalnotice2025",
+    "propertyId": "sanctuary-office-park",
+    "building": "Building #2",
+    "tenant": "J. Chris Pazos Insurance Agency LLC",
+    "suite": "202",
+    "file": "Pazos_BLDG2_STE202_RenewalNotice2025.pdf",
+    "docType": "Renewal Notice",
+    "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FPazos_BLDG2_STE202_RenewalNotice2025.pdf?alt=media&token=da929c6a-fe27-4cb4-97f9-7af324d39b4e",
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FPazos_BLDG2_STE202_RenewalNotice2025.html?alt=media&token=81caa95d-75a1-496a-a08b-78995b42974e",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "J. Chris Pazos Insurance Agency LLC",
+      "property": "Sanctuary Office Park, Building #2, #2 Sanctuary Boulevard, Mandeville, LA 70471",
+      "suite": "Suite 202",
+      "documentType": "Renewal Notice",
+      "dated": "2025-06-11",
+      "monthlyRent": "USD 922.40",
+      "commencement": "2025-06-14",
+      "termination": "2026-06-13",
+      "title": "Renewal Notice — Building #2, Suite 202 (Pazos) — auto-renewed to 2026-06-13, rent $922.40 (current)"
+    },
+    "date": "2025-06-11"
   }
 ]

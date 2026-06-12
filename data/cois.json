@@ -130,5 +130,37 @@
       "dated": "2018-08-25",
       "title": "COI — Margaret Benjamin LLC (Suite 100) — GL $1M, Crosby additional insured, exp 2019-10-01"
     }
+  },
+  {
+    "id": "coi-cypresskeycoi2025",
+    "propertyId": "sanctuary-office-park",
+    "building": "Building #2",
+    "tenant": "Cypress Key Realty LLC",
+    "suite": "204",
+    "producer": "Financial Assurance LLC",
+    "certificateHolder": "Crosby Development Company, LLC",
+    "additionalInsured": true,
+    "coverages": [
+      {
+        "type": "General Liability",
+        "eachOccurrence": 1000000,
+        "generalAggregate": 2000000,
+        "policyNumber": "17 0037794740",
+        "expiration": "2026-03-29"
+      }
+    ],
+    "expiration": "2026-03-29",
+    "file": "CypressKey_COI_2025.pdf",
+    "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/cois%2FCypressKey_COI_2025.pdf?alt=media&token=b38bd432-1ea8-48a1-990d-6314f37d7dcc",
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/cois-html%2FCypressKey_COI_2025.html?alt=media&token=1f256eea-7edd-462d-94f5-fa0679b8fc31",
+    "date": "2025-03-19",
+    "meta": {
+      "insured": "Cypress Key Realty LLC",
+      "carrier": "Bankers Insurance Company",
+      "policyNumber": "17 0037794740",
+      "documentType": "Businessowners Policy (Bankers) — evidence of insurance",
+      "dated": "2025-03-19",
+      "title": "COI — Cypress Key Realty LLC (Suite 204) — Bankers BOP, GL $1M, Crosby as Managers/Lessors of Premises, exp 2026-03-29"
+    }
   }
 ]
