@@ -242,6 +242,30 @@
     "date": "2025-12-08"
   },
   {
+    "id": "leasedoc-benjamininitpdf",
+    "propertyId": "sanctuary-office-park",
+    "building": "Building #2",
+    "tenant": "Margaret Benjamin LLC",
+    "suite": "100",
+    "file": "Benjamin_BLDG2_STE100_Init.pdf",
+    "docType": "Init",
+    "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FBenjamin_BLDG2_STE100_Init.pdf?alt=media&token=766d6104-8be0-4468-bbf6-b190631bb6bf",
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FBenjamin_BLDG2_STE100_Init.html?alt=media&token=e628a9e4-b4b5-494b-9e39-5fe7c1355f3d",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Margaret Benjamin LLC",
+      "property": "Sanctuary Office Park, Building #2, #2 Sanctuary Boulevard, Mandeville, LA 70471",
+      "suite": "Suite 100, Floor 1",
+      "documentType": "Init",
+      "dated": "2020-12-08",
+      "monthlyRent": "USD 1850.00",
+      "commencement": "2021-03-01",
+      "termination": "2026-02-28",
+      "title": "Lease of Commercial Property — Sanctuary Office Park, Building #2, Suite 100 (Crosby Development Company, LLC / Margaret Benjamin LLC) — 5-yr primary term, full-service gross"
+    },
+    "date": "2020-12-08"
+  },
+  {
     "id": "leasedoc-mandevilletechnologyinitpdf",
     "propertyId": "sanctuary-office-park",
     "building": "Building #1",
