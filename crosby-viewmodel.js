@@ -55,28 +55,49 @@ function leaseExpiry(lease) {
   return /^\d{4}-\d{2}-\d{2}$/.test(lease.terminates) ? lease.terminates : "—";
 }
 
-// Leasing action item per suite, inferred from the lease state. tone drives the
-// badge color: steady (green), attention (amber), urgent (red), neutral (gray).
+// Urgency tone for a date, by days-from-today: red when ≤90d (or past), amber when
+// ≤180d, gray when further out. Used to color the expiry/notice countdowns.
+function dateTone(d) {
+  if (d == null) return "neutral";
+  if (d < 0 || d <= 90) return "urgent";
+  if (d <= 180) return "attention";
+  return "neutral";
+}
+
+// Leasing action per suite — fully derived from lease state and recomputed against
+// today's date (no stored/frozen values). tone drives the badge color: steady
+// (green), attention (amber), urgent (red), neutral (gray). The "binding date" is
+// the NOTICE deadline for an auto-renewing lease (you must act before it) and the
+// EXPIRATION for a non-renewing lease.
 function leaseAction(lease, vacant, today) {
   if (vacant) return { label: "Begin Marketing", tone: "urgent" };
   if (!lease) return { label: "—", tone: "neutral" };
   if (lease.status === "owner-occupant") return { label: "Owner-Occupied", tone: "neutral" };
   if (lease.status === "vacating") return { label: "Begin Marketing", tone: "urgent" };
   if (lease.status === "mtm") return { label: "Formalize Lease", tone: "attention" };
-  const term = /^\d{4}-\d{2}-\d{2}$/.test(lease.terminates) ? lease.terminates : null;
-  if (!term) return { label: "Confirm Lease Terms", tone: "attention" }; // rent on file, dates pending
-  const daysLeft = Math.round((Date.parse(term) - today) / DAY);
-  const ndDays = lease.daysToNoticeDeadline;
-  if (daysLeft < 0) return { label: "Expired — Re-market", tone: "urgent" };
-  if (lease.autoRenew === false) {
-    return daysLeft <= 180 ? { label: "Negotiate Renewal", tone: "attention" } : { label: "Cash Checks", tone: "steady" };
-  }
+  const expDays = daysBetween(lease.terminates, today);
+  if (expDays == null) return { label: "Confirm Lease Terms", tone: "attention" }; // rent on file, dates pending
+  const ndDays = daysBetween(lease.noticeDeadline, today);
+
   if (lease.autoRenew === true) {
-    return (ndDays != null && ndDays >= 0 && ndDays <= 120)
-      ? { label: "Renewal Decision", tone: "attention" }
-      : { label: "Cash Checks", tone: "steady" };
+    // The notice deadline is the action trigger; once it passes the lease auto-renews.
+    if (ndDays == null) return expDays <= 150 ? { label: "Confirm Renewal", tone: "attention" } : { label: "Cash Checks", tone: "steady" };
+    if (ndDays < 0) return { label: "Cash Checks", tone: "steady" };           // notice passed → auto-renewed
+    if (ndDays <= 60) return { label: "Renewal Decision Due", tone: "urgent" };
+    if (ndDays <= 150) return { label: "Renewal Decision", tone: "attention" };
+    return { label: "Cash Checks", tone: "steady" };
   }
-  return { label: "Verify Renewal Terms", tone: "attention" }; // auto-renew unknown
+  if (lease.autoRenew === false) {
+    if (expDays < 0) return { label: "Expired — Re-market", tone: "urgent" };
+    if (expDays <= 90) return { label: "Renew or Re-market", tone: "urgent" };
+    if (expDays <= 180) return { label: "Negotiate Renewal", tone: "attention" };
+    return { label: "Cash Checks", tone: "steady" };
+  }
+  // auto-renew unknown (e.g. roster-only backfill, terms unconfirmed)
+  if (expDays < 0) return { label: "Expired — Verify", tone: "urgent" };
+  if (expDays <= 90) return { label: "Expiring — Verify Terms", tone: "urgent" };
+  if (expDays <= 180) return { label: "Verify & Plan Renewal", tone: "attention" };
+  return { label: "Verify Renewal Terms", tone: "attention" };
 }
 
 export function deriveViewModel(entities) {
@@ -192,8 +213,10 @@ function deriveCommercial(p, pBldgs, unitsByBldg, leaseByUnit, tenantById, pLeas
         rent: lease ? num(lease.monthlyRent) : 0, vacant,
         expiry: leaseExpiry(lease),
         expiryIn: humanUntil(lease && lease.terminates, today),
+        expiryTone: lease ? dateTone(daysBetween(lease.terminates, today)) : "neutral",
         notice: (lease && lease.noticeDeadline) || "—",
         noticeIn: humanUntil(lease && lease.noticeDeadline, today),
+        noticeTone: lease ? dateTone(daysBetween(lease.noticeDeadline, today)) : "neutral",
         action: leaseAction(lease, vacant, today),
       });
 
@@ -211,7 +234,7 @@ function deriveCommercial(p, pBldgs, unitsByBldg, leaseByUnit, tenantById, pLeas
           autoRenew: lease.autoRenew == null ? null : !!lease.autoRenew,
           noticeDays: lease.noticeDays != null ? lease.noticeDays : null,
           noticeDeadline: lease.noticeDeadline || null,
-          noticeDeadlineDays: lease.daysToNoticeDeadline != null ? lease.daysToNoticeDeadline : daysBetween(lease.noticeDeadline, today),
+          noticeDeadlineDays: daysBetween(lease.noticeDeadline, today),
           additional: lease.notes || "",
           vacating: lease.status === "vacating", mtm, ownerOccupant: owner,
         };
