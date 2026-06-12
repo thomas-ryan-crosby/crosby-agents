@@ -194,5 +194,88 @@
       "dated": "2025-01-10",
       "title": "COI — 4 Your Eyes LLC (Suite 303) — State Farm BOP, GL $1M, Crosby additional insured, exp 2026-01-10"
     }
+  },
+  {
+    "id": "coi-wellsfargocoi2025",
+    "propertyId": "sanctuary-office-park",
+    "building": "Building #2",
+    "tenant": "Wells Fargo Clearing Services, LLC",
+    "suite": "101",
+    "producer": "USI Insurance Services, LLC",
+    "certificateHolder": "Crosby Development (Additional Interest)",
+    "additionalInsured": true,
+    "coverages": [
+      {
+        "type": "General Liability",
+        "eachOccurrence": 1000000,
+        "note": "self-insured/blanket per lease",
+        "expiration": "2026-04-30"
+      },
+      {
+        "type": "Property (All-Risk)",
+        "limit": 100000000,
+        "policyNumber": "404-1PRCI-27",
+        "expiration": "2026-04-30"
+      }
+    ],
+    "expiration": "2026-04-30",
+    "file": "WellsFargo_COI_2025.pdf",
+    "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/cois%2FWellsFargo_COI_2025.pdf?alt=media&token=bfe0ce35-c75d-40be-a953-2390eb2b2dcb",
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/cois-html%2FWellsFargo_COI_2025.html?alt=media&token=89cfdb59-b0c0-4e6c-9272-b10ee8601fc8",
+    "date": "2025-04-29",
+    "meta": {
+      "insured": "Wells Fargo & Company and subsidiaries incl. Wells Fargo Clearing Services, LLC",
+      "carrier": "Superior Guaranty Insurance Company",
+      "policyNumber": "404-1PRCI-27",
+      "documentType": "Evidence of Property Insurance (ACORD 27)",
+      "dated": "2025-04-29",
+      "title": "COI — Wells Fargo (Suite 101) — $100M all-risk property, Crosby additional interest; liability self-insured per lease; exp 2026-04-30"
+    }
+  },
+  {
+    "id": "coi-gallowaycoi2022",
+    "propertyId": "sanctuary-office-park",
+    "building": "Building #3",
+    "tenant": "Galloway, Johnson, Tompkins, Burr & Smith",
+    "suite": "301",
+    "producer": "Alliant Insurance Services, Inc.",
+    "certificateHolder": "Crosby Development Co., LLC",
+    "additionalInsured": true,
+    "coverages": [
+      {
+        "type": "General Liability",
+        "eachOccurrence": 1000000,
+        "generalAggregate": 2000000,
+        "policyNumber": "72UUNCG3366",
+        "expiration": "2023-02-09"
+      },
+      {
+        "type": "Automobile Liability",
+        "combinedSingleLimit": 1000000,
+        "expiration": "2023-02-09"
+      },
+      {
+        "type": "Umbrella/Excess",
+        "eachOccurrence": 10000000,
+        "expiration": "2023-02-09"
+      },
+      {
+        "type": "Workers Compensation",
+        "eachAccident": 1000000,
+        "expiration": "2023-02-09"
+      }
+    ],
+    "expiration": "2023-02-09",
+    "file": "Galloway_COI_2022.pdf",
+    "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/cois%2FGalloway_COI_2022.pdf?alt=media&token=a148f0b9-65b6-4e8a-8ad8-f9850b807465",
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/cois-html%2FGalloway_COI_2022.html?alt=media&token=aa1e068d-9744-422d-9010-016fe45a3c29",
+    "date": "2022-02-08",
+    "meta": {
+      "insured": "Galloway, Johnson, Tompkins, Burr & Smith, APLC",
+      "carrier": "The Hartford",
+      "documentType": "Certificate of Liability Insurance (ACORD 25)",
+      "dated": "2022-02-08",
+      "title": "COI — Galloway (Building #3) — GL $1M/$2M, umbrella $10M, blanket AI/Crosby cert holder; exp 2023-02-09"
+    }
   }
 ]

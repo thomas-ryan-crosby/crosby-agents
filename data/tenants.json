@@ -2674,12 +2674,12 @@
   },
   {
     "id": "tenant-wells-fargo",
-    "name": "Wells Fargo",
+    "name": "Wells Fargo Clearing Services, LLC",
     "type": "commercial",
     "contactName": null,
     "email": null,
     "phone": null,
-    "notes": "Suite 101, Building #2. Roster-level record; legal name and contacts pending source-file reconciliation."
+    "notes": "Building #2, Suite 101 (2,500 SF). d/b/a Wells Fargo Advisors (orig. Wells Fargo Advisors, LLC); BE #144919. Tenant since 2010-04-01 (orig. Suites 101+201, 7,062 SF). Right-sized over Amendments 1–4 to 2,500 SF; current term to 2027-03-31, rent $4,641.43 (2026). Renewal RFP in progress (Stirling/Cresa) for a 5-yr term from 2027-04-01. Self-insures liability per lease. Full-service gross."
   },
   {
     "id": "tenant-penzato",
@@ -2800,12 +2800,12 @@
   },
   {
     "id": "tenant-galloway",
-    "name": "Galloway",
+    "name": "Galloway, Johnson, Tompkins, Burr & Smith",
     "type": "commercial",
     "contactName": null,
     "email": null,
     "phone": null,
-    "notes": "Suite 101, 102 & 310, Building #3. Roster-level record; legal name and contacts pending source-file reconciliation."
+    "notes": "Building #3, Suites 101 + 102 + 301 (13,455 SF). Law firm (APLC), 701 Poydras St., New Orleans. Tenant since 2004-12-01 (orig. Suite 301, 6,500 SF). Grew via Amendments: +Suite 102 (2019–20, 4,145 SF), +Suite 101 (2021, 2,810 SF). Current per Amendment #6 (2024-08-08): term to 2029-11-30, rent $26,761.42 eff 2024-12-01 (now $27,564.26 after the Dec-2025 3% step), 3% annual (Dec), one 5-yr option. Full-service gross."
   },
   {
     "id": "tenant-baker-donelson",
