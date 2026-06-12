@@ -1,1 +1,134 @@
-[]
+[
+  {
+    "id": "coi-benjamincoi2024",
+    "propertyId": "sanctuary-office-park",
+    "building": "Building #2",
+    "tenant": "Margaret Benjamin LLC",
+    "suite": "100",
+    "producer": "CS&S / Alliant Insurance Services, Inc.",
+    "certificateHolder": "Crosby Development Company, LLC",
+    "additionalInsured": true,
+    "coverages": [
+      {
+        "type": "General Liability",
+        "eachOccurrence": 1000000,
+        "generalAggregate": 2000000,
+        "policyNumber": "6021665727",
+        "expiration": "2025-10-01"
+      },
+      {
+        "type": "Automobile Liability",
+        "combinedSingleLimit": 1000000,
+        "policyNumber": "6021665727",
+        "expiration": "2025-10-01"
+      },
+      {
+        "type": "Workers Compensation",
+        "eachAccident": 1000000,
+        "policyNumber": "6021665758",
+        "expiration": "2025-10-01"
+      }
+    ],
+    "expiration": "2025-10-01",
+    "file": "Benjamin_COI_2024.pdf",
+    "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/cois%2FBenjamin_COI_2024.pdf?alt=media&token=946aa8a0-dc45-48c0-9eff-0c5055c22ec3",
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/cois-html%2FBenjamin_COI_2024.html?alt=media&token=84d53f11-4a1b-4fec-ad07-6781d7d54cfa",
+    "date": "2024-03-12",
+    "meta": {
+      "insured": "Margaret Benjamin, LLC",
+      "documentType": "Certificate of Liability Insurance (ACORD 25)",
+      "dated": "2024-03-12",
+      "title": "COI — Margaret Benjamin LLC (Suite 100) — GL $1M, Crosby additional insured, exp 2025-10-01"
+    }
+  },
+  {
+    "id": "coi-benjamincoi2020",
+    "propertyId": "sanctuary-office-park",
+    "building": "Building #2",
+    "tenant": "Margaret Benjamin LLC",
+    "suite": "100",
+    "producer": "CS&S / Mesirow",
+    "certificateHolder": "Crosby Development Company, LLC",
+    "additionalInsured": true,
+    "coverages": [
+      {
+        "type": "General Liability",
+        "eachOccurrence": 1000000,
+        "generalAggregate": 2000000,
+        "policyNumber": "6021665727",
+        "expiration": "2021-10-01"
+      }
+    ],
+    "expiration": "2021-10-01",
+    "file": "Benjamin_COI_2020.pdf",
+    "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/cois%2FBenjamin_COI_2020.pdf?alt=media&token=dd453bf2-62aa-424a-9b9f-ffddeee80a8b",
+    "htmlUrl": null,
+    "date": "2020-08-12",
+    "meta": {
+      "insured": "Margaret Benjamin, LLC",
+      "documentType": "Certificate of Liability Insurance (ACORD 25)",
+      "dated": "2020-08-12",
+      "title": "COI — Margaret Benjamin LLC (Suite 100) — GL $1M, Crosby additional insured, exp 2021-10-01"
+    }
+  },
+  {
+    "id": "coi-benjamincoi2019",
+    "propertyId": "sanctuary-office-park",
+    "building": "Building #2",
+    "tenant": "Margaret Benjamin LLC",
+    "suite": "100",
+    "producer": "CS&S / Mesirow",
+    "certificateHolder": "Crosby Development Company, LLC",
+    "additionalInsured": true,
+    "coverages": [
+      {
+        "type": "General Liability",
+        "eachOccurrence": 1000000,
+        "generalAggregate": 2000000,
+        "policyNumber": "6021665727",
+        "expiration": "2020-10-01"
+      }
+    ],
+    "expiration": "2020-10-01",
+    "file": "Benjamin_COI_2019.pdf",
+    "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/cois%2FBenjamin_COI_2019.pdf?alt=media&token=0f904c08-2ccd-4ec8-a2a7-1f5fb8c11168",
+    "htmlUrl": null,
+    "date": "2019-08-11",
+    "meta": {
+      "insured": "Margaret Benjamin, LLC",
+      "documentType": "Certificate of Liability Insurance (ACORD 25)",
+      "dated": "2019-08-11",
+      "title": "COI — Margaret Benjamin LLC (Suite 100) — GL $1M, Crosby additional insured, exp 2020-10-01"
+    }
+  },
+  {
+    "id": "coi-benjamincoi2018",
+    "propertyId": "sanctuary-office-park",
+    "building": "Building #2",
+    "tenant": "Margaret Benjamin LLC",
+    "suite": "100",
+    "producer": "CS&S / Mesirow",
+    "certificateHolder": "Crosby Development Company, LLC",
+    "additionalInsured": true,
+    "coverages": [
+      {
+        "type": "General Liability",
+        "eachOccurrence": 1000000,
+        "generalAggregate": 2000000,
+        "policyNumber": "6021665727",
+        "expiration": "2019-10-01"
+      }
+    ],
+    "expiration": "2019-10-01",
+    "file": "Benjamin_COI_2018.pdf",
+    "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/cois%2FBenjamin_COI_2018.pdf?alt=media&token=1a7328c5-4067-465b-9be8-e0c844d88862",
+    "htmlUrl": null,
+    "date": "2018-08-25",
+    "meta": {
+      "insured": "Margaret Benjamin, LLC",
+      "documentType": "Certificate of Liability Insurance (ACORD 25)",
+      "dated": "2018-08-25",
+      "title": "COI — Margaret Benjamin LLC (Suite 100) — GL $1M, Crosby additional insured, exp 2019-10-01"
+    }
+  }
+]

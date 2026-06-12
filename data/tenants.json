@@ -2746,12 +2746,12 @@
   },
   {
     "id": "tenant-standard",
-    "name": "Standard",
+    "name": "Standard Mortgage Corporation",
     "type": "commercial",
-    "contactName": null,
+    "contactName": "Kristie R. Berggren",
     "email": null,
     "phone": null,
-    "notes": "Suite 201, Building #2. Roster-level record; legal name and contacts pending source-file reconciliation."
+    "notes": "Suite 201, Building #2. Name per lease/directory. Long-tenured: current lease commenced 2021-03-01 (superseding a 2014 lease), extended by Amendment #1 (2023) and #2 (2025) to 2029-02-28. Predecessor entity 'Standard Mortgage Insurance Agency' occupied Ste 201 (+204 2016-17) and subleased part of Ste 201 to Margaret Benjamin LLC in 2017. Full-service gross."
   },
   {
     "id": "tenant-assured-part",
@@ -2764,12 +2764,12 @@
   },
   {
     "id": "tenant-central-title",
-    "name": "Central Title",
+    "name": "Central Title / Callihan Law",
     "type": "commercial",
-    "contactName": null,
+    "contactName": "Greg Callihan",
     "email": null,
     "phone": null,
-    "notes": "Suite 102, Building #2. Roster-level record; legal name and contacts pending source-file reconciliation."
+    "notes": "Suite 102, Building #2. Name per lease (Init 2023-08-17 + Amendment #1 2025-05-23); lobby directory 'Central Title and Closing'. Office at 9718 Sullivan Rd., Baton Rouge. Full-service gross; auto-renews 12-mo unless 90-day notice."
   },
   {
     "id": "tenant-nationwide",
