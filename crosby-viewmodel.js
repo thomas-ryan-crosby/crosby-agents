@@ -24,6 +24,29 @@ const docTypeOf = (file) => {
   return m ? "AMD" + m[1] : (/AMD/i.test(file) ? "AMD" : "Init");
 };
 
+// Human "time until" a date as years/months/days, e.g. "1y 6m 20d" (or "… ago" if
+// the date is past). Empty string for non-dates (—, MTM, Owner).
+function humanUntil(isoStr, today) {
+  if (!isoStr || !/^\d{4}-\d{2}-\d{2}$/.test(isoStr)) return "";
+  const t = new Date(today);
+  const from = new Date(Date.UTC(t.getUTCFullYear(), t.getUTCMonth(), t.getUTCDate()));
+  const to = new Date(isoStr + "T00:00:00Z");
+  if (to.getTime() === from.getTime()) return "today";
+  const past = to < from;
+  const a = past ? to : from, b = past ? from : to;
+  let years = b.getUTCFullYear() - a.getUTCFullYear();
+  let months = b.getUTCMonth() - a.getUTCMonth();
+  let days = b.getUTCDate() - a.getUTCDate();
+  if (days < 0) { months--; days += new Date(Date.UTC(b.getUTCFullYear(), b.getUTCMonth(), 0)).getUTCDate(); }
+  if (months < 0) { years--; months += 12; }
+  const parts = [];
+  if (years) parts.push(years + "y");
+  if (months) parts.push(months + "m");
+  if (days) parts.push(days + "d");
+  const s = parts.join(" ") || "0d";
+  return past ? s + " ago" : s;
+}
+
 // Expiry display for a roster row.
 function leaseExpiry(lease) {
   if (!lease) return "—";
@@ -147,7 +170,9 @@ function deriveCommercial(p, pBldgs, unitsByBldg, leaseByUnit, tenantById, pLeas
         tenant: tenant ? tenant.name : "(Vacant)", suite: u.identifier, sf: u.sf || 0,
         rent: lease ? num(lease.monthlyRent) : 0, vacant,
         expiry: leaseExpiry(lease),
+        expiryIn: humanUntil(lease && lease.terminates, today),
         notice: (lease && lease.noticeDeadline) || "—",
+        noticeIn: humanUntil(lease && lease.noticeDeadline, today),
         action: leaseAction(lease, vacant, today),
       });
 

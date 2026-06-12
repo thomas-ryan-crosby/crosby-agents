@@ -1716,7 +1716,9 @@ function renderPropertyDetail(p) {
           }
           var actTone = {steady:'badge-approved',attention:'badge-pending',urgent:'badge-revision',neutral:'badge-idle'}[(t.action&&t.action.tone)||'neutral'];
           var actCell = t.action && t.action.label !== '—' ? '<span class="badge '+actTone+'">'+t.action.label+'</span>' : '<span style="color:#d1d5db;">—</span>';
-          html += '<tr><td style="font-weight:500;">'+t.tenant+'</td><td>'+t.suite+'</td><td>'+t.sf.toLocaleString()+'</td><td>'+(t.rent>0?'$'+t.rent.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}):'—')+'</td><td>'+sfyr+'</td><td>'+statusBdg+'</td><td style="font-size:12px;'+(t.expiry==='—'?'color:#d1d5db;':'')+'">'+t.expiry+'</td><td style="font-size:12px;'+(t.notice==='—'?'color:#d1d5db;':'')+'">'+t.notice+'</td><td>'+actCell+'</td>'+leaseCell+'</tr>';
+          var expSub = t.expiryIn ? '<div style="font-size:10px;color:'+(t.expiryIn.indexOf('ago')>=0?'#dc2626':'#9ca3af')+';">'+t.expiryIn+'</div>' : '';
+          var notSub = t.noticeIn ? '<div style="font-size:10px;color:'+(t.noticeIn.indexOf('ago')>=0?'#dc2626':'#9ca3af')+';">'+t.noticeIn+'</div>' : '';
+          html += '<tr><td style="font-weight:500;">'+t.tenant+'</td><td>'+t.suite+'</td><td>'+t.sf.toLocaleString()+'</td><td>'+(t.rent>0?'$'+t.rent.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}):'—')+'</td><td>'+sfyr+'</td><td>'+statusBdg+'</td><td style="font-size:12px;'+(t.expiry==='—'?'color:#d1d5db;':'')+'">'+t.expiry+expSub+'</td><td style="font-size:12px;'+(t.notice==='—'?'color:#d1d5db;':'')+'">'+t.notice+notSub+'</td><td>'+actCell+'</td>'+leaseCell+'</tr>';
         });
         html += '<tr><td style="font-weight:700;">Total ('+bTenants.length+' tenants)</td><td></td><td>'+bTotal.toLocaleString()+'</td><td>$'+bRent.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})+'</td><td></td><td></td><td></td><td></td><td></td>'+(hasLeases?'<td></td>':'')+'</tr>';
         html += '</tbody></table>';
