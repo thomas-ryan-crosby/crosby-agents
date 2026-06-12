@@ -2715,16 +2715,16 @@
     "contactName": null,
     "email": null,
     "phone": null,
-    "notes": "Suite 301, Building #2. Roster-level record; legal name and contacts pending source-file reconciliation."
+    "notes": "Suite 301, Building #2 (2,350 RSF, 3rd floor). Connecticut corporation; tenant since 2005-10-01. Lease extended via Amendments #1–#6 to 2029-09-30; current rent $4,213.62, stepping to $4,423.87 by 2028, with two 5-year renewal options at 2%. Broker on Amd #6: Jack Sikora, CBRE. Right of first refusal on other 3rd-floor space. Full-service gross."
   },
   {
     "id": "tenant-4-your-eyes",
     "name": "4 Your Eyes, LLC",
     "type": "commercial",
-    "contactName": null,
+    "contactName": "Dr. Neil Notaroberto",
     "email": null,
     "phone": null,
-    "notes": "Suite 303+302A&B, Building #2. Roster-level record; legal name and contacts pending source-file reconciliation."
+    "notes": "Suites 303 + 302-A + 302B, Building #2 (3rd floor). Ophthalmology practice (Dr. Neil F. Notaroberto), tenant since 2006-05-01. Expanded to 302-A (2007) and 302B (Amendment #6, 2026). Current rent $4,304.39 eff 2026-04-01, term to 2027-03-31; auto-renews 3-month terms (90-day notice), 3% annual (April). In-solido guaranty by Dr. Notaroberto. Full-service gross."
   },
   {
     "id": "tenant-pazos",

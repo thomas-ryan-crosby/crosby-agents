@@ -162,5 +162,37 @@
       "dated": "2025-03-19",
       "title": "COI — Cypress Key Realty LLC (Suite 204) — Bankers BOP, GL $1M, Crosby as Managers/Lessors of Premises, exp 2026-03-29"
     }
+  },
+  {
+    "id": "coi-4youreyescoi2025",
+    "propertyId": "sanctuary-office-park",
+    "building": "Building #2",
+    "tenant": "4 Your Eyes, LLC",
+    "suite": "303",
+    "producer": "State Farm Fire and Casualty Company",
+    "certificateHolder": "Crosby Development Company, LLC",
+    "additionalInsured": true,
+    "coverages": [
+      {
+        "type": "General Liability",
+        "eachOccurrence": 1000000,
+        "generalAggregate": 2000000,
+        "policyNumber": "98-CJ-E676-3",
+        "expiration": "2026-01-10"
+      }
+    ],
+    "expiration": "2026-01-10",
+    "file": "4YourEyes_COI_2025.pdf",
+    "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/cois%2F4YourEyes_COI_2025.pdf?alt=media&token=35895b73-9e3b-4c3c-870a-aedd50863c76",
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/cois-html%2F4YourEyes_COI_2025.html?alt=media&token=d434eeaf-6ebe-469a-89c4-bdb9e017c253",
+    "date": "2025-01-10",
+    "meta": {
+      "insured": "4 Your Eyes LLC",
+      "carrier": "State Farm Fire and Casualty Company",
+      "policyNumber": "98-CJ-E676-3",
+      "documentType": "State Farm Medical Office (Businessowners) Policy — evidence of insurance",
+      "dated": "2025-01-10",
+      "title": "COI — 4 Your Eyes LLC (Suite 303) — State Farm BOP, GL $1M, Crosby additional insured, exp 2026-01-10"
+    }
   }
 ]
