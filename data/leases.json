@@ -195,16 +195,17 @@
     "propertyId": "sanctuary-office-park",
     "buildingId": "sanctuary-bldg-1",
     "commenced": "2026-04-01",
-    "terminates": "2028-07-31",
+    "terminates": "2028-08-01",
     "monthlyRent": 575,
-    "escalationPct": 3.5,
-    "autoRenew": null,
+    "escalationPct": 3,
+    "autoRenew": true,
     "noticeDays": 90,
-    "noticeDeadline": "2028-05-02",
-    "daysToNoticeDeadline": 691,
+    "noticeDeadline": "2028-05-03",
+    "daysToNoticeDeadline": null,
     "status": "active",
-    "docFile": null,
-    "notes": "90 Day Notice to Terminate or lease Auto Renews. New tenant April 2026.",
+    "docFile": "Detox_BLDG1_STE307_Init.pdf",
+    "suiteFlag": "Recorded as Suite 307; tenant physically occupies 303B (internal 303B/307 label flip).",
+    "notes": "New lease (CDC-L-2026-0018), commenced 2026-04-01, 28-mo term to 2028-08-01 @ $575/mo; first payment 2026-05-01; 3% annual; auto-renews 12-mo unless 90-day notice; deposit waived. Suite labeling: recorded 307 / occupies 303B (see Brandner). Tenant also leases Bldg #4 Ste 301.",
     "escalationMonth": 4
   },
   {
@@ -223,6 +224,7 @@
     "daysToNoticeDeadline": 813,
     "status": "vacating",
     "docFile": "Brandner_BLDG1_STE303B_ReductionNotice.pdf",
+    "suiteFlag": "Recorded as Suite 303B; internal 303B/307 label flip with Detox Management Company, LLC (recorded under 307).",
     "notes": "GOVERNING: Premises & Rent Reduction Notice (eff 2026-04-01). Originally leased full Suite 303 @ $862 (lease 2025-11-21, commenced 2025-11-24); tenant gave email termination notice 2025-12-04. Suite 303A re-leased; Brandner reduced to Suite 303B only (~235 SF) at $431/mo (half) eff 2026-04-01. Wind-down — Lessor actively marketing to fully relieve tenant of remaining space. 3% annual (Dec); rate would step to $443.93 Dec 2026 if it continues. All other lease terms unchanged."
   },
   {
@@ -5537,9 +5539,10 @@
     "noticeDays": null,
     "noticeDeadline": null,
     "daysToNoticeDeadline": null,
-    "status": "active",
-    "docFile": null,
-    "notes": "Terms populated from lease doc (AMD3, 2025-04); auto-renew & notice not confirmed."
+    "status": "vacating",
+    "vacateDate": "2026-06-30",
+    "docFile": "AssuredPartners_BLDG2_STE206_TerminationNotice.pdf",
+    "notes": "TERMINATING: Notice to vacate (Arthur J. Gallagher & Co., 2026-05-27) — tenant vacates Suite 206 on 2026-06-30; rent paid through that date. Security deposit $3,106.50 refundable to tenant by 2026-06-30. Lease commenced 2025-07-01 (AMD3 terms). Banking/wire details kept out of the public record."
   },
   {
     "id": "lease-bldg2-suite102-central-title",

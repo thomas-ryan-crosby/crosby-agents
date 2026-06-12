@@ -163,6 +163,7 @@ export function deriveViewModel(entities) {
   const LEASE_TERMS = {};
   const LEASE_DOCS = {};
   const MOVED_OUT = {};
+  const TERMINATIONS = {};
   const PROPERTIES = [];
 
   for (const p of props) {
@@ -188,6 +189,8 @@ export function deriveViewModel(entities) {
       Object.assign(base, deriveCommercial(p, pBldgs, unitsByBldg, leaseByUnit, tenantById, pLeases, coiByName));
       TENANT_ROSTER[p.id] = base._tenantRoster; delete base._tenantRoster;
       LEASE_TERMS[p.id] = base._leaseTerms; delete base._leaseTerms;
+      if (base._terminations && base._terminations.length) TERMINATIONS[p.id] = base._terminations;
+      delete base._terminations;
     } else if (p.isHOA) {
       Object.assign(base, deriveHOA(pLots));
       UNIT_ROSTER[p.id] = base._roster; delete base._roster;
@@ -227,14 +230,14 @@ export function deriveViewModel(entities) {
     MOVED_OUT[k].sort((a, b) => String(a.suite).localeCompare(String(b.suite), undefined, { numeric: true }));
   });
 
-  return { PROPERTIES, PROPERTY_PROFILES, UNIT_ROSTER, TENANT_ROSTER, LEASE_TERMS, LEASE_DOCS, MOVED_OUT };
+  return { PROPERTIES, PROPERTY_PROFILES, UNIT_ROSTER, TENANT_ROSTER, LEASE_TERMS, LEASE_DOCS, MOVED_OUT, TERMINATIONS };
 }
 
 // ── Commercial (e.g. Sanctuary Office Park) ────────────────────────────────────
 function deriveCommercial(p, pBldgs, unitsByBldg, leaseByUnit, tenantById, pLeases, coiByName) {
   const today = Date.now();
   const required = p.requiredInsurance || { glEachOccurrence: 1000000, additionalInsured: true };
-  const buildings = [], tenantRoster = {}, leaseTerms = {};
+  const buildings = [], tenantRoster = {}, leaseTerms = {}, terminations = [];
   let totalSF = 0, occSF = 0, vacSF = 0, monthly = 0, tenantCount = 0;
 
   for (const b of pBldgs) {
@@ -261,7 +264,20 @@ function deriveCommercial(p, pBldgs, unitsByBldg, leaseByUnit, tenantById, pLeas
         noticeTone: lease ? dateTone(daysBetween(lease.noticeDeadline, today)) : "neutral",
         action: leaseAction(lease, vacant, today),
         insurance: vacant ? null : deriveInsurance((coiByName || {})[tenant && tenant.name], required, today),
+        suiteNote: (lease && lease.suiteFlag) || null,
       });
+
+      // Collect tenants who have given termination/vacate notice (status "vacating"
+      // or an explicit vacateDate) into a property-level Terminations list.
+      if (lease && (lease.status === "vacating" || lease.vacateDate)) {
+        const vd = lease.vacateDate || null;
+        terminations.push({
+          tenant: tenant ? tenant.name : u.identifier, building: b.name, suite: u.identifier, sf: u.sf || 0,
+          rent: num(lease.monthlyRent), vacateDate: vd,
+          vacateIn: vd ? humanUntil(vd, today) : "", vacateTone: dateTone(daysBetween(vd, today)),
+          hardDate: !!vd,
+        });
+      }
 
       if (lease) {
         const mtm = lease.status === "mtm", owner = lease.status === "owner-occupant";
@@ -297,6 +313,7 @@ function deriveCommercial(p, pBldgs, unitsByBldg, leaseByUnit, tenantById, pLeas
     annualRent: monthly * 12, tenantCount, occupancy: Math.round(occupancy * 10) / 10,
     avgRentSF: occSF > 0 ? (monthly * 12) / occSF : 0,
     _tenantRoster: tenantRoster, _leaseTerms: leaseTerms,
+    _terminations: terminations.sort((a, b) => String(a.vacateDate || "9999").localeCompare(String(b.vacateDate || "9999"))),
   };
 }
 

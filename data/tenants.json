@@ -91,12 +91,12 @@
   },
   {
     "id": "tenant-detox",
-    "name": "Detox",
+    "name": "Detox Management Company, LLC",
     "type": "commercial",
     "contactName": null,
     "email": null,
     "phone": null,
-    "notes": "Suite 307. New tenant (commenced April 2026)."
+    "notes": "Building #1, Suite 307 (recorded) / 303B (physical) — ~300 SF. New lease (CDC-L-2026-0018) commenced 2026-04-01, term to 2028-08-01 @ $575/mo, 3% annual, auto-renews 12-mo unless 90-day notice; deposit waived. NOTE: internal 303B/307 label flip — recorded as 307, occupies 303B (see Brandner Law Firm). Also leases Building #4, Suite 301. Mailing: 4 Sanctuary Blvd, Suite 301."
   },
   {
     "id": "tenant-brandner-law",
@@ -2863,12 +2863,12 @@
   },
   {
     "id": "tenant-detox-4",
-    "name": "Detox",
+    "name": "Detox Management Company, LLC",
     "type": "commercial",
     "contactName": null,
     "email": null,
     "phone": null,
-    "notes": "Suite 301, Building #4. Roster-level record; legal name and contacts pending source-file reconciliation."
+    "notes": "Building #4, Suite 301. Same tenant also leases Building #1, Suite 307/303B. Legal name from Bldg 1 lease (Detox Management Company, LLC)."
   },
   {
     "id": "tenant-audubon",

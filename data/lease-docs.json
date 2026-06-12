@@ -1683,5 +1683,51 @@
       "title": "Amendment #1 to Lease — Building #4, Suite 302 (MedSouth Record Management LLC) — converts to 90-day auto-renew term, rent $1,416.25 eff 2026-06-01"
     },
     "date": "2026-06-02"
+  },
+  {
+    "id": "leasedoc-detoxbldg1ste307init",
+    "propertyId": "sanctuary-office-park",
+    "building": "Building #1",
+    "tenant": "Detox Management Company, LLC",
+    "suite": "307",
+    "file": "Detox_BLDG1_STE307_Init.pdf",
+    "docType": "Init",
+    "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FDetox_BLDG1_STE307_Init.pdf?alt=media&token=4264d77b-052e-4cae-94bb-2ae552088761",
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FDetox_BLDG1_STE307_Init.html?alt=media&token=04ae1a5c-158a-41b2-8356-949e18b0ff65",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Detox Management Company, LLC",
+      "property": "Sanctuary Office Park, Building #1, #1 Sanctuary Boulevard, Suite 307 (303B), Mandeville, LA 70471",
+      "suite": "Suite 307 / 303B",
+      "documentType": "Init",
+      "dated": "2026-04-01",
+      "monthlyRent": "USD 575.00",
+      "commencement": "2026-04-01",
+      "termination": "2028-08-01",
+      "title": "Lease of Commercial Property — Building #1, Suite 307/303B (Crosby / Detox Management Company, LLC) — ~300 SF, $575, full-service gross (Lease ID CDC-L-2026-0018)"
+    },
+    "date": "2026-04-01"
+  },
+  {
+    "id": "leasedoc-assuredpartnersbldg2ste206terminationnotice",
+    "propertyId": "sanctuary-office-park",
+    "building": "Building #2",
+    "tenant": "AssuredPartners Gulf Coast Insurance Agency, LLC",
+    "suite": "206",
+    "file": "AssuredPartners_BLDG2_STE206_TerminationNotice.pdf",
+    "docType": "Termination Notice",
+    "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FAssuredPartners_BLDG2_STE206_TerminationNotice.pdf?alt=media&token=7e0634ab-19aa-4c7b-808f-9a5691bd1de8",
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FAssuredPartners_BLDG2_STE206_TerminationNotice.html?alt=media&token=f9a43fcd-cb6e-47f9-95f6-c85122048df9",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "AssuredPartners Gulf Coast Insurance Agency, LLC",
+      "property": "Sanctuary Office Park, Building #2, #2 Sanctuary Boulevard, Suite 206, Mandeville, LA 70471",
+      "suite": "Suite 206",
+      "documentType": "Termination Notice",
+      "dated": "2026-05-27",
+      "vacateDate": "2026-06-30",
+      "title": "Notice to Vacate — Building #2, Suite 206 (AssuredPartners) — vacating 2026-06-30; security deposit $3,106.50 refundable (via Arthur J. Gallagher & Co.)"
+    },
+    "date": "2026-05-27"
   }
 ]

@@ -405,6 +405,7 @@ var TENANT_ROSTER = {};
 var LEASE_TERMS = {};
 var LEASE_DOCS = {};
 var MOVED_OUT = {};
+var TERMINATIONS = {};
 
 // ── AGENT ROSTER (static definition — statuses loaded from dashboard-state.json) ──
 const AGENTS = [
@@ -1961,13 +1962,35 @@ function renderPropertyDetail(p) {
           var toneCol = {urgent:'#dc2626',attention:'#b45309',steady:'#059669',neutral:'#9ca3af'};
           var expSub = t.expiryIn ? '<div style="font-size:10px;font-weight:600;color:'+(toneCol[t.expiryTone]||'#9ca3af')+';">'+t.expiryIn+'</div>' : '';
           var notSub = t.noticeIn ? '<div style="font-size:10px;font-weight:600;color:'+(toneCol[t.noticeTone]||'#9ca3af')+';">'+t.noticeIn+'</div>' : '';
-          html += '<tr><td class="c-tenant" style="font-weight:500;">'+t.tenant+'</td><td class="c-suite">'+t.suite+'</td><td class="c-sf">'+t.sf.toLocaleString()+'</td><td class="c-rent">'+(t.rent>0?'$'+t.rent.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}):'—')+'</td><td class="c-sfyr">'+sfyr+'</td><td class="c-status">'+statusBdg+'</td><td class="c-expiry" style="font-size:12px;'+(t.expiry==='—'?'color:#d1d5db;':'')+'">'+t.expiry+expSub+'</td><td class="c-notice" style="font-size:12px;'+(t.notice==='—'?'color:#d1d5db;':'')+'">'+t.notice+notSub+'</td><td class="c-action">'+actCell+'</td>'+leaseCell+legacyCell+'<td class="c-coi">'+insuranceCell(t.insurance)+'</td></tr>';
+          html += '<tr><td class="c-tenant" style="font-weight:500;">'+t.tenant+'</td><td class="c-suite">'+t.suite+(t.suiteNote?'<sup title="'+String(t.suiteNote).replace(/"/g,"&quot;")+'" style="color:#b45309;cursor:help;font-weight:700;font-size:11px;">&nbsp;*</sup>':'')+'</td><td class="c-sf">'+t.sf.toLocaleString()+'</td><td class="c-rent">'+(t.rent>0?'$'+t.rent.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}):'—')+'</td><td class="c-sfyr">'+sfyr+'</td><td class="c-status">'+statusBdg+'</td><td class="c-expiry" style="font-size:12px;'+(t.expiry==='—'?'color:#d1d5db;':'')+'">'+t.expiry+expSub+'</td><td class="c-notice" style="font-size:12px;'+(t.notice==='—'?'color:#d1d5db;':'')+'">'+t.notice+notSub+'</td><td class="c-action">'+actCell+'</td>'+leaseCell+legacyCell+'<td class="c-coi">'+insuranceCell(t.insurance)+'</td></tr>';
         });
         html += '<tr><td class="c-tenant" style="font-weight:700;">Total ('+bTenants.length+' tenants)</td><td class="c-suite"></td><td class="c-sf">'+bTotal.toLocaleString()+'</td><td class="c-rent">$'+bRent.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})+'</td><td class="c-sfyr"></td><td class="c-status"></td><td class="c-expiry"></td><td class="c-notice"></td><td class="c-action"></td><td class="c-lease"></td><td class="c-legacy"></td><td class="c-coi"></td></tr>';
         html += '</tbody></table>';
 
         html += '</div>';
       });
+    }
+
+    // Terminations & Notices — current tenants who have given termination/vacate notice
+    var terminations = (typeof TERMINATIONS !== 'undefined' && TERMINATIONS[p.slug]) || [];
+    if(terminations.length) {
+      var allDocsT = LEASE_DOCS[p.slug] || {};
+      var newestDocByTenant = {};
+      Object.keys(allDocsT).forEach(function(bn){ allDocsT[bn].forEach(function(d){ var c=newestDocByTenant[d.tenant]; if(!c || String(d.date||'')>String(c.date||'')) newestDocByTenant[d.tenant]=d; }); });
+      var tToneCol = {urgent:'#dc2626',attention:'#b45309',steady:'#059669',neutral:'#9ca3af'};
+      html += '<div class="card" style="margin-bottom:16px;border-left:4px solid #c0322b;">';
+      html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">'+iconSvg('log-out',18,'#c0322b')+'<span class="card-title" style="margin-bottom:0;color:#c0322b;">Terminations &amp; Notices — '+terminations.length+'</span></div>';
+      html += '<div style="font-size:12px;color:#6b7280;margin-bottom:14px;">Current tenants who have given notice to vacate or are winding down — space to backfill.</div>';
+      html += '<table class="unit-table"><thead><tr><th>Tenant</th><th>Building</th><th>Suite</th><th>Vacate / Status</th><th>Monthly Rent</th><th>Notice</th></tr></thead><tbody>';
+      terminations.forEach(function(e){
+        var when = e.hardDate
+          ? (e.vacateDate+(e.vacateIn?' <span style="font-weight:600;color:'+(tToneCol[e.vacateTone]||'#9ca3af')+';">('+e.vacateIn+')</span>':''))
+          : '<span style="color:#b45309;font-weight:600;">Wind-down — no fixed date</span>';
+        var doc = newestDocByTenant[e.tenant];
+        var docHtml = doc ? leaseWidget(doc) : '<span style="font-size:11px;color:#d1d5db;">—</span>';
+        html += '<tr><td style="font-weight:500;">'+e.tenant+'</td><td style="font-size:12px;color:#6b7280;">'+(e.building||'—')+'</td><td>'+e.suite+'</td><td style="font-size:12px;">'+when+'</td><td style="font-size:12px;">'+(e.rent>0?'$'+e.rent.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}):'—')+'</td><td>'+docHtml+'</td></tr>';
+      });
+      html += '</tbody></table></div>';
     }
 
     // Moved Out Tenants — former tenants whose leases have terminated/vacated
@@ -3071,6 +3094,7 @@ document.addEventListener("DOMContentLoaded", init);
       window.LEASE_TERMS = vm.LEASE_TERMS;
       window.LEASE_DOCS = vm.LEASE_DOCS;
       window.MOVED_OUT = vm.MOVED_OUT;
+      window.TERMINATIONS = vm.TERMINATIONS;
       rerenderActiveViews();
     } catch(e) { console.error("Entity load / derive failed:", e); }
 
