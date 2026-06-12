@@ -64,12 +64,12 @@
   },
   {
     "id": "tenant-fine-southern",
-    "name": "Fine Southern Properties",
+    "name": "Christine West",
     "type": "commercial",
-    "contactName": "Christine West",
+    "contactName": null,
     "email": null,
     "phone": null,
-    "notes": "Suite 100. Month-to-month since March 2020. Christine West is primary contact. Should be offered a fixed-term lease."
+    "notes": "Suite 100, Building #1. Fixed-term lease (exp Jan 2027), formalized from the prior Fine Southern Properties month-to-month tenancy."
   },
   {
     "id": "tenant-crosby-development",

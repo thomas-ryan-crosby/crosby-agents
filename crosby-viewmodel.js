@@ -7,6 +7,7 @@
 // Output: { PROPERTIES, PROPERTY_PROFILES, UNIT_ROSTER, TENANT_ROSTER, LEASE_TERMS, LEASE_DOCS }
 
 const DAY = 86400000;
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const num = (v) => {
   if (v == null) return 0;
   if (typeof v === "number") return v;
@@ -122,8 +123,11 @@ function deriveCommercial(p, pBldgs, unitsByBldg, leaseByUnit, tenantById, pLeas
           commenced: lease.commenced || "—",
           terminates: mtm ? "Month-to-Month" : owner ? "Owner Occupant" : (lease.terminates || "—"),
           daysLeft: daysBetween(lease.terminates, today),
-          escalation: lease.escalationPct != null ? Number(lease.escalationPct).toFixed(1) + "%" : "—",
-          autoRenew: !!lease.autoRenew,
+          escalation: lease.escalationPct != null
+            ? Number(lease.escalationPct).toFixed(1) + "%" + (lease.escalationMonth ? " (" + MONTHS[lease.escalationMonth - 1] + ")" : "")
+            : "—",
+          escalationMonth: lease.escalationMonth || null,
+          autoRenew: lease.autoRenew == null ? null : !!lease.autoRenew,
           noticeDays: lease.noticeDays != null ? lease.noticeDays : null,
           noticeDeadline: lease.noticeDeadline || null,
           noticeDeadlineDays: lease.daysToNoticeDeadline != null ? lease.daysToNoticeDeadline : daysBetween(lease.noticeDeadline, today),

@@ -169,3 +169,32 @@ bypass rules, so the dashboard links work while the bucket is **not** publicly r
 listable (verified: tokenized URL → 200, no-token → 403). This replaced the console's
 temporary test-mode rules (which allowed public writes and would have expired). The
 earlier whole-bucket `allUsers` public-read exposure is gone.
+
+---
+
+## 2026-06-11 (later same day)
+
+### Building #1 lease reconciliation (operator-provided table)
+
+Reconciled the 12 leased Building #1 suites against an operator-provided table (matched
+by suite; Suite 101 owner-occupant not in the table). Rent, SQFT and escalation % all
+**confirmed** the existing records (no change). Applied changes:
+
+- **Suite 100: Fine Southern Properties (month-to-month) → Christine West**, now a
+  fixed-term lease (exp 2027-01-31, no escalation, no auto-renew). Updated the tenant
+  record (id `tenant-fine-southern` retained) and the Suite 100 lease-doc label.
+- **New field `escalationMonth`** added to all 12 leases (month the escalation occurs);
+  surfaced in the lease-timeline escalation column, e.g. "3.0% (Apr)".
+- **Auto-renew:** Security National `Yes→No`, Brandner `Yes→No`, Detox `Yes→Unknown`
+  (stored `null`; dashboard now shows "? Unknown").
+- **Expiration months** updated to the table's stated month — set to the **last day of
+  that month** (kept the current day where the month already matched). Notice deadlines
+  and `daysToNoticeDeadline` recomputed from the new terminations (as of 2026-06-11).
+- **Security National (Suite 302)** vacate date moved 2026-06-30 → **2026-07-31**; updated
+  the stale "vacant July 1" note. ⚠ This post-dates the existing Suite 302 vacancy-marketing
+  outputs — regenerate if the exact date matters.
+
+**Assumption to confirm:** the table's expiration *month* sits one month after several of
+the current end-of-month dates (e.g. Bayou `2026-12-31` → table `01 2027`). Treated the
+table as authoritative and used last-day-of-stated-month; correct any specific days if the
+two were meant to describe the same expiry.
