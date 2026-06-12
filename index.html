@@ -1604,7 +1604,39 @@ var detailCharts = {};
 
 // Show/hide columns for the commercial tenant tables. Column cells carry a
 // `c-<key>` class; hidden columns are suppressed by a single global <style>.
-var SOP_COLS = [['tenant','Tenant'],['suite','Suite'],['sf','Square Feet'],['rent','Monthly Rent'],['sfyr','$/SF/Yr'],['status','Status'],['expiry','Expiry'],['notice','Notice'],['action','Action'],['lease','Lease']];
+var SOP_COLS = [['tenant','Tenant'],['suite','Suite'],['sf','Square Feet'],['rent','Monthly Rent'],['sfyr','$/SF/Yr'],['status','Status'],['expiry','Expiry'],['notice','Notice'],['action','Action'],['lease','Lease'],['legacy','Legacy Leases']];
+
+// One-time styles for the lease widget + metadata hover card.
+function ensureLeaseStyles() {
+  if(document.getElementById('leaseWidgetStyle')) return;
+  var s = document.createElement('style'); s.id = 'leaseWidgetStyle';
+  s.textContent = '.lw{position:relative;display:inline-flex;align-items:center;gap:4px;margin:1px 0;}'+
+    '.lw .nm{font-size:11px;font-weight:700;color:#374151;}'+
+    '.lw a{font-size:10px;font-weight:700;text-decoration:none;border-radius:3px;padding:1px 5px;}'+
+    '.lw a.pdf{color:#6b7280;border:1px solid #e5e7eb;}'+
+    '.lw a.html{color:#2563eb;border:1px solid #bfdbfe;background:#eff6ff;}'+
+    '.lw .tip{display:none;position:absolute;z-index:60;bottom:100%;left:0;margin-bottom:6px;width:270px;background:#111827;color:#e5e7eb;font-size:11px;font-weight:400;line-height:1.55;text-align:left;padding:9px 11px;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.28);white-space:normal;}'+
+    '.lw:hover .tip{display:block;}'+
+    '.lw .tip b{color:#fff;}.lw .tip .k{color:#9ca3af;}';
+  document.head.appendChild(s);
+}
+function leaseTip(ld){
+  var m = ld.meta || {}; var rows = [];
+  rows.push('<b>'+(m.lessee||ld.tenant)+'</b> &middot; Suite '+(ld.suite||'—'));
+  rows.push('<span class="k">Type:</span> '+ld.docType+(ld.date?'  <span class="k">Dated:</span> '+ld.date:''));
+  if(m.monthlyRent) rows.push('<span class="k">Rent:</span> '+m.monthlyRent);
+  if(m.commencement||m.termination) rows.push('<span class="k">Term:</span> '+(m.commencement||'?')+' → '+(m.termination||'?'));
+  if(m.escalation) rows.push('<span class="k">Escalation:</span> '+m.escalation);
+  if(m.lessor) rows.push('<span class="k">Lessor:</span> '+m.lessor);
+  return '<div class="tip">'+rows.join('<br>')+'</div>';
+}
+function leaseWidget(ld){
+  var nm = ld.docType + (ld.date ? ' <span style="font-weight:400;color:#9ca3af;">'+ld.date+'</span>' : '');
+  return '<span class="lw"><span class="nm">'+nm+'</span>'+
+    '<a class="pdf" href="'+ld.url+'" target="_blank" rel="noopener">PDF</a>'+
+    (ld.htmlUrl?'<a class="html" href="'+ld.htmlUrl+'" target="_blank" rel="noopener">HTML</a>':'')+
+    leaseTip(ld)+'</span>';
+}
 var sopHiddenCols = [];
 try { sopHiddenCols = JSON.parse(localStorage.getItem('sopHiddenCols')||'[]'); } catch(e) {}
 function applySopCols() {
@@ -1717,32 +1749,30 @@ function renderPropertyDetail(p) {
         html += '</div>';
         // Build lease doc lookup for this building
         var buildingLeases = (LEASE_DOCS[p.slug] && LEASE_DOCS[p.slug][b.name]) || [];
-        var leaseByTenant = {};
-        buildingLeases.forEach(function(l) { leaseByTenant[l.tenant] = l; });
+        var docsByTenant = {};
+        buildingLeases.forEach(function(l) { (docsByTenant[l.tenant] = docsByTenant[l.tenant] || []).push(l); });
+        Object.keys(docsByTenant).forEach(function(k){ docsByTenant[k].sort(function(a,b){ return String(b.date||'').localeCompare(String(a.date||'')); }); });
         var hasLeases = buildingLeases.length > 0;
 
-        html += '<table class="unit-table"><thead><tr><th class="c-tenant">Tenant</th><th class="c-suite">Suite</th><th class="c-sf">Square Feet</th><th class="c-rent">Monthly Rent</th><th class="c-sfyr">$/SF/Yr</th><th class="c-status">Status</th><th class="c-expiry">Expiry</th><th class="c-notice">Notice</th><th class="c-action">Action</th><th class="c-lease">Lease</th></tr></thead><tbody>';
+        html += '<table class="unit-table"><thead><tr><th class="c-tenant">Tenant</th><th class="c-suite">Suite</th><th class="c-sf">Square Feet</th><th class="c-rent">Monthly Rent</th><th class="c-sfyr">$/SF/Yr</th><th class="c-status">Status</th><th class="c-expiry">Expiry</th><th class="c-notice">Notice</th><th class="c-action">Action</th><th class="c-lease">Lease</th><th class="c-legacy">Legacy Leases</th></tr></thead><tbody>';
         var bTotal = 0, bRent = 0;
         bTenants.forEach(function(t) {
           bTotal += t.sf;
           bRent += t.rent;
           var sfyr = t.sf > 0 && t.rent > 0 ? "$"+(t.rent * 12 / t.sf).toFixed(2) : "—";
           var statusBdg = t.vacant ? '<span class="badge badge-pending">Vacant</span>' : '<span class="badge badge-approved">Active</span>';
-          var ld = leaseByTenant[t.tenant];
-          var leaseCell;
-          if(ld) {
-            var typeColor = ld.docType === 'Init' ? '#059669' : '#7c3aed';
-            leaseCell = '<td class="c-lease"><a href="'+ld.url+'" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;color:'+typeColor+';text-decoration:none;background:'+(ld.docType==='Init'?'#ecfdf5':'#f5f3ff')+';padding:2px 7px;border-radius:4px;">'+iconSvg('file-text',11,typeColor)+' '+ld.docType+'</a></td>';
-          } else {
-            leaseCell = '<td class="c-lease"><span style="font-size:11px;color:#d1d5db;">—</span></td>';
-          }
+          var tdocs = docsByTenant[t.tenant] || [];
+          var curDoc = tdocs[0] || null;
+          var legacyDocs = tdocs.slice(1);
+          var leaseCell = '<td class="c-lease">'+(curDoc ? leaseWidget(curDoc) : '<span style="font-size:11px;color:#d1d5db;">—</span>')+'</td>';
+          var legacyCell = '<td class="c-legacy">'+(legacyDocs.length ? legacyDocs.map(leaseWidget).join('<br>') : '<span style="font-size:11px;color:#d1d5db;">—</span>')+'</td>';
           var actTone = {steady:'badge-approved',attention:'badge-pending',urgent:'badge-revision',neutral:'badge-idle'}[(t.action&&t.action.tone)||'neutral'];
           var actCell = t.action && t.action.label !== '—' ? '<span class="badge '+actTone+'">'+t.action.label+'</span>' : '<span style="color:#d1d5db;">—</span>';
           var expSub = t.expiryIn ? '<div style="font-size:10px;color:'+(t.expiryIn.indexOf('ago')>=0?'#dc2626':'#9ca3af')+';">'+t.expiryIn+'</div>' : '';
           var notSub = t.noticeIn ? '<div style="font-size:10px;color:'+(t.noticeIn.indexOf('ago')>=0?'#dc2626':'#9ca3af')+';">'+t.noticeIn+'</div>' : '';
-          html += '<tr><td class="c-tenant" style="font-weight:500;">'+t.tenant+'</td><td class="c-suite">'+t.suite+'</td><td class="c-sf">'+t.sf.toLocaleString()+'</td><td class="c-rent">'+(t.rent>0?'$'+t.rent.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}):'—')+'</td><td class="c-sfyr">'+sfyr+'</td><td class="c-status">'+statusBdg+'</td><td class="c-expiry" style="font-size:12px;'+(t.expiry==='—'?'color:#d1d5db;':'')+'">'+t.expiry+expSub+'</td><td class="c-notice" style="font-size:12px;'+(t.notice==='—'?'color:#d1d5db;':'')+'">'+t.notice+notSub+'</td><td class="c-action">'+actCell+'</td>'+leaseCell+'</tr>';
+          html += '<tr><td class="c-tenant" style="font-weight:500;">'+t.tenant+'</td><td class="c-suite">'+t.suite+'</td><td class="c-sf">'+t.sf.toLocaleString()+'</td><td class="c-rent">'+(t.rent>0?'$'+t.rent.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}):'—')+'</td><td class="c-sfyr">'+sfyr+'</td><td class="c-status">'+statusBdg+'</td><td class="c-expiry" style="font-size:12px;'+(t.expiry==='—'?'color:#d1d5db;':'')+'">'+t.expiry+expSub+'</td><td class="c-notice" style="font-size:12px;'+(t.notice==='—'?'color:#d1d5db;':'')+'">'+t.notice+notSub+'</td><td class="c-action">'+actCell+'</td>'+leaseCell+legacyCell+'</tr>';
         });
-        html += '<tr><td class="c-tenant" style="font-weight:700;">Total ('+bTenants.length+' tenants)</td><td class="c-suite"></td><td class="c-sf">'+bTotal.toLocaleString()+'</td><td class="c-rent">$'+bRent.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})+'</td><td class="c-sfyr"></td><td class="c-status"></td><td class="c-expiry"></td><td class="c-notice"></td><td class="c-action"></td><td class="c-lease"></td></tr>';
+        html += '<tr><td class="c-tenant" style="font-weight:700;">Total ('+bTenants.length+' tenants)</td><td class="c-suite"></td><td class="c-sf">'+bTotal.toLocaleString()+'</td><td class="c-rent">$'+bRent.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})+'</td><td class="c-sfyr"></td><td class="c-status"></td><td class="c-expiry"></td><td class="c-notice"></td><td class="c-action"></td><td class="c-lease"></td><td class="c-legacy"></td></tr>';
         html += '</tbody></table>';
 
         // Documents panel for buildings that have leases on file
@@ -1911,6 +1941,7 @@ function renderPropertyDetail(p) {
   }
 
   document.getElementById("detailContent").innerHTML = html;
+  ensureLeaseStyles();
   applySopCols();
   lucide.createIcons();
 

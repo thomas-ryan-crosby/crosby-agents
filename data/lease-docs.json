@@ -8,7 +8,18 @@
     "file": "AcornAdoption_AMD1.pdf",
     "docType": "AMD1",
     "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FAcornAdoption_AMD1.pdf?alt=media&token=3c9f94fc-8411-499c-ab33-d685a68a3394",
-    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FAcornAdoption_AMD1.html?alt=media&token=4c5816d7-c4b8-4e2c-8dbb-61bf2956a460"
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FAcornAdoption_AMD1.html?alt=media&token=4c5816d7-c4b8-4e2c-8dbb-61bf2956a460",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Acorn Adoption, Inc.",
+      "property": "#1 Sanctuary, Mandeville, LA 70471",
+      "suite": "301-B",
+      "documentType": "AMD1",
+      "monthlyRent": "412.00",
+      "commencement": "2008-09-01",
+      "title": "Amendment #1 to Lease — Acorn Adoption, Inc. — #1 Sanctuary, Suite 301-B"
+    },
+    "date": "2008-09-01"
   },
   {
     "id": "leasedoc-acornadoptionamd2pdf",
@@ -19,7 +30,20 @@
     "file": "AcornAdoption_AMD2.pdf",
     "docType": "AMD2",
     "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FAcornAdoption_AMD2.pdf?alt=media&token=edd0041a-290c-42ad-bc2c-a70ab6d58cb8",
-    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FAcornAdoption_AMD2.html?alt=media&token=ba128062-8e72-4ae0-a87b-159635415e48"
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FAcornAdoption_AMD2.html?alt=media&token=ba128062-8e72-4ae0-a87b-159635415e48",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Acorn Adoption Company LLC",
+      "property": "Sanctuary Office Park, Building #1, 1 Sanctuary Blvd, Mandeville, LA 70471",
+      "suite": "Suite 301-B",
+      "documentType": "AMD2",
+      "dated": "2024-12-03",
+      "monthlyRent": "424.36",
+      "commencement": "2025-03-01",
+      "escalation": "3% over the previous year's rent",
+      "title": "Amendment #2 to the Lease — Acorn Adoption Company LLC, Sanctuary Office Park, Suite 301-B"
+    },
+    "date": "2024-12-03"
   },
   {
     "id": "leasedoc-acornadoptionintitalpdf",
@@ -30,7 +54,21 @@
     "file": "AcornAdoption_Intital.pdf",
     "docType": "Init",
     "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FAcornAdoption_Intital.pdf?alt=media&token=d9ff6264-2be1-43ec-9257-27b04d9b128e",
-    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FAcornAdoption_Intital.html?alt=media&token=99f6c147-23e9-4011-82e4-06c19269a204"
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FAcornAdoption_Intital.html?alt=media&token=99f6c147-23e9-4011-82e4-06c19269a204",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Acorn Adoption, Inc.",
+      "property": "Sanctuary Office Park, Building #1, #1 Sanctuary Boulevard, Mandeville, LA 70471",
+      "suite": "Suite 301-B (Floor 1)",
+      "documentType": "Init",
+      "dated": "2007-08-09",
+      "monthlyRent": "$400.00",
+      "commencement": "2007-09-01",
+      "termination": "2008-08-31",
+      "escalation": "3% annual increase commencing second full calendar year",
+      "title": "Lease of Commercial Property &mdash; Crosby Development Company, LLC &amp; Acorn Adoption, Inc. (Sanctuary Office Park, Building #1, Suite 301-B)"
+    },
+    "date": "2007-08-09"
   },
   {
     "id": "leasedoc-bayoucpramd1pdf",
@@ -41,7 +79,21 @@
     "file": "BayouCPR_AMD1.pdf",
     "docType": "AMD1",
     "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FBayouCPR_AMD1.pdf?alt=media&token=c4c5ad59-19ee-48cc-8448-fcf352e9ca51",
-    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FBayouCPR_AMD1.html?alt=media&token=c647918c-8170-45e6-9a44-46d246ee1ade"
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FBayouCPR_AMD1.html?alt=media&token=c647918c-8170-45e6-9a44-46d246ee1ade",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Bayou CPR Training",
+      "property": "Sanctuary Office Park, Building #1, 1 Sanctuary Blvd., Mandeville, LA 70471",
+      "suite": "Suite 301A (Floor 3)",
+      "documentType": "AMD1",
+      "dated": "2016-12-15",
+      "commencement": "2015-09-16",
+      "termination": "2018-12-31",
+      "monthlyRent": "530.45",
+      "escalation": "3% annual increase beginning with the first month in 2018, applicable to all subsequent years including any renewal leases",
+      "title": "Amendment #1 to Lease Agreement — Bayou CPR Training, Sanctuary Office Park Suite 301A"
+    },
+    "date": "2016-12-15"
   },
   {
     "id": "leasedoc-bayoucpramd2pdf",
@@ -52,7 +104,21 @@
     "file": "BayouCPR_AMD2.pdf",
     "docType": "AMD2",
     "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FBayouCPR_AMD2.pdf?alt=media&token=2cd8c701-f02b-4095-853d-501117d93e9a",
-    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FBayouCPR_AMD2.html?alt=media&token=15f63d59-d03c-45f8-8482-f6a44bf40c11"
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FBayouCPR_AMD2.html?alt=media&token=15f63d59-d03c-45f8-8482-f6a44bf40c11",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Bayou CPR Training",
+      "property": "#1 Sanctuary Blvd., Mandeville, LA 70471",
+      "suite": "Suite 301A",
+      "documentType": "AMD2",
+      "dated": "2018-08-01",
+      "monthlyRent": "562.75",
+      "commencement": "2019-01-01",
+      "termination": "2019-12-31",
+      "escalation": "3% over the previous year's rent, applicable to all subsequent years including any renewal leases",
+      "title": "Amendment #2 to Lease Agreement — Bayou CPR, Suite 301A, Sanctuary Office Park"
+    },
+    "date": "2018-08-01"
   },
   {
     "id": "leasedoc-bayoucprinitpdf",
@@ -63,7 +129,20 @@
     "file": "BayouCPR_Init.pdf",
     "docType": "Init",
     "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FBayouCPR_Init.pdf?alt=media&token=b8c4a9a5-228b-47f2-9c6a-50d20a56864d",
-    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FBayouCPR_Init.html?alt=media&token=7b5c7e3e-f766-45e6-b5d3-331dd84608e1"
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FBayouCPR_Init.html?alt=media&token=7b5c7e3e-f766-45e6-b5d3-331dd84608e1",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Bayou CPR Training",
+      "property": "Sanctuary Office Park, Building #1, #1 Sanctuary Boulevard, Mandeville, LA 70471",
+      "suite": "Suite 301-A",
+      "documentType": "Init",
+      "commencement": "2015-09-16",
+      "termination": "2016-12-31",
+      "monthlyRent": "USD 500.00",
+      "escalation": "3% annual increase over prior year's rent, commencing with the first month of the second calendar year",
+      "title": "Lease of Commercial Property — Sanctuary Office Park, Building #1, Suite 301-A — Crosby Development Company, LLC &amp; Bayou CPR"
+    },
+    "date": "2015-09-16"
   },
   {
     "id": "leasedoc-bldg2flr3302camd1bodyremedypdf",
@@ -74,7 +153,20 @@
     "file": "BLDG2_FLR3_302C_AMD1_BodyRemedy.pdf",
     "docType": "AMD1",
     "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FBLDG2_FLR3_302C_AMD1_BodyRemedy.pdf?alt=media&token=6d426fb2-0026-4de6-afdf-7642d400b561",
-    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FBLDG2_FLR3_302C_AMD1_BodyRemedy.html?alt=media&token=bf164ead-edc4-4f02-896e-733939c728fe"
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FBLDG2_FLR3_302C_AMD1_BodyRemedy.html?alt=media&token=bf164ead-edc4-4f02-896e-733939c728fe",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Body Remedy Physical Therapy and Wellness",
+      "property": "Sanctuary Office Park, #2 Sanctuary Blvd., Mandeville, LA 70471",
+      "suite": "Suite 302 C",
+      "documentType": "AMD1",
+      "dated": "2024-07-01",
+      "monthlyRent": "566.50",
+      "commencement": "2024-09-01",
+      "termination": "2025-08-31",
+      "title": "Lease Renewal Notice — Body Remedy Physical Therapy and Wellness, Suite 302 C — Crosby Development Company"
+    },
+    "date": "2024-07-01"
   },
   {
     "id": "leasedoc-brandnerlawfirmsignedpdf",
@@ -85,7 +177,21 @@
     "file": "Brandner Law Firm signed.pdf",
     "docType": "Lease",
     "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FBrandner%20Law%20Firm%20signed.pdf?alt=media&token=2941faef-82b1-4dcb-b28c-5c352406b6d7",
-    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FBrandner%20Law%20Firm%20signed.html?alt=media&token=c42c7820-5e10-40a0-b976-8c702031bfeb"
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FBrandner%20Law%20Firm%20signed.html?alt=media&token=c42c7820-5e10-40a0-b976-8c702031bfeb",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Brandner Law Firm",
+      "property": "#1 Sanctuary Boulevard, Floor 3, Mandeville, LA 70471 (Sanctuary Office Park, Building #1)",
+      "suite": "303",
+      "documentType": "Lease",
+      "dated": "2025-11-21",
+      "monthlyRent": "862.00",
+      "commencement": "2025-11-24",
+      "termination": "2028-11-24",
+      "escalation": "3% annual increase commencing first month of the second calendar year of the lease term, applicable to all subsequent years including any renewal leases",
+      "title": "Lease of Commercial Property — Crosby Development Company, LLC &amp; Brandner Law Firm (Suite 303)"
+    },
+    "date": "2025-11-21"
   },
   {
     "id": "leasedoc-fspinitpdf",
@@ -96,7 +202,20 @@
     "file": "FSP_Init.pdf",
     "docType": "Init",
     "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FFSP_Init.pdf?alt=media&token=7b70bf2c-fdd2-46f7-865c-b00328260fb4",
-    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FFSP_Init.html?alt=media&token=771a3388-2ddd-4b36-843e-b26476e00a29"
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FFSP_Init.html?alt=media&token=771a3388-2ddd-4b36-843e-b26476e00a29",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Fine Southern Properties",
+      "property": "Sanctuary Office Park, Building #1, #1 Sanctuary Boulevard, Mandeville, LA 70471",
+      "suite": "Suite 100, Floor 1",
+      "documentType": "Init",
+      "dated": "2021-05-25",
+      "monthlyRent": "USD 1500.00",
+      "commencement": "2021-01-01",
+      "termination": "2021-12-31",
+      "title": "Lease of Commercial Property — Sanctuary Office Park, Building #1, Suite 100 (Crosby Development Company, LLC / Fine Southern Properties)"
+    },
+    "date": "2021-05-25"
   },
   {
     "id": "leasedoc-mandevilletechnologyinitpdf",
@@ -107,7 +226,21 @@
     "file": "MandevilleTechnology_Init.pdf",
     "docType": "Init",
     "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FMandevilleTechnology_Init.pdf?alt=media&token=c9779b95-42d2-4532-b4dd-3f912a4f3d29",
-    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FMandevilleTechnology_Init.html?alt=media&token=bd9f7cd1-fe52-41cf-94ce-5060d86b3f41"
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FMandevilleTechnology_Init.html?alt=media&token=bd9f7cd1-fe52-41cf-94ce-5060d86b3f41",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Mandeville Technology",
+      "property": "Sanctuary Office Park, Building #1, #1 Sanctuary Boulevard, Mandeville, LA 70471",
+      "suite": "Suite 300A",
+      "documentType": "Init",
+      "dated": "2021-04-07",
+      "monthlyRent": "435.41",
+      "commencement": "2021-04-01",
+      "termination": "2022-03-31",
+      "escalation": "3% increase to base rent commencing with the first month of the second calendar year of the lease term; applicable to all subsequent years including renewal years",
+      "title": "Lease of Commercial Property — Crosby Development Company, LLC &amp; Mandeville Technology (Sanctuary Office Park, Building #1, Suite 300A)"
+    },
+    "date": "2021-04-07"
   },
   {
     "id": "leasedoc-nirvanamassageamd1pdf",
@@ -118,7 +251,20 @@
     "file": "NirvanaMassage_AMD1.pdf",
     "docType": "AMD1",
     "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FNirvanaMassage_AMD1.pdf?alt=media&token=dce747ee-b5b9-47be-a6b2-686cccd44099",
-    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FNirvanaMassage_AMD1.html?alt=media&token=9646716e-042e-427a-ac99-bbb78c54884b"
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FNirvanaMassage_AMD1.html?alt=media&token=9646716e-042e-427a-ac99-bbb78c54884b",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Michael & Kathleen Brown dba Nirvana Massage Therapy",
+      "property": "Sanctuary Office Park, Building #1, 1 Sanctuary Boulevard, Mandeville, LA 70471",
+      "suite": "Suite 306",
+      "documentType": "AMD1",
+      "monthlyRent": "934.00",
+      "commencement": "2014-03-01",
+      "termination": "2016-12-13",
+      "escalation": "3% annual increase beginning first month of 2015 over the previous year's rent",
+      "title": "Amendment #1 to Lease Agreement &mdash; Nirvana Massage Therapy, Suite 306, Sanctuary Office Park Building #1"
+    },
+    "date": "2014-03-01"
   },
   {
     "id": "leasedoc-nirvanamassageamd2pdf",
@@ -129,7 +275,20 @@
     "file": "NirvanaMassage_AMD2.pdf",
     "docType": "AMD2",
     "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FNirvanaMassage_AMD2.pdf?alt=media&token=71f44585-1413-43cc-8bdf-4d2ea95b8c0e",
-    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FNirvanaMassage_AMD2.html?alt=media&token=c0120288-2393-43ab-8723-616eb6e43b9e"
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FNirvanaMassage_AMD2.html?alt=media&token=c0120288-2393-43ab-8723-616eb6e43b9e",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Michael & Kathleen Brown dba Nirvana Massage Therapy",
+      "property": "Sanctuary Office Park, Building #1, Sanctuary Blvd., Mandeville, LA 70471",
+      "suite": "306",
+      "documentType": "AMD2",
+      "dated": "2016-12-15",
+      "monthlyRent": "1020.60",
+      "termination": "2018-12-31",
+      "escalation": "3% annual increase over previous year's rent, commencing with the first month in 2018, applicable to all subsequent years including any renewal leases",
+      "title": "Amendment #2 to Lease Agreement &mdash; Nirvana Massage Therapy, Sanctuary Office Park, Building #1, Suite 306"
+    },
+    "date": "2016-12-15"
   },
   {
     "id": "leasedoc-nirvanamassageamd3pdf",
@@ -140,7 +299,21 @@
     "file": "NirvanaMassage_AMD3.pdf",
     "docType": "AMD3",
     "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FNirvanaMassage_AMD3.pdf?alt=media&token=2811310f-d316-4de5-b1b6-10d79a43db5f",
-    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FNirvanaMassage_AMD3.html?alt=media&token=d041c7ce-7f8b-4a0c-b9d4-b8d21035f1a9"
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FNirvanaMassage_AMD3.html?alt=media&token=d041c7ce-7f8b-4a0c-b9d4-b8d21035f1a9",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Michael & Kathleen Brown dba Nirvana Massage Therapy",
+      "property": "Sanctuary Office Park, Building #1, 1 Sanctuary Blvd., Mandeville, LA 70471",
+      "suite": "Suite 306",
+      "documentType": "AMD3",
+      "dated": "2018-08-28",
+      "monthlyRent": "1082.75",
+      "commencement": "2019-01-01",
+      "termination": "2019-12-31",
+      "escalation": "3% over the previous year's rent",
+      "title": "Amendment #3 to Lease Agreement — Nirvana Massage Therapy, Sanctuary Office Park Building #1 Suite 306"
+    },
+    "date": "2018-08-28"
   },
   {
     "id": "leasedoc-nirvanamassageinitialpdf",
@@ -151,7 +324,21 @@
     "file": "NirvanaMassage_Initial.pdf",
     "docType": "Init",
     "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FNirvanaMassage_Initial.pdf?alt=media&token=143029b7-03c4-45c1-a680-3b77d019a898",
-    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FNirvanaMassage_Initial.html?alt=media&token=abb6ec8b-0d59-42bc-8701-c4c4ca06bf1c"
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FNirvanaMassage_Initial.html?alt=media&token=abb6ec8b-0d59-42bc-8701-c4c4ca06bf1c",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Michael & Kathleen Brown DBA Nirvana Massage Therapy",
+      "property": "Sanctuary Office Park, Building #1, #1 Sanctuary Boulevard, Mandeville, LA 70471",
+      "suite": "306",
+      "documentType": "Initial Lease",
+      "dated": "2013-06-14",
+      "monthlyRent": "840.00",
+      "commencement": "2013-07-01",
+      "termination": "2015-06-30",
+      "escalation": "3% annual increase commencing with the first month of the second calendar year",
+      "title": "Lease of Commercial Property — Sanctuary Office Park, Building #1, Suite 306 — Nirvana Massage"
+    },
+    "date": "2013-06-14"
   },
   {
     "id": "leasedoc-securitynationalamd1pdf",
@@ -162,7 +349,19 @@
     "file": "SecurityNational_AMD1.pdf",
     "docType": "AMD1",
     "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FSecurityNational_AMD1.pdf?alt=media&token=9b02cb6a-0792-4c04-8e1b-0286020fb2e3",
-    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FSecurityNational_AMD1.html?alt=media&token=316287b7-4bbc-454c-9f42-b68afd270aeb"
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FSecurityNational_AMD1.html?alt=media&token=316287b7-4bbc-454c-9f42-b68afd270aeb",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Security National Life Insurance Company",
+      "property": "Sanctuary Office Park, Building #1, #1 Sanctuary Blvd., Mandeville, LA 70471",
+      "suite": "Suite 302",
+      "documentType": "AMD1",
+      "commencement": "2015-10",
+      "escalation": "Effective October 2015, rental rate increased by $367.57 per month for a total rent of $1,264.45 per month",
+      "monthlyRent": "$1,264.45",
+      "title": "Amendment #1 to Lease — Sanctuary Office Park, Building #1, Suite 302 — Crosby Development Company, LLC &amp; Security National Life Insurance Company"
+    },
+    "date": "2015-10"
   },
   {
     "id": "leasedoc-securitynationalamd2finalmay2019pdf",
@@ -173,7 +372,20 @@
     "file": "SecurityNational_AMD2_Final_May2019.pdf",
     "docType": "AMD2",
     "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FSecurityNational_AMD2_Final_May2019.pdf?alt=media&token=f590bdd7-46af-4c63-93b1-1215c45f5376",
-    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FSecurityNational_AMD2_Final_May2019.html?alt=media&token=3a3f7660-6a83-427f-8525-deb9b2c21e8c"
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FSecurityNational_AMD2_Final_May2019.html?alt=media&token=3a3f7660-6a83-427f-8525-deb9b2c21e8c",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Security National Life Insurance Company",
+      "property": "Sanctuary Office Park, Building #1",
+      "suite": "302, 302A and 303",
+      "documentType": "AMD2",
+      "dated": "2019-07-01",
+      "monthlyRent": "1381.70",
+      "termination": "2023-06-30",
+      "escalation": "3% annually beginning 2021-02-01",
+      "title": "Amendment #2 to the Lease — Sanctuary Office Park, Building #1, Suite 302 / 302A — Crosby Development Company, LLC &amp; Security National Life Insurance Company"
+    },
+    "date": "2019-07-01"
   },
   {
     "id": "leasedoc-securitynationalamd2march2018pdf",
@@ -184,7 +396,21 @@
     "file": "SecurityNational_AMD2_March2018.pdf",
     "docType": "AMD2",
     "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FSecurityNational_AMD2_March2018.pdf?alt=media&token=b0472183-f134-457d-97f8-9ed0f8a8453b",
-    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FSecurityNational_AMD2_March2018.html?alt=media&token=a5acc6ce-e64e-43cb-ab7e-74156a042c4f"
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FSecurityNational_AMD2_March2018.html?alt=media&token=a5acc6ce-e64e-43cb-ab7e-74156a042c4f",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Security National Life Insurance Company",
+      "property": "Sanctuary Office Park, Building #1",
+      "suite": "Suite 302 and 302A",
+      "documentType": "AMD2",
+      "dated": "2018-03-21",
+      "monthlyRent": "1381.70",
+      "commencement": "2018-07-01",
+      "termination": "2020-06-30",
+      "escalation": "3% over the previous year's rent, applies to all renewals",
+      "title": "Amendment #2 to the Lease — Sanctuary Office Park, Building #1, Suite 302 &amp; 302A — Crosby Development Company, LLC &amp; Security National Life Insurance Company (March 21, 2018)"
+    },
+    "date": "2018-03-21"
   },
   {
     "id": "leasedoc-securitynationalamd3072024pdf",
@@ -195,7 +421,21 @@
     "file": "SecurityNational_AMD3_07_2024.pdf",
     "docType": "AMD3",
     "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FSecurityNational_AMD3_07_2024.pdf?alt=media&token=d9638229-6b39-4f59-961a-95bc4a446199",
-    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FSecurityNational_AMD3_07_2024.html?alt=media&token=026a504e-4262-43fb-a3fc-d61de5cae7ea"
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FSecurityNational_AMD3_07_2024.html?alt=media&token=026a504e-4262-43fb-a3fc-d61de5cae7ea",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Security National Life Insurance Company",
+      "property": "Sanctuary Office Park, Building #1, #1 Sanctuary Blvd., Mandeville, LA 70471",
+      "suite": "Suite 302 and 302A",
+      "documentType": "AMD3 — Amendment #3 to the Lease",
+      "dated": "2024-07-17",
+      "monthlyRent": "2546.10",
+      "commencement": "2025-07-01",
+      "termination": "2026-06-30",
+      "escalation": "3% annual increase over previous year's rent, applies to all renewals",
+      "title": "Amendment #3 to the Lease — Security National Life Insurance Company / Crosby Development Company, LLC — #1 Sanctuary, Suite 302 and 302A (July 17, 2024)"
+    },
+    "date": "2024-07-17"
   },
   {
     "id": "leasedoc-securitynationalamd3112025pdf",
@@ -206,7 +446,20 @@
     "file": "SecurityNational_AMD3_11_2025.pdf",
     "docType": "AMD3",
     "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FSecurityNational_AMD3_11_2025.pdf?alt=media&token=7bf06d04-7242-4f59-8063-50f4979455b4",
-    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FSecurityNational_AMD3_11_2025.html?alt=media&token=4337b942-7c5d-4b0e-bc81-027e46a70252"
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FSecurityNational_AMD3_11_2025.html?alt=media&token=4337b942-7c5d-4b0e-bc81-027e46a70252",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Security National Life Insurance Company",
+      "property": "Sanctuary Office Park, Building #1, 1 Sanctuary Blvd, Mandeville, LA 70471",
+      "suite": "302 and 303",
+      "documentType": "AMD3",
+      "dated": "2025-11-18",
+      "monthlyRent": "Reduced by $600.00; rent obligations prior to 2025-12-01 are $1,609.96",
+      "commencement": "2025-12-01",
+      "escalation": "Not stated",
+      "title": "Amendment #3 to Lease &mdash; Sanctuary Office Park, Building #1, Suites 302 and 303 &mdash; Security National Life Insurance Company"
+    },
+    "date": "2025-11-18"
   },
   {
     "id": "leasedoc-securitynationalamd3spacereleasepdf",
@@ -217,7 +470,18 @@
     "file": "SecurityNational_AMD3_SpaceRelease.pdf",
     "docType": "AMD3",
     "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FSecurityNational_AMD3_SpaceRelease.pdf?alt=media&token=be24c363-fab4-4ac4-9411-8f7628f2bb76",
-    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FSecurityNational_AMD3_SpaceRelease.html?alt=media&token=b76f37ab-aaed-4e80-bce9-425e91ee68a1"
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FSecurityNational_AMD3_SpaceRelease.html?alt=media&token=b76f37ab-aaed-4e80-bce9-425e91ee68a1",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Security National Life Insurance Company",
+      "property": "Sanctuary Office Park, Building #1",
+      "suite": "302 and 302A",
+      "documentType": "AMD3",
+      "dated": "2024-10-08",
+      "monthlyRent": "Reduced by $400.51; new monthly rent $2,145.59 effective November",
+      "title": "Amendment #3 to Lease (Space Release) — Security National · Suite 302/302A"
+    },
+    "date": "2024-10-08"
   },
   {
     "id": "leasedoc-securitynationalinitialpdf",
@@ -228,7 +492,21 @@
     "file": "SecurityNational_Initial.pdf",
     "docType": "Init",
     "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FSecurityNational_Initial.pdf?alt=media&token=5465e247-3fb7-49b7-9192-30d16c5f8b73",
-    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FSecurityNational_Initial.html?alt=media&token=d0ab4d54-a9cd-40b5-8f06-f69ad6192ae5"
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FSecurityNational_Initial.html?alt=media&token=d0ab4d54-a9cd-40b5-8f06-f69ad6192ae5",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Security National Life Insurance Company",
+      "property": "Sanctuary Office Park, Building #1, #1 Sanctuary Boulevard, Mandeville, LA 70471",
+      "suite": "Suite 302, Floor 3",
+      "documentType": "Initial Lease",
+      "dated": "2015-06-10",
+      "monthlyRent": "896.87",
+      "commencement": "2015-07-01",
+      "termination": "2018-06-30",
+      "escalation": "3% increase over previous year's rent each subsequent year (commencing with second calendar year of lease term)",
+      "title": "Lease of Commercial Property — Security National Life Insurance Company — Sanctuary Office Park, Building #1, Suite 302"
+    },
+    "date": "2015-06-10"
   },
   {
     "id": "leasedoc-bldg2flr3303amd44youreyeseyecare2020pdf",
@@ -239,7 +517,20 @@
     "file": "BLDG2_FLR3_303_AMD4_4YourEyes_EyeCare2020.pdf",
     "docType": "AMD4",
     "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FBLDG2_FLR3_303_AMD4_4YourEyes_EyeCare2020.pdf?alt=media&token=fd7fe256-5dc9-43b7-8b16-eb025a46b044",
-    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FBLDG2_FLR3_303_AMD4_4YourEyes_EyeCare2020.html?alt=media&token=89fa5f24-254f-4e87-a68e-fed746381dd8"
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FBLDG2_FLR3_303_AMD4_4YourEyes_EyeCare2020.html?alt=media&token=89fa5f24-254f-4e87-a68e-fed746381dd8",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "4 Your Eyes, LLC",
+      "property": "Sanctuary Office Park, Building #2, 1 Sanctuary Blvd., Mandeville, LA 70471",
+      "suite": "Suite 302-A and 303",
+      "documentType": "AMD4",
+      "dated": "2017-07-24",
+      "monthlyRent": "3616.46",
+      "termination": "2017-12-31",
+      "escalation": "3% increase to $3,616.46 beginning 2017-11-01",
+      "title": "Amendment #4 to Lease — Sanctuary Office Park, Building #2, Suite 303 — 4 Your Eyes, LLC"
+    },
+    "date": "2017-07-24"
   },
   {
     "id": "leasedoc-bldg2flr2206amd3assuredpartnerspdf",
@@ -250,7 +541,21 @@
     "file": "BLDG2_FLR2_206_AMD3_AssuredPartners.pdf",
     "docType": "AMD3",
     "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FBLDG2_FLR2_206_AMD3_AssuredPartners.pdf?alt=media&token=090383ec-6e07-4d18-b3c0-8b90349306ac",
-    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FBLDG2_FLR2_206_AMD3_AssuredPartners.html?alt=media&token=8768d2f2-b6f0-4f48-ae05-c64829f363bb"
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FBLDG2_FLR2_206_AMD3_AssuredPartners.html?alt=media&token=8768d2f2-b6f0-4f48-ae05-c64829f363bb",
+    "meta": {
+      "lessor": "Crosby Development Company, L.L.C.",
+      "lessee": "AssuredPartners Gulf Coast Insurance Agency, LLC",
+      "property": "Sanctuary Office Park, Building #2, #2 Sanctuary Boulevard, Mandeville, LA 70471",
+      "suite": "206",
+      "documentType": "Third Amendment to Lease (AMD3)",
+      "dated": "2025-04",
+      "monthlyRent": "$3,816.09 (Current Base Rent, through June 30, 2025); $3,842.25 (Extended Term, Months 1-12, July 1, 2025 - June 30, 2026)",
+      "commencement": "2025-07-01",
+      "termination": "2026-06-30",
+      "escalation": "3% annual Base Rent escalation on renewal options",
+      "title": "Third Amendment to Lease — Sanctuary Office Park, Building #2, Suite 206 — Crosby Development Company, LLC &amp; AssuredPartners Gulf Coast Insurance Agency, LLC"
+    },
+    "date": "2025-04"
   },
   {
     "id": "leasedoc-bldg2flr2205initcarverdardenpdf",
@@ -261,7 +566,21 @@
     "file": "BLDG2_FLR2_205_Init_CarverDarden.pdf",
     "docType": "Init",
     "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FBLDG2_FLR2_205_Init_CarverDarden.pdf?alt=media&token=1241e720-146c-4aed-ae9b-3f11405cdaa7",
-    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FBLDG2_FLR2_205_Init_CarverDarden.html?alt=media&token=ec5bb0ba-f4d5-487d-a8d4-78952f2f4d9b"
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FBLDG2_FLR2_205_Init_CarverDarden.html?alt=media&token=ec5bb0ba-f4d5-487d-a8d4-78952f2f4d9b",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Carver, Darden, Koretzky, Tessier, Finn, Blossman & Areaux, LLC",
+      "property": "#2 Sanctuary Boulevard, Mandeville, LA 70471 (Sanctuary Office Park, Building #2)",
+      "suite": "Floor 2, Suite 205",
+      "documentType": "Init",
+      "dated": "2024-10-23",
+      "monthlyRent": "2108.33",
+      "commencement": "2025-01-01",
+      "termination": "2027-12-31",
+      "escalation": "3% annual increase commencing with the first month of the second calendar year of the lease term",
+      "title": "Lease of Commercial Property — Sanctuary Office Park Bldg #2, Suite 205 — Crosby Development Company, LLC &amp; Carver, Darden, Koretzky, Tessier, Finn, Blossman &amp; Areaux, LLC"
+    },
+    "date": "2024-10-23"
   },
   {
     "id": "leasedoc-bldg2flr2204cypresskeyrealtypdf",
@@ -272,7 +591,21 @@
     "file": "BLDG2_FLR2_204_Cypress Key Realty.pdf",
     "docType": "Lease",
     "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FBLDG2_FLR2_204_Cypress%20Key%20Realty.pdf?alt=media&token=e400f893-e6b0-41a4-a48e-7054311a65ff",
-    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FBLDG2_FLR2_204_Cypress%20Key%20Realty.html?alt=media&token=9ab94de0-317b-41fe-83dd-6640c98a1767"
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FBLDG2_FLR2_204_Cypress%20Key%20Realty.html?alt=media&token=9ab94de0-317b-41fe-83dd-6640c98a1767",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Cypress Key Realty LLC",
+      "property": "Sanctuary Office Park, Building #2, #2 Sanctuary Boulevard, Mandeville, LA 70471",
+      "suite": "Suite 204, Floor 2",
+      "documentType": "Lease of Commercial Property",
+      "dated": "2024-01-06",
+      "monthlyRent": "1312.50",
+      "commencement": "2024-01-08",
+      "termination": "2027-12-31",
+      "escalation": "Three percent (3%) increase over the previous year's rent, commencing with the first month of the second calendar year of the lease term, applicable to all subsequent years including any renewal leases",
+      "title": "Lease of Commercial Property — Sanctuary Office Park, Building #2, Suite 204 — Cypress Key Realty LLC"
+    },
+    "date": "2024-01-06"
   },
   {
     "id": "leasedoc-bldg2flr3301amd5hartfordfireinsurancepdf",
@@ -283,7 +616,21 @@
     "file": "BLDG2_FLR3_301_AMD5_HartfordFireInsurance.pdf",
     "docType": "AMD5",
     "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FBLDG2_FLR3_301_AMD5_HartfordFireInsurance.pdf?alt=media&token=db5ee3c8-16ae-4043-a305-8d7612f754ce",
-    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FBLDG2_FLR3_301_AMD5_HartfordFireInsurance.html?alt=media&token=068bba97-8fba-4abe-9a91-2f6bb2e6a44d"
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FBLDG2_FLR3_301_AMD5_HartfordFireInsurance.html?alt=media&token=068bba97-8fba-4abe-9a91-2f6bb2e6a44d",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Hartford Fire Insurance Company",
+      "property": "Sanctuary Office Park, Building #2, #2 Sanctuary Blvd., 3rd Floor, Mandeville, LA 70471",
+      "suite": "301",
+      "documentType": "Amendment #5",
+      "dated": "2024-01-23",
+      "monthlyRent": "4213.62",
+      "commencement": "2024-10-01",
+      "termination": "2026-09-30",
+      "escalation": "None",
+      "title": "Amendment #5 to the Lease — Sanctuary Building #2, Suite 301 — Crosby Development Company, LLC &amp; Hartford Fire Insurance Company"
+    },
+    "date": "2024-01-23"
   },
   {
     "id": "leasedoc-bldg2flr2203nationwidepdf",
@@ -294,7 +641,21 @@
     "file": "BLDG2_FLR2_203_Nationwide.pdf",
     "docType": "Lease",
     "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FBLDG2_FLR2_203_Nationwide.pdf?alt=media&token=fdc918e6-7885-4d27-b911-ee11ad503f72",
-    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FBLDG2_FLR2_203_Nationwide.html?alt=media&token=1781cd97-18e0-46ba-a6f1-1e07fb81b709"
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FBLDG2_FLR2_203_Nationwide.html?alt=media&token=1781cd97-18e0-46ba-a6f1-1e07fb81b709",
+    "meta": {
+      "documentType": "Lease Amendment",
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Nationwide Mutual Insurance Company",
+      "property": "Sanctuary Office Park, Building #2, #2 Sanctuary Blvd., Mandeville, LA 70471",
+      "suite": "203",
+      "dated": "2025-07-18",
+      "monthlyRent": "1867.18",
+      "commencement": "2025-11-01",
+      "termination": "2026-10-31",
+      "escalation": "3% annual increase each subsequent year",
+      "title": "Amendment #1 to Lease — #2 Sanctuary, Suite 203, Nationwide"
+    },
+    "date": "2025-07-18"
   },
   {
     "id": "leasedoc-northshorelazerllcsignedpdf",
@@ -305,7 +666,21 @@
     "file": "Northshore Lazer LLC signed.pdf",
     "docType": "Lease",
     "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FNorthshore%20Lazer%20LLC%20signed.pdf?alt=media&token=3655fe4e-2e1a-4495-8f29-b8c7cd9969b4",
-    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FNorthshore%20Lazer%20LLC%20signed.html?alt=media&token=d5466230-30f7-4efb-8879-ba345d326498"
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FNorthshore%20Lazer%20LLC%20signed.html?alt=media&token=d5466230-30f7-4efb-8879-ba345d326498",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Northshore Laser LLC",
+      "property": "#2 Sanctuary Boulevard, Mandeville, LA 70471 (Sanctuary Office Park, Building #2)",
+      "suite": "Floor 3, Suite 302B",
+      "documentType": "Lease",
+      "dated": "2024-10-14",
+      "monthlyRent": "$300.00",
+      "commencement": "2024-10-15",
+      "termination": "2025-10-14",
+      "escalation": "3% annual increase commencing with the first month of the second calendar year of the lease term, applicable to all subsequent years including any renewal leases",
+      "title": "Lease of Commercial Property — Crosby Development Company, LLC &amp; Northshore Laser LLC (Sanctuary Office Park, Suite 302B)"
+    },
+    "date": "2024-10-14"
   },
   {
     "id": "leasedoc-leasejudgepenzatosigned1pdf",
@@ -316,7 +691,21 @@
     "file": "Lease_Judge_Penzato signed (1).pdf",
     "docType": "Lease",
     "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FLease_Judge_Penzato%20signed%20(1).pdf?alt=media&token=8071d20c-d6fa-40c7-95cf-edd764d55df6",
-    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FLease_Judge_Penzato%20signed%20(1).html?alt=media&token=e420b83d-a7e4-4af5-ae62-2739ce45a27d"
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FLease_Judge_Penzato%20signed%20(1).html?alt=media&token=e420b83d-a7e4-4af5-ae62-2739ce45a27d",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "The Honorable Allison H. Penzato, Judge, First Circuit Court of Appeal, State of Louisiana",
+      "property": "Sanctuary Office Park, Building #2, 2 Sanctuary Boulevard, Mandeville, LA 70471",
+      "suite": "103",
+      "documentType": "Lease",
+      "dated": "2025-01-17",
+      "monthlyRent": "2950.00",
+      "commencement": "2025-03-01",
+      "termination": "2031-02-28",
+      "escalation": "2% annual increase commencing with the first month of the second calendar year of the lease term",
+      "title": "Lease of Commercial Property &mdash; Sanctuary Office Park, Building #2, Suite 103 (Crosby Development Company, LLC &amp; Hon. Allison H. Penzato)"
+    },
+    "date": "2025-01-17"
   },
   {
     "id": "leasedoc-bldg2flr3304amd11garythomascpapdf",
@@ -327,7 +716,20 @@
     "file": "BLDG2_FLR3_304_AMD11_GaryThomasCPA.pdf",
     "docType": "AMD11",
     "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FBLDG2_FLR3_304_AMD11_GaryThomasCPA.pdf?alt=media&token=13a39846-c36d-4b73-8966-3d45ba0c5cf7",
-    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FBLDG2_FLR3_304_AMD11_GaryThomasCPA.html?alt=media&token=58c5947b-9771-4a99-a03f-f7dd363877fb"
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FBLDG2_FLR3_304_AMD11_GaryThomasCPA.html?alt=media&token=58c5947b-9771-4a99-a03f-f7dd363877fb",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Gary Thomas CPA",
+      "property": "Sanctuary Office Park, Building #2 (#2 Sanctuary Blvd.), Mandeville, LA 70471",
+      "suite": "304",
+      "documentType": "AMD11 — Lease Renewal Notice",
+      "dated": "2024-07-01",
+      "monthlyRent": "1892.10",
+      "commencement": "2024-08-01",
+      "termination": "2025-07-31",
+      "title": "Lease Renewal Notice (AMD11) — Gary Thomas CPA, #2 Sanctuary, Suite 304"
+    },
+    "date": "2024-07-01"
   },
   {
     "id": "leasedoc-bldg2flr3304amd12garythomascpapdf",
@@ -338,7 +740,21 @@
     "file": "BLDG2_FLR3_304_AMD12_GaryThomasCPA.pdf",
     "docType": "AMD12",
     "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FBLDG2_FLR3_304_AMD12_GaryThomasCPA.pdf?alt=media&token=f56663db-111c-4a4a-aba8-7d809ece4a47",
-    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FBLDG2_FLR3_304_AMD12_GaryThomasCPA.html?alt=media&token=73b9285a-3731-445b-88b4-54b2e02c2fc9"
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FBLDG2_FLR3_304_AMD12_GaryThomasCPA.html?alt=media&token=73b9285a-3731-445b-88b4-54b2e02c2fc9",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Gary M. Thomas, CPA, A Professional Corporation",
+      "property": "Sanctuary Office Park, Building #2, Suite 304, Mandeville, LA 70471",
+      "suite": "304",
+      "documentType": "AMD12",
+      "dated": "2025-06-06",
+      "monthlyRent": "1948.86",
+      "commencement": "2025-08-01",
+      "termination": "2026-07-31",
+      "escalation": "3% per year, applies to all renewals",
+      "title": "Amendment #12 to Lease of Commercial Property &mdash; Suite 304, #2 Sanctuary &mdash; Gary M. Thomas, CPA"
+    },
+    "date": "2025-06-06"
   },
   {
     "id": "leasedoc-bldg4flr12suite101204watchsystemspdf",
@@ -349,7 +765,21 @@
     "file": "BLDG4_FLR1+2_Suite101+204_WatchSystems.pdf",
     "docType": "Lease",
     "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FBLDG4_FLR1%2B2_Suite101%2B204_WatchSystems.pdf?alt=media&token=e95c82ad-11d8-4532-9d88-ea96d13a01ba",
-    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FBLDG4_FLR1%2B2_Suite101%2B204_WatchSystems.html?alt=media&token=f391a55c-d0db-4044-9ab2-5aeffc3127c4"
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FBLDG4_FLR1%2B2_Suite101%2B204_WatchSystems.html?alt=media&token=f391a55c-d0db-4044-9ab2-5aeffc3127c4",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Watch Systems",
+      "property": "#4 Sanctuary, 4 Sanctuary Boulevard, Mandeville, LA 70471",
+      "suite": "101",
+      "documentType": "Lease Amendment",
+      "dated": "2024-05-01",
+      "monthlyRent": "$19,636.64",
+      "commencement": "2021-07-01",
+      "termination": "2026-06-30",
+      "escalation": "3% annual",
+      "title": "Amendment #2 to the Lease — Watch Systems, #4 Sanctuary, Suite 101"
+    },
+    "date": "2024-05-01"
   },
   {
     "id": "leasedoc-watchsystemsamd1pdf",
@@ -360,7 +790,19 @@
     "file": "WatchSystemsAMD1.pdf",
     "docType": "AMD1",
     "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FWatchSystemsAMD1.pdf?alt=media&token=32c3cd1e-7418-4c77-ae7d-81b90d27231f",
-    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FWatchSystemsAMD1.html?alt=media&token=e599b7a5-c789-47e0-a294-dbabc71cd670"
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FWatchSystemsAMD1.html?alt=media&token=e599b7a5-c789-47e0-a294-dbabc71cd670",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Watch Systems",
+      "property": "#4 Sanctuary, Sanctuary Office Park, Building #4, Mandeville, Louisiana 70471",
+      "suite": "Suite 101",
+      "documentType": "AMD1",
+      "dated": "2022-08-16",
+      "commencement": "2021-07-01",
+      "monthlyRent": "652.31",
+      "title": "Amendment #1 to Lease — Watch Systems &amp; Crosby Development Company, LLC — Sanctuary Office Park, Building #4, Suite 101"
+    },
+    "date": "2022-08-16"
   },
   {
     "id": "leasedoc-watchsystemsinitpdf",
@@ -371,7 +813,21 @@
     "file": "WatchSystemsInit.pdf",
     "docType": "Init",
     "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FWatchSystemsInit.pdf?alt=media&token=befa5bc4-19a0-4b8b-b52a-dfdc0e26393e",
-    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FWatchSystemsInit.html?alt=media&token=b53ca290-205d-4ba1-abf2-09fe9ab27eed"
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FWatchSystemsInit.html?alt=media&token=b53ca290-205d-4ba1-abf2-09fe9ab27eed",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Watch Systems",
+      "property": "#4 Sanctuary Boulevard, Mandeville, LA 70471 (Sanctuary Office Park, Building #4)",
+      "suite": "Floor 1, Suite 101 (7,100 sqft); Floor 2, Suite 201 (3,850 sqft); 10,950 sqft total rentable area",
+      "documentType": "Init",
+      "dated": "2021-04-22",
+      "monthlyRent": "17337.00",
+      "commencement": "2021-07-01",
+      "termination": "2024-06-30",
+      "escalation": "3% increase on the second calendar year of the lease term, applicable to all subsequent years including renewals",
+      "title": "Lease of Commercial Property — Crosby Development Company, LLC &amp; Watch Systems (Sanctuary Office Park, Building #4, Suite 101 &amp; 201)"
+    },
+    "date": "2021-04-22"
   },
   {
     "id": "leasedoc-bldg5flr1103amd1mapspdf",
@@ -382,6 +838,20 @@
     "file": "BLDG5_FLR1_103_AMD1_MAPS.pdf",
     "docType": "AMD1",
     "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FBLDG5_FLR1_103_AMD1_MAPS.pdf?alt=media&token=4386c322-ffe2-4af1-9f11-38d0ea7b629c",
-    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FBLDG5_FLR1_103_AMD1_MAPS.html?alt=media&token=63975542-2be3-4efc-b0d8-89d5b2313839"
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FBLDG5_FLR1_103_AMD1_MAPS.html?alt=media&token=63975542-2be3-4efc-b0d8-89d5b2313839",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Mediation Arbitration Professional Systems, INC",
+      "property": "Sanctuary Office Park, Building #5, 5 Sanctuary Blvd, Mandeville, LA 70471",
+      "suite": "103",
+      "documentType": "AMD1",
+      "dated": "2025-04-23",
+      "monthlyRent": "3279.27",
+      "commencement": "2025-07-01",
+      "termination": "2028-06-30",
+      "escalation": "3% annually",
+      "title": "Amendment #1 to Lease — 5 Sanctuary Blvd, Suite 103, Mandeville, LA — Crosby Development Company, LLC &amp; Mediation Arbitration Professional Systems, INC"
+    },
+    "date": "2025-04-23"
   }
 ]

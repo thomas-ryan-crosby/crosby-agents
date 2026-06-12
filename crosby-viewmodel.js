@@ -141,6 +141,7 @@ export function deriveViewModel(entities) {
     const byProp = LEASE_DOCS[d.propertyId] || (LEASE_DOCS[d.propertyId] = {});
     (byProp[d.building] || (byProp[d.building] = [])).push({
       tenant: d.tenant, suite: d.suite, file: d.file, docType: d.docType, url: d.url, htmlUrl: d.htmlUrl || null,
+      meta: d.meta || null, date: d.date || null,
     });
   }
 
