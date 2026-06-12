@@ -1776,25 +1776,6 @@ function renderPropertyDetail(p) {
         html += '<tr><td class="c-tenant" style="font-weight:700;">Total ('+bTenants.length+' tenants)</td><td class="c-suite"></td><td class="c-sf">'+bTotal.toLocaleString()+'</td><td class="c-rent">$'+bRent.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})+'</td><td class="c-sfyr"></td><td class="c-status"></td><td class="c-expiry"></td><td class="c-notice"></td><td class="c-action"></td><td class="c-lease"></td><td class="c-legacy"></td></tr>';
         html += '</tbody></table>';
 
-        // Documents panel for buildings that have leases on file
-        if(hasLeases) {
-          html += '<div style="margin-top:14px;padding-top:14px;border-top:1px solid #f3f4f6;">';
-          html += '<div style="font-size:11px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;">'+iconSvg('folder',12,'#9ca3af')+' <span style="margin-left:4px;">Lease Documents on File ('+buildingLeases.length+')</span></div>';
-          html += '<div style="display:flex;flex-wrap:wrap;gap:8px;">';
-          buildingLeases.forEach(function(ld) {
-            var typeColor = ld.docType === 'Init' ? '#059669' : '#7c3aed';
-            var typeBg = ld.docType === 'Init' ? '#ecfdf5' : '#f5f3ff';
-            html += '<div style="display:inline-flex;align-items:center;gap:6px;background:#f9fafb;border:1px solid #e5e7eb;padding:5px 8px;border-radius:6px;" title="'+ld.file+'">';
-            html += iconSvg('file-text',13,'#6b7280');
-            html += '<span style="font-size:12px;color:#374151;">'+ld.tenant+' — Suite '+ld.suite+'</span>';
-            html += '<span style="font-size:10px;font-weight:700;color:'+typeColor+';background:'+typeBg+';padding:1px 5px;border-radius:3px;">'+ld.docType+'</span>';
-            html += '<a href="'+ld.url+'" target="_blank" rel="noopener" style="font-size:10px;font-weight:700;color:#6b7280;text-decoration:none;border:1px solid #e5e7eb;border-radius:3px;padding:1px 5px;">PDF</a>';
-            if(ld.htmlUrl) html += '<a href="'+ld.htmlUrl+'" target="_blank" rel="noopener" style="font-size:10px;font-weight:700;color:#2563eb;text-decoration:none;border:1px solid #bfdbfe;background:#eff6ff;border-radius:3px;padding:1px 5px;">HTML</a>';
-            html += '</div>';
-          });
-          html += '</div></div>';
-        }
-
         html += '</div>';
       });
     }
