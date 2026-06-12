@@ -32,6 +32,7 @@ export function deriveViewModel(entities) {
   const leases = entities.leases || [];
   const hoaLots = entities.hoaLots || [];
 
+  const leaseDocsEnt = entities.leaseDocs || [];
   const tenantById = new Map(tenants.map((t) => [t.id, t]));
   const leaseByUnit = new Map(leases.map((l) => [l.unitId, l]));
   const unitsByProp = groupBy(units, "propertyId");
@@ -67,7 +68,6 @@ export function deriveViewModel(entities) {
       Object.assign(base, deriveCommercial(p, pBldgs, unitsByBldg, leaseByUnit, tenantById, pLeases));
       TENANT_ROSTER[p.id] = base._tenantRoster; delete base._tenantRoster;
       LEASE_TERMS[p.id] = base._leaseTerms; delete base._leaseTerms;
-      LEASE_DOCS[p.id] = base._leaseDocs; delete base._leaseDocs;
     } else if (p.isHOA) {
       Object.assign(base, deriveHOA(pLots));
       UNIT_ROSTER[p.id] = base._roster; delete base._roster;
@@ -79,19 +79,28 @@ export function deriveViewModel(entities) {
     PROPERTIES.push(base);
   }
 
+  // LEASE_DOCS: group the leaseDocs entity by propertyId -> building name.
+  for (const d of leaseDocsEnt) {
+    if (!d.tenant || !d.propertyId || !d.building) continue; // skip unmatched/unlinked
+    const byProp = LEASE_DOCS[d.propertyId] || (LEASE_DOCS[d.propertyId] = {});
+    (byProp[d.building] || (byProp[d.building] = [])).push({
+      tenant: d.tenant, suite: d.suite, file: d.file, docType: d.docType, url: d.url,
+    });
+  }
+
   return { PROPERTIES, PROPERTY_PROFILES, UNIT_ROSTER, TENANT_ROSTER, LEASE_TERMS, LEASE_DOCS };
 }
 
 // ── Commercial (e.g. Sanctuary Office Park) ────────────────────────────────────
 function deriveCommercial(p, pBldgs, unitsByBldg, leaseByUnit, tenantById, pLeases) {
   const today = Date.now();
-  const buildings = [], tenantRoster = {}, leaseTerms = {}, leaseDocs = {};
+  const buildings = [], tenantRoster = {}, leaseTerms = {};
   let totalSF = 0, occSF = 0, vacSF = 0, monthly = 0, tenantCount = 0;
 
   for (const b of pBldgs) {
     const bUnits = (unitsByBldg[b.id] || []).slice().sort(bySuite);
     let bSF = 0, bOcc = 0, bVac = 0, bMonthly = 0, bTenants = 0;
-    const roster = [], terms = [], docs = [];
+    const roster = [], terms = [];
 
     for (const u of bUnits) {
       const lease = leaseByUnit.get(u.id);
@@ -122,14 +131,12 @@ function deriveCommercial(p, pBldgs, unitsByBldg, leaseByUnit, tenantById, pLeas
           vacating: lease.status === "vacating", mtm, ownerOccupant: owner,
         };
         terms.push(term);
-        if (lease.docFile) docs.push({ tenant: tenant ? tenant.name : u.identifier, suite: u.identifier, file: lease.docFile, docType: docTypeOf(lease.docFile) });
       }
     }
 
     buildings.push({ name: b.name, sf: bSF || b.totalSF || 0, occupiedSF: bOcc, vacantSF: bVac, tenants: bTenants, monthly: bMonthly });
     if (roster.length) tenantRoster[b.name] = roster;
     if (terms.length) leaseTerms[b.name] = terms;
-    if (docs.length) leaseDocs[b.name] = docs;
     totalSF += bSF || b.totalSF || 0; occSF += bOcc; vacSF += bVac; monthly += bMonthly; tenantCount += bTenants;
   }
 
@@ -138,7 +145,7 @@ function deriveCommercial(p, pBldgs, unitsByBldg, leaseByUnit, tenantById, pLeas
     buildings, totalSF, occupiedSF: occSF, vacantSF: vacSF, monthlyRent: monthly,
     annualRent: monthly * 12, tenantCount, occupancy: Math.round(occupancy * 10) / 10,
     avgRentSF: occSF > 0 ? (monthly * 12) / occSF : 0,
-    _tenantRoster: tenantRoster, _leaseTerms: leaseTerms, _leaseDocs: leaseDocs,
+    _tenantRoster: tenantRoster, _leaseTerms: leaseTerms,
   };
 }
 

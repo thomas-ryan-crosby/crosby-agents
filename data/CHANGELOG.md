@@ -126,3 +126,31 @@ data that previously lived only in `index.html` was lifted into `data/*.json`:
 - Metairie Plaza shows 62 units (roster had 62 entries; the old hardcoded "66" was a
   rollup figure). Metairie lease rent/terms are null pending the source rent rolls.
 - Re-seeded Firestore; removed the orphan `lakeside-lot-summary` doc.
+
+---
+
+## 2026-06-11 (later same day)
+
+### Lease PDF library — migrated from `proppli` bucket, linked to tenants
+
+Copied 38 lease PDFs from `gs://proppli.firebasestorage.app/leases` into a new public
+bucket `gs://crosby-agents-leases` (object path `leases/<file>`), and added
+`data/lease-docs.json` (new `leaseDocs` Firestore collection) mapping each file to its
+tenant/building/suite + public URL.
+
+| File | Records | Detail |
+|------|---------|--------|
+| lease-docs.json | 35 | SOP lease docs linked to 19 tenants (Security National ×7, Nirvana ×4, Acorn/Bayou CPR/Watch Systems ×3, …) across Buildings #1/#2/#4/#5 |
+
+**Notes:**
+- The dashboard's commercial property detail now renders working PDF links (open in a new
+  tab) from `leaseDocs.url`; `crosby-viewmodel.js` derives `LEASE_DOCS` from this collection
+  (replacing the dead `computer:///…/Leases_Claude/…` paths and the per-lease `docFile` field).
+- **⚠ Public exposure (operator-approved):** the bucket grants `allUsers` object-read, so the
+  PDFs are world-downloadable to match the current no-auth public dashboard. Re-secure
+  (remove the allUsers binding + re-enable auth) before treating this as anything but a preview.
+- **3 files uploaded but NOT linked** (no matching tenant in the data): `The Maven Group_Lease.pdf`,
+  `CONN_BLDG1_AMD1.pdf` (×2). They sit in the bucket; link them once the tenants are identified.
+- Filename suite hint vs. data: `BLDG2_FLR3_302C_BodyRemedy.pdf` was linked to tenant Body
+  Remedy (Building #1, Suite 303A per the dashboard data); the filename's B2/302C may be a
+  proppli mislabel — confirm.
