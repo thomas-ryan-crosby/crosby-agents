@@ -1601,6 +1601,31 @@ function renderOccChart(canvasId, occupied, vacant, turnover, label) {
 
 // ── PROPERTY DETAIL ─────────────────────────────────────────────────────────
 var detailCharts = {};
+
+// Show/hide columns for the commercial tenant tables. Column cells carry a
+// `c-<key>` class; hidden columns are suppressed by a single global <style>.
+var SOP_COLS = [['tenant','Tenant'],['suite','Suite'],['sf','Square Feet'],['rent','Monthly Rent'],['sfyr','$/SF/Yr'],['status','Status'],['expiry','Expiry'],['notice','Notice'],['action','Action'],['lease','Lease']];
+var sopHiddenCols = [];
+try { sopHiddenCols = JSON.parse(localStorage.getItem('sopHiddenCols')||'[]'); } catch(e) {}
+function applySopCols() {
+  var css = sopHiddenCols.map(function(c){ return '.c-'+c+'{display:none!important;}'; }).join('');
+  var el = document.getElementById('sopColStyle');
+  if(!el){ el = document.createElement('style'); el.id = 'sopColStyle'; document.head.appendChild(el); }
+  el.textContent = css;
+}
+function toggleSopCol(col, show) {
+  sopHiddenCols = sopHiddenCols.filter(function(c){ return c!==col; });
+  if(!show) sopHiddenCols.push(col);
+  try { localStorage.setItem('sopHiddenCols', JSON.stringify(sopHiddenCols)); } catch(e) {}
+  applySopCols();
+}
+function sopColToggleBar() {
+  return '<div class="card" style="margin-bottom:16px;padding:10px 14px;"><div style="display:flex;align-items:center;flex-wrap:wrap;gap:14px;">'+
+    '<span style="font-size:11px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;">Columns</span>'+
+    SOP_COLS.map(function(c){ var ck = sopHiddenCols.indexOf(c[0])<0?'checked':''; return '<label style="font-size:12px;color:#374151;display:inline-flex;align-items:center;gap:5px;cursor:pointer;"><input type="checkbox" '+ck+' onchange="toggleSopCol(\''+c[0]+'\',this.checked)"> '+c[1]+'</label>'; }).join('')+
+    '</div></div>';
+}
+
 function renderPropertyDetail(p) {
   document.getElementById("detailPropName").textContent = p.name;
   document.getElementById("detailPropBadge").innerHTML = p.cls;
@@ -1676,6 +1701,7 @@ function renderPropertyDetail(p) {
     // ── Commercial detail: building cards with full tenant rosters ──
     var tenantData = TENANT_ROSTER[p.slug];
     if(tenantData && p.buildings) {
+      html += sopColToggleBar();
       p.buildings.forEach(function(b) {
         var bTenants = tenantData[b.name] || [];
         var bOccPct = b.sf > 0 ? Math.round(b.occupiedSF / b.sf * 100) : 0;
@@ -1695,32 +1721,28 @@ function renderPropertyDetail(p) {
         buildingLeases.forEach(function(l) { leaseByTenant[l.tenant] = l; });
         var hasLeases = buildingLeases.length > 0;
 
-        var leaseCol = hasLeases ? '<th>Lease</th>' : '';
-        html += '<table class="unit-table"><thead><tr><th>Tenant</th><th>Suite</th><th>Square Feet</th><th>Monthly Rent</th><th>$/SF/Yr</th><th>Status</th><th>Expiry</th><th>Notice</th><th>Action</th>'+leaseCol+'</tr></thead><tbody>';
+        html += '<table class="unit-table"><thead><tr><th class="c-tenant">Tenant</th><th class="c-suite">Suite</th><th class="c-sf">Square Feet</th><th class="c-rent">Monthly Rent</th><th class="c-sfyr">$/SF/Yr</th><th class="c-status">Status</th><th class="c-expiry">Expiry</th><th class="c-notice">Notice</th><th class="c-action">Action</th><th class="c-lease">Lease</th></tr></thead><tbody>';
         var bTotal = 0, bRent = 0;
         bTenants.forEach(function(t) {
           bTotal += t.sf;
           bRent += t.rent;
           var sfyr = t.sf > 0 && t.rent > 0 ? "$"+(t.rent * 12 / t.sf).toFixed(2) : "—";
           var statusBdg = t.vacant ? '<span class="badge badge-pending">Vacant</span>' : '<span class="badge badge-approved">Active</span>';
-          var leaseCell = '';
-          if(hasLeases) {
-            var ld = leaseByTenant[t.tenant];
-            if(ld) {
-              var leaseFile = ld.url;
-              var typeColor = ld.docType === 'Init' ? '#059669' : '#7c3aed';
-              leaseCell = '<td><a href="'+leaseFile+'" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;color:'+typeColor+';text-decoration:none;background:'+(ld.docType==='Init'?'#ecfdf5':'#f5f3ff')+';padding:2px 7px;border-radius:4px;">'+iconSvg('file-text',11,typeColor)+' '+ld.docType+'</a></td>';
-            } else {
-              leaseCell = '<td><span style="font-size:11px;color:#d1d5db;">—</span></td>';
-            }
+          var ld = leaseByTenant[t.tenant];
+          var leaseCell;
+          if(ld) {
+            var typeColor = ld.docType === 'Init' ? '#059669' : '#7c3aed';
+            leaseCell = '<td class="c-lease"><a href="'+ld.url+'" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;color:'+typeColor+';text-decoration:none;background:'+(ld.docType==='Init'?'#ecfdf5':'#f5f3ff')+';padding:2px 7px;border-radius:4px;">'+iconSvg('file-text',11,typeColor)+' '+ld.docType+'</a></td>';
+          } else {
+            leaseCell = '<td class="c-lease"><span style="font-size:11px;color:#d1d5db;">—</span></td>';
           }
           var actTone = {steady:'badge-approved',attention:'badge-pending',urgent:'badge-revision',neutral:'badge-idle'}[(t.action&&t.action.tone)||'neutral'];
           var actCell = t.action && t.action.label !== '—' ? '<span class="badge '+actTone+'">'+t.action.label+'</span>' : '<span style="color:#d1d5db;">—</span>';
           var expSub = t.expiryIn ? '<div style="font-size:10px;color:'+(t.expiryIn.indexOf('ago')>=0?'#dc2626':'#9ca3af')+';">'+t.expiryIn+'</div>' : '';
           var notSub = t.noticeIn ? '<div style="font-size:10px;color:'+(t.noticeIn.indexOf('ago')>=0?'#dc2626':'#9ca3af')+';">'+t.noticeIn+'</div>' : '';
-          html += '<tr><td style="font-weight:500;">'+t.tenant+'</td><td>'+t.suite+'</td><td>'+t.sf.toLocaleString()+'</td><td>'+(t.rent>0?'$'+t.rent.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}):'—')+'</td><td>'+sfyr+'</td><td>'+statusBdg+'</td><td style="font-size:12px;'+(t.expiry==='—'?'color:#d1d5db;':'')+'">'+t.expiry+expSub+'</td><td style="font-size:12px;'+(t.notice==='—'?'color:#d1d5db;':'')+'">'+t.notice+notSub+'</td><td>'+actCell+'</td>'+leaseCell+'</tr>';
+          html += '<tr><td class="c-tenant" style="font-weight:500;">'+t.tenant+'</td><td class="c-suite">'+t.suite+'</td><td class="c-sf">'+t.sf.toLocaleString()+'</td><td class="c-rent">'+(t.rent>0?'$'+t.rent.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}):'—')+'</td><td class="c-sfyr">'+sfyr+'</td><td class="c-status">'+statusBdg+'</td><td class="c-expiry" style="font-size:12px;'+(t.expiry==='—'?'color:#d1d5db;':'')+'">'+t.expiry+expSub+'</td><td class="c-notice" style="font-size:12px;'+(t.notice==='—'?'color:#d1d5db;':'')+'">'+t.notice+notSub+'</td><td class="c-action">'+actCell+'</td>'+leaseCell+'</tr>';
         });
-        html += '<tr><td style="font-weight:700;">Total ('+bTenants.length+' tenants)</td><td></td><td>'+bTotal.toLocaleString()+'</td><td>$'+bRent.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})+'</td><td></td><td></td><td></td><td></td><td></td>'+(hasLeases?'<td></td>':'')+'</tr>';
+        html += '<tr><td class="c-tenant" style="font-weight:700;">Total ('+bTenants.length+' tenants)</td><td class="c-suite"></td><td class="c-sf">'+bTotal.toLocaleString()+'</td><td class="c-rent">$'+bRent.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})+'</td><td class="c-sfyr"></td><td class="c-status"></td><td class="c-expiry"></td><td class="c-notice"></td><td class="c-action"></td><td class="c-lease"></td></tr>';
         html += '</tbody></table>';
 
         // Documents panel for buildings that have leases on file
@@ -1888,6 +1910,7 @@ function renderPropertyDetail(p) {
   }
 
   document.getElementById("detailContent").innerHTML = html;
+  applySopCols();
   lucide.createIcons();
 
   // Render charts after DOM is ready
