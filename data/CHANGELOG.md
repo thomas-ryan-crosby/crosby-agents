@@ -194,10 +194,12 @@ by suite; Suite 101 owner-occupant not in the table). Rent, SQFT and escalation 
   the stale "vacant July 1" note. ⚠ This post-dates the existing Suite 302 vacancy-marketing
   outputs — regenerate if the exact date matters.
 
-**Assumption to confirm:** the table's expiration *month* sits one month after several of
-the current end-of-month dates (e.g. Bayou `2026-12-31` → table `01 2027`). Treated the
-table as authoritative and used last-day-of-stated-month; correct any specific days if the
-two were meant to describe the same expiry.
+**Expiration-date rule (resolved):** the operator's "Exp MM YYYY" is the renewal/expiration
+*month*; the termination date is the **last day of the month before it**. Recomputed all 12
+(e.g. Bayou `01 2027` → `2026-12-31`; Security National `07 2026` → `2026-06-30`, back to the
+original vacate date). The escalation column shows the renewal month (term ends the last day
+prior). M Squared/Mand Tech/Brandner/Detox shifted off their earlier specific days to the
+month-end accordingly.
 
 **Correction:** the Suite 100 table row labeled "Christine West" is the **broker**, not the
 tenant. Tenant reverted to **Fine Southern Properties**; **Christine Westenberger** recorded
