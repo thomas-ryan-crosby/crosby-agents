@@ -18,6 +18,7 @@
     "location": "Mandeville, LA",
     "isCommercial": true,
     "isHOA": false,
+    "requiredInsurance": { "glEachOccurrence": 1000000, "additionalInsured": true },
     "profile": {
       "type": "Commercial Office Park",
       "address": "1 Sanctuary Blvd, Mandeville, LA 70471",

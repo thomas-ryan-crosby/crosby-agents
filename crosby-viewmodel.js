@@ -100,6 +100,43 @@ function leaseAction(lease, vacant, today) {
   return { label: "Verify Renewal Terms", tone: "attention" };
 }
 
+// Insurance/COI status for a roster row, derived from the tenant's certificates of
+// insurance and the property's required coverage. tone mirrors leaseAction: steady
+// (green/compliant), attention (amber/expiring or missing), urgent (red/expired or
+// below-requirement). The earliest-expiring coverage governs the overall expiration.
+function deriveInsurance(cois, required, today) {
+  const req = required || { glEachOccurrence: 1000000, additionalInsured: true };
+  if (!cois || !cois.length) {
+    return { status: "missing", label: "No COI on file", tone: "attention",
+      expiry: "—", expiryIn: "", expiryTone: "neutral",
+      flags: ["No certificate of insurance on file"], doc: null, producer: null };
+  }
+  const coi = cois.slice().sort((a, b) => String(b.date || "").localeCompare(String(a.date || "")))[0];
+  const covs = coi.coverages || [];
+  const exps = covs.map((c) => c.expiration).filter((d) => /^\d{4}-\d{2}-\d{2}$/.test(d || ""));
+  const earliest = exps.sort()[0] || (/^\d{4}-\d{2}-\d{2}$/.test(coi.expiration || "") ? coi.expiration : null);
+  const expDays = daysBetween(earliest, today);
+  const flags = [];
+  const gl = covs.find((c) => /general\s*liab/i.test(c.type || ""));
+  const glEach = gl ? num(gl.eachOccurrence) : 0;
+  if (req.glEachOccurrence && glEach < req.glEachOccurrence)
+    flags.push("GL each-occurrence " + (glEach ? "$" + glEach.toLocaleString() : "not shown") +
+      " is below the required $" + req.glEachOccurrence.toLocaleString());
+  if (req.additionalInsured && coi.additionalInsured !== true)
+    flags.push("Crosby not confirmed as additional insured / certificate holder");
+  const expired = expDays != null && expDays < 0;
+  const expiringSoon = expDays != null && expDays >= 0 && expDays <= 60;
+  let status, label, tone;
+  if (expired) { status = "expired"; label = "COI Expired"; tone = "urgent"; flags.unshift("Coverage expired " + earliest); }
+  else if (flags.length) { status = "noncompliant"; label = "Action Needed"; tone = "urgent"; }
+  else if (expiringSoon) { status = "expiring"; label = "Expiring Soon"; tone = "attention"; }
+  else { status = "compliant"; label = "Compliant"; tone = "steady"; }
+  const doc = coi.url ? { docType: "COI", date: coi.date || null, url: coi.url,
+    htmlUrl: coi.htmlUrl || null, meta: coi.meta || null } : null;
+  return { status, label, tone, expiry: earliest || "—", expiryIn: humanUntil(earliest, today),
+    expiryTone: dateTone(expDays), flags, doc, producer: coi.producer || null };
+}
+
 export function deriveViewModel(entities) {
   const today = Date.now();
   const props = entities.properties || [];
@@ -110,6 +147,8 @@ export function deriveViewModel(entities) {
   const hoaLots = entities.hoaLots || [];
 
   const leaseDocsEnt = entities.leaseDocs || [];
+  const coisEnt = entities.cois || [];
+  const coisByProp = groupBy(coisEnt, "propertyId");
   const tenantById = new Map(tenants.map((t) => [t.id, t]));
   const leaseByUnit = new Map(leases.map((l) => [l.unitId, l]));
   const unitsByProp = groupBy(units, "propertyId");
@@ -144,7 +183,9 @@ export function deriveViewModel(entities) {
     };
 
     if (p.isCommercial) {
-      Object.assign(base, deriveCommercial(p, pBldgs, unitsByBldg, leaseByUnit, tenantById, pLeases));
+      const coiByName = {};
+      for (const c of (coisByProp[p.id] || [])) (coiByName[c.tenant] = coiByName[c.tenant] || []).push(c);
+      Object.assign(base, deriveCommercial(p, pBldgs, unitsByBldg, leaseByUnit, tenantById, pLeases, coiByName));
       TENANT_ROSTER[p.id] = base._tenantRoster; delete base._tenantRoster;
       LEASE_TERMS[p.id] = base._leaseTerms; delete base._leaseTerms;
     } else if (p.isHOA) {
@@ -190,8 +231,9 @@ export function deriveViewModel(entities) {
 }
 
 // ── Commercial (e.g. Sanctuary Office Park) ────────────────────────────────────
-function deriveCommercial(p, pBldgs, unitsByBldg, leaseByUnit, tenantById, pLeases) {
+function deriveCommercial(p, pBldgs, unitsByBldg, leaseByUnit, tenantById, pLeases, coiByName) {
   const today = Date.now();
+  const required = p.requiredInsurance || { glEachOccurrence: 1000000, additionalInsured: true };
   const buildings = [], tenantRoster = {}, leaseTerms = {};
   let totalSF = 0, occSF = 0, vacSF = 0, monthly = 0, tenantCount = 0;
 
@@ -218,6 +260,7 @@ function deriveCommercial(p, pBldgs, unitsByBldg, leaseByUnit, tenantById, pLeas
         noticeIn: humanUntil(lease && lease.noticeDeadline, today),
         noticeTone: lease ? dateTone(daysBetween(lease.noticeDeadline, today)) : "neutral",
         action: leaseAction(lease, vacant, today),
+        insurance: vacant ? null : deriveInsurance((coiByName || {})[tenant && tenant.name], required, today),
       });
 
       if (lease) {

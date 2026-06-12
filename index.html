@@ -1605,7 +1605,7 @@ var detailCharts = {};
 
 // Show/hide columns for the commercial tenant tables. Column cells carry a
 // `c-<key>` class; hidden columns are suppressed by a single global <style>.
-var SOP_COLS = [['tenant','Tenant'],['suite','Suite'],['sf','Square Feet'],['rent','Monthly Rent'],['sfyr','$/SF/Yr'],['status','Status'],['expiry','Expiry'],['notice','Notice'],['action','Action'],['lease','Lease'],['legacy','Legacy Leases']];
+var SOP_COLS = [['tenant','Tenant'],['suite','Suite'],['sf','Square Feet'],['rent','Monthly Rent'],['sfyr','$/SF/Yr'],['status','Status'],['expiry','Expiry'],['notice','Notice'],['action','Action'],['lease','Lease'],['legacy','Legacy Leases'],['coi','Insurance']];
 
 // One-time styles for the lease widget + metadata hover card.
 function ensureLeaseStyles() {
@@ -1618,8 +1618,27 @@ function ensureLeaseStyles() {
     '.lw a.html{color:#2563eb;border:1px solid #bfdbfe;background:#eff6ff;}'+
     '.lw .tip{display:none;position:absolute;z-index:60;bottom:100%;left:0;margin-bottom:6px;width:270px;background:#111827;color:#e5e7eb;font-size:11px;font-weight:400;line-height:1.55;text-align:left;padding:9px 11px;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.28);white-space:normal;}'+
     '.lw:hover .tip{display:block;}'+
-    '.lw .tip b{color:#fff;}.lw .tip .k{color:#9ca3af;}';
+    '.lw .tip b{color:#fff;}.lw .tip .k{color:#9ca3af;}'+
+    '.iw{position:relative;display:inline-flex;flex-direction:column;align-items:flex-start;gap:2px;}'+
+    '.iw .tip{display:none;position:absolute;z-index:60;bottom:100%;left:0;margin-bottom:6px;width:260px;background:#111827;color:#e5e7eb;font-size:11px;font-weight:400;line-height:1.55;text-align:left;padding:9px 11px;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.28);white-space:normal;}'+
+    '.iw:hover > .tip{display:block;}.iw .tip b{color:#fff;}';
   document.head.appendChild(s);
+}
+// Insurance/COI cell for a roster row: compliance badge + expiration countdown +
+// COI doc widget, with a hover card listing any compliance flags.
+function insuranceCell(ins){
+  if(!ins) return '<span style="font-size:11px;color:#d1d5db;">—</span>';
+  var toneBdg = {steady:'badge-approved',attention:'badge-pending',urgent:'badge-revision',neutral:'badge-idle'}[ins.tone||'neutral'];
+  var toneCol = {urgent:'#dc2626',attention:'#b45309',steady:'#059669',neutral:'#9ca3af'};
+  var badge = '<span class="badge '+toneBdg+'">'+ins.label+'</span>';
+  var exp = (ins.expiry && ins.expiry!=='—') ? '<div style="font-size:11px;color:#374151;">Exp '+ins.expiry+(ins.expiryIn?' <span style="font-weight:600;color:'+(toneCol[ins.expiryTone]||'#9ca3af')+';">('+ins.expiryIn+')</span>':'')+'</div>' : '';
+  var docw = ins.doc ? leaseWidget(ins.doc) : '';
+  var tipRows = [];
+  if(ins.producer) tipRows.push('<b>'+ins.producer+'</b>');
+  if(ins.flags && ins.flags.length) ins.flags.forEach(function(f){ tipRows.push('&bull; '+f); });
+  else if(ins.status==='compliant') tipRows.push('Coverage on file meets the lease requirement ($1M GL, Crosby named as insured).');
+  var tip = tipRows.length ? '<div class="tip">'+tipRows.join('<br>')+'</div>' : '';
+  return '<span class="iw">'+badge+exp+docw+tip+'</span>';
 }
 function leaseTip(ld){
   var m = ld.meta || {}; var rows = [];
@@ -1783,7 +1802,7 @@ function renderPropertyDetail(p) {
         Object.keys(docsByTenant).forEach(function(k){ docsByTenant[k].sort(function(a,b){ return String(b.date||'').localeCompare(String(a.date||'')); }); });
         var hasLeases = buildingLeases.length > 0;
 
-        html += '<table class="unit-table"><thead><tr><th class="c-tenant">Tenant</th><th class="c-suite">Suite</th><th class="c-sf">Square Feet</th><th class="c-rent">Monthly Rent</th><th class="c-sfyr">$/SF/Yr</th><th class="c-status">Status</th><th class="c-expiry">Expiry</th><th class="c-notice">Notice</th><th class="c-action">Action</th><th class="c-lease">Lease</th><th class="c-legacy">Legacy Leases</th></tr></thead><tbody>';
+        html += '<table class="unit-table"><thead><tr><th class="c-tenant">Tenant</th><th class="c-suite">Suite</th><th class="c-sf">Square Feet</th><th class="c-rent">Monthly Rent</th><th class="c-sfyr">$/SF/Yr</th><th class="c-status">Status</th><th class="c-expiry">Expiry</th><th class="c-notice">Notice</th><th class="c-action">Action</th><th class="c-lease">Lease</th><th class="c-legacy">Legacy Leases</th><th class="c-coi">Insurance</th></tr></thead><tbody>';
         var bTotal = 0, bRent = 0;
         bTenants.forEach(function(t) {
           bTotal += t.sf;
@@ -1800,9 +1819,9 @@ function renderPropertyDetail(p) {
           var toneCol = {urgent:'#dc2626',attention:'#b45309',steady:'#059669',neutral:'#9ca3af'};
           var expSub = t.expiryIn ? '<div style="font-size:10px;font-weight:600;color:'+(toneCol[t.expiryTone]||'#9ca3af')+';">'+t.expiryIn+'</div>' : '';
           var notSub = t.noticeIn ? '<div style="font-size:10px;font-weight:600;color:'+(toneCol[t.noticeTone]||'#9ca3af')+';">'+t.noticeIn+'</div>' : '';
-          html += '<tr><td class="c-tenant" style="font-weight:500;">'+t.tenant+'</td><td class="c-suite">'+t.suite+'</td><td class="c-sf">'+t.sf.toLocaleString()+'</td><td class="c-rent">'+(t.rent>0?'$'+t.rent.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}):'—')+'</td><td class="c-sfyr">'+sfyr+'</td><td class="c-status">'+statusBdg+'</td><td class="c-expiry" style="font-size:12px;'+(t.expiry==='—'?'color:#d1d5db;':'')+'">'+t.expiry+expSub+'</td><td class="c-notice" style="font-size:12px;'+(t.notice==='—'?'color:#d1d5db;':'')+'">'+t.notice+notSub+'</td><td class="c-action">'+actCell+'</td>'+leaseCell+legacyCell+'</tr>';
+          html += '<tr><td class="c-tenant" style="font-weight:500;">'+t.tenant+'</td><td class="c-suite">'+t.suite+'</td><td class="c-sf">'+t.sf.toLocaleString()+'</td><td class="c-rent">'+(t.rent>0?'$'+t.rent.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}):'—')+'</td><td class="c-sfyr">'+sfyr+'</td><td class="c-status">'+statusBdg+'</td><td class="c-expiry" style="font-size:12px;'+(t.expiry==='—'?'color:#d1d5db;':'')+'">'+t.expiry+expSub+'</td><td class="c-notice" style="font-size:12px;'+(t.notice==='—'?'color:#d1d5db;':'')+'">'+t.notice+notSub+'</td><td class="c-action">'+actCell+'</td>'+leaseCell+legacyCell+'<td class="c-coi">'+insuranceCell(t.insurance)+'</td></tr>';
         });
-        html += '<tr><td class="c-tenant" style="font-weight:700;">Total ('+bTenants.length+' tenants)</td><td class="c-suite"></td><td class="c-sf">'+bTotal.toLocaleString()+'</td><td class="c-rent">$'+bRent.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})+'</td><td class="c-sfyr"></td><td class="c-status"></td><td class="c-expiry"></td><td class="c-notice"></td><td class="c-action"></td><td class="c-lease"></td><td class="c-legacy"></td></tr>';
+        html += '<tr><td class="c-tenant" style="font-weight:700;">Total ('+bTenants.length+' tenants)</td><td class="c-suite"></td><td class="c-sf">'+bTotal.toLocaleString()+'</td><td class="c-rent">$'+bRent.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})+'</td><td class="c-sfyr"></td><td class="c-status"></td><td class="c-expiry"></td><td class="c-notice"></td><td class="c-action"></td><td class="c-lease"></td><td class="c-legacy"></td><td class="c-coi"></td></tr>';
         html += '</tbody></table>';
 
         html += '</div>';

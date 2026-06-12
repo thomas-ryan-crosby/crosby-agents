@@ -56,6 +56,7 @@ async function main() {
     leases:     "leases.json",
     hoaLots:    "hoa-lots.json",
     leaseDocs:  "lease-docs.json",
+    cois:       "cois.json",
   };
   for (const [col, file] of Object.entries(entityFiles)) {
     const path = join(DATA_DIR, file);
