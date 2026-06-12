@@ -140,7 +140,7 @@ export function deriveViewModel(entities) {
     if (!d.tenant || !d.propertyId || !d.building) continue; // skip unmatched/unlinked
     const byProp = LEASE_DOCS[d.propertyId] || (LEASE_DOCS[d.propertyId] = {});
     (byProp[d.building] || (byProp[d.building] = [])).push({
-      tenant: d.tenant, suite: d.suite, file: d.file, docType: d.docType, url: d.url,
+      tenant: d.tenant, suite: d.suite, file: d.file, docType: d.docType, url: d.url, htmlUrl: d.htmlUrl || null,
     });
   }
 
