@@ -255,320 +255,15 @@
 
 <script>
 // ── REAL DATA ONLY ──────────────────────────────────────────────────────────
-const PROPERTIES = [
-  { slug: "metairie-plaza", name: "Metairie Plaza", location: "Metairie, LA", units: 66, occupied: 60, vacant: 4, turnover: 2, occupancy: 91, cls: "Multi-Family", status: "data-loaded",
-    unitMix: [
-      { plan: "2 BR Flat", beds: "2/2", sqft: "1,040", rent: "$955–$1,300", count: 16, vacant: 1 },
-      { plan: "2 BR Flat CP", beds: "2/2", sqft: "1,080", rent: "$970–$1,250", count: 6, vacant: 1 },
-      { plan: "2 BR Townhome", beds: "2/1.5", sqft: "1,054", rent: "$980–$1,250", count: 14, vacant: 1 },
-      { plan: "2 BR Townhome CP", beds: "2/1.5–2", sqft: "1,054–1,150", rent: "$920–$1,250", count: 12, vacant: 1 },
-      { plan: "3 BR Townhome", beds: "3/2", sqft: "1,150", rent: "$1,150–$1,600", count: 8, vacant: 0 },
-      { plan: "3 BR Townhome CP", beds: "3/2", sqft: "1,150", rent: "$1,150–$1,350", count: 6, vacant: 0 },
-      { plan: "EX 3 BR Townhome", beds: "3/2.5", sqft: "1,735", rent: "$1,200–$2,200", count: 4, vacant: 1 },
-    ]},
-  { slug: "metairie-lake-apartments", name: "Metairie Lake Apartments", location: "Metairie, LA", units: 108, occupied: 98, vacant: 9, turnover: 1, occupancy: 91, cls: "Multi-Family", status: "data-loaded",
-    unitMix: [
-      { plan: "1 Bedroom", beds: "1/1", sqft: "696–699", rent: "$800–$1,475", count: 80, vacant: 7 },
-      { plan: "2 Bedroom", beds: "2/2", sqft: "1,044–1,230", rent: "$1,030–$1,600", count: 28, vacant: 2 },
-    ]},
-  { slug: "sanctuary-office-park", name: "Sanctuary Office Park", location: "Mandeville, LA", units: 5, occupied: 5, vacant: 0, turnover: 0, cls: "Commercial", status: "data-loaded",
-    isCommercial: true, totalSF: 91602, occupiedSF: 91352, vacantSF: 250, occupancy: 99.7, tenantCount: 38, monthlyRent: 173452.80, annualRent: 2081433.60, avgRentSF: 27.26,
-    buildings: [
-      { name: "Sanctuary #1", sf: 10228, occupiedSF: 10228, vacantSF: 0, tenants: 12, monthly: 23085.94 },
-      { name: "Sanctuary #2", sf: 20133, occupiedSF: 20133, vacantSF: 0, tenants: 14, monthly: 36844.59 },
-      { name: "Sanctuary #3", sf: 20385, occupiedSF: 20385, vacantSF: 0, tenants: 2, monthly: 41245.24 },
-      { name: "Sanctuary #4", sf: 20289, occupiedSF: 20039, vacantSF: 250, tenants: 7, monthly: 35472.86 },
-      { name: "Sanctuary #5", sf: 20567, occupiedSF: 20567, vacantSF: 0, tenants: 4, monthly: 36804.17 },
-    ]},
-  { slug: "mandeville-lake-apartments", name: "Mandeville Lake Apartments", location: "Mandeville, LA", units: 293, occupied: 284, vacant: 9, turnover: 0, occupancy: 96.9, cls: "Multi-Family", status: "data-loaded",
-    totalSF: 340232, monthlyRent: 390799, annualRent: 4689588,
-    buildings: [
-      { name: "Building 1", units: 29, occupied: 29, vacant: 0, monthly: 36680 },
-      { name: "Building 2", units: 29, occupied: 29, vacant: 0, monthly: 37260 },
-      { name: "Building 3", units: 27, occupied: 26, vacant: 1, monthly: 35995 },
-      { name: "Building 4", units: 26, occupied: 26, vacant: 0, monthly: 36255 },
-      { name: "Building 5", units: 13, occupied: 13, vacant: 0, monthly: 18000 },
-      { name: "Building 6", units: 25, occupied: 23, vacant: 2, monthly: 34910 },
-      { name: "Building 7", units: 24, occupied: 23, vacant: 1, monthly: 33249 },
-      { name: "Building 8", units: 30, occupied: 28, vacant: 2, monthly: 36350 },
-      { name: "Building 9", units: 29, occupied: 29, vacant: 0, monthly: 37945 },
-      { name: "Building 10", units: 13, occupied: 12, vacant: 1, monthly: 16705 },
-      { name: "Building 11", units: 25, occupied: 23, vacant: 2, monthly: 34485 },
-      { name: "Building 12", units: 23, occupied: 23, vacant: 0, monthly: 32965 }
-    ],
-    unitMix: [
-      { plan: "Azalea (1BR)", beds: "1/1", sqft: "840", rent: "$1,030–$1,220", count: 60, vacant: 2 },
-      { plan: "Elm (1BR)", beds: "1/1", sqft: "880", rent: "$945–$1,270", count: 41, vacant: 1 },
-      { plan: "Bradford (2BR)", beds: "2/2", sqft: "1,240", rent: "$1,250–$1,625", count: 53, vacant: 2 },
-      { plan: "Cypress (2BR)", beds: "2/2", sqft: "1,200", rent: "$1,120–$1,500", count: 54, vacant: 1 },
-      { plan: "Dogwood (3BR)", beds: "3/2", sqft: "1,482", rent: "$1,070–$1,800", count: 69, vacant: 2 },
-      { plan: "Fern (3BR)", beds: "3/2", sqft: "1,371", rent: "$1,370–$1,650", count: 12, vacant: 0 },
-      { plan: "Other", beds: "—", sqft: "—", rent: "Varies", count: 4, vacant: 1 }
-    ] },
-  { slug: "lakeside-village-townhomes", name: "Lakeside Village Townhomes", location: "Mandeville, LA", units: 45, occupied: 45, vacant: 0, turnover: 0, occupancy: 100, cls: "HOA / Mixed", status: "data-loaded",
-    isHOA: true, totalLots: 45, townhomes: 31, cottages: 14, rented: 15, ownerOccupied: 30, crosbyOwned: 11, crosbyManaged: 11, thirdPartyManaged: 4, monthlyRent: 30675, monthlyDues: 91880,
-    unitMix: [
-      { plan: "Townhome", beds: "N/A", sqft: "2,041–3,366", rent: "$1,500–$3,200/mo", count: 31, vacant: 0 },
-      { plan: "Cottage", beds: "N/A", sqft: "2,072", rent: "$3,200/mo", count: 14, vacant: 0 },
-    ]},
-  { slug: "gulf-south-commerce-park", name: "Gulf South Commerce Park", location: "St. Tammany Parish, LA", units: 0, occupancy: 0, cls: "Industrial", status: "pending" },
-  { slug: "delimon-place", name: "DeLimon Place", location: "Old Metairie, LA", units: 0, occupancy: 0, cls: "Townhome / Mixed", status: "pending" },
-  { slug: "the-sanctuary", name: "The Sanctuary", location: "Mandeville, LA", units: 0, occupancy: 0, cls: "HOA / Single-Family", status: "pending" },
-];
-
-// ── PROPERTY PROFILES ──────────────────────────────────────────────────────
-const PROPERTY_PROFILES = {
-  "metairie-plaza": {
-    type: "Apartment Complex", address: "1046 Lake Avenue, Metairie, LA 70005",
-    website: "metairieplaza.com", phone: "(504) 565-2664", yearBuilt: 1972, stories: 2, totalUnits: 66,
-    involvement: "Ground-up development complete — owned rental apartment complex",
-    description: "Centrally located in Metairie, minutes from the New Orleans CBD. Features 2 & 3 bedroom units (1,040–1,735 SF) including flats, townhomes, and executive townhomes. Amenities include a private swimming pool, ample off-street parking, covered carports, outdoor storage lockers, and professional on-site management.",
-    sqftRange: "1,040–1,735 SF", rentRange: "$955–$2,200/mo",
-  },
-  "metairie-lake-apartments": {
-    type: "Apartment Complex", address: "1309 Carrollton Avenue, Metairie, LA 70005",
-    website: "metairielake.com", phone: "(504) 285-5221", yearBuilt: 1978, stories: 3, totalUnits: 108,
-    involvement: "Ground-up development complete — owned rental apartment complex",
-    description: "Spacious 1 & 2 bedroom floor plans (696–1,230 SF) near New Orleans CBD, medical schools, and universities. Amenities include a swimming pool, courtyard, clubhouse, controlled access, fitness center, walk-in closets, and private patios/balconies. 10.7 miles from Louis Armstrong International Airport.",
-    sqftRange: "696–1,230 SF", rentRange: "$800–$1,600/mo",
-  },
-  "sanctuary-office-park": {
-    type: "Commercial Office Park", address: "1 Sanctuary Blvd, Mandeville, LA 70471",
-    website: "sanctuaryofficepark.com", phone: "(985) 373-2383", yearBuilt: 1995, stories: 3, totalUnits: null,
-    involvement: "Ground-up development complete — owned rental office complex",
-    description: "Five Class A commercial office buildings with beautifully landscaped grounds. Suites range from 200 to 13,455 SF. Full-service lease structure includes janitorial, trash, property maintenance, and HVAC — no CAM charges, no year-end adjustments. Fixed 3% annual rent increases. Located 2 miles from the Causeway Bridge with easy access to New Orleans and Baton Rouge. 38 active tenants, 91,602 total rentable SF, 99.7% leased.",
-    sqftRange: "200–13,455 SF", rentRange: "$309–$27,564/mo",
-  },
-  "mandeville-lake-apartments": {
-    type: "Apartment Complex", address: "4840 Highway 22, Mandeville, LA 70471",
-    website: "mandevillelake.com", phone: null, yearBuilt: null, stories: null, totalUnits: null,
-    involvement: "Ground-up development complete — owned rental apartment complex",
-    description: "Luxury apartment community in Mandeville offering 1–3 bedroom units (840–1,482 SF) starting at $1,525/mo. Features elevators in every building, trash chutes on every floor, 9-ft ceilings, crown molding, fireplaces, ceiling fans, and open-concept kitchens with custom cabinetry. Amenities include a clubhouse, two pools, tennis courts, car washing station, 24-hour fitness center, and playground. 5 minutes from the Causeway Bridge.",
-    sqftRange: "840–1,482 SF", rentRange: "From $1,525/mo",
-  },
-  "lakeside-village-townhomes": {
-    type: "HOA Community — Townhomes & Cottages", address: "1100 Mandeville High Blvd, Mandeville, LA 70471",
-    website: "lakesidevillage.org", phone: null, yearBuilt: null, stories: null, totalUnits: null,
-    involvement: "Ground-up development complete — partial unit ownership, partial property management contracts, full HOA management",
-    description: "Gated luxury townhome and cottage community in the heart of Mandeville, just steps from the Causeway. Upgraded amenities include well-equipped kitchens, crown molding, granite countertops, double-car garages, controlled access, private pool, club room with fitness center, pond, and community center. Located off Rue Renoir, directly across from Mandeville High School.",
-    sqftRange: "N/A", rentRange: "N/A",
-  },
-  "gulf-south-commerce-park": {
-    type: "Industrial Mega Site", address: "I-12 & LA Hwy 1088, St. Tammany Parish, LA",
-    website: "gulfsouthcommercepark.com", phone: null, yearBuilt: null, stories: null, totalUnits: null,
-    involvement: "Horizontal development — selling building pads. One plat sold (Parcel 1-A)",
-    description: "919-acre industrial mega site in St. Tammany Parish, less than 50 miles north of New Orleans. Master-planned for Advanced Manufacturing and Logistics. Located at I-12 & Hwy 1088 with access to ports, rail, and major highways. Developed in partnership with St. Tammany Corporation and Parish Government. Selected as a Louisiana FastSites project (2026) under the $150M Site Investment & Infrastructure Fund. Parcels available from 1 to 189 acres — currently doing horizontal development and selling building pads.",
-    sqftRange: "919 total acres", rentRange: "Land sales — pad-ready parcels",
-  },
-  "delimon-place": {
-    type: "Townhome Community & Apartment Complexes", address: "800 Rue Rampart, Old Metairie, LA 70005",
-    website: "delimonoldmetairie.com", phone: null, yearBuilt: 1981, stories: 3, totalUnits: 125,
-    involvement: "Limited remaining ownership — a few units + on-site office building. 3 separate HOAs. No HOA or property management involvement.",
-    description: "Established in 1981, DeLimon Place is an Old Metairie icon. Townhomes and two apartment complexes across 3 separate HOAs on a single site. Townhomes are ~3,000 SF (3-story). Pristine common areas, inground pool, party room. Easy access to City Park, Downtown New Orleans, the French Quarter, and the airport.",
-    sqftRange: "~3,000 SF (townhomes)", rentRange: "N/A",
-  },
-  "the-sanctuary": {
-    type: "Luxury Single-Family Community", address: "Sanctuary Blvd, Mandeville, LA 70471",
-    website: "thesanctuaryneighborhood.org", phone: null, yearBuilt: 1995, stories: null, totalUnits: 400,
-    involvement: "HOA management. One owned rental property. Multiple family members reside in the community.",
-    description: "Private gated community established in 1995 by Crosby Development Company on 1,170 acres less than 2 miles from Lake Pontchartrain. 400+ homesites surrounded by native wetlands, cypress marshes, and nature preserves. Amenities include a Health and Activity Center with tournament-sized pool, tennis courts, fitness facilities, and miles of walking/jogging/nature trails. Underground utilities. Lots from $215K–$676K; homes from $750K–$3.2M.",
-    sqftRange: "Custom homes", rentRange: "Lots $215K–$676K; Homes $750K–$3.2M",
-  },
-};
-
-// ── TENANT / UNIT DATA ──────────────────────────────────────────────────────
-const UNIT_ROSTER = {
-  "metairie-plaza": [
-    {unit:'1034 A',plan:'3 BR TH',name:'Bernadette Patterson',phone:'301-8033',email:'bpatterson@cox.net',status:'Occupied'},{unit:'1034 B',plan:'2 BR TH',name:'Kaitlyn Sorbel',phone:'504-756-3327',email:'ksorbel1994@live.com',status:'Occupied'},{unit:'1034 C',plan:'2 BR TH',name:'Priscilla Shepack',phone:'504-914-3589',email:'shepackpriscilla@gmail.com',status:'Occupied'},{unit:'1034 D',plan:'2 BR TH',name:'Mary/Reese Ellis/ Bourdais',phone:'504-421-8596',email:'mgellis2020@gmail.com',status:'Occupied'},
-    {unit:'1034 E',plan:'3 BR TH',name:'Jerry/William White/Thornton',phone:'606-3729',email:'',status:'Occupied'},{unit:'1041 A',plan:'2 BR FL',name:'Bryan Hartman',phone:'256-9438',email:'bryankhartman@gmail.com',status:'Occupied'},{unit:'1041 B',plan:'2 BR FL',name:'Christon Saik',phone:'',email:'cornut531@gmail.com',status:'Occupied'},{unit:'1041 C',plan:'2 BR FL',name:'from Met. Lake',phone:'',email:'',status:'Vacant'},
-    {unit:'1041 D',plan:'2 BR FL',name:'Mitchell Temple',phone:'',email:'mitchell.temple@ochsner.org',status:'Occupied'},{unit:'1041 E',plan:'2 BR FL',name:'Whitney Wortham',phone:'318-235-8968',email:'whitney_wortham@yahoo.com',status:'Occupied'},{unit:'1041 F',plan:'2 BR FL',name:'Sharon Callegan',phone:'835-0695',email:'',status:'Occupied'},{unit:'1041 G',plan:'2 BR FL',name:'Devonica Deal',phone:'377-4628',email:'devonicad@gmail.com',status:'Moved Out'},
-    {unit:'1041 H',plan:'2 BR FL',name:'Norma Velasquez',phone:'504-505-4862',email:'nlizeth35@hotmail.com',status:'Occupied'},{unit:'1044 A',plan:'2 BR FL',name:'Laura Romero',phone:'504-250-2063',email:'',status:'Occupied'},{unit:'1044 B',plan:'2 BR FL',name:'Julia Shane',phone:'504-523-1927',email:'mariecaj2@ymail.com',status:'Occupied'},{unit:'1044 C',plan:'2 BR FL',name:'Carlette Hayes',phone:'225-328-5069',email:'Carlette.I.Hayes@usps.gov',status:'Occupied'},
-    {unit:'1044 D',plan:'2 BR FL',name:'Elizabeth Bernard',phone:'504-874-3549',email:'elizpbernard@gmail.com',status:'Moving'},{unit:'1044 E',plan:'2 BR FL',name:'Janet Mouledous',phone:'504-453-9475',email:'janetmouledous@gmail.com',status:'Occupied'},{unit:'1044 F',plan:'2 BR FL',name:'Lauren Giraud-Lotz',phone:'432-9319',email:'laurenglotz@gmail.com',status:'Occupied'},{unit:'1044 G',plan:'2 BR FL',name:'Nathan/Caitlin Reveley/Murphy',phone:'',email:'sunsetswamp@gmail.com',status:'Occupied'},
-    {unit:'1044 H',plan:'2 BR FL',name:'Laurie Gendron',phone:'',email:'lauriebg7@gmail.com',status:'Occupied'},{unit:'1048 A',plan:'3 BR TH',name:'Ronald Olivier',phone:'520-9734',email:'rolivier8486@yahoo.com',status:'Occupied'},{unit:'1048 B',plan:'2 BR TH',name:'Christina Kapsos-Munch',phone:'628-9033',email:'ckapsosmunch@yahoo.com',status:'Occupied'},{unit:'1048 C',plan:'2 BR TH',name:'Kathryn Picone',phone:'504-444-5591',email:'berkana1@gmail.com',status:'Occupied'},
-    {unit:'1048 D',plan:'2 BR TH',name:'Rogers Joyce',phone:'',email:'rogersnorton@gmail.com',status:'Occupied'},{unit:'1048 E',plan:'3 BR TH',name:'Noel Cipriano',phone:'833-1046',email:'',status:'Occupied'},{unit:'209 A',plan:'2 BR FL CP',name:'Kenneth Dedrick',phone:'504-982-7117',email:'kennethdedrick4@yahoo.com',status:'Occupied'},{unit:'209 B',plan:'2 BR TH CP',name:'Joseph Faroldi',phone:'504-913-2596',email:'',status:'Occupied'},
-    {unit:'209 C',plan:'2 BR TH CP',name:'Abigail Richard',phone:'985-551-1353',email:'abigailamyrichard@gmail.com',status:'Occupied'},{unit:'209 D',plan:'3 BR TH CP',name:'Paula Jackson',phone:'722-7405',email:'pjackson5656@gmail.com',status:'Occupied'},{unit:'210 A',plan:'2 BR FL CP',name:'Calvin/Abigail Idom/Lonigro',phone:'',email:'calvinidom@gmail.com',status:'Occupied'},{unit:'210 B',plan:'2 BR TH CP',name:'Patricia Frost-Chiek',phone:'874-1561',email:'trishafrost22@gmail.com',status:'Occupied'},
-    {unit:'210 C',plan:'2 BR TH CP',name:'Dado Papich',phone:'504-616-0541',email:'dpapic24@yahoo.com',status:'Occupied'},{unit:'210 D',plan:'3 BR TH CP',name:'Kenneth/Mira Foxworth/Jones',phone:'',email:'kenf1988@yahoo.com',status:'Occupied'},{unit:'217 A',plan:'2 BR FL CP',name:'Tomas/Kristel Aparicio/Hurtado',phone:'',email:'tomas.aparicio@ritzcarlton.com',status:'Occupied'},{unit:'217 B',plan:'2 BR TH CP',name:'Vaja\'e Parker',phone:'504-458-9284',email:'vparker504@icloud.com',status:'Occupied'},
-    {unit:'217 C',plan:'2 BR TH CP',name:'Cornell Manuel',phone:'504-325-6636',email:'cjmanpha1993@gmail.com',status:'Occupied'},{unit:'217 D',plan:'3 BR TH CP',name:'Linda Morgan',phone:'864-9455',email:'linda@nolasport.net',status:'Occupied'},{unit:'218 A',plan:'2 BR FL CP',name:'Thanh Duong',phone:'985-859-2614',email:'thanh42390@yahoo.com',status:'Occupied'},{unit:'218 B',plan:'2 BR TH CP',name:'Ivan Duong',phone:'',email:'',status:'Vacant'},
-    {unit:'218 C',plan:'2 BR TH CP',name:'Herman Lombos',phone:'833-6599',email:'hlombas@cox.net',status:'Occupied'},{unit:'218 D',plan:'3 BR TH CP',name:'Ken Susan',phone:'838-9425',email:'',status:'Occupied'},{unit:'225 A',plan:'2 BR FL CP',name:'Helen Harris',phone:'504-874-1079',email:'mz_honey504@yahoo.com',status:'Occupied'},{unit:'225 B',plan:'2BR TH CP',name:'Jazmine/Allie King/King',phone:'985-351-2818',email:'jking16@tulane.edu',status:'Occupied'},
-    {unit:'225 C',plan:'2 BR TH CP',name:'Monica Mora',phone:'504-717-3449',email:'mlm682@hotmail.com',status:'Occupied'},{unit:'225 D',plan:'3 BR TH CP',name:'Alexandra Raskina Alexander',phone:'828-8173',email:'sasha.raskina@gmail.com',status:'Occupied'},{unit:'226 A',plan:'2 BR FL CP',name:'Joshua Vivas Gomez',phone:'305-570-7426',email:'joshuavivas89@gmail.com',status:'Occupied'},{unit:'226 B',plan:'2 BR TH CP',name:'Debra James',phone:'710-0563',email:'debrajames12555@gmail.com',status:'Occupied'},
-    {unit:'226 C',plan:'2 BR TH CP',name:'Brock/Batuhan Dogan/Zorluturk',phone:'504-677-6344',email:'doganbrock@gmail.com',status:'Occupied'},{unit:'226 D',plan:'3 BR TH CP',name:'Karen Lachney',phone:'504-920-4962',email:'kklachney@hotmail.com',status:'Occupied'},{unit:'233 A',plan:'3 BR TH',name:'Esperanza Jorge',phone:'219-0125',email:'basilioacevedo029@gmail.com',status:'Occupied'},{unit:'233 B',plan:'2 BR TH',name:'Evan/Judah Keller/Wolf',phone:'',email:'kellerevanw@gmail.com',status:'Occupied'},
-    {unit:'233 C',plan:'2 BR TH',name:'Mary Ellen Remi',phone:'504-723-1835',email:'remielise16@yahoo.com',status:'Occupied'},{unit:'233 D',plan:'2 BR TH',name:'Allan Richards',phone:'225-371-9036',email:'allanrichards@hotmail.com',status:'Occupied'},{unit:'233 E',plan:'2 BR TH',name:'Michael Nuber',phone:'985-685-8547',email:'mike.nuber78@gmail.com',status:'Occupied'},{unit:'233 F',plan:'3 BR TH',name:'Elainey/Bryson Heltz/Parker',phone:'985-703-0837',email:'emheltz00@gmail.com',status:'Occupied'},
-    {unit:'234 A',plan:'3 BR TH',name:'Kevin Davis',phone:'',email:'image1025@gmail.com',status:'Occupied'},{unit:'234 B',plan:'',name:'',phone:'',email:'',status:''},{unit:'234 C',plan:'2 BR TH',name:'Earl/Rachel Lightell',phone:'985-774-7052',email:'earllightell@yahoo.com',status:'Occupied'},{unit:'234 D',plan:'2 BR TH',name:'Barbara Nye',phone:'419-344-3657',email:'barbyn@icloud.com',status:'Occupied'},
-    {unit:'234 E',plan:'2 BR TH',name:'Stephanie Rose',phone:'504-722-0240',email:'stephanierose504@gmail.com',status:'Occupied'},{unit:'234 F',plan:'3 BR TH',name:'',phone:'',email:'',status:'Vacant'},
-  ],
-  "metairie-lake-apartments": [
-    {unit:'1',plan:'1BR',name:'Dinah Mestier',phone:'504-357-7953',email:'dmestier@icloud.com',status:'Occupied'},{unit:'2',plan:'1BR',name:'atrick Soden',phone:'985-201-3644',email:'patricksoden@gmail.com',status:'Occupied'},{unit:'3',plan:'2BR',name:'Jennifer Burns',phone:'228-2038',email:'',status:'Occupied'},{unit:'4',plan:'2BR',name:'am Taranto',phone:'504-439-5553',email:'',status:'Occupied'},
-    {unit:'5',plan:'2BR',name:'Charlotte',phone:'832-1866',email:'',status:'Occupied'},{unit:'6',plan:'1BR',name:'Monique Goutierrez',phone:'337-251-0453',email:'nickigt444@gmail.com',status:'Occupied'},{unit:'7',plan:'1BR',name:'ona Bernard',phone:'402-3232',email:'',status:'Occupied'},{unit:'8',plan:'1BR',name:'Keyli apalo',phone:'504-617-8073',email:'',status:'Occupied'},
-    {unit:'9',plan:'1BR',name:'',phone:'',email:'',status:'Vacant'},{unit:'10',plan:'1BR',name:'Ken Kulik',phone:'782-9932',email:'',status:'Occupied'},{unit:'11',plan:'1BR',name:'JoAnn Lartigue',phone:'835-2559',email:'joannlartigue504@gmail.com',status:'Occupied'},{unit:'12',plan:'1BR',name:'icole Lopiparo',phone:'615-5775',email:'',status:'Occupied'},
-    {unit:'13',plan:'2BR',name:'Jose',phone:'504-283-8822',email:'taitaguejose93@gmail.com',status:'Occupied'},{unit:'14',plan:'2BR',name:'JB/Eli Landrum/Tidewell',phone:'',email:'',status:'Occupied'},{unit:'15',plan:'1BR',name:'Marc A Demma',phone:'388-0427',email:'',status:'Occupied'},{unit:'16',plan:'1BR',name:'Thomas ipchinski',phone:'',email:'',status:'Occupied'},
-    {unit:'17',plan:'1BR',name:'Dawn Leaumont',phone:'504-380-5530',email:'dawnleaumont@gmail.com',status:'Occupied'},{unit:'18',plan:'1BR',name:'Cameron',phone:'504-428-5616',email:'',status:'Occupied'},{unit:'19',plan:'1BR',name:'David Hall',phone:'343-6564',email:'dwhtoo@hotmail.com',status:'Occupied'},{unit:'20',plan:'2BR',name:'Lisa Wong',phone:'225-773-1419',email:'lwong1009@yahoo.com',status:'Occupied'},
-    {unit:'21',plan:'2BR',name:'Dralene Sintes',phone:'504-914-1472',email:'darlenesintes@gmail.com',status:'Occupied'},{unit:'22',plan:'1BR',name:'Jana',phone:'504-430-3573',email:'',status:'Occupied'},{unit:'23',plan:'2BR',name:'Gabriela Dalazen',phone:'504-508-9778',email:'gabrieladalszen@gmail.com',status:'Occupied'},{unit:'24',plan:'1BR',name:'Jacqulyn Chad',phone:'318-977-2497',email:'jacqymuller@yahoo.com',status:'Occupied'},
-    {unit:'25',plan:'2BR',name:'Alice Mayeaux',phone:'225-330-1112',email:'',status:'Occupied'},{unit:'26',plan:'1BR',name:'`@ Louis',phone:'837-9233',email:'',status:'Occupied'},{unit:'27',plan:'1BR',name:'Steven',phone:'957-3977',email:'steven.voorhies@michelin.com',status:'Occupied'},{unit:'28',plan:'1BR',name:'`@ Lynn',phone:'421-6865',email:'',status:'Occupied'},
-    {unit:'29',plan:'1BR',name:'William Thompson',phone:'504-296-1663',email:'wdthompsgrey@gmail.com',status:'Occupied'},{unit:'30',plan:'1BR',name:'Sherry Migaud',phone:'504-215-0372',email:'',status:'Occupied'},{unit:'31',plan:'1BR',name:'Christine Johnson',phone:'504-294-9750',email:'johnson2147@bellsouth.net',status:'Occupied'},{unit:'32',plan:'1BR',name:'Jaquil Lovett',phone:'',email:'jtl129@rutgers.edu',status:'Occupied'},
-    {unit:'33',plan:'1BR',name:'Allie (jane) Avery',phone:'504-339-9806',email:'jayneavery@me.com',status:'Occupied'},{unit:'34',plan:'1BR',name:'a@ Savannah',phone:'',email:'',status:'Occupied'},{unit:'35',plan:'1BR',name:'i@ Breyanah',phone:'',email:'',status:'Occupied'},{unit:'36',plan:'1BR',name:'Dane',phone:'504-402-1063',email:'',status:'Occupied'},
-    {unit:'37',plan:'2BR',name:'Arnold',phone:'813-7570',email:'',status:'Occupied'},{unit:'38',plan:'2BR',name:'Douglas/Brian osenthal',phone:'606-3576',email:'',status:'Occupied'},{unit:'39',plan:'2BR',name:'',phone:'337-258-6277',email:'',status:'Vacant'},{unit:'40',plan:'2BR',name:'Swayze Landry',phone:'985-870-5408',email:'landryswayze@gmail.com',status:'Occupied'},
-    {unit:'41',plan:'1BR',name:'Gabriel Woodson',phone:'',email:'',status:'Occupied'},{unit:'42',plan:'1BR',name:'Dien guyen-Bui',phone:'504-375-8430',email:'dien2000@gmail.com',status:'Occupied'},{unit:'43',plan:'1BR',name:'j@ Daniel',phone:'813-1082',email:'',status:'Occupied'},{unit:'44',plan:'1BR',name:'Tim',phone:'225-207-9432',email:'',status:'Occupied'},
-    {unit:'45',plan:'1BR',name:'Candace',phone:'337-303-5974',email:'',status:'Occupied'},{unit:'46',plan:'1BR',name:'Wes Thibodeaux',phone:'504-444-7116',email:'westhib@gmail.com',status:'Occupied'},{unit:'47',plan:'2BR',name:'Bairagi audei',phone:'504-508-6270',email:'',status:'Occupied'},{unit:'48',plan:'2BR',name:'Clemmiette/Kyle Fairley/Martin',phone:'228-235-3011',email:'clemmiette.fairley@yahoo.com',status:'Occupied'},
-    {unit:'49',plan:'1BR',name:'Jaci Ward',phone:'',email:'jaciward12@yahoo.com',status:'Occupied'},{unit:'50',plan:'1BR',name:'Annette oth',phone:'939-1065',email:'',status:'Occupied'},{unit:'51',plan:'1BR',name:'k@ Carol',phone:'985-707-8524',email:'',status:'Occupied'},{unit:'52',plan:'1BR',name:'Luciana',phone:'504-266-3273',email:'',status:'Occupied'},
-    {unit:'53',plan:'1BR',name:'Clementina',phone:'450-5276',email:'',status:'Occupied'},{unit:'54',plan:'1BR',name:'Alexander owe',phone:'',email:'alexanderlmg@gmail.com',status:'Occupied'},{unit:'55',plan:'1BR',name:'Trey Tramell',phone:'427-5769',email:'',status:'Occupied'},{unit:'56',plan:'1BR',name:'yan Foret',phone:'504-919-3515',email:'rforet316@aol.com',status:'Occupied'},
-    {unit:'57',plan:'2BR',name:'andhini Eswar',phone:'504-203-9517',email:'',status:'Occupied'},{unit:'58',plan:'2BR',name:'Giovenda/Nikita Kafle/Dhkal',phone:'504-892-6832',email:'',status:'Vacant'},{unit:'59',plan:'1BR',name:'l@ Jason',phone:'390-9759',email:'',status:'Occupied'},{unit:'60',plan:'2BR',name:'Jaron /Joanna',phone:'228-206-5432',email:'',status:'Moving'},
-    {unit:'61',plan:'1BR',name:'Allen',phone:'',email:'allenslee3@gmail.com',status:'Occupied'},{unit:'62',plan:'2BR',name:'Spouse Francine/Gad',phone:'',email:'',status:'Occupied'},{unit:'63',plan:'1BR',name:'Justin LeBlanc',phone:'985-804-0916',email:'',status:'Occupied'},{unit:'64',plan:'1BR',name:'Trinh Bui',phone:'225-456-0219',email:'',status:'Occupied'},
-    {unit:'65',plan:'1BR',name:'Manuel apale',phone:'',email:'manuelpapale@hotmail.com',status:'Occupied'},{unit:'66',plan:'1BR',name:'',phone:'237-7734',email:'morettiniamanda@gmail.com',status:'Vacant'},{unit:'67',plan:'1BR',name:'m@ Alec',phone:'',email:'',status:'Occupied'},{unit:'68',plan:'1BR',name:'Maria',phone:'512-3018',email:'',status:'Occupied'},
-    {unit:'69',plan:'1BR',name:'20 21 30 31 33',phone:'985-870-9662',email:'',status:'Vacant'},{unit:'70',plan:'1BR',name:'Anna Lisa odney',phone:'',email:'',status:'Occupied'},{unit:'71',plan:'1BR',name:'Jacob Burris',phone:'',email:'',status:'Occupied'},{unit:'72',plan:'1BR',name:'Brooke Simon',phone:'504-312-2207',email:'brookea328@gmail.com',status:'Occupied'},
-    {unit:'73',plan:'1BR',name:'Keith Brown',phone:'504-813-1350',email:'keith@kmbcounseling.com',status:'Occupied'},{unit:'74',plan:'2BR',name:'Shambhu Joshi',phone:'504-503-3077',email:'sjoshi3@tulane.edu',status:'Occupied'},{unit:'75',plan:'2BR',name:'Chelethea Thompson',phone:'601-395-8372',email:'',status:'Occupied'},{unit:'76',plan:'2BR',name:'Bipul oudel',phone:'',email:'bipulpoudel1991@gmail.com',status:'Occupied'},
-    {unit:'77',plan:'1BR',name:'s@ Shalika',phone:'504-547-2309',email:'',status:'Occupied'},{unit:'78',plan:'1BR',name:'Annie Dupuy',phone:'225-235-3848',email:'dupuyannie3@gmail.com',status:'Occupied'},{unit:'79',plan:'1BR',name:'eid',phone:'225-385-5183',email:'',status:'Occupied'},{unit:'80',plan:'1BR',name:'',phone:'318-578-8038',email:'',status:'Vacant'},
-    {unit:'81',plan:'1BR',name:'',phone:'',email:'',status:'Vacant'},{unit:'82',plan:'1BR',name:'Cory',phone:'504-615-2649',email:'',status:'Occupied'},{unit:'83',plan:'1BR',name:'Michael Abadie',phone:'504-315-9098',email:'',status:'Occupied'},{unit:'84',plan:'2BR',name:'Hui Zhang',phone:'504-766-0089',email:'',status:'Occupied'},
-    {unit:'85',plan:'2BR',name:'LiJun Baojun',phone:'',email:'baojun.888rachel@gmail.com',status:'Occupied'},{unit:'86',plan:'1BR',name:'ofio ecoraro',phone:'',email:'',status:'Vacant'},{unit:'87',plan:'1BR',name:'Mahya Sabour',phone:'',email:'mahya.sabour@mail.mlg.or',status:'Occupied'},{unit:'88',plan:'1BR',name:'Jaden Davis',phone:'985-520-7986',email:'',status:'Occupied'},
-    {unit:'89',plan:'1BR',name:'Ivelina Tihomir',phone:'666-5900',email:'',status:'Occupied'},{unit:'90',plan:'1BR',name:'Alexander/Nicolas Harrington/Gennuca',phone:'',email:'',status:'Occupied'},{unit:'91',plan:'1BR',name:'Jacob awlings',phone:'',email:'jrawlings@tulane.edu',status:'Occupied'},{unit:'92',plan:'1BR',name:'Alexander Wong',phone:'225-773-0235',email:'',status:'Occupied'},
-    {unit:'93',plan:'1BR',name:'t@ Sheryl',phone:'837-6860',email:'',status:'Occupied'},{unit:'94',plan:'2BR',name:'Ireland/Sarah Cotes/Rader',phone:'225-287-8199',email:'',status:'Occupied'},{unit:'95',plan:'2BR',name:'Aiyana',phone:'985-264-1495',email:'hotardaw@gmail.com',status:'Occupied'},{unit:'96',plan:'1BR',name:'Sara',phone:'',email:'sara.karnes2019@gmail.com',status:'Occupied'},
-    {unit:'97',plan:'2BR',name:'Angela',phone:'504-912-3394',email:'greentiger538@gmail.com',status:'Occupied'},{unit:'98',plan:'1BR',name:'Tyler',phone:'601-408-8341',email:'tylerstuart15@gmail.com',status:'Occupied'},{unit:'99',plan:'2BR',name:'Catherine Alesich',phone:'669-3677',email:'calesich@aol.com',status:'Occupied'},{unit:'100',plan:'1BR',name:'Jasjeet Singh',phone:'318-372-5266',email:'',status:'Occupied'},
-    {unit:'101',plan:'1BR',name:'Jackson Cross',phone:'',email:'tjcross311@gmail.com',status:'Occupied'},{unit:'102',plan:'1BR',name:'Lakia Smith',phone:'504-729-0039',email:'',status:'Occupied'},{unit:'103',plan:'1BR',name:'Andrea Hysaw',phone:'648-9690',email:'mariehysaw83@gmail.com',status:'Occupied'},{unit:'104',plan:'1BR',name:'Sabina Baral',phone:'',email:'',status:'Occupied'},
-    {unit:'105',plan:'1BR',name:'Christopher Lindeman',phone:'',email:'',status:'Occupied'},{unit:'106',plan:'1BR',name:'Xin Miao',phone:'',email:'xnmiao@gmail.com',status:'Occupied'},{unit:'107',plan:'1BR',name:'Dylan',phone:'225-235-0144',email:'',status:'Occupied'},{unit:'108',plan:'1BR',name:'',phone:'',email:'juliekarcia@gmail.com',status:'Vacant'},
-  ],
-  "lakeside-village-townhomes": [
-    {unit:'1',plan:'Townhome',address:'1225 Rue Degas',owner:'Charlie Bateman',ownerPhone:'9856743650',ownerEmail:'operations@patobriens.com',dues:'$1,880',status:'Owner-Occupied',role:'Owner-Occupied'},
-    {unit:'2',plan:'Townhome',address:'1223 Rue Degas',owner:'LSV/Crosby',dues:'$1,880',status:'Rented',role:'Crosby Managed',name:'Nancy Coffey',phone:'5046506406',email:'coffeynancy504@gmail.com',rent:'$2,650'},
-    {unit:'3',plan:'Townhome',address:'1221 Rue Degas',owner:'Jason Gillard',ownerPhone:'5046358414',ownerEmail:'jgillard100@gmail.com',dues:'$1,880',status:'Owner-Occupied',role:'Owner-Occupied'},
-    {unit:'4',plan:'Townhome',address:'1219 Rue Degas',owner:'Michael Romig',ownerPhone:'5046214809',ownerEmail:'mtt75007@gmail.com',dues:'$1,880',status:'Owner-Occupied',role:'Owner-Occupied'},
-    {unit:'5',plan:'Townhome',address:'1217 Rue Degas',owner:'LSV/Crosby',dues:'$1,880',status:'Rented',role:'Crosby Managed',name:'Marshall Delesdernier',phone:'5044323387',email:'Marshall.delesdernier@yahoo.com',rent:'$3,200'},
-    {unit:'6',plan:'Townhome',address:'1215 Rue Degas',owner:'Kulwinder Banipal',ownerEmail:'Kbanipal@hotmail.com',dues:'$1,880',status:'Rented',role:'Crosby Managed',name:'Kris Keith',phone:'8043567348',email:'podleshs3@yahoo.com',rent:'$2,775'},
-    {unit:'7',plan:'Townhome',address:'1213 Rue Degas',owner:'John Kavanaugh',ownerPhone:'3183472870',ownerEmail:'L.m.kavanaugh@gmail.com',dues:'$1,880',status:'Owner-Occupied',role:'Owner-Occupied'},
-    {unit:'8',plan:'Townhome',address:'1211 Rue Degas',owner:'Sidney Beaumont',ownerPhone:'5042329578',ownerEmail:'sydney.beaumont@gmail.com',dues:'$1,880',status:'Owner-Occupied',role:'Owner-Occupied'},
-    {unit:'9',plan:'Townhome',address:'1209 Rue Degas',owner:'Kimberly Kelly',ownerPhone:'9852641058',ownerEmail:'meilet@bellsouth.net',dues:'$1,880',status:'Owner-Occupied',role:'Owner-Occupied'},
-    {unit:'10',plan:'Townhome',address:'1207 Rue Degas',owner:'Michael Dorris',ownerPhone:'5048103964',ownerEmail:'mdorris@delsol-consulting.com',dues:'$1,880',status:'Owner-Occupied',role:'Owner-Occupied'},
-    {unit:'11',plan:'Townhome',address:'1205 Rue Degas',owner:'Spencer Graham-Winkles',ownerPhone:'5043603020',ownerEmail:'winkcrain@gmail.com',dues:'$1,880',status:'Owner-Occupied',role:'Owner-Occupied'},
-    {unit:'12',plan:'Townhome',address:'1203 Rue Degas',owner:'Christopher Mora',ownerPhone:'9853732727',ownerEmail:'cmora@one-louisiana.com',dues:'$1,880',status:'Owner-Occupied',role:'Owner-Occupied'},
-    {unit:'13',plan:'Townhome',address:'1201 Rue Degas',owner:'Kevin Schabel Bayhi',ownerPhone:'5044305033',ownerEmail:'kbayhi@bellsouth.net',dues:'$1,880',status:'Owner-Occupied',role:'Owner-Occupied'},
-    {unit:'14',plan:'Townhome',address:'1200 Rue Degas',owner:'Gigi/David Leblanc/Rosenfeld',ownerPhone:'5047564916',ownerEmail:'drose70471@gmail.com',dues:'$1,880',status:'Owner-Occupied',role:'Owner-Occupied'},
-    {unit:'15',plan:'Townhome',address:'1202 Rue Degas',owner:'Mary Gayle Adams',ownerPhone:'9857783809',ownerEmail:'gayleadams59@msn.com',dues:'$1,880',status:'Owner-Occupied',role:'Owner-Occupied'},
-    {unit:'16',plan:'Townhome',address:'1204 Rue Degas',owner:'Ross Quartano',ownerPhone:'9858696402',ownerEmail:'rossquartano@gmail.com',dues:'$1,880',status:'Rented',role:'Third-Party Managed',name:'Shermetrius Mack-Grey',phone:'9857072571',email:'smackgray@gmail.com'},
-    {unit:'17',plan:'Townhome',address:'1206 Rue Degas',owner:'Taranjeet Banipal',ownerPhone:'6019411540',dues:'$1,880',status:'Rented',role:'Crosby Managed',name:'Kasey Fontenot',phone:'9857783148',email:'kasey.fontenot@yahoo.com',rent:'$2,850'},
-    {unit:'18',plan:'Townhome',address:'1208 Rue Degas',owner:'Scott Gutterman',ownerPhone:'9856307029',ownerEmail:'scottgu58@gmail.com',dues:'$1,880',status:'Rented',role:'Third-Party Managed',name:'Karla Kite',phone:'9852318865',email:'ammiekite@gmail.com'},
-    {unit:'19',plan:'Townhome',address:'1210 Rue Degas',owner:'Scott Swanner',ownerPhone:'5044514361',dues:'$1,880',status:'Rented',role:'Third-Party Managed',name:'Chet Vaughn',phone:'5045599928',email:'Vaughn.chester@gmail.com'},
-    {unit:'20',plan:'Townhome',address:'201 Rue Esplanade',owner:'Joseph Bartels',ownerPhone:'504-439-2901',ownerEmail:'Joeb@jcbartels.com',dues:'$1,880',status:'Owner-Occupied',role:'Owner-Occupied'},
-    {unit:'21',plan:'Townhome',address:'205 Rue Esplanade',owner:'LSV/Crosby',dues:'$1,880',status:'Rented',role:'Crosby Managed',name:'Shane Lecocq',phone:'9852153645',email:'shanelecocq@yahoo.com',rent:'$3,200'},
-    {unit:'22',plan:'Townhome',address:'209 Rue Esplanade',owner:'LSV/Crosby',dues:'$1,880',status:'Rented',role:'Crosby Managed',name:'Jeff Anderson',phone:'5046168055',email:'jeff.business@icloud.com',rent:'$3,200'},
-    {unit:'23',plan:'Townhome',address:'213 Rue Esplanade',owner:'LSV/Crosby',dues:'$1,880',status:'Rented',role:'Crosby Managed',name:'Daniel Dipol',phone:'9857786782',email:'danieldipol6782@gmail.com',rent:'$1,500'},
-    {unit:'24',plan:'Townhome',address:'217 Rue Esplanade',owner:'LSV/Crosby',dues:'$1,880',status:'Rented',role:'Crosby Managed',name:'Rosalyn Jackson',phone:'8325630976',email:'jrosalyn54@gmail.com',rent:'$3,200'},
-    {unit:'25',plan:'Townhome',address:'221 Rue Esplanade',owner:'Amie Willis',ownerPhone:'5044163836',ownerEmail:'ame1680@icloud.com',dues:'$1,880',status:'Owner-Occupied',role:'Owner-Occupied'},
-    {unit:'26',plan:'Townhome',address:'1211 Rue Renoir',owner:'Angelina Burst',ownerPhone:'5042508508',ownerEmail:'angelina@directmail.io',dues:'$1,880',status:'Owner-Occupied',role:'Owner-Occupied'},
-    {unit:'27',plan:'Townhome',address:'1209 Rue Renoir',owner:'Holly Haik',ownerPhone:'5044005290',ownerEmail:'LSUHaikLSU@gmail.com',dues:'$1,880',status:'Owner-Occupied',role:'Owner-Occupied'},
-    {unit:'28',plan:'Townhome',address:'1207 Rue Renoir',owner:'LSV/Crosby',dues:'$1,880',status:'Rented',role:'Crosby Managed',name:'Scott Morgan',phone:'3144979281',email:'morgans68@gmail.com',rent:'$2,400'},
-    {unit:'29',plan:'Townhome',address:'1205 Rue Renoir',owner:'Jane Walls',ownerPhone:'5042368880',ownerEmail:'janemwalls@yahoo.com',dues:'$1,880',status:'Owner-Occupied',role:'Owner-Occupied'},
-    {unit:'30',plan:'Townhome',address:'1203 Rue Renoir',owner:'Gregory Schenck',ownerPhone:'5049757165',ownerEmail:'3whodatz@gmail.com',dues:'$1,880',status:'Owner-Occupied',role:'Owner-Occupied'},
-    {unit:'31',plan:'Townhome',address:'1201 Rue Renoir',owner:'Jag Banipal',ownerPhone:'6015737147',ownerEmail:'jagwinder@msn.com',dues:'$1,880',status:'Rented',role:'Crosby Managed',name:'Allison Groves',phone:'4153850386',email:'Littlestar.alg@gmail.com',rent:'$2,500'},
-    {unit:'32A',plan:'Cottage',address:'1200 Rue Renoir',owner:'Eddy Nana-Tankeu',ownerPhone:'9096886',ownerEmail:'ecnana@live.com',dues:'$2,400',status:'Owner-Occupied',role:'Owner-Occupied'},
-    {unit:'33A',plan:'Cottage',address:'1204 Rue Renoir',owner:'Tommy Crosby',ownerPhone:'9857896252',ownerEmail:'tommy@crosbydevelopment.com',dues:'$2,400',status:'Rented',role:'Crosby Managed',name:'Paula Sperry',phone:'9853029646',email:'paula.sperry@yahoo.com',rent:'$3,200'},
-    {unit:'34A',plan:'Cottage',address:'1206 Rue Renoir',owner:'Marshall/Susan Thompson',ownerPhone:'8506879453',ownerEmail:'mthompson621@hotmail.com',dues:'$2,400',status:'Owner-Occupied',role:'Owner-Occupied'},
-    {unit:'35A',plan:'Cottage',address:'225 Rue Esplanade',owner:'Beth Seamon',ownerPhone:'5044600253',ownerEmail:'beth@shopsilverplum.com',dues:'$2,400',status:'Owner-Occupied',role:'Owner-Occupied'},
-    {unit:'36A',plan:'Cottage',address:'229 Rue Esplanade',owner:'Cathy Crosby',ownerPhone:'5048843443',ownerEmail:'Cathy@crosbydevelopment.com',dues:'$2,400',status:'Owner-Occupied',role:'Owner-Occupied'},
-    {unit:'37A',plan:'Cottage',address:'233 Rue Esplanade',owner:'Cathy Crosby',ownerPhone:'5048843443',ownerEmail:'Cathy@crosbydevelopment.com',dues:'$2,400',status:'Owner-Occupied',role:'Owner-Occupied'},
-    {unit:'38A',plan:'Cottage',address:'1207 Rue Monet',owner:'Scott Swanner',ownerPhone:'5044514361',ownerEmail:'suswanner@gmail.com',dues:'$2,400',status:'Owner-Occupied',role:'Owner-Occupied'},
-    {unit:'39A',plan:'Cottage',address:'1205 Rue Monet',owner:'Ed Clark',ownerPhone:'4043530414',ownerEmail:'edwardclark66@gmail.com',dues:'$2,400',status:'Owner-Occupied',role:'Owner-Occupied'},
-    {unit:'40A',plan:'Cottage',address:'1201 Rue Monet',owner:'Colton Acosta',ownerPhone:'9855029510',ownerEmail:'coltonvacosta@gmail.com',dues:'$2,400',status:'Owner-Occupied',role:'Owner-Occupied'},
-    {unit:'41A',plan:'Cottage',address:'1210 Rue Monet',owner:'Joseph Jeanmarie, Sr.',ownerPhone:'5044212035',ownerEmail:'joejam@cox.net',dues:'$2,400',status:'Owner-Occupied',role:'Owner-Occupied'},
-    {unit:'42A',plan:'Cottage',address:'1208 Rue Monet',owner:'Pat Flower',ownerPhone:'6013374824',ownerEmail:'pcflower@bellsouth.net',dues:'$2,400',status:'Owner-Occupied',role:'Owner-Occupied'},
-    {unit:'43A',plan:'Cottage',address:'1206 Rue Monet',owner:'Kristin Core',ownerPhone:'9852646500',ownerEmail:'corekristin@gmail.com',dues:'$2,400',status:'Rented',role:'Third-Party Managed',name:'Eric Westenberger',phone:'5048587643',email:'emwest@bellsouth.net'},
-    {unit:'44A',plan:'Cottage',address:'1202 Rue Monet',owner:'Eli Crosby',ownerPhone:'9852647675',ownerEmail:'eli@elicrosbyhomes.com',dues:'$2,400',status:'Owner-Occupied',role:'Owner-Occupied'},
-    {unit:'45A',plan:'Cottage',address:'1200 Rue Monet',owner:'Patty Lala',ownerPhone:'9853207231',ownerEmail:'dupreelala1919@yahoo.com',dues:'$2,400',status:'Owner-Occupied',role:'Owner-Occupied'},
-  ],
-};
-
-const TENANT_ROSTER = {
-  "sanctuary-office-park": {
-    "Sanctuary #1": [
-      {tenant:"M Squared",suite:"300",sf:1445,rent:2250.00},
-      {tenant:"Bayou CPR",suite:"301-A",sf:400,rent:692.12},
-      {tenant:"Acorn",suite:"301-B",sf:300,rent:437.09},
-      {tenant:"Travelers",suite:"210 & 202",sf:5573,rent:12754.36},
-      {tenant:"Nirvana",suite:"306",sf:610,rent:1331.65},
-      {tenant:"Dianne's",suite:"305B",sf:300,rent:550.00},
-      {tenant:"Sec National",suite:"302",sf:655,rent:1609.96},
-      {tenant:"Christine West",suite:"100",sf:500,rent:1500.00},
-      {tenant:"Mand Tech",suite:"300A",sf:275,rent:504.76},
-      {tenant:"Detox",suite:"307",sf:250,rent:575.00},
-      {tenant:"Brandner",suite:"303B",sf:235,rent:431.00},
-      {tenant:"Body Remedy",suite:"303A",sf:300,rent:450.00},
-    ],
-    "Sanctuary #2": [
-      {tenant:"Wells Fargo",suite:"101",sf:2500,rent:4641.43},
-      {tenant:"Penzato",suite:"103",sf:1710,rent:3009.00},
-      {tenant:"Thomas",suite:"304",sf:1225,rent:1948.86},
-      {tenant:"NS Laser",suite:"302C",sf:200,rent:309.00},
-      {tenant:"Hartford",suite:"301",sf:2350,rent:4213.62},
-      {tenant:"4 Your Eyes",suite:"303+302A&B",sf:2600,rent:4304.39},
-      {tenant:"Pazos",suite:"202",sf:450,rent:950.07},
-      {tenant:"Cypress Key",suite:"204",sf:700,rent:1392.43},
-      {tenant:"Standard",suite:"201",sf:1690,rent:3265.27},
-      {tenant:"Assured Part.",suite:"206",sf:1962,rent:3842.25},
-      {tenant:"Central Title",suite:"102",sf:1400,rent:2784.86},
-      {tenant:"Nationwide",suite:"203",sf:1006,rent:1867.18},
-      {tenant:"Benjamin",suite:"100",sf:1240,rent:2144.65},
-      {tenant:"Carver",suite:"205",sf:1100,rent:2171.58},
-    ],
-    "Sanctuary #3": [
-      {tenant:"Galloway",suite:"101, 102 & 310",sf:13455,rent:27564.26},
-      {tenant:"Baker Donelson",suite:"201 & 202",sf:6930,rent:13680.98},
-    ],
-    "Sanctuary #4": [
-      {tenant:"JCM II",suite:"306",sf:250,rent:0,vacant:true},
-      {tenant:"St. Paul",suite:"305",sf:684,rent:1026.46},
-      {tenant:"Edelman",suite:"200",sf:2350,rent:4468.12},
-      {tenant:"Watch Systems",suite:"101 & 201",sf:11850,rent:20225.74},
-      {tenant:"MedSouth",suite:"302",sf:750,rent:1375.00},
-      {tenant:"Menard",suite:"304",sf:2640,rent:5377.54},
-      {tenant:"Detox",suite:"301",sf:1765,rent:3000.00},
-    ],
-    "Sanctuary #5": [
-      {tenant:"Audubon",suite:"300",sf:6507,rent:10834.63},
-      {tenant:"Monson",suite:"101 & 202",sf:7385,rent:13513.30},
-      {tenant:"MAPS",suite:"103",sf:1830,rent:3279.27},
-      {tenant:"Ceco",suite:"201",sf:4845,rent:9176.97},
-    ],
-  },
-};
-
-// ── LEASE TERMS ─────────────────────────────────────────────────────────────
-// Source: rentinfo#1.xls — Commencement, Termination, Escalation, Notice requirements
-// daysLeft computed from April 1, 2026. noticeDeadline = termination minus notice days.
-const LEASE_TERMS = {
-  "sanctuary-office-park": {
-    "Sanctuary #1": [
-      { tenant:"M Squared",              suite:"300",       sf:1445, commenced:"2026-03-15", terminates:"2028-03-15", daysLeft:714,  escalation:"3.0%", autoRenew:true,  noticeDays:90,  noticeDeadline:"2027-12-15", noticeDeadlineDays:988, additional:"90 Day Notice to Terminate or lease Auto Renews" },
-      { tenant:"Bayou CPR",              suite:"301-A",     sf:400,  commenced:"2015-09-15", terminates:"2026-12-31", daysLeft:274,  escalation:"3.0%", autoRenew:true,  noticeDays:180, noticeDeadline:"2026-07-04", noticeDeadlineDays:94,  additional:"180 Day Notice to Cancel or Terminate" },
-      { tenant:"Acorn",                  suite:"301-B",     sf:300,  commenced:"2007-08-31", terminates:"2027-02-28", daysLeft:333,  escalation:"3.0%", autoRenew:true,  noticeDays:90,  noticeDeadline:"2026-11-30", noticeDeadlineDays:243, additional:"90 Day Notice to Terminate or lease Auto Renews" },
-      { tenant:"Travelers",              suite:"210 & 202", sf:5573, commenced:"1996-11-15", terminates:"2029-04-30", daysLeft:1125, escalation:"3.0%", autoRenew:false, noticeDays:null,noticeDeadline:null,          noticeDeadlineDays:null,additional:"1 (5) Year Option" },
-      { tenant:"Nirvana",                suite:"306",       sf:610,  commenced:"2013-06-30", terminates:"2026-12-31", daysLeft:274,  escalation:"3.0%", autoRenew:true,  noticeDays:180, noticeDeadline:"2026-07-04", noticeDeadlineDays:94,  additional:"180 Day Notice to Cancel or Terminate" },
-      { tenant:"Dianne's",               suite:"305B",      sf:300,  commenced:"2025-12-01", terminates:"2026-11-30", daysLeft:243,  escalation:"3.0%", autoRenew:true,  noticeDays:90,  noticeDeadline:"2026-09-01", noticeDeadlineDays:153, additional:"90 Day Notice to Terminate or lease Auto Renews" },
-      { tenant:"Sec National",           suite:"302",       sf:655,  commenced:"2015-07-01", terminates:"2026-06-30", daysLeft:90,   escalation:"3.0%", autoRenew:true,  noticeDays:180, noticeDeadline:"2025-12-31", noticeDeadlineDays:-91, additional:"180 Day Notice — VACATING Jun 30 2026", vacating:true },
-      { tenant:"Fine Southern Properties",suite:"100",     sf:500,  commenced:"2020-03-01", terminates:"Month-to-Month", daysLeft:null,escalation:"None",autoRenew:true,noticeDays:null,noticeDeadline:null,          noticeDeadlineDays:null,additional:"Month-to-Month", mtm:true },
-      { tenant:"Crosby Development",     suite:"101",       sf:4000, commenced:"—",          terminates:"Owner Occupant",  daysLeft:null,escalation:"—",  autoRenew:false, noticeDays:null,noticeDeadline:null,          noticeDeadlineDays:null,additional:"Owner Occupant", ownerOccupant:true },
-      { tenant:"Mand Tech",              suite:"300A",      sf:275,  commenced:"2021-04-01", terminates:"2027-04-01", daysLeft:365,  escalation:"3.0%", autoRenew:true,  noticeDays:90,  noticeDeadline:"2027-01-01", noticeDeadlineDays:275, additional:"90 Day Notice to Terminate or lease Auto Renews" },
-      { tenant:"Detox",                  suite:"307",       sf:250,  commenced:"2026-04-01", terminates:"2028-08-01", daysLeft:853,  escalation:"3.5%", autoRenew:true,  noticeDays:90,  noticeDeadline:"2028-05-03", noticeDeadlineDays:763, additional:"90 Day Notice to Terminate or lease Auto Renews" },
-      { tenant:"Brandner",               suite:"303B",      sf:235,  commenced:"2025-11-24", terminates:"2028-11-24", daysLeft:968,  escalation:"3.0%", autoRenew:true,  noticeDays:90,  noticeDeadline:"2028-08-26", noticeDeadlineDays:878, additional:"90 Day Notice to Terminate or lease Auto Renews" },
-      { tenant:"Body Remedy",            suite:"303A",      sf:300,  commenced:"2026-04-01", terminates:"2027-03-31", daysLeft:364,  escalation:"3.0%", autoRenew:true,  noticeDays:90,  noticeDeadline:"2026-12-31", noticeDeadlineDays:274, additional:"90 Day Notice to Terminate or lease Auto Renews" },
-    ],
-  },
-};
-
-// ── LEASE DOCUMENTS ─────────────────────────────────────────────────────────
-// Maps tenant slugs to their lease files. File paths relative to Leases_Claude folder.
-// docType: "Init" = original lease, "AMD" = amendment (number = amendment #)
-const LEASE_DOCS = {
-  "sanctuary-office-park": {
-    "Sanctuary #1": [
-      { tenant: "M Squared",      suite: "300",   file: "Bldg 1 Suite 300 Lease.pdf",                          docType: "Init" },
-      { tenant: "Bayou CPR",      suite: "301-A", file: "BayouCPR_AMD2.pdf",                                   docType: "AMD2" },
-      { tenant: "Acorn",          suite: "301-B", file: "leases_2F1768525513380_2FAcornAdoption_AMD2.pdf",      docType: "AMD2" },
-      { tenant: "Sec National",   suite: "302",   file: "SecurityNational_AMD3_11_2025.pdf",                   docType: "AMD3" },
-      { tenant: "Brandner",       suite: "303B",  file: "Brandner Law Firm signed.pdf",                        docType: "Init" },
-      { tenant: "Dianne's",       suite: "305B",  file: "BLDG1_FLR3_305B_Diane's Esthetic and Waxing.pdf",    docType: "Init" },
-      { tenant: "Nirvana",        suite: "306",   file: "NirvanaMassage_AMD3.pdf",                             docType: "AMD3" },
-      { tenant: "Mand Tech",      suite: "300A",  file: "MandevilleTechnology_Init.pdf",                       docType: "Init" },
-      { tenant: "FSP",            suite: "TBD",   file: "FSP_Init.pdf",                                        docType: "Init" },
-    ],
-  },
-};
+// ── PORTFOLIO DATA ───────────────────────────────────────────────────────────
+// Derived at runtime from Firestore entities by crosby-viewmodel.js and assigned
+// in the <script type="module"> at the end of <body>. Empty until entities load.
+var PROPERTIES = [];
+var PROPERTY_PROFILES = {};
+var UNIT_ROSTER = {};
+var TENANT_ROSTER = {};
+var LEASE_TERMS = {};
+var LEASE_DOCS = {};
 
 // ── AGENT ROSTER (static definition — statuses loaded from dashboard-state.json) ──
 const AGENTS = [
@@ -1790,8 +1485,9 @@ function renderMetrics() {
   var mp = getProp("metairie-plaza");
   var mpHTML = "";
   if(mp && mp.unitMix) {
-    mp.unitMix.forEach(function(u) { mpHTML += '<tr><td>'+u.plan+'</td><td>'+u.beds+'</td><td>'+u.sqft+'</td><td>'+u.rent+'</td><td>'+u.count+'</td><td>'+u.vacant+'</td></tr>'; });
-    mpHTML += '<tr><td>Total</td><td></td><td></td><td></td><td>66</td><td>4</td></tr>';
+    var mpC=0, mpV=0;
+    mp.unitMix.forEach(function(u) { mpC+=u.count; mpV+=u.vacant; mpHTML += '<tr><td>'+u.plan+'</td><td>'+u.beds+'</td><td>'+u.sqft+'</td><td>'+u.rent+'</td><td>'+u.count+'</td><td>'+u.vacant+'</td></tr>'; });
+    mpHTML += '<tr><td>Total</td><td></td><td></td><td></td><td>'+mpC+'</td><td>'+mpV+'</td></tr>';
   }
   document.getElementById("mpUnitTable").innerHTML = mpHTML;
 
@@ -1799,8 +1495,9 @@ function renderMetrics() {
   var ml = getProp("metairie-lake-apartments");
   var mlHTML = "";
   if(ml && ml.unitMix) {
-    ml.unitMix.forEach(function(u) { mlHTML += '<tr><td>'+u.plan+'</td><td>'+u.beds+'</td><td>'+u.sqft+'</td><td>'+u.rent+'</td><td>'+u.count+'</td><td>'+u.vacant+'</td></tr>'; });
-    mlHTML += '<tr><td>Total</td><td></td><td></td><td></td><td>108</td><td>9</td></tr>';
+    var mlC=0, mlV=0;
+    ml.unitMix.forEach(function(u) { mlC+=u.count; mlV+=u.vacant; mlHTML += '<tr><td>'+u.plan+'</td><td>'+u.beds+'</td><td>'+u.sqft+'</td><td>'+u.rent+'</td><td>'+u.count+'</td><td>'+u.vacant+'</td></tr>'; });
+    mlHTML += '<tr><td>Total</td><td></td><td></td><td></td><td>'+mlC+'</td><td>'+mlV+'</td></tr>';
   }
   document.getElementById("mlUnitTable").innerHTML = mlHTML;
 
@@ -1823,8 +1520,8 @@ function renderMetrics() {
   }
 
   // Occupancy doughnuts
-  renderOccChart("mpOccChart", 60, 4, 2, "Metairie Plaza");
-  renderOccChart("mlOccChart", 98, 9, 1, "Metairie Lake");
+  if(mp) renderOccChart("mpOccChart", mp.occupied||0, mp.vacant||0, mp.turnover||0, "Metairie Plaza");
+  if(ml) renderOccChart("mlOccChart", ml.occupied||0, ml.vacant||0, ml.turnover||0, "Metairie Lake");
 
   // Dynamic portfolio summary
   var resProps = PROPERTIES.filter(function(p){return !p.isCommercial && p.status==="data-loaded";});
@@ -3096,6 +2793,7 @@ document.addEventListener("DOMContentLoaded", init);
 <script type="module">
   import { DATA_MODE, startAuth, signIn, signOutUser, loadEntities, subscribeState, setDocumentStatus }
     from "./crosby-data.js";
+  import { deriveViewModel } from "./crosby-viewmodel.js";
 
   // Bridge module functions to the global handlers used by the classic script.
   window.__persistDocStatus = (id, status) => setDocumentStatus(id, status, window.__operatorEmail);
@@ -3116,8 +2814,17 @@ document.addEventListener("DOMContentLoaded", init);
 
     // Entity data (properties/buildings/units/tenants/leases) — loaded once and
     // exposed for the upcoming SOP data-derivation work (Phase 3).
-    try { window.__crosbyEntities = await loadEntities(); }
-    catch(e) { console.error("Entity load failed:", e); }
+    try {
+      window.__crosbyEntities = await loadEntities();
+      const vm = deriveViewModel(window.__crosbyEntities);
+      window.PROPERTIES = vm.PROPERTIES;
+      window.PROPERTY_PROFILES = vm.PROPERTY_PROFILES;
+      window.UNIT_ROSTER = vm.UNIT_ROSTER;
+      window.TENANT_ROSTER = vm.TENANT_ROSTER;
+      window.LEASE_TERMS = vm.LEASE_TERMS;
+      window.LEASE_DOCS = vm.LEASE_DOCS;
+      rerenderActiveViews();
+    } catch(e) { console.error("Entity load / derive failed:", e); }
 
     // Live state: each collection pushes updates into the globals + re-renders.
     await subscribeState({

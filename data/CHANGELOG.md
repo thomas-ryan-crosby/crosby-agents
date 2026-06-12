@@ -95,3 +95,34 @@ are **null** and still require `rentinfo#2–5.xls`.
   Mandeville Lake import (`ml-b03-34`, `ml-b06-20`, `ml-b06-24`, `ml-b07-30`, `ml-b08-112`,
   `ml-b08-306`, `ml-b11-12`, `ml-b11-25`).
 - Re-seed Firestore (`npm run seed`) once operator credentials are configured.
+
+---
+
+## 2026-06-11 (later same day)
+
+### Backfill remaining hardcoded property data → Firestore (de-hardcode the dashboard)
+
+To make the dashboard derive 100% from Firestore (no hardcoded arrays), the property
+data that previously lived only in `index.html` was lifted into `data/*.json`:
+
+| File | Action | Detail | Source |
+|------|--------|--------|--------|
+| properties.json | Updated (8) | Added `profile` (description/website/address/year), `cls`, `location`, `isCommercial`, `isHOA`, `unitMix` | dashboard PROPERTY_PROFILES + PROPERTIES |
+| units.json | +170 (333→503) | Metairie Plaza (62) + Metairie Lake (108) residential units | dashboard UNIT_ROSTER |
+| tenants.json | +162 (323→485) | Metairie residents (named/occupied units) | dashboard UNIT_ROSTER |
+| leases.json | +162 (323→485) | Metairie unit↔tenant links (rent/terms null — roster-level) | dashboard UNIT_ROSTER |
+| hoa-lots.json | 1 → 45 | Lakeside Village full 45-lot roster (replaced summary stub) | dashboard UNIT_ROSTER |
+
+**Notes:**
+- The dashboard now renders via `crosby-viewmodel.js`, which derives PROPERTIES /
+  PROPERTY_PROFILES / UNIT_ROSTER / TENANT_ROSTER / LEASE_TERMS / LEASE_DOCS from these
+  entities. All hardcoded data arrays were removed from `index.html`.
+- SOP campus SF now derives to 96,217 (sum of suite SF) vs the 98,217 stored on the
+  building records — Building #1's suites sum to 14,843 SF but its record shows 16,843
+  (~2,000 SF common area not assigned to a suite). The dashboard uses suite sums.
+- Mandeville Lake shows 285 units (not 293): the 8 duplicate-id rows are the SAME unit
+  entered twice with conflicting occupied/vacant status. 285 unique units is likely the
+  correct count; confirm against `2026 ML RR.xlsx`.
+- Metairie Plaza shows 62 units (roster had 62 entries; the old hardcoded "66" was a
+  rollup figure). Metairie lease rent/terms are null pending the source rent rolls.
+- Re-seeded Firestore; removed the orphan `lakeside-lot-summary` doc.

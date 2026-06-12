@@ -12,4 +12,5 @@
 !index.html
 !firebase-config.js
 !crosby-data.js
+!crosby-viewmodel.js
 !vercel.json

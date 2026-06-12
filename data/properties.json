@@ -13,7 +13,24 @@
     "crosbyRole": "Owner-Operator",
     "notes": "5-building commercial office campus. Building #1 reconciled from rentinfo#1.xls + lease PDFs; Buildings #2-5 loaded roster-level from the dashboard (lease terms pending rentinfo#2-5.xls). Crosby Development occupies Suite 101 in Building #1 as owner-occupant.",
     "dataSource": "rentinfo#1.xls (Bldg #1, reconciled) + dashboard TENANT_ROSTER (Bldgs #2-5)",
-    "lastUpdated": "2026-06-11"
+    "lastUpdated": "2026-06-11",
+    "cls": "Commercial",
+    "location": "Mandeville, LA",
+    "isCommercial": true,
+    "isHOA": false,
+    "profile": {
+      "type": "Commercial Office Park",
+      "address": "1 Sanctuary Blvd, Mandeville, LA 70471",
+      "website": "sanctuaryofficepark.com",
+      "phone": "(985) 373-2383",
+      "yearBuilt": 1995,
+      "stories": 3,
+      "totalUnits": null,
+      "involvement": "Ground-up development complete — owned rental office complex",
+      "description": "Five Class A commercial office buildings with beautifully landscaped grounds. Suites range from 200 to 13,455 SF. Full-service lease structure includes janitorial, trash, property maintenance, and HVAC — no CAM charges, no year-end adjustments. Fixed 3% annual rent increases. Located 2 miles from the Causeway Bridge with easy access to New Orleans and Baton Rouge.",
+      "sqftRange": "200–13,455 SF",
+      "rentRange": "$309–$27,564/mo"
+    }
   },
   {
     "id": "mandeville-lake-apartments",
@@ -29,7 +46,82 @@
     "crosbyRole": "Owner-Operator",
     "notes": "12-building apartment community. 284 occupied, 9 vacant. Azalea (1BR/840SF), Elm (1BR/880SF), Bradford (2BR/1240SF), Cypress (2BR/1200SF), Dogwood (3BR/1482SF), Fern (3BR/1371SF).",
     "dataSource": "2026 ML RR.xlsx",
-    "lastUpdated": "2026-04-02"
+    "lastUpdated": "2026-06-11",
+    "cls": "Multi-Family",
+    "location": "Mandeville, LA",
+    "isCommercial": false,
+    "isHOA": false,
+    "unitMix": [
+      {
+        "plan": "Azalea (1BR)",
+        "beds": "1/1",
+        "sqft": "840",
+        "rent": "$1,030–$1,220",
+        "count": 60,
+        "vacant": 2
+      },
+      {
+        "plan": "Elm (1BR)",
+        "beds": "1/1",
+        "sqft": "880",
+        "rent": "$945–$1,270",
+        "count": 41,
+        "vacant": 1
+      },
+      {
+        "plan": "Bradford (2BR)",
+        "beds": "2/2",
+        "sqft": "1,240",
+        "rent": "$1,250–$1,625",
+        "count": 53,
+        "vacant": 2
+      },
+      {
+        "plan": "Cypress (2BR)",
+        "beds": "2/2",
+        "sqft": "1,200",
+        "rent": "$1,120–$1,500",
+        "count": 54,
+        "vacant": 1
+      },
+      {
+        "plan": "Dogwood (3BR)",
+        "beds": "3/2",
+        "sqft": "1,482",
+        "rent": "$1,070–$1,800",
+        "count": 69,
+        "vacant": 2
+      },
+      {
+        "plan": "Fern (3BR)",
+        "beds": "3/2",
+        "sqft": "1,371",
+        "rent": "$1,370–$1,650",
+        "count": 12,
+        "vacant": 0
+      },
+      {
+        "plan": "Other",
+        "beds": "—",
+        "sqft": "—",
+        "rent": "Varies",
+        "count": 4,
+        "vacant": 1
+      }
+    ],
+    "profile": {
+      "type": "Apartment Complex",
+      "address": "4840 Highway 22, Mandeville, LA 70471",
+      "website": "mandevillelake.com",
+      "phone": null,
+      "yearBuilt": null,
+      "stories": null,
+      "totalUnits": null,
+      "involvement": "Ground-up development complete — owned rental apartment complex",
+      "description": "Luxury apartment community in Mandeville offering 1–3 bedroom units (840–1,482 SF) starting at $1,525/mo. Features elevators in every building, trash chutes on every floor, 9-ft ceilings, crown molding, fireplaces, ceiling fans, and open-concept kitchens with custom cabinetry. Amenities include a clubhouse, two pools, tennis courts, car washing station, 24-hour fitness center, and playground. 5 minutes from the Causeway Bridge.",
+      "sqftRange": "840–1,482 SF",
+      "rentRange": "From $1,525/mo"
+    }
   },
   {
     "id": "lakeside-village-townhomes",
@@ -45,7 +137,42 @@
     "crosbyRole": "Owner-PM",
     "notes": "45-lot HOA community. 31 townhomes, 14 cottages. Crosby owns 11 lots (7 managed directly, 4 third-party). 30 owner-occupied lots. Monthly dues: $91,880 total.",
     "dataSource": "Lakeside Village Controller_SOURCE - Main Information (7).csv",
-    "lastUpdated": "2026-04-02"
+    "lastUpdated": "2026-06-11",
+    "cls": "HOA / Mixed",
+    "location": "Mandeville, LA",
+    "isCommercial": false,
+    "isHOA": true,
+    "unitMix": [
+      {
+        "plan": "Townhome",
+        "beds": "N/A",
+        "sqft": "2,041–3,366",
+        "rent": "$1,500–$3,200/mo",
+        "count": 31,
+        "vacant": 0
+      },
+      {
+        "plan": "Cottage",
+        "beds": "N/A",
+        "sqft": "2,072",
+        "rent": "$3,200/mo",
+        "count": 14,
+        "vacant": 0
+      }
+    ],
+    "profile": {
+      "type": "HOA Community — Townhomes & Cottages",
+      "address": "1100 Mandeville High Blvd, Mandeville, LA 70471",
+      "website": "lakesidevillage.org",
+      "phone": null,
+      "yearBuilt": null,
+      "stories": null,
+      "totalUnits": null,
+      "involvement": "Ground-up development complete — partial unit ownership, partial property management contracts, full HOA management",
+      "description": "Gated luxury townhome and cottage community in the heart of Mandeville, just steps from the Causeway. Upgraded amenities include well-equipped kitchens, crown molding, granite countertops, double-car garages, controlled access, private pool, club room with fitness center, pond, and community center. Located off Rue Renoir, directly across from Mandeville High School.",
+      "sqftRange": "N/A",
+      "rentRange": "N/A"
+    }
   },
   {
     "id": "gulf-south-commerce-park",
@@ -61,7 +188,24 @@
     "crosbyRole": "Owner-Operator",
     "notes": "Industrial mega site undergoing horizontal development. Parcel 1-A sold. Remaining parcels for industrial/logistics/manufacturing users.",
     "dataSource": null,
-    "lastUpdated": null
+    "lastUpdated": "2026-06-11",
+    "cls": "Industrial",
+    "location": "St. Tammany Parish, LA",
+    "isCommercial": false,
+    "isHOA": false,
+    "profile": {
+      "type": "Industrial Mega Site",
+      "address": "I-12 & LA Hwy 1088, St. Tammany Parish, LA",
+      "website": "gulfsouthcommercepark.com",
+      "phone": null,
+      "yearBuilt": null,
+      "stories": null,
+      "totalUnits": null,
+      "involvement": "Horizontal development — selling building pads. One plat sold (Parcel 1-A)",
+      "description": "919-acre industrial mega site in St. Tammany Parish, less than 50 miles north of New Orleans. Master-planned for Advanced Manufacturing and Logistics. Located at I-12 & Hwy 1088 with access to ports, rail, and major highways. Developed in partnership with St. Tammany Corporation and Parish Government. Selected as a Louisiana FastSites project (2026) under the $150M Site Investment & Infrastructure Fund. Parcels available from 1 to 189 acres — currently doing horizontal development and selling building pads.",
+      "sqftRange": "919 total acres",
+      "rentRange": "Land sales — pad-ready parcels"
+    }
   },
   {
     "id": "the-sanctuary",
@@ -77,7 +221,24 @@
     "crosbyRole": "HOA-Manager",
     "notes": "Luxury single-family HOA community. Crosby manages HOA and owns one rental unit. Multiple Crosby family members reside in community.",
     "dataSource": null,
-    "lastUpdated": null
+    "lastUpdated": "2026-06-11",
+    "cls": "HOA / Single-Family",
+    "location": "Mandeville, LA",
+    "isCommercial": false,
+    "isHOA": false,
+    "profile": {
+      "type": "Luxury Single-Family Community",
+      "address": "Sanctuary Blvd, Mandeville, LA 70471",
+      "website": "thesanctuaryneighborhood.org",
+      "phone": null,
+      "yearBuilt": 1995,
+      "stories": null,
+      "totalUnits": 400,
+      "involvement": "HOA management. One owned rental property. Multiple family members reside in the community.",
+      "description": "Private gated community established in 1995 by Crosby Development Company on 1,170 acres less than 2 miles from Lake Pontchartrain. 400+ homesites surrounded by native wetlands, cypress marshes, and nature preserves. Amenities include a Health and Activity Center with tournament-sized pool, tennis courts, fitness facilities, and miles of walking/jogging/nature trails. Underground utilities. Lots from $215K–$676K; homes from $750K–$3.2M.",
+      "sqftRange": "Custom homes",
+      "rentRange": "Lots $215K–$676K; Homes $750K–$3.2M"
+    }
   },
   {
     "id": "delimon-place",
@@ -91,9 +252,26 @@
     "totalUnits": null,
     "status": "active",
     "crosbyRole": "Partial",
-    "notes": "Mixed-use development: townhomes, 2 apartment complexes, 3 HOAs. Limited Crosby involvement \u2014 owns some units and an office building. Managed alongside community associations.",
+    "notes": "Mixed-use development: townhomes, 2 apartment complexes, 3 HOAs. Limited Crosby involvement — owns some units and an office building. Managed alongside community associations.",
     "dataSource": null,
-    "lastUpdated": null
+    "lastUpdated": "2026-06-11",
+    "cls": "Townhome / Mixed",
+    "location": "Old Metairie, LA",
+    "isCommercial": false,
+    "isHOA": false,
+    "profile": {
+      "type": "Townhome Community & Apartment Complexes",
+      "address": "800 Rue Rampart, Old Metairie, LA 70005",
+      "website": "delimonoldmetairie.com",
+      "phone": null,
+      "yearBuilt": 1981,
+      "stories": 3,
+      "totalUnits": 125,
+      "involvement": "Limited remaining ownership — a few units + on-site office building. 3 separate HOAs. No HOA or property management involvement.",
+      "description": "Established in 1981, DeLimon Place is an Old Metairie icon. Townhomes and two apartment complexes across 3 separate HOAs on a single site. Townhomes are ~3,000 SF (3-story). Pristine common areas, inground pool, party room. Easy access to City Park, Downtown New Orleans, the French Quarter, and the airport.",
+      "sqftRange": "~3,000 SF (townhomes)",
+      "rentRange": "N/A"
+    }
   },
   {
     "id": "metairie-lake-apartments",
@@ -109,7 +287,42 @@
     "crosbyRole": "Owner-Operator",
     "notes": "108-unit apartment community in Metairie. Rent roll loaded from WDB file.",
     "dataSource": "Metairie Lake rent roll.wdb",
-    "lastUpdated": "2026-04-02"
+    "lastUpdated": "2026-06-11",
+    "cls": "Multi-Family",
+    "location": "Metairie, LA",
+    "isCommercial": false,
+    "isHOA": false,
+    "unitMix": [
+      {
+        "plan": "1 Bedroom",
+        "beds": "1/1",
+        "sqft": "696–699",
+        "rent": "$800–$1,475",
+        "count": 80,
+        "vacant": 7
+      },
+      {
+        "plan": "2 Bedroom",
+        "beds": "2/2",
+        "sqft": "1,044–1,230",
+        "rent": "$1,030–$1,600",
+        "count": 28,
+        "vacant": 2
+      }
+    ],
+    "profile": {
+      "type": "Apartment Complex",
+      "address": "1309 Carrollton Avenue, Metairie, LA 70005",
+      "website": "metairielake.com",
+      "phone": "(504) 285-5221",
+      "yearBuilt": 1978,
+      "stories": 3,
+      "totalUnits": 108,
+      "involvement": "Ground-up development complete — owned rental apartment complex",
+      "description": "Spacious 1 & 2 bedroom floor plans (696–1,230 SF) near New Orleans CBD, medical schools, and universities. Amenities include a swimming pool, courtyard, clubhouse, controlled access, fitness center, walk-in closets, and private patios/balconies. 10.7 miles from Louis Armstrong International Airport.",
+      "sqftRange": "696–1,230 SF",
+      "rentRange": "$800–$1,600/mo"
+    }
   },
   {
     "id": "metairie-plaza",
@@ -125,6 +338,81 @@
     "crosbyRole": "Owner-Operator",
     "notes": "66-unit apartment community in Metairie. 62 of 66 units parsed from WDB file; 4 boundary units pending.",
     "dataSource": "Metairie Plaza rent roll.wdb",
-    "lastUpdated": "2026-04-02"
+    "lastUpdated": "2026-06-11",
+    "cls": "Multi-Family",
+    "location": "Metairie, LA",
+    "isCommercial": false,
+    "isHOA": false,
+    "unitMix": [
+      {
+        "plan": "2 BR Flat",
+        "beds": "2/2",
+        "sqft": "1,040",
+        "rent": "$955–$1,300",
+        "count": 16,
+        "vacant": 1
+      },
+      {
+        "plan": "2 BR Flat CP",
+        "beds": "2/2",
+        "sqft": "1,080",
+        "rent": "$970–$1,250",
+        "count": 6,
+        "vacant": 1
+      },
+      {
+        "plan": "2 BR Townhome",
+        "beds": "2/1.5",
+        "sqft": "1,054",
+        "rent": "$980–$1,250",
+        "count": 14,
+        "vacant": 1
+      },
+      {
+        "plan": "2 BR Townhome CP",
+        "beds": "2/1.5–2",
+        "sqft": "1,054–1,150",
+        "rent": "$920–$1,250",
+        "count": 12,
+        "vacant": 1
+      },
+      {
+        "plan": "3 BR Townhome",
+        "beds": "3/2",
+        "sqft": "1,150",
+        "rent": "$1,150–$1,600",
+        "count": 8,
+        "vacant": 0
+      },
+      {
+        "plan": "3 BR Townhome CP",
+        "beds": "3/2",
+        "sqft": "1,150",
+        "rent": "$1,150–$1,350",
+        "count": 6,
+        "vacant": 0
+      },
+      {
+        "plan": "EX 3 BR Townhome",
+        "beds": "3/2.5",
+        "sqft": "1,735",
+        "rent": "$1,200–$2,200",
+        "count": 4,
+        "vacant": 1
+      }
+    ],
+    "profile": {
+      "type": "Apartment Complex",
+      "address": "1046 Lake Avenue, Metairie, LA 70005",
+      "website": "metairieplaza.com",
+      "phone": "(504) 565-2664",
+      "yearBuilt": 1972,
+      "stories": 2,
+      "totalUnits": 66,
+      "involvement": "Ground-up development complete — owned rental apartment complex",
+      "description": "Centrally located in Metairie, minutes from the New Orleans CBD. Features 2 & 3 bedroom units (1,040–1,735 SF) including flats, townhomes, and executive townhomes. Amenities include a private swimming pool, ample off-street parking, covered carports, outdoor storage lockers, and professional on-site management.",
+      "sqftRange": "1,040–1,735 SF",
+      "rentRange": "$955–$2,200/mo"
+    }
   }
 ]
