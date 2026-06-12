@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Crosby Development — Agent Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script src="https://unpkg.com/lucide@0.383.0/dist/umd/lucide.min.js"></script>
   <style>
@@ -129,10 +132,134 @@
     .doc-detail-body code { font-family:monospace;font-size:12px;background:#f3f4f6;padding:1px 5px;border-radius:3px; }
     .doc-detail-body hr { border:none;border-top:1px solid #e5e7eb;margin:16px 0; }
     .doc-pending-banner { background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:12px; }
+    /* ============================================================
+       DESIGN SYSTEM — premium refinement layer (overrides above)
+       ============================================================ */
+    :root {
+      --bg: #eef1f5;
+      --bg-grad-a: #f4f6f9; --bg-grad-b: #e9edf2;
+      --surface: #ffffff;
+      --surface-2: #f8fafc;
+      --border: #e7e9ee;
+      --border-strong: #d6dae1;
+      --ink: #0d1726;
+      --ink-2: #475569;
+      --ink-3: #8b95a7;
+      --brand: #1f5fdb;
+      --brand-strong: #1648b0;
+      --brand-ink: #15396f;
+      --brand-tint: #eaf1fe;
+      --brand-tint-2: #dbe7fd;
+      --success: #0f7a4f; --success-tint: #e3f5ec; --success-ring: #b6e4cd;
+      --warn: #b06a08; --warn-tint: #fdf2dd; --warn-ring: #f3d9a4;
+      --danger: #c0322b; --danger-tint: #fdeceb; --danger-ring: #f4c6c2;
+      --radius: 16px; --radius-sm: 11px; --radius-xs: 8px;
+      --shadow-xs: 0 1px 2px rgba(13,23,38,.05);
+      --shadow-sm: 0 1px 2px rgba(13,23,38,.04), 0 2px 5px rgba(13,23,38,.05);
+      --shadow-md: 0 4px 14px rgba(13,23,38,.08), 0 1px 3px rgba(13,23,38,.04);
+      --shadow-lg: 0 14px 40px rgba(13,23,38,.14);
+      --ring: 0 0 0 4px rgba(31,95,219,.12);
+    }
+    html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(180deg, var(--bg-grad-a) 0%, var(--bg-grad-b) 100%);
+      background-attachment: fixed;
+      color: var(--ink); letter-spacing: -0.011em;
+    }
+    .mono, code, .freq-badge, .agent-last, .sched-table .mono { font-family: 'Inter', ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+    .stat-value, .prop-stat-val, .snapshot-val { font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+
+    /* Header — refined, with soft elevation and gradient mark */
+    .header {
+      background: rgba(255,255,255,0.82); backdrop-filter: saturate(180%) blur(12px);
+      border-bottom: 1px solid var(--border); box-shadow: 0 1px 0 rgba(13,23,38,.03);
+    }
+    .header-inner { padding: 14px 28px; }
+    .header-logo {
+      width: 38px; height: 38px; border-radius: 11px;
+      background: linear-gradient(150deg, #2f6fe6 0%, #163e95 100%);
+      box-shadow: 0 4px 12px rgba(22,62,149,.35), inset 0 1px 0 rgba(255,255,255,.22);
+    }
+    .header-title { font-family: 'Fraunces', Georgia, 'Times New Roman', serif; font-size: 19px; font-weight: 600; letter-spacing: -0.01em; color: var(--ink); line-height: 1.1; }
+    .header-sub { font-size: 11px; font-weight: 500; letter-spacing: 0.02em; text-transform: uppercase; color: var(--ink-3); }
+
+    .container { max-width: 1240px; padding: 28px; }
+
+    /* Segmented nav */
+    .nav {
+      gap: 2px; border-radius: 13px; padding: 5px; border: 1px solid var(--border);
+      background: var(--surface); box-shadow: var(--shadow-xs);
+    }
+    .nav-btn { font-weight: 550; padding: 8px 15px; border-radius: 9px; color: var(--ink-3); letter-spacing: -0.01em; transition: all 160ms ease; }
+    .nav-btn:hover { background: var(--surface-2); color: var(--ink); }
+    .nav-btn.active {
+      background: linear-gradient(150deg, #2f6fe6 0%, #1a4cae 100%); color: #fff;
+      box-shadow: 0 3px 9px rgba(22,62,149,.30), inset 0 1px 0 rgba(255,255,255,.18);
+    }
+
+    /* Cards — soft elevation instead of hard borders */
+    .card, .stat-card, .prop-card, .approval-card, .doc-card {
+      border: 1px solid var(--border); border-radius: var(--radius);
+      box-shadow: var(--shadow-sm); background: var(--surface);
+    }
+    .card { padding: 22px; }
+    .card-title { font-size: 12px; font-weight: 650; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 14px; }
+
+    /* Stat cards — editorial figures, tinted icon chip, accent rule */
+    .stat-card { padding: 20px 22px; position: relative; overflow: hidden; transition: box-shadow 200ms ease, transform 200ms ease; }
+    .stat-card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+    .stat-card::before { content:""; position:absolute; left:0; top:0; bottom:0; width:3px; background: linear-gradient(180deg,#2f6fe6,#163e95); opacity:.9; }
+    .stat-icon { padding: 11px; border-radius: 11px; background: var(--brand-tint); color: var(--brand); box-shadow: inset 0 0 0 1px var(--brand-tint-2); }
+    .stat-label { font-size: 12px; font-weight: 600; letter-spacing: 0.02em; text-transform: uppercase; color: var(--ink-3); }
+    .stat-value { font-size: 30px; font-weight: 750; color: var(--ink); margin-top: 4px; line-height: 1.05; }
+    .stat-sub { font-size: 12px; color: var(--ink-3); margin-top: 5px; font-weight: 500; }
+
+    /* Badges — softer fills with a defining ring */
+    .badge { font-size: 11.5px; font-weight: 600; padding: 3px 10px; letter-spacing: 0.01em; box-shadow: inset 0 0 0 1px rgba(13,23,38,.04); }
+    .badge-approved { background: var(--success-tint); color: var(--success); box-shadow: inset 0 0 0 1px var(--success-ring); }
+    .badge-pending { background: var(--warn-tint); color: var(--warn); box-shadow: inset 0 0 0 1px var(--warn-ring); }
+    .badge-revision { background: var(--danger-tint); color: var(--danger); box-shadow: inset 0 0 0 1px var(--danger-ring); }
+    .badge-idle { background: #eef1f5; color: var(--ink-3); box-shadow: inset 0 0 0 1px #e1e5ea; }
+
+    /* Property cards — lift on hover */
+    .prop-card { padding: 18px; transition: box-shadow 200ms ease, transform 200ms ease, border-color 200ms ease; }
+    .prop-card:hover { border-color: var(--border-strong); box-shadow: var(--shadow-md); transform: translateY(-2px); }
+    .prop-name { font-size: 15px; font-weight: 650; letter-spacing: -0.01em; }
+    .prop-stat-val { font-weight: 750; }
+    .prop-expand { color: var(--brand); font-weight: 600; }
+
+    /* Tables — refined header micro-labels and calm row separation */
+    .unit-table th, .sched-table th {
+      font-size: 10.5px; font-weight: 650; letter-spacing: 0.06em; color: var(--ink-3);
+      background: var(--surface-2); padding: 10px 13px; border-bottom: 1px solid var(--border);
+    }
+    .unit-table td { padding: 11px 13px; border-bottom: 1px solid #eef1f4; color: var(--ink-2); }
+    .unit-table tbody tr { transition: background 120ms ease; }
+    .unit-table tbody tr:hover td { background: #f7f9fc; }
+    .unit-table tbody tr:hover .c-tenant { background: #f7f9fc; }
+    .unit-table .c-tenant { color: var(--ink); font-weight: 600; }
+    .unit-table tr:last-child td { border-top: 1.5px solid var(--border-strong); background: var(--surface-2); color: var(--ink); }
+    .table-scroll { border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow-sm); }
+    .table-scroll .unit-table { font-size: 13px; }
+    .table-scroll .unit-table thead .c-tenant, .table-scroll .unit-table tr:last-child .c-tenant { background: var(--surface-2); }
+    .table-scroll .unit-table .c-tenant { background: var(--surface); box-shadow: 1px 0 0 var(--border); }
+
+    /* Buttons */
+    .btn { border-radius: 9px; font-weight: 600; box-shadow: var(--shadow-xs); }
+    .alert-btn { border-radius: 9px; box-shadow: var(--shadow-xs); }
+    .freq-badge { font-weight: 600; background: var(--brand-tint); color: var(--brand-strong); }
+
+    /* Section eyebrow used in detail headers (progressive enhancement) */
+    .doc-card { padding: 18px; }
+    .doc-card:hover { border-color: var(--border-strong); box-shadow: var(--shadow-md); transform: translateY(-1px); }
+
     @media (max-width: 900px) {
       .grid-4 { grid-template-columns: repeat(2, 1fr); }
       .grid-2-1 { grid-template-columns: 1fr; }
       .nav { flex-wrap: wrap; }
+      .container { padding: 18px; }
+      .header-inner { padding: 12px 18px; }
     }
   </style>
 </head>
@@ -253,10 +380,13 @@
 
   <!-- ═══ PROPERTY DETAIL ═══ -->
   <div class="view" id="view-property-detail">
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:20px;">
-      <button class="btn btn-review" onclick="switchView('portfolio')" style="padding:6px 10px;">← Back to Portfolio</button>
-      <h2 id="detailPropName" style="font-size:20px;font-weight:700;margin:0;"></h2>
-      <span id="detailPropBadge" class="badge" style="margin-left:auto;"></span>
+    <button class="btn btn-review" onclick="switchView('portfolio')" style="padding:6px 12px;margin-bottom:16px;">← Back to Portfolio</button>
+    <div style="display:flex;align-items:flex-end;gap:14px;margin-bottom:22px;flex-wrap:wrap;">
+      <div>
+        <div style="font-size:11px;font-weight:650;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);margin-bottom:4px;">Property Detail</div>
+        <h2 id="detailPropName" style="font-family:'Fraunces',Georgia,serif;font-size:30px;font-weight:600;letter-spacing:-0.015em;line-height:1.05;margin:0;color:var(--ink);"></h2>
+      </div>
+      <span id="detailPropBadge" class="badge" style="margin-left:auto;margin-bottom:6px;"></span>
     </div>
     <div class="grid-4" id="detailStats"></div>
     <div id="detailContent"></div>
@@ -1621,17 +1751,19 @@ var SOP_COLS = [['tenant','Tenant'],['suite','Suite'],['sf','Square Feet'],['ren
 function ensureLeaseStyles() {
   if(document.getElementById('leaseWidgetStyle')) return;
   var s = document.createElement('style'); s.id = 'leaseWidgetStyle';
-  s.textContent = '.lw{position:relative;display:inline-flex;align-items:center;gap:4px;margin:1px 0;}'+
-    '.lw .nm{font-size:11px;font-weight:700;color:#374151;}'+
-    '.lw a{font-size:10px;font-weight:700;text-decoration:none;border-radius:3px;padding:1px 5px;}'+
-    '.lw a.pdf{color:#6b7280;border:1px solid #e5e7eb;}'+
-    '.lw a.html{color:#2563eb;border:1px solid #bfdbfe;background:#eff6ff;}'+
-    '.lw .tip{display:none;position:absolute;z-index:60;bottom:100%;left:0;margin-bottom:6px;width:270px;background:#111827;color:#e5e7eb;font-size:11px;font-weight:400;line-height:1.55;text-align:left;padding:9px 11px;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.28);white-space:normal;}'+
+  s.textContent = '.lw{position:relative;display:inline-flex;align-items:center;gap:5px;margin:1px 0;}'+
+    '.lw .nm{font-size:11px;font-weight:650;color:#334155;letter-spacing:-0.01em;}'+
+    '.lw a{font-size:9.5px;font-weight:700;letter-spacing:.03em;text-decoration:none;border-radius:5px;padding:2px 6px;transition:all 130ms ease;}'+
+    '.lw a.pdf{color:#64748b;border:1px solid #e2e6ec;background:#f8fafc;}'+
+    '.lw a.pdf:hover{color:#334155;border-color:#cdd4dd;background:#eef1f5;}'+
+    '.lw a.html{color:#1648b0;border:1px solid #c7dbfb;background:#eaf1fe;}'+
+    '.lw a.html:hover{color:#fff;background:#1f5fdb;border-color:#1f5fdb;}'+
+    '.lw .tip{display:none;position:absolute;z-index:60;bottom:100%;left:0;margin-bottom:8px;width:280px;background:#0d1726;color:#dce3ee;font-size:11px;font-weight:400;line-height:1.6;text-align:left;padding:11px 13px;border-radius:11px;box-shadow:0 14px 40px rgba(13,23,38,.34),0 0 0 1px rgba(255,255,255,.06);white-space:normal;}'+
     '.lw:hover .tip{display:block;}'+
-    '.lw .tip b{color:#fff;}.lw .tip .k{color:#9ca3af;}'+
-    '.iw{position:relative;display:inline-flex;flex-direction:column;align-items:flex-start;gap:2px;}'+
-    '.iw .tip{display:none;position:absolute;z-index:60;bottom:100%;left:0;margin-bottom:6px;width:260px;background:#111827;color:#e5e7eb;font-size:11px;font-weight:400;line-height:1.55;text-align:left;padding:9px 11px;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.28);white-space:normal;}'+
-    '.iw:hover > .tip{display:block;}.iw .tip b{color:#fff;}';
+    '.lw .tip b{color:#fff;font-weight:650;}.lw .tip .k{color:#94a3b8;}'+
+    '.iw{position:relative;display:inline-flex;flex-direction:column;align-items:flex-start;gap:3px;}'+
+    '.iw .tip{display:none;position:absolute;z-index:60;bottom:100%;left:0;margin-bottom:8px;width:270px;background:#0d1726;color:#dce3ee;font-size:11px;font-weight:400;line-height:1.6;text-align:left;padding:11px 13px;border-radius:11px;box-shadow:0 14px 40px rgba(13,23,38,.34),0 0 0 1px rgba(255,255,255,.06);white-space:normal;}'+
+    '.iw:hover > .tip{display:block;}.iw .tip b{color:#fff;font-weight:650;}';
   document.head.appendChild(s);
 }
 // Insurance/COI cell for a roster row: compliance badge + expiration countdown +
@@ -1747,7 +1879,7 @@ function renderPropertyDetail(p) {
 
   var html = "";
   if(p.marketInfoUrl) {
-    html += '<div style="margin-bottom:16px;"><button onclick="openMarketInfo(\''+p.marketInfoUrl+'\')" style="display:inline-flex;align-items:center;gap:8px;background:#2563eb;color:#fff;border:none;border-radius:8px;padding:9px 16px;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 2px 8px rgba(37,99,235,.28);">'+iconSvg("trending-up",16)+' Current Market Info</button></div>';
+    html += '<div style="margin-bottom:16px;"><button onclick="openMarketInfo(\''+p.marketInfoUrl+'\')" style="display:inline-flex;align-items:center;gap:8px;background:linear-gradient(150deg,#2f6fe6,#1a4cae);color:#fff;border:none;border-radius:10px;padding:10px 18px;font-size:13px;font-weight:650;letter-spacing:-0.01em;cursor:pointer;box-shadow:0 4px 14px rgba(22,62,149,.30),inset 0 1px 0 rgba(255,255,255,.18);transition:transform 150ms ease,box-shadow 150ms ease;" onmouseover="this.style.transform=\'translateY(-1px)\';this.style.boxShadow=\'0 6px 18px rgba(22,62,149,.38),inset 0 1px 0 rgba(255,255,255,.18)\'" onmouseout="this.style.transform=\'\';this.style.boxShadow=\'0 4px 14px rgba(22,62,149,.30),inset 0 1px 0 rgba(255,255,255,.18)\'">'+iconSvg("trending-up",16)+' Current Market Info</button></div>';
   }
 
   if(p.isHOA) {
