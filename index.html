@@ -95,6 +95,12 @@
     .unit-table th { text-align: left; padding: 8px 12px; font-size: 11px; font-weight: 600; color: #6b7280; text-transform: uppercase; border-bottom: 1px solid #e5e7eb; background: #f9fafb; }
     .unit-table td { padding: 8px 12px; border-bottom: 1px solid #f3f4f6; }
     .unit-table tr:last-child td { font-weight: 700; border-top: 2px solid #e5e7eb; }
+    /* Horizontal scroll for wide tables: fills the card when it fits, scrolls left-right when it doesn't. */
+    .table-scroll { overflow-x: auto; overflow-y: visible; margin-top: 12px; -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
+    .table-scroll .unit-table { margin-top: 0; min-width: 1180px; }
+    .table-scroll::-webkit-scrollbar { height: 9px; }
+    .table-scroll::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 5px; }
+    .table-scroll::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
     .prop-expand { font-size: 11px; color: #2563eb; display: flex; align-items: center; gap: 4px; margin-top: 10px; font-weight: 500; }
     .prop-card:hover .prop-expand { color: #1d4ed8; }
     .view { display: none; }
@@ -1984,6 +1990,8 @@ function renderPropertyDetail(p) {
     }
   }
 
+  // Wrap each table in a horizontal-scroll container (fills the card; scrolls when wider than viewport).
+  html = html.replace(/<table class="unit-table">([\s\S]*?)<\/table>/g, '<div class="table-scroll"><table class="unit-table">$1</table></div>');
   document.getElementById("detailContent").innerHTML = html;
   ensureLeaseStyles();
   applySopCols();
