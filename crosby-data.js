@@ -88,6 +88,18 @@ export async function loadEntities() {
   return out;
 }
 
+// ── Assistant interaction log (WhatsApp Q&A audit trail) ──────────────────────
+// Returns recent entries newest-first: { ts, fromNumber, question, answer, model, status, ms }.
+export async function loadAssistantLog(max = 300) {
+  if (DATA_MODE === "local") return [];
+  const fb = await ensureFirebase();
+  const snap = await fb.getDocs(fb.collection(fb.db, "assistantLog"));
+  return snap.docs
+    .map((d) => d.data())
+    .sort((a, b) => String(b.ts || "").localeCompare(String(a.ts || "")))
+    .slice(0, max);
+}
+
 // ── Live state (documents / activity / agentStatuses / scheduled) ─────────────
 // handlers: { onDocuments(arr), onActivity(arr), onAgentStatuses(map), onScheduled(arr) }
 // Returns an unsubscribe function. In local mode it's a one-shot read.

@@ -295,6 +295,7 @@
     <button class="nav-btn" data-view="outputs"><i data-lucide="file-check" style="width:15px;height:15px;"></i> Outputs <span class="nav-badge" id="outputsBadge">0</span></button>
     <button class="nav-btn" data-view="kb"><i data-lucide="book-open" style="width:15px;height:15px;"></i> Knowledge Base</button>
     <button class="nav-btn" data-view="metrics"><i data-lucide="trending-up" style="width:15px;height:15px;"></i> Metrics</button>
+    <button class="nav-btn" data-view="assistant"><i data-lucide="message-square" style="width:15px;height:15px;"></i> Assistant</button>
   </nav>
 
   <!-- ═══ PORTFOLIO ═══ -->
@@ -376,6 +377,18 @@
       <div class="card-title">Portfolio Summary</div>
       <div id="portfolioSummaryGrid"></div>
     </div>
+  </div>
+
+  <!-- ═══ ASSISTANT ACTIVITY ═══ -->
+  <div class="view" id="view-assistant">
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:16px;flex-wrap:wrap;gap:8px;">
+      <div>
+        <div class="card-title" style="margin-bottom:2px;">WhatsApp Assistant Activity</div>
+        <div style="font-size:13px;color:#6b7280;">Every question asked through the WhatsApp assistant — who asked, the reply, and which model answered.</div>
+      </div>
+      <button onclick="renderAssistantLog()" style="font-size:12px;color:#374151;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:6px;padding:6px 12px;cursor:pointer;">Refresh</button>
+    </div>
+    <div class="card"><div id="assistantLogBody"><div style="color:#9ca3af;font-size:13px;padding:8px;">Loading…</div></div></div>
   </div>
 
   <!-- ═══ PROPERTY DETAIL ═══ -->
@@ -582,7 +595,36 @@ function switchView(id) {
   if(id==="outputs") renderOutputs(null);
   if(id==="kb") renderKB(null);
   if(id==="metrics") renderMetrics();
+  if(id==="assistant") renderAssistantLog();
   lucide.createIcons();
+}
+
+// ── ASSISTANT ACTIVITY ──────────────────────────────────────────────────────
+function renderAssistantLog() {
+  var c = document.getElementById('assistantLogBody');
+  if(!c) return;
+  c.innerHTML = '<div style="color:#9ca3af;font-size:13px;padding:8px;">Loading…</div>';
+  if(typeof window.loadAssistantLog !== 'function'){ c.innerHTML = '<div style="color:#9ca3af;font-size:13px;padding:8px;">Activity log isn\'t available in preview mode.</div>'; return; }
+  var esc = function(t){ return String(t==null?'':t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); };
+  var badge = function(s){ var m={answered:'badge-approved',blocked:'badge-revision',error:'badge-revision',help:'badge-idle'}; return '<span class="badge '+(m[s]||'badge-idle')+'">'+esc(s||'—')+'</span>'; };
+  var fmt = function(ts){ if(!ts) return '—'; var d=new Date(ts); if(isNaN(d.getTime())) return esc(ts); return d.toLocaleString(undefined,{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}); };
+  window.loadAssistantLog().then(function(rows){
+    if(!rows || !rows.length){ c.innerHTML = '<div style="color:#6b7280;font-size:13px;padding:8px;">No assistant activity yet. Questions asked via WhatsApp will appear here.</div>'; return; }
+    var html = '<div style="font-size:12px;color:#9ca3af;margin-bottom:10px;">'+rows.length+' interaction'+(rows.length===1?'':'s')+' · newest first</div>';
+    html += '<div class="table-scroll"><table class="unit-table" style="min-width:920px;"><thead><tr><th style="width:118px;">Time</th><th style="width:130px;">From</th><th>Question</th><th>Answer</th><th style="width:64px;">Model</th><th style="width:92px;">Status</th></tr></thead><tbody>';
+    rows.forEach(function(r){
+      html += '<tr>'+
+        '<td style="font-size:12px;color:#6b7280;white-space:nowrap;">'+fmt(r.ts)+'</td>'+
+        '<td style="font-size:12px;font-family:monospace;white-space:nowrap;">'+esc(r.fromNumber||r.from||'—')+'</td>'+
+        '<td style="font-size:13px;color:#111827;">'+esc(r.question||'—')+'</td>'+
+        '<td style="font-size:12px;color:#374151;">'+esc(r.answer!=null?r.answer:(r.error?('⚠ '+r.error):'—'))+'</td>'+
+        '<td style="font-size:11px;color:#6b7280;">'+esc(r.model||'—')+'</td>'+
+        '<td>'+badge(r.status)+'</td>'+
+      '</tr>';
+    });
+    html += '</tbody></table></div>';
+    c.innerHTML = html;
+  }).catch(function(e){ c.innerHTML = '<div style="color:#dc2626;font-size:13px;padding:8px;">Could not load the activity log: '+esc(e&&e.message||e)+'</div>'; });
 }
 
 function openPropertyDetail(slug) {
@@ -3424,12 +3466,13 @@ document.addEventListener("DOMContentLoaded", init);
 </div>
 
 <script type="module">
-  import { DATA_MODE, startAuth, signIn, signOutUser, loadEntities, subscribeState, setDocumentStatus }
+  import { DATA_MODE, startAuth, signIn, signOutUser, loadEntities, subscribeState, setDocumentStatus, loadAssistantLog }
     from "./crosby-data.js";
   import { deriveViewModel } from "./crosby-viewmodel.js";
 
   // Bridge module functions to the global handlers used by the classic script.
   window.__persistDocStatus = (id, status) => setDocumentStatus(id, status, window.__operatorEmail);
+  window.loadAssistantLog = loadAssistantLog;
   window.__signIn  = () => signIn().catch((e) => alert("Sign-in failed: " + e.message));
   window.__signOut = () => signOutUser();
 
