@@ -342,5 +342,106 @@
             "dated": "2024-12-07",
             "title": "COI — Monson Law Firm (Building #5, Suite 101) — GL $1M/$2M (prod/comp-ops $4M), Crosby AI + cert holder; EXPIRED 2026-01-17"
         }
+    },
+    {
+        "id": "coi-cecocoi2022",
+        "propertyId": "sanctuary-office-park",
+        "building": "Building #5",
+        "tenant": "Ceco Concrete Construction LLC",
+        "suite": "201",
+        "producer": "Tave Risk Management",
+        "certificateHolder": "Crosby Development Company, LLC",
+        "additionalInsured": true,
+        "coverages": [
+            {
+                "type": "General Liability",
+                "eachOccurrence": 4500000,
+                "generalAggregate": 10000000,
+                "policyNumber": "GLO 0111195-05",
+                "expiration": "2023-08-01"
+            },
+            {
+                "type": "Workers Compensation",
+                "eachAccident": 1000000,
+                "expiration": "2023-08-01"
+            }
+        ],
+        "expiration": "2023-08-01",
+        "file": "Ceco_COI_2022.pdf",
+        "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/cois%2FCeco_COI_2022.pdf?alt=media&token=ed6faabf-ed8d-45fe-87ed-ba222a69177f",
+        "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/cois-html%2FCeco_COI_2022.html?alt=media&token=18064334-0e01-413f-9cff-9919ba391809",
+        "date": "2022-09-23",
+        "meta": {
+            "insured": "Ceco Concrete Construction LLC",
+            "carrier": "Zurich American Insurance Co.",
+            "policyNumber": "GLO 0111195-05",
+            "documentType": "Certificate of Liability Insurance (ACORD 25)",
+            "dated": "2022-09-23",
+            "title": "COI — Ceco Concrete (Building #5, Suite 201) — GL $4.5M/$10M, Crosby AI + cert holder; EXPIRED 2023-08-01"
+        }
+    },
+    {
+        "id": "coi-callihancentraltitlecoi2026amended",
+        "propertyId": "sanctuary-office-park",
+        "building": "Building #2",
+        "tenant": "Central Title / Callihan Law",
+        "suite": "102",
+        "producer": "Novatae Risk Group LLC",
+        "certificateHolder": "Crosby Development Company, LLC",
+        "additionalInsured": true,
+        "coverages": [
+            {
+                "type": "General Liability",
+                "eachOccurrence": 1000000,
+                "generalAggregate": 2000000,
+                "policyNumber": "17 0037799496 8 01",
+                "expiration": "2027-02-27"
+            }
+        ],
+        "expiration": "2027-02-27",
+        "file": "CallihanCentralTitle_COI_2026_Amended.pdf",
+        "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/cois%2FCallihanCentralTitle_COI_2026_Amended.pdf?alt=media&token=82b3228e-750a-4efe-9541-8c5de1010942",
+        "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/cois-html%2FCallihanCentralTitle_COI_2026_Amended.html?alt=media&token=54224ec9-ebb1-44a5-9ffa-e41a6c225816",
+        "date": "2026-02-26",
+        "meta": {
+            "insured": "Callihan Law Firm LLC / Central Title Closing Co LLC",
+            "carrier": "Bankers Insurance Company",
+            "policyNumber": "17 0037799496 8 01",
+            "documentType": "Businessowners Evidence of Insurance (amended quote)",
+            "dated": "2026-02-26",
+            "title": "COI — Central Title / Callihan Law (Building #2, Suite 102) — GL $1M/$2M, Crosby AI/Lessor; current, exp 2027-02-27"
+        }
+    },
+    {
+        "id": "coi-callihancentraltitlecoi2026renewal",
+        "propertyId": "sanctuary-office-park",
+        "building": "Building #2",
+        "tenant": "Central Title / Callihan Law",
+        "suite": "102",
+        "producer": "Novatae Risk Group LLC",
+        "certificateHolder": "Crosby Development Company, LLC",
+        "additionalInsured": true,
+        "coverages": [
+            {
+                "type": "General Liability",
+                "eachOccurrence": 1000000,
+                "generalAggregate": 2000000,
+                "policyNumber": "17 0037799496 8 01",
+                "expiration": "2027-02-27"
+            }
+        ],
+        "expiration": "2027-02-27",
+        "file": "CallihanCentralTitle_COI_2026_Renewal.pdf",
+        "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/cois%2FCallihanCentralTitle_COI_2026_Renewal.pdf?alt=media&token=cc7de0b3-5cb0-4b9d-9ecd-173f54895aad",
+        "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/cois-html%2FCallihanCentralTitle_COI_2026_Renewal.html?alt=media&token=b00ebab2-5c2c-4b2d-9dff-1ce36f5c882e",
+        "date": "2026-01-08",
+        "meta": {
+            "insured": "Callihan Law Firm LLC / Central Title Closing Co LLC",
+            "carrier": "Bankers Insurance Company",
+            "policyNumber": "17 0037799496 8 01",
+            "documentType": "Businessowners Evidence of Insurance (renewal quote)",
+            "dated": "2026-01-08",
+            "title": "COI — Central Title / Callihan Law (Building #2, Suite 102) — GL $1M/$2M, Crosby AI/Lessor; renewal quote, exp 2027-02-27"
+        }
     }
 ]

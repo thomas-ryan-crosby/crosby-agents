@@ -2771,5 +2771,146 @@
             "title": "Lease of Commercial Property — Building #5, Suites 101 & 202 (Monson Law Firm) — 7,385 SF, $12,923/mo, 1.5% esc, 2×36mo options, full-service gross"
         },
         "date": "2022-04-15"
+    },
+    {
+        "id": "leasedoc-cecobldg5ste201init",
+        "propertyId": "sanctuary-office-park",
+        "building": "Building #5",
+        "tenant": "Ceco Concrete Construction LLC",
+        "suite": "201",
+        "file": "Ceco_BLDG5_STE201_Init.pdf",
+        "docType": "Init",
+        "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FCeco_BLDG5_STE201_Init.pdf?alt=media&token=de4fc451-3dea-4475-9ae9-c2dc36ee4253",
+        "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FCeco_BLDG5_STE201_Init.html?alt=media&token=ab88ce6e-7a57-4427-af6d-3b96899759f9",
+        "meta": {
+            "lessor": "Crosby Development Company, LLC",
+            "lessee": "Ceco Concrete Construction LLC",
+            "property": "Sanctuary Office Park, Building #5, Suite 201, Mandeville, LA 70471",
+            "suite": "Suite 201",
+            "documentType": "Init",
+            "dated": "2021-11-04",
+            "monthlyRent": "USD 6562.00",
+            "commencement": "2022-01-01",
+            "termination": "2024-12-31",
+            "title": "Lease of Commercial Property — Building #5, Suite 201 (Ceco Concrete Construction) — 3,750 SF, $6,562/mo, 2% esc, 2×2yr options, full-service gross"
+        },
+        "date": "2021-11-04"
+    },
+    {
+        "id": "leasedoc-cecobldg5ste201amd1",
+        "propertyId": "sanctuary-office-park",
+        "building": "Building #5",
+        "tenant": "Ceco Concrete Construction LLC",
+        "suite": "201",
+        "file": "Ceco_BLDG5_STE201_AMD1.pdf",
+        "docType": "Amendment",
+        "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FCeco_BLDG5_STE201_AMD1.pdf?alt=media&token=90b28648-c540-4cad-baab-cbefc4efc852",
+        "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FCeco_BLDG5_STE201_AMD1.html?alt=media&token=cbacc087-2141-44b3-ac4e-2ddb30586afe",
+        "meta": {
+            "lessor": "Crosby Development Company, LLC",
+            "lessee": "Ceco Concrete Construction LLC",
+            "property": "Sanctuary Office Park, Building #5, Suite 201, Mandeville, LA 70471",
+            "suite": "Suite 201",
+            "documentType": "Amendment",
+            "dated": "2024-11-20",
+            "monthlyRent": "USD 8997.03",
+            "commencement": "2025-01-01",
+            "termination": "2027-12-31",
+            "title": "First Amendment (current) — Building #5, Suite 201 (Ceco) — $6,963.64/mo eff 2025-01-01, +1,095 SF on 2025-07-15 → $8,997.03/mo, extend to 2027-12-31, 2% esc"
+        },
+        "date": "2024-11-20"
+    },
+    {
+        "id": "leasedoc-mapsbldg5ste103init",
+        "propertyId": "sanctuary-office-park",
+        "building": "Building #5",
+        "tenant": "Mediation Arbitration Professional Systems, INC",
+        "suite": "103",
+        "file": "MAPS_BLDG5_STE103_Init.pdf",
+        "docType": "Init",
+        "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FMAPS_BLDG5_STE103_Init.pdf?alt=media&token=5809d127-5af0-4e59-95be-db0c32218762",
+        "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FMAPS_BLDG5_STE103_Init.html?alt=media&token=19393bfa-fb34-497f-984b-69079162c22d",
+        "meta": {
+            "lessor": "Crosby Development Company, LLC",
+            "lessee": "Mediation Arbitration Professional Systems, INC",
+            "property": "Sanctuary Office Park, Building #5, Suite 103, Mandeville, LA 70471",
+            "suite": "Suite 103",
+            "documentType": "Init",
+            "dated": "2022-03-18",
+            "monthlyRent": "USD 3001.00",
+            "commencement": "2022-05-01",
+            "termination": "2025-06-30",
+            "title": "Lease of Commercial Property — Building #5, Suite 103 (MAPS) — 1,715 SF, $3,001/mo, 3% esc, 1×36mo option, full-service gross"
+        },
+        "date": "2022-03-18"
+    },
+    {
+        "id": "leasedoc-audubonbldg5ste300init",
+        "propertyId": "sanctuary-office-park",
+        "building": "Building #5",
+        "tenant": "Audubon Companies, LLC",
+        "suite": "300",
+        "file": "Audubon_BLDG5_STE300_Init.pdf",
+        "docType": "Init",
+        "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FAudubon_BLDG5_STE300_Init.pdf?alt=media&token=3f4726b9-82e3-4523-b753-5133d3cce9b1",
+        "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FAudubon_BLDG5_STE300_Init.html?alt=media&token=93841b2d-fb6f-4e7d-9f53-68627a3cd7f7",
+        "meta": {
+            "lessor": "Crosby Development Company, LLC",
+            "lessee": "Audubon Engineering Company, LP",
+            "property": "Sanctuary Office Park, Building #5, Suite 300, Mandeville, LA 70471",
+            "suite": "Suite 300",
+            "documentType": "Init",
+            "dated": "2020-10-23",
+            "monthlyRent": "USD 9353.81",
+            "commencement": "2020-12-01",
+            "termination": "2025-11-30",
+            "title": "Lease of Commercial Property — Building #5, Suite 300 (Audubon Engineering Company, LP) — 6,507 SF, $9,353.81/mo, 3% esc, 2×2yr options, full-service gross"
+        },
+        "date": "2020-10-23"
+    },
+    {
+        "id": "leasedoc-audubonbldg5ste300amd1",
+        "propertyId": "sanctuary-office-park",
+        "building": "Building #5",
+        "tenant": "Audubon Companies, LLC",
+        "suite": "300",
+        "file": "Audubon_BLDG5_STE300_AMD1.pdf",
+        "docType": "Amendment",
+        "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FAudubon_BLDG5_STE300_AMD1.pdf?alt=media&token=fc83293b-89dc-45f7-892f-1bbb469c4535",
+        "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FAudubon_BLDG5_STE300_AMD1.html?alt=media&token=bd7840b7-bff6-4a49-8181-dfb98ea02551",
+        "meta": {
+            "lessor": "Crosby Development Company, LLC",
+            "lessee": "Audubon Companies, LLC",
+            "property": "Sanctuary Office Park, Building #5, Suite 300, Mandeville, LA 70471",
+            "suite": "Suite 300",
+            "documentType": "Amendment",
+            "dated": "2025-09-29",
+            "monthlyRent": "USD 10834.63",
+            "commencement": "2025-12-01",
+            "termination": "2030-11-30",
+            "title": "First Amendment (current) — Building #5, Suite 300 (Audubon) — substitute lessee Audubon Engineering LP → Audubon Companies LLC, $10,834.63/mo eff 2025-12-01, extend to 2030-11-30, 3% esc"
+        },
+        "date": "2025-09-29"
+    },
+    {
+        "id": "leasedoc-audubonbldg5ste300mergernotice",
+        "propertyId": "sanctuary-office-park",
+        "building": "Building #5",
+        "tenant": "Audubon Companies, LLC",
+        "suite": "300",
+        "file": "Audubon_BLDG5_STE300_MergerNotice.pdf",
+        "docType": "Notice",
+        "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FAudubon_BLDG5_STE300_MergerNotice.pdf?alt=media&token=70fedbfe-82e5-4061-8ca6-e1fb76ac0816",
+        "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FAudubon_BLDG5_STE300_MergerNotice.html?alt=media&token=c5707c4f-eb86-4fb6-aaa7-9111f59ff745",
+        "meta": {
+            "lessor": "Crosby Development Company, LLC",
+            "lessee": "Audubon Companies, LLC",
+            "property": "Sanctuary Office Park, Building #5, Suite 300, Mandeville, LA 70471",
+            "suite": "Suite 300",
+            "documentType": "Notice",
+            "dated": "2026-01-09",
+            "title": "Notice of Merger — Building #5, Suite 300 (Audubon) — Audubon Engineering Company, LP merged into Audubon Companies, LLC (surviving), eff 2026-01-01, new tax ID 26-3937890"
+        },
+        "date": "2026-01-09"
     }
 ]

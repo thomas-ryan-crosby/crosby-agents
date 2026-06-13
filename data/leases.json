@@ -5775,17 +5775,17 @@
     "tenantId": "tenant-audubon",
     "propertyId": "sanctuary-office-park",
     "buildingId": "sanctuary-bldg-5",
-    "commenced": null,
-    "terminates": null,
+    "commenced": "2020-12-01",
+    "terminates": "2030-11-30",
     "monthlyRent": 10834.63,
-    "escalationPct": null,
-    "autoRenew": null,
+    "escalationPct": 3,
+    "autoRenew": false,
     "noticeDays": null,
     "noticeDeadline": null,
     "daysToNoticeDeadline": null,
     "status": "active",
-    "docFile": null,
-    "notes": "Lease terms (dates/notice/escalation) pending rentinfo#5.xls. Roster-level load from dashboard TENANT_ROSTER (index.html), 2026-06-11."
+    "docFile": "Audubon_BLDG5_STE300_AMD1.pdf",
+    "notes": "Suite 300 (6,507 RSF), Building #5. Amendment #1 (2025-09-29): substitute lessee Audubon Engineering Company, LP → Audubon Companies, LLC (merger eff 2026-01-01), $10,834.63/mo eff 2025-12-01, term to 2030-11-30, 3% esc, 2×2yr options. Rent reflects current term."
   },
   {
     "id": "lease-bldg5-suite101-monson",
@@ -5811,7 +5811,7 @@
     "tenantId": "tenant-maps",
     "propertyId": "sanctuary-office-park",
     "buildingId": "sanctuary-bldg-5",
-    "commenced": "2025-07-01",
+    "commenced": "2022-05-01",
     "terminates": "2028-06-30",
     "monthlyRent": 3279.27,
     "escalationPct": 3,
@@ -5820,8 +5820,8 @@
     "noticeDeadline": null,
     "daysToNoticeDeadline": null,
     "status": "active",
-    "docFile": null,
-    "notes": "Terms populated from lease doc (AMD1, 2025-04-23); auto-renew & notice not confirmed."
+    "docFile": "BLDG5_FLR1_103_AMD1_MAPS.pdf",
+    "notes": "Suite 103 (1,830 RSF), Building #5. Original lease (2022-03-18) $3,001/mo; Amendment #1 (2025-04-23): $3,279.27/mo eff 2025-07-01, term to 2028-06-30, 3% esc, 1×3yr option. Rent reflects current term."
   },
   {
     "id": "lease-bldg5-suite201-ceco",
@@ -5829,17 +5829,17 @@
     "tenantId": "tenant-ceco",
     "propertyId": "sanctuary-office-park",
     "buildingId": "sanctuary-bldg-5",
-    "commenced": null,
-    "terminates": null,
+    "commenced": "2022-01-01",
+    "terminates": "2027-12-31",
     "monthlyRent": 9176.97,
-    "escalationPct": null,
-    "autoRenew": null,
+    "escalationPct": 2,
+    "autoRenew": true,
     "noticeDays": null,
     "noticeDeadline": null,
     "daysToNoticeDeadline": null,
     "status": "active",
-    "docFile": null,
-    "notes": "Lease terms (dates/notice/escalation) pending rentinfo#5.xls. Roster-level load from dashboard TENANT_ROSTER (index.html), 2026-06-11."
+    "docFile": "Ceco_BLDG5_STE201_AMD1.pdf",
+    "notes": "Suite 201 (4,845 RSF), Building #5. Amendment #1 (2024-11-20): $6,963.64/mo eff 2025-01-01, +1,095 SF on 2025-07-15 → $8,997.03/mo, term to 2027-12-31, 2% esc, auto-renews. Rent reflects Jan-2026 step. COI on file expired 2023-08-01 — request renewal."
   },
   {
     "id": "lease-mp-1034-a",
