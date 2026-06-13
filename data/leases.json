@@ -5700,16 +5700,17 @@
     "propertyId": "sanctuary-office-park",
     "buildingId": "sanctuary-bldg-4",
     "commenced": "2021-07-01",
-    "terminates": "2026-06-30",
-    "monthlyRent": 20225.74,
+    "terminates": "2028-06-30",
+    "monthlyRent": 20832.51,
     "escalationPct": 3,
-    "autoRenew": null,
+    "escalationMonth": 7,
+    "autoRenew": false,
     "noticeDays": null,
     "noticeDeadline": null,
     "daysToNoticeDeadline": null,
     "status": "active",
-    "docFile": null,
-    "notes": "Terms populated from lease doc (Lease, 2024-05-01); auto-renew & notice not confirmed."
+    "docFile": "WatchSystems_BLDG4_STE101_AMD3.pdf",
+    "notes": "Terms from Amendment #3 (2026-05-22, signed), copier scan '2026 Crosby lease-signed copy'. Original commencement 2021-07-01 (Suites 101 & 201, 11,850 SF). Extended to 2028-06-30; rent $20,832.51/mo eff 2026-07-01 (3% over prior $20,225.74); 3% annual (July); one 2-year renewal option."
   },
   {
     "id": "lease-bldg4-suite302-medsouth",

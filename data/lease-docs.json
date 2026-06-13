@@ -854,6 +854,31 @@
     "date": "2024-05-01"
   },
   {
+    "id": "leasedoc-watchsystemsbldg4ste101amd3",
+    "propertyId": "sanctuary-office-park",
+    "building": "Building #4",
+    "tenant": "Watch Systems",
+    "suite": "101",
+    "file": "WatchSystems_BLDG4_STE101_AMD3.pdf",
+    "docType": "Amendment",
+    "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FWatchSystems_BLDG4_STE101_AMD3.pdf?alt=media&token=b6a97c69-2089-4b4a-a9f5-565d4e622030",
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FWatchSystems_BLDG4_STE101_AMD3.html?alt=media&token=40684689-8d84-4699-938f-88cf8666bb04",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Watch Systems",
+      "property": "Sanctuary Office Park, Building #4, #4 Sanctuary Boulevard, Suite 101, Mandeville, LA 70471",
+      "suite": "Suite 101",
+      "documentType": "Amendment",
+      "dated": "2026-05-22",
+      "monthlyRent": "USD 20832.51",
+      "commencement": "2026-07-01",
+      "termination": "2028-06-30",
+      "escalation": "3% annual",
+      "title": "Amendment #3 to Lease — Building #4, Suite 101 (Watch Systems) — extend to 2028-06-30, rent $20,832.51 eff 2026-07-01, one 2-yr option (current)"
+    },
+    "date": "2026-05-22"
+  },
+  {
     "id": "leasedoc-watchsystemsamd1pdf",
     "propertyId": "sanctuary-office-park",
     "building": "Building #4",
