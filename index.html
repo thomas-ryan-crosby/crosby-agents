@@ -611,7 +611,8 @@ function renderAssistantLog() {
   window.loadAssistantLog().then(function(rows){
     if(!rows || !rows.length){ c.innerHTML = '<div style="color:#6b7280;font-size:13px;padding:8px;">No assistant activity yet. Questions asked via WhatsApp will appear here.</div>'; return; }
     var html = '<div style="font-size:12px;color:#9ca3af;margin-bottom:10px;">'+rows.length+' interaction'+(rows.length===1?'':'s')+' · newest first</div>';
-    html += '<div class="table-scroll"><table class="unit-table" style="min-width:920px;"><thead><tr><th style="width:118px;">Time</th><th style="width:130px;">From</th><th>Question</th><th>Answer</th><th style="width:64px;">Model</th><th style="width:92px;">Status</th></tr></thead><tbody>';
+    var fb = function(f){ if(!f||!f.rating) return '<span style="color:#d1d5db;">—</span>'; var pos=f.rating==='positive'; var t=f.comment?(' title="'+esc(f.comment).replace(/"/g,'&quot;')+'"'):''; return '<span'+t+' style="font-size:15px;cursor:'+(f.comment?'help':'default')+';">'+(pos?'👍':'👎')+'</span>'+(f.comment?'<div style="font-size:10px;color:#9ca3af;">'+esc(f.comment).slice(0,40)+'</div>':''); };
+    html += '<div class="table-scroll"><table class="unit-table" style="min-width:1000px;"><thead><tr><th style="width:118px;">Time</th><th style="width:130px;">From</th><th>Question</th><th>Answer</th><th style="width:64px;">Model</th><th style="width:92px;">Status</th><th style="width:84px;">Feedback</th></tr></thead><tbody>';
     rows.forEach(function(r){
       html += '<tr>'+
         '<td style="font-size:12px;color:#6b7280;white-space:nowrap;">'+fmt(r.ts)+'</td>'+
@@ -620,6 +621,7 @@ function renderAssistantLog() {
         '<td style="font-size:12px;color:#374151;">'+esc(r.answer!=null?r.answer:(r.error?('⚠ '+r.error):'—'))+'</td>'+
         '<td style="font-size:11px;color:#6b7280;">'+esc(r.model||'—')+'</td>'+
         '<td>'+badge(r.status)+'</td>'+
+        '<td>'+fb(r.feedback)+'</td>'+
       '</tr>';
     });
     html += '</tbody></table></div>';

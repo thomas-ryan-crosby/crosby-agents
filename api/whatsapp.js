@@ -1,46 +1,37 @@
-// WhatsApp (Twilio) webhook for the Crosby property assistant.
-// Inbound text -> verify sender -> load live portfolio snapshot -> ask Claude ->
-// reply with a plain-language answer (TwiML). Read-only Q&A.
+// WhatsApp (Twilio) webhook for the Crosby property assistant. Read-only Q&A.
+// Inbound text -> verify sender -> the model answers by CALLING TOOLS that look
+// up / compute exact figures from the live data (never doing math itself) ->
+// reply (TwiML) + a "was this helpful?" prompt. Follow-up 👍/👎 is recorded.
 //
-// Model: open-source Llama 3.3 70B via Groq (primary), with OpenAI gpt-4o-mini
-// as an automatic fallback if Groq errors/times out. Both are OpenAI-compatible.
+// Model: open-source Llama 3.3 70B via Groq (primary, supports tool calling),
+// with OpenAI gpt-4o-mini as an automatic fallback. Both OpenAI-compatible.
 //
-// Required env vars (set in Vercel project settings):
-//   GROQ_API_KEY           - primary model (Groq, free tier)
-//   OPENAI_API_KEY         - fallback model (used only if Groq fails)
-//   ALLOWED_NUMBERS        - comma-separated E.164 numbers allowed to use it,
-//                            e.g. "+19855551234,+19855555678"
-//   TWILIO_AUTH_TOKEN      - (recommended) to verify requests really come from Twilio
-//   FIREBASE_SERVICE_ACCOUNT - service-account JSON (string) for Firestore read access
-//   GROQ_MODEL / OPENAI_MODEL - (optional) override model ids
+// Required env vars (Vercel project settings):
+//   GROQ_API_KEY, OPENAI_API_KEY (fallback), ALLOWED_NUMBERS,
+//   TWILIO_AUTH_TOKEN, FIREBASE_SERVICE_ACCOUNT,  GROQ_MODEL/OPENAI_MODEL (optional)
 import crypto from "node:crypto";
-import { buildSnapshot, logInteraction } from "../lib/portfolio.mjs";
+import { logInteraction, setFeedback, getSession, setSession } from "../lib/portfolio.mjs";
+import { buildContext, directoryText, runTool, TOOL_DEFS } from "../lib/assistant-tools.mjs";
 
 export const config = { maxDuration: 30 };
 
-const SYSTEM = `You are the Crosby Development property assistant, answering questions over WhatsApp for a property-management team that is not very technical. You are given a current snapshot of the portfolio (properties, buildings, units, active leases, occupancy, vacant space, tenants on notice, and certificates of insurance).
+const SYSTEM = `You are the Crosby Development property assistant, answering questions over WhatsApp for a property-management team that is not very technical.
 
-Rules:
-- Answer ONLY from the snapshot. Never invent figures, names, dates, or terms. If the snapshot does not contain the answer, say you don't have that on file and suggest what you can answer.
-- Be concise and plain — this is a text message. No markdown headers, no tables. For a single fact, 1-2 sentences. For a list, a short bulleted list is fine — but include ALL relevant items, don't stop at a few.
-- Money as $ with commas; dates as written. When asked "how long" or "when", compute relative to today's date given below.
-- Sanctuary Office Park leases are full-service gross (landlord pays utilities, taxes, janitorial; no CAM). Mention this only if relevant.
-- If a question is ambiguous (e.g. a tenant name appears at multiple suites), give the best match and note the others briefly.
+You have TOOLS that look up exact, live data. You MUST call a tool for any question about rents, totals, what a tenant pays, lease dates or terms, lease documents/links, expirations or renewals, occupancy, vacancies, or insurance. NEVER calculate, sum, or recall figures from memory — always call the relevant tool and answer from its result. If a tool returns no match, say so plainly and suggest what you can answer.
 
-For questions about expiring / upcoming / renewing leases or "what's coming up":
-- Sort by date, soonest first.
-- List tenants who are VACATING or on notice first — that space needs re-leasing and is the most time-sensitive.
-- For each lease note whether it is auto-renew (rolls over automatically unless the tenant gives notice — so it's not truly "expiring") or fixed-term (genuinely ends and needs action).
-- Ignore lease end dates already in the PAST for auto-renew leases — those have already renewed and are ongoing, not expiring.
-- Be complete — include every matching lease, not just a sample.`;
+Style:
+- Concise and plain — this is a text message. No markdown headers or tables. A single fact = 1-2 sentences; a list = short bullets.
+- Money as $ with commas; dates as written.
+- When sharing a lease document, give the html link if present, otherwise the pdf link.
+- Sanctuary Office Park leases are full-service gross (no CAM); mention only if relevant.
+- For expirations: the expiring_leases tool already sorts soonest-first and flags vacating / auto-renew / fixed-term — present them that way, vacating tenants first, and note that auto-renew leases roll over unless the tenant gives notice.
+- If a tool result includes a caveat (e.g. "annual = monthly x 12, not adjusting for move-outs"), pass that caveat along briefly.`;
 
 export default async function handler(req, res) {
   if (req.method !== "POST") { res.status(405).send("Method Not Allowed"); return; }
   let params;
-  try {
-    const raw = await readRaw(req);
-    params = Object.fromEntries(new URLSearchParams(raw));
-  } catch (e) { res.status(400).send("Bad Request"); return; }
+  try { params = Object.fromEntries(new URLSearchParams(await readRaw(req))); }
+  catch (e) { res.status(400).send("Bad Request"); return; }
 
   // 1. Verify the request is genuinely from Twilio (if configured)
   const authToken = process.env.TWILIO_AUTH_TOKEN;
@@ -53,14 +44,13 @@ export default async function handler(req, res) {
     }
   }
 
-  const from = (params.From || "").trim();          // e.g. "whatsapp:+19855551234"
+  const from = (params.From || "").trim();
   const fromNum = from.replace(/^whatsapp:/, "").trim();
   const body = (params.Body || "").trim();
-
   const started = Date.now();
-  const base = { from: from, fromNumber: fromNum, question: body };
+  const base = { from, fromNumber: fromNum, question: body };
 
-  // 2. Allowlist — only approved numbers may query (this is tenant/financial data)
+  // 2. Allowlist — only approved numbers may query (tenant/financial data)
   const allow = (process.env.ALLOWED_NUMBERS || "").split(",").map((s) => s.trim()).filter(Boolean);
   if (allow.length && !allow.includes(fromNum) && !allow.includes(from)) {
     const msg = "Sorry — this number isn't authorized to use the Crosby property assistant. Please contact your administrator.";
@@ -68,20 +58,34 @@ export default async function handler(req, res) {
     return reply(res, msg);
   }
 
-  // 3. Greeting / help
+  // 3. Is this a 👍/👎 about the previous answer?
+  const session = await getSession(fromNum);
+  if (session && session.lastLogId) {
+    const fb = detectFeedback(body);
+    if (fb) {
+      await setFeedback(session.lastLogId, fb);
+      await setSession(fromNum, { lastLogId: null });
+      return reply(res, fb.rating === "positive"
+        ? "👍 Glad that helped!"
+        : "Thanks for the feedback — I've flagged this so we can keep improving the assistant.");
+    }
+  }
+
+  // 4. Greeting / help
   if (!body || /^(hi|hello|hey|help|start|menu|\?)$/i.test(body)) {
-    const help = "Hi! I'm the Crosby property assistant. Ask me things like:\n• Whats vacating at Sanctuary this year?\n• What does Wells Fargo pay?\n• Occupancy at Mandeville Lake Apartments?\n• Which COIs are expired?\n• When does Galloway's lease end?\n• Any space available in Building 4?";
+    const help = "Hi! I'm the Crosby property assistant. Ask me things like:\n• Whats vacating at Sanctuary this year?\n• What does Wells Fargo pay?\n• Annual rent for Building 2?\n• Send me the Pazos lease link\n• Which COIs are expired?\n• Any space available in Building 4?";
     await logInteraction(Object.assign({}, base, { status: "help", answer: help, model: null }));
     return reply(res, help);
   }
 
-  // 4. Answer
+  // 5. Answer (model calls tools)
   try {
     const today = new Date().toISOString().slice(0, 10);
-    const snapshot = await buildSnapshot(today);
-    const out = await askAssistant(snapshot, body, today);
-    await logInteraction(Object.assign({}, base, { status: "answered", answer: out.text, model: out.provider, ms: Date.now() - started }));
-    return reply(res, out.text);
+    const ctx = await buildContext();
+    const out = await answerWithTools(body, today, ctx);
+    const logId = await logInteraction(Object.assign({}, base, { status: "answered", answer: out.text, model: out.provider, ms: Date.now() - started }));
+    await setSession(fromNum, { lastLogId: logId, question: body });
+    return reply(res, out.text, "Was this helpful? Reply 👍 or 👎 — or tell me what was off.");
   } catch (e) {
     console.error("whatsapp handler error:", e && (e.stack || e.message));
     await logInteraction(Object.assign({}, base, { status: "error", answer: null, model: null, error: String((e && e.message) || "unknown").slice(0, 300), ms: Date.now() - started }));
@@ -89,17 +93,88 @@ export default async function handler(req, res) {
   }
 }
 
-// ── helpers ──────────────────────────────────────────────────────────────────
+// ── feedback detection ───────────────────────────────────────────────────────
+// Only short, unambiguous replies count as feedback (so a new question that
+// happens to start with "no…" is not mistaken for a thumbs-down).
+function detectFeedback(body) {
+  const raw = (body || "").trim();
+  if (!raw) return null;
+  if (/^[\u{1F44D}\u{1F44C}✅]/u.test(raw)) return { rating: "positive", comment: raw.replace(/^[^\w]+/u, "").trim() || null };
+  if (/^[\u{1F44E}❌]/u.test(raw)) return { rating: "negative", comment: raw.replace(/^[^\w]+/u, "").trim() || null };
+  const w = raw.toLowerCase().replace(/[^a-z ]/g, "").trim();
+  const POS = ["y", "yes", "yeah", "yep", "yup", "good", "great", "perfect", "helpful", "very helpful", "nice", "thanks", "thank you", "correct", "right", "that helped", "awesome", "ok", "okay"];
+  const NEG = ["n", "no", "nope", "wrong", "incorrect", "not helpful", "unhelpful", "bad", "not really", "nah", "no good"];
+  if (POS.includes(w)) return { rating: "positive", comment: null };
+  if (NEG.includes(w)) return { rating: "negative", comment: null };
+  return null;
+}
+
+// ── model + tool loop ────────────────────────────────────────────────────────
+async function answerWithTools(question, today, ctx) {
+  const system = SYSTEM + "\n\n" + directoryText(ctx) + "\n\nToday's date: " + today + ".";
+  const providers = [
+    { name: "groq", key: process.env.GROQ_API_KEY, url: "https://api.groq.com/openai/v1/chat/completions", model: process.env.GROQ_MODEL || "llama-3.3-70b-versatile" },
+    { name: "openai", key: process.env.OPENAI_API_KEY, url: "https://api.openai.com/v1/chat/completions", model: process.env.OPENAI_MODEL || "gpt-4o-mini" },
+  ].filter((p) => p.key);
+  if (!providers.length) throw new Error("No model provider configured (set GROQ_API_KEY and/or OPENAI_API_KEY)");
+  let lastErr;
+  for (const p of providers) {
+    try { return { text: await runToolLoop(p, system, question, ctx), provider: p.name }; }
+    catch (e) { lastErr = e; console.error(p.name + " failed" + (providers.length > 1 ? ", trying fallback" : "") + ":", e && e.message); }
+  }
+  throw lastErr;
+}
+
+async function runToolLoop(p, system, question, ctx) {
+  const messages = [{ role: "system", content: system }, { role: "user", content: question }];
+  for (let i = 0; i < 5; i++) {
+    const msg = await callChat(p, messages);
+    messages.push(msg);
+    const calls = msg.tool_calls || [];
+    if (calls.length) {
+      for (const tc of calls) {
+        let args = {};
+        try { args = JSON.parse((tc.function && tc.function.arguments) || "{}"); } catch (e) {}
+        const result = runTool(tc.function && tc.function.name, args, ctx);
+        messages.push({ role: "tool", tool_call_id: tc.id, content: JSON.stringify(result).slice(0, 8000) });
+      }
+      continue;
+    }
+    const text = (msg.content || "").trim();
+    if (text) return text;
+    return "I couldn't find an answer to that. Try asking about a tenant, a building's rent, occupancy, expirations, vacancies, or insurance.";
+  }
+  return "That needed several lookups and I didn't finish — please try a more specific question.";
+}
+
+async function callChat(p, messages) {
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), 18000);
+  try {
+    const r = await fetch(p.url, {
+      method: "POST",
+      headers: { "content-type": "application/json", authorization: "Bearer " + p.key },
+      body: JSON.stringify({ model: p.model, temperature: 0.1, max_tokens: 800, tools: TOOL_DEFS, tool_choice: "auto", messages }),
+      signal: ctrl.signal,
+    });
+    if (!r.ok) { const t = await r.text(); throw new Error(p.model + " " + r.status + ": " + t.slice(0, 200)); }
+    const data = await r.json();
+    return (((data.choices || [])[0] || {}).message) || { role: "assistant", content: "" };
+  } finally { clearTimeout(timer); }
+}
+
+// ── plumbing ─────────────────────────────────────────────────────────────────
 function readRaw(req) {
   return new Promise((resolve, reject) => {
     let d = ""; req.on("data", (c) => (d += c)); req.on("end", () => resolve(d)); req.on("error", reject);
   });
 }
 
-function reply(res, text) {
-  const xml = '<?xml version="1.0" encoding="UTF-8"?><Response><Message>' + xmlEscape(text) + "</Message></Response>";
+function reply(res, text, followup) {
+  let inner = "<Message>" + xmlEscape(text) + "</Message>";
+  if (followup) inner += "<Message>" + xmlEscape(followup) + "</Message>";
   res.setHeader("Content-Type", "text/xml");
-  res.status(200).send(xml);
+  res.status(200).send('<?xml version="1.0" encoding="UTF-8"?><Response>' + inner + "</Response>");
 }
 
 function xmlEscape(s) {
@@ -113,44 +188,4 @@ function validTwilioSignature(authToken, signature, url, params) {
     const a = Buffer.from(expected), b = Buffer.from(String(signature || ""));
     return a.length === b.length && crypto.timingSafeEqual(a, b);
   } catch (e) { return false; }
-}
-
-// Primary = Groq (open-source Llama 3.3 70B). Fallback = OpenAI gpt-4o-mini,
-// used only if Groq is missing/errors/times out — so the bot never goes dark.
-async function askAssistant(snapshot, question, today) {
-  const system = SYSTEM + "\n\nToday's date: " + today + ".";
-  const user = snapshot + "\n\n----\nQUESTION: " + question;
-  const providers = [
-    { name: "groq", key: process.env.GROQ_API_KEY, url: "https://api.groq.com/openai/v1/chat/completions", model: process.env.GROQ_MODEL || "llama-3.3-70b-versatile" },
-    { name: "openai", key: process.env.OPENAI_API_KEY, url: "https://api.openai.com/v1/chat/completions", model: process.env.OPENAI_MODEL || "gpt-4o-mini" },
-  ].filter((p) => p.key);
-  if (!providers.length) throw new Error("No model provider configured (set GROQ_API_KEY and/or OPENAI_API_KEY)");
-  let lastErr;
-  for (const p of providers) {
-    try { return { text: await callChat(p, system, user), provider: p.name }; }
-    catch (e) { lastErr = e; console.error(p.name + " failed" + (providers.length > 1 ? ", trying fallback" : "") + ":", e && e.message); }
-  }
-  throw lastErr;
-}
-
-// One call to an OpenAI-compatible chat-completions endpoint (Groq or OpenAI).
-async function callChat(p, system, user) {
-  const ctrl = new AbortController();
-  const timer = setTimeout(() => ctrl.abort(), 15000);
-  try {
-    const r = await fetch(p.url, {
-      method: "POST",
-      headers: { "content-type": "application/json", authorization: "Bearer " + p.key },
-      body: JSON.stringify({
-        model: p.model, temperature: 0.2, max_tokens: 700,
-        messages: [{ role: "system", content: system }, { role: "user", content: user }],
-      }),
-      signal: ctrl.signal,
-    });
-    if (!r.ok) { const t = await r.text(); throw new Error(p.model + " " + r.status + ": " + t.slice(0, 200)); }
-    const data = await r.json();
-    const text = ((((data.choices || [])[0] || {}).message || {}).content || "").trim();
-    if (!text) throw new Error(p.model + ": empty response");
-    return text;
-  } finally { clearTimeout(timer); }
 }
