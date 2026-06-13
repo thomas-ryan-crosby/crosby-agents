@@ -14,3 +14,10 @@
 !crosby-data.js
 !crosby-viewmodel.js
 !vercel.json
+
+# Chat assistant serverless function + its helper. Reads PII from the
+# auth-gated Firestore at runtime (not from the bundle) — no data/*.json ships.
+!package.json
+!package-lock.json
+!api
+!lib
