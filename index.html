@@ -1901,7 +1901,24 @@ function rentRollCSS(){
     '.rr-grid .rr-sub{color:#64748b;font-size:10.5px;}'+
     '.rr-grid .rr-zero{color:#cbd5e1;}'+
     '.rr-grid tfoot .rr-annual td{font-weight:700;border-top:2px solid #cbd5e1;background:#f8fafc;}'+
-    '.rr-grid tfoot .rr-annual .rr-mh{background:#f8fafc;}';
+    '.rr-grid tfoot .rr-annual .rr-mh{background:#f8fafc;}'+
+    '.rr-grid .rr-totcol{background:#f8fafc;font-weight:700;border-left:2px solid #cbd5e1;}'+
+    '.rr-sectitle{font-size:15px;font-weight:700;color:#0f172a;margin:22px 0 10px;border-top:1px solid #e5e7eb;padding-top:16px;}'+
+    '.rr-occ-stats{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;}'+
+    '.rr-occ-card{border:1px solid #e2e8f0;border-radius:9px;padding:9px 14px;min-width:118px;}'+
+    '.rr-occ-card .v{font-size:19px;font-weight:700;color:#0f172a;line-height:1.1;}'+
+    '.rr-occ-card .l{font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:#94a3b8;font-weight:600;}'+
+    '.rr-occ-card .sub{font-size:10.5px;color:#64748b;margin-top:2px;}'+
+    '.rr-occ-card.primary{background:#1f5fdb;border-color:#1f5fdb;}.rr-occ-card.primary .v{color:#fff;}.rr-occ-card.primary .l{color:#bdd2fb;}.rr-occ-card.primary .sub{color:#dbe7fe;}'+
+    '.rr-note{background:#fffbeb;border:1px solid #fde68a;border-left:3px solid #f59e0b;border-radius:7px;padding:9px 12px;font-size:12px;color:#7c5e10;margin-bottom:8px;line-height:1.55;}'+
+    '.rr-note.major{background:#fef2f2;border-color:#fecaca;border-left-color:#dc2626;color:#991b1b;}'+
+    '.rr-note.good{background:#ecfdf5;border-color:#a7f3d0;border-left-color:#059669;color:#065f46;}'+
+    '.rr-occ-table{border-collapse:collapse;font-size:11.5px;margin-bottom:10px;min-width:560px;}'+
+    '.rr-occ-table th,.rr-occ-table td{border:1px solid #e2e8f0;padding:4px 10px;text-align:right;white-space:nowrap;}'+
+    '.rr-occ-table th{background:#f1f5f9;font-weight:650;color:#334155;}'+
+    '.rr-occ-table td.l,.rr-occ-table th.l{text-align:left;white-space:normal;}'+
+    '.rr-occ-table .drop td{color:#991b1b;}'+
+    '.rr-occ-table .bar{display:inline-block;height:7px;border-radius:3px;background:#1f5fdb;vertical-align:middle;}';
 }
 function ensureRentRollStyles(){ if(document.getElementById('rentRollStyle'))return; var s=document.createElement('style'); s.id='rentRollStyle'; s.textContent=rentRollCSS(); document.head.appendChild(s); }
 function openRentRoll(slug){
@@ -1911,68 +1928,105 @@ function openRentRoll(slug){
   (ent.units||[]).forEach(function(u){unitById[u.id]=u;});
   (ent.tenants||[]).forEach(function(t){tenantById[t.id]=t;});
   (ent.buildings||[]).forEach(function(b){bldgById[b.id]=b;});
-  var now = new Date();
+  var now = new Date(), curYear = now.getFullYear();
   var MN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  // 12 forward months from the current month
-  var months=[]; for(var i=0;i<12;i++){ var d=new Date(now.getFullYear(), now.getMonth()+i, 1); months.push({ y:d.getFullYear(), m:d.getMonth(), label:MN[d.getMonth()]+" '"+String(d.getFullYear()).slice(2) }); }
-  // collect occupied leases grouped by building
-  var byBldg={};
+  var num2=function(n){ return n.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}); };
+  var asOf = now.toLocaleDateString(undefined,{year:'numeric',month:'long',day:'numeric'});
+  // ── enrich occupied leases; treat already-expired-but-active as holdover (continues) ──
+  var L=[];
   (ent.leases||[]).filter(function(l){return l.propertyId===slug && l.status!=='owner-occupant';}).forEach(function(l){
     var u=unitById[l.unitId]||{}, t=tenantById[l.tenantId]||{}, b=bldgById[u.buildingId]||{};
     var rent=Number(l.monthlyRent)||0; if(rent<=0) return;
-    var key=b.name||'—';
-    (byBldg[key]=byBldg[key]||[]).push({ tenant:t.name||u.identifier||'—', suite:u.identifier||'—', sf:Number(u.sf)||0,
-      rent:rent, pct:l.escalationPct, escMonth:l.escalationMonth, terminates:l.terminates||null, autoRenew:l.autoRenew, status:l.status||'active' });
+    var term=l.terminates||null, holdover=false;
+    if(term && new Date(term) < now && l.autoRenew!==true){ holdover=true; term=null; } // expired & still active → holding over
+    L.push({ tenant:t.name||u.identifier||'—', suite:u.identifier||'—', sf:Number(u.sf)||0, building:b.name||'—',
+      rent:rent, pct:l.escalationPct, escMonth:l.escalationMonth, terminates:term, autoRenew:l.autoRenew, status:l.status||'active', holdover:holdover });
   });
-  // projected rent for a tenant in a given month: escalates in its escalation month,
-  // drops to 0 after the lease ends unless it auto-renews.
-  function cellRent(r, mo){
-    var ms=new Date(mo.y, mo.m, 1);
-    if(r.terminates){ var td=new Date(r.terminates); if(ms>td && r.autoRenew!==true) return 0; }
-    if(r.pct && r.escMonth){ var c=0; for(var y=now.getFullYear(); y<=mo.y; y++){ var ed=new Date(y, r.escMonth-1, 1); if(ed>now && ed<=ms) c++; } return r.rent*Math.pow(1+r.pct/100, c); }
-    return r.rent;
+  // horizon: project until the last lease term in place (capped)
+  var maxYear=curYear; L.forEach(function(l){ if(l.terminates){ var y=new Date(l.terminates).getFullYear(); if(y>maxYear) maxYear=y; } });
+  maxYear=Math.min(Math.max(maxYear, curYear+1), curYear+10);
+  var years=[]; for(var yy=curYear; yy<=maxYear; yy++) years.push(yy);
+  function monthRent(l, Y, m){
+    var ms=new Date(Y, m, 1);
+    if(l.terminates){ var td=new Date(l.terminates); if(ms>td && l.autoRenew!==true) return 0; }
+    if(l.pct && l.escMonth){ var c=0; for(var y=curYear; y<=Y; y++){ var ed=new Date(y, l.escMonth-1, 1); if(ed>now && ed<=ms) c++; } return l.rent*Math.pow(1+l.pct/100, c); }
+    return l.rent;
   }
+  function annualRent(l, Y){ var s=0; for(var m=0;m<12;m++) s+=monthRent(l,Y,m); return s; }
   function typeLabel(r){
     var esc = r.pct!=null ? ((Number(r.pct)%1?Number(r.pct).toFixed(1):r.pct)+'%') : null;
     if(r.status==='vacating') return 'Vacating'+(r.terminates?' '+r.terminates:'');
+    if(r.holdover) return 'Holdover (MTM)'+(esc?' / '+esc:'');
     if(r.autoRenew===true) return 'Auto Renew'+(esc?' / '+esc:'');
     if(r.terminates) return 'Exp '+r.terminates+(esc?' / '+esc:'');
     return esc? esc+' esc' : '—';
   }
-  var num2=function(n){ return n.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}); };
-  var asOf = now.toLocaleDateString(undefined,{year:'numeric',month:'long',day:'numeric'});
-  var grandSF=0, grandAnnual=0, grandTenants=0, gridsHtml='';
-  Object.keys(byBldg).sort(function(a,b){return a.localeCompare(b,undefined,{numeric:true});}).forEach(function(bn){
-    var trs=byBldg[bn].sort(function(a,b){return String(a.suite).localeCompare(String(b.suite),undefined,{numeric:true});});
-    var annuals=trs.map(function(r){ return months.reduce(function(s,mo){return s+cellRent(r,mo);},0); });
-    var bSF=trs.reduce(function(s,r){return s+r.sf;},0);
-    var bAnnual=annuals.reduce(function(s,a){return s+a;},0);
-    grandSF+=bSF; grandAnnual+=bAnnual; grandTenants+=trs.length;
-    var h='<div class="rr-bwrap"><div class="rr-bhead">'+bn+' <span class="rr-bmeta">'+bSF.toLocaleString()+' SF · '+(bSF>0?'$'+(bAnnual/bSF).toFixed(2):'—')+'/SF/yr · '+rrMoney(bAnnual)+'/yr</span></div>';
-    h+='<div style="overflow-x:auto;"><table class="rr-grid"><thead>';
-    h+='<tr><th class="rr-mh"></th>'+trs.map(function(r){return '<th>'+r.tenant+'</th>';}).join('')+'</tr>';
-    h+='<tr><th class="rr-mh rr-lbl">Suite</th>'+trs.map(function(r){return '<td class="rr-sub">'+r.suite+'</td>';}).join('')+'</tr>';
-    h+='<tr><th class="rr-mh rr-lbl">SF</th>'+trs.map(function(r){return '<td class="rr-sub">'+(r.sf?r.sf.toLocaleString():'—')+'</td>';}).join('')+'</tr>';
-    h+='</thead><tbody>';
-    months.forEach(function(mo){
-      h+='<tr><th class="rr-mh">'+mo.label+'</th>'+trs.map(function(r){var v=cellRent(r,mo); return '<td>'+(v>0?num2(v):'<span class="rr-zero">—</span>')+'</td>';}).join('')+'</tr>';
-    });
-    h+='</tbody><tfoot>';
-    h+='<tr class="rr-annual"><th class="rr-mh">Annual</th>'+annuals.map(function(a){return '<td>'+rrMoney(a)+'</td>';}).join('')+'</tr>';
-    h+='<tr><th class="rr-mh rr-lbl">$/SF/Yr</th>'+trs.map(function(r,i){return '<td class="rr-sub">'+(r.sf?'$'+(annuals[i]/r.sf).toFixed(2):'—')+'</td>';}).join('')+'</tr>';
-    h+='<tr><th class="rr-mh rr-lbl">Type</th>'+trs.map(function(r){return '<td class="rr-sub">'+typeLabel(r)+'</td>';}).join('')+'</tr>';
-    h+='</tfoot></table></div></div>';
-    gridsHtml+=h;
-  });
+  // ── occupancy (from the derived building totals so it matches the dashboard) ──
+  var occByB={}, totRent=0, totOcc=0;
+  (prop.buildings||[]).forEach(function(b){ occByB[b.name]={rent:b.sf||0, occ:b.occupiedSF||0}; totRent+=b.sf||0; totOcc+=b.occupiedSF||0; });
+  // future expirations (non-auto-renew, dated) → projected occupancy roll-off
+  var expByYear={};
+  L.forEach(function(l){ if(l.autoRenew===true || !l.terminates) return; var td=new Date(l.terminates); if(td<now) return;
+    var y=td.getFullYear(); var e=expByYear[y]=expByYear[y]||{sf:0,tenants:[]}; e.sf+=l.sf; e.tenants.push(l); });
+  var remaining=totOcc;
+  var occRows=years.map(function(Y){ var e=expByYear[Y]||{sf:0,tenants:[]}; remaining-=e.sf;
+    return { year:Y, expSF:e.sf, tenants:e.tenants, leasedSF:Math.max(remaining,0), occPct: totRent>0? Math.max(remaining,0)/totRent*100 : 0 }; });
+  var thresh=Math.max(totRent*0.05, 3000);
+  // ── group leases by building ──
+  var byB={}; L.forEach(function(l){ (byB[l.building]=byB[l.building]||[]).push(l); });
+  var bnames=Object.keys(byB).sort(function(a,b){return a.localeCompare(b,undefined,{numeric:true});});
+  var complexYear={}; years.forEach(function(y){complexYear[y]=0;});
+  var bYear={}; bnames.forEach(function(bn){ bYear[bn]={}; years.forEach(function(Y){ var s=byB[bn].reduce(function(a,l){return a+annualRent(l,Y);},0); bYear[bn][Y]=s; complexYear[Y]+=s; }); });
+  // ════════════════ BUILD ════════════════
   var body = '<div class="rr-doc">';
-  body += '<div class="rr-head"><div><div class="rr-title">Rent Roll — Monthly</div><div class="rr-sub">'+prop.name+(prop.location?' &middot; '+prop.location:'')+'</div></div>'+
-    '<div class="rr-meta">As of '+asOf+'<br><span style="color:#9ca3af;">Forward 12 months · from current lease records</span></div></div>';
-  body += '<div class="rr-summary"><span><span class="rr-k">Tenants</span>'+grandTenants+'</span>'+
-    '<span><span class="rr-k">Rentable Area</span>'+grandSF.toLocaleString()+' SF</span>'+
-    '<span><span class="rr-k">Average $/SF/Yr</span>'+(grandSF>0?'$'+(grandAnnual/grandSF).toFixed(2):'—')+'</span>'+
-    '<span><span class="rr-k">Total Annual Rent (12-mo fwd)</span>'+rrMoney(grandAnnual)+'</span></div>';
-  body += gridsHtml;
-  body += '<div class="rr-foot">Each cell is the projected base rent for that month, applying each lease&rsquo;s contractual escalation in its escalation month. Leases that expire within the window drop to &mdash; unless they auto-renew. Annual totals are the sum of the 12 forward months, so a lease ending mid-window shows a partial year. Base rent only (full-service gross); excludes owner-occupied units. Source: current lease records as of '+asOf+'.</div>';
+  body += '<div class="rr-head"><div><div class="rr-title">Rent Roll — Annual</div><div class="rr-sub">'+prop.name+(prop.location?' &middot; '+prop.location:'')+'</div></div>'+
+    '<div class="rr-meta">As of '+asOf+'<br><span style="color:#9ca3af;">By lease year, '+curYear+'&ndash;'+maxYear+' · from current lease records</span></div></div>';
+  // Occupancy & expiration outlook
+  body += '<div class="rr-sectitle" style="border-top:none;padding-top:0;margin-top:0;">Occupancy &amp; Lease-Expiration Outlook</div>';
+  body += '<div class="rr-occ-stats"><div class="rr-occ-card primary"><div class="l">Complex Occupancy</div><div class="v">'+(totRent>0?(totOcc/totRent*100).toFixed(1):'—')+'%</div><div class="sub">'+totOcc.toLocaleString()+' / '+totRent.toLocaleString()+' SF leased</div></div>'+
+    bnames.map(function(bn){ var o=occByB[bn]||{rent:0,occ:0}; var pct=o.rent>0?(o.occ/o.rent*100):0; return '<div class="rr-occ-card"><div class="l">'+bn+'</div><div class="v">'+pct.toFixed(0)+'%</div><div class="sub">'+o.occ.toLocaleString()+' / '+o.rent.toLocaleString()+' SF</div></div>'; }).join('')+'</div>';
+  // notes
+  var majors=occRows.filter(function(r){return r.expSF>=thresh;});
+  if(!majors.length){
+    body += '<div class="rr-note good">No single year rolls off more than '+Math.round(thresh).toLocaleString()+' SF ('+(thresh/totRent*100).toFixed(0)+'% of the complex) within the current lease terms — renewal exposure is well staggered. Keep watch on auto-renew notice deadlines (see the Lease Action column).</div>';
+  } else {
+    majors.forEach(function(r){
+      var names=r.tenants.slice().sort(function(a,b){return b.sf-a.sf;}).map(function(t){return t.tenant+' ('+t.building.replace('Building ','#')+'/'+t.suite+', '+t.sf.toLocaleString()+' SF)';}).join('; ');
+      body += '<div class="rr-note major"><b>'+r.year+' — major roll-off: '+r.expSF.toLocaleString()+' SF ('+(r.expSF/totRent*100).toFixed(1)+'% of the complex)</b> drops to '+r.occPct.toFixed(1)+'% occupancy if not renewed. Begin renewal/backfill effort by mid-'+(r.year-1)+'. Expiring: '+names+'.</div>';
+    });
+  }
+  // outlook table
+  body += '<div style="overflow-x:auto;"><table class="rr-occ-table"><thead><tr><th class="l">Year</th><th>Expiring SF</th><th>% of Complex</th><th>Projected Leased SF</th><th>Projected Occupancy*</th><th class="l">Expiring leases</th></tr></thead><tbody>';
+  occRows.forEach(function(r){
+    var barW=Math.round(r.occPct*0.9);
+    var names=r.tenants.length? r.tenants.slice().sort(function(a,b){return b.sf-a.sf;}).map(function(t){return t.tenant;}).join(', ') : '—';
+    body += '<tr'+(r.expSF>=thresh?' class="drop"':'')+'><td class="l"><b>'+r.year+'</b></td><td>'+(r.expSF?r.expSF.toLocaleString():'—')+'</td><td>'+(r.expSF?(r.expSF/totRent*100).toFixed(1)+'%':'—')+'</td><td>'+r.leasedSF.toLocaleString()+'</td><td><span class="bar" style="width:'+barW+'px;"></span> '+r.occPct.toFixed(1)+'%</td><td class="l" style="font-size:10.5px;color:#64748b;">'+names+'</td></tr>';
+  });
+  body += '</tbody></table></div>';
+  body += '<div class="rr-foot" style="margin-top:0;margin-bottom:8px;">*Projected occupancy assumes fixed-term leases that expire are <b>not</b> backfilled (a worst-case view to size leasing effort); auto-renew, holdover and month-to-month tenants are held in place. It does not assume renewals — actual occupancy depends on retention.</div>';
+  // Complex-level annual rent by building
+  body += '<div class="rr-sectitle">Annual Base Rent by Building</div>';
+  body += '<div style="overflow-x:auto;"><table class="rr-grid"><thead><tr><th class="rr-mh">Year</th>'+bnames.map(function(bn){return '<th>'+bn.replace('Building ','Bldg ')+'</th>';}).join('')+'<th class="rr-totcol">Complex Total</th></tr></thead><tbody>';
+  years.forEach(function(Y){ body += '<tr><th class="rr-mh">'+Y+'</th>'+bnames.map(function(bn){return '<td>'+rrMoney(bYear[bn][Y])+'</td>';}).join('')+'<td class="rr-totcol">'+rrMoney(complexYear[Y])+'</td></tr>'; });
+  body += '</tbody></table></div>';
+  // Per-building detail grids (years as rows, tenants as columns)
+  bnames.forEach(function(bn){
+    var trs=byB[bn].sort(function(a,b){return String(a.suite).localeCompare(String(b.suite),undefined,{numeric:true});});
+    var bSF=trs.reduce(function(s,r){return s+r.sf;},0);
+    body += '<div class="rr-sectitle">'+bn+' <span class="rr-bmeta">'+bSF.toLocaleString()+' SF · '+trs.length+' tenants</span></div>';
+    body += '<div style="overflow-x:auto;"><table class="rr-grid"><thead>';
+    body += '<tr><th class="rr-mh"></th>'+trs.map(function(r){return '<th>'+r.tenant+'</th>';}).join('')+'<th class="rr-totcol">Total</th></tr>';
+    body += '<tr><th class="rr-mh rr-lbl">Suite</th>'+trs.map(function(r){return '<td class="rr-sub">'+r.suite+'</td>';}).join('')+'<td class="rr-totcol"></td></tr>';
+    body += '<tr><th class="rr-mh rr-lbl">SF</th>'+trs.map(function(r){return '<td class="rr-sub">'+(r.sf?r.sf.toLocaleString():'—')+'</td>';}).join('')+'<td class="rr-totcol">'+bSF.toLocaleString()+'</td></tr>';
+    body += '</thead><tbody>';
+    years.forEach(function(Y){
+      var rowTot=0;
+      body += '<tr><th class="rr-mh">'+Y+'</th>'+trs.map(function(r){ var a=annualRent(r,Y); rowTot+=a; return '<td>'+(a>0?rrMoney(a):'<span class="rr-zero">—</span>')+'</td>'; }).join('')+'<td class="rr-totcol">'+rrMoney(rowTot)+'</td></tr>';
+    });
+    body += '</tbody><tfoot><tr><th class="rr-mh rr-lbl">Type</th>'+trs.map(function(r){return '<td class="rr-sub">'+typeLabel(r)+'</td>';}).join('')+'<td class="rr-totcol"></td></tr></tfoot>';
+    body += '</table></div>';
+  });
+  body += '<div class="rr-foot">Each cell is the projected base rent for that calendar year (sum of 12 months), applying each lease&rsquo;s contractual escalation in its escalation month. A lease that expires mid-year shows a partial year and then drops to &mdash; in later years, unless it auto-renews. Holdover/month-to-month tenants are held at current rent. Base rent only (full-service gross); excludes owner-occupied units. Source: current lease records as of '+asOf+'.</div>';
   body += '</div>';
   __rentRollHTML = body;
   var ov=document.getElementById('rentRollModal');
