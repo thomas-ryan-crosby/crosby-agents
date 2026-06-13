@@ -236,13 +236,40 @@ function readRaw(req) {
   });
 }
 
+// WhatsApp's hard limit is 1600 characters PER message; Twilio silently fails to
+// deliver a <Message> whose body exceeds it. Lease answers list several documents
+// with ~250-char Firebase tokenized URLs and easily blow past that — which is why
+// long answers vanished while a short reply went through. Split the reply into
+// chunks on line boundaries (never inside a URL) and emit one <Message> each.
+const WA_LIMIT = 1500; // safe margin under 1600
+
+function chunkText(text) {
+  const chunks = [];
+  let cur = "";
+  for (const rawLine of String(text).split("\n")) {
+    // A single line longer than the limit (shouldn't happen — URLs are ~260) is
+    // hard-split as a fallback so it still sends.
+    let line = rawLine;
+    while (line.length > WA_LIMIT) { chunks.push(line.slice(0, WA_LIMIT)); line = line.slice(WA_LIMIT); }
+    const next = cur ? cur + "\n" + line : line;
+    if (next.length > WA_LIMIT) { if (cur) chunks.push(cur); cur = line; }
+    else cur = next;
+  }
+  if (cur) chunks.push(cur);
+  return chunks.length ? chunks : [""];
+}
+
 function reply(res, text, followup) {
-  // IMPORTANT: send ONE WhatsApp message. Twilio's WhatsApp sender throttles a
-  // burst of multiple <Message> verbs in a single TwiML response and commonly
-  // drops all but the last — which silently swallowed the actual answer and only
-  // delivered the "Was this helpful?" prompt. Fold the followup into one body.
-  const body = followup ? (text + "\n\n— — —\n" + followup) : text;
-  const inner = "<Message>" + xmlEscape(body) + "</Message>";
+  const chunks = chunkText(text);
+  if (followup) {
+    const tail = "\n\n— — —\n" + followup;
+    const last = chunks[chunks.length - 1];
+    // Append the feedback prompt to the last chunk if it still fits; else send it
+    // as its own final message.
+    if ((last + tail).length <= WA_LIMIT) chunks[chunks.length - 1] = last + tail;
+    else chunks.push(followup);
+  }
+  const inner = chunks.map((c) => "<Message>" + xmlEscape(c) + "</Message>").join("");
   res.setHeader("Content-Type", "text/xml");
   res.status(200).send('<?xml version="1.0" encoding="UTF-8"?><Response>' + inner + "</Response>");
 }
