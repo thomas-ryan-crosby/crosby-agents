@@ -277,7 +277,7 @@ function deriveCommercial(p, pBldgs, unitsByBldg, leaseByUnit, tenantById, pLeas
       else { bOcc += u.sf || 0; bMonthly += num(lease.monthlyRent); bTenants++; }
 
       roster.push({
-        tenant: tenant ? tenant.name : "(Vacant)", suite: u.identifier, sf: u.sf || 0,
+        tenant: tenant ? tenant.name : "(Vacant)", tenantId: tenant ? tenant.id : null, suite: u.identifier, sf: u.sf || 0,
         rent: lease ? num(lease.monthlyRent) : 0, vacant,
         expiry: leaseExpiry(lease),
         expiryIn: humanUntil(lease && lease.terminates, today),
