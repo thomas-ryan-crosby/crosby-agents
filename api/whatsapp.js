@@ -22,10 +22,17 @@ const SYSTEM = `You are the Crosby Development property assistant, answering que
 
 Rules:
 - Answer ONLY from the snapshot. Never invent figures, names, dates, or terms. If the snapshot does not contain the answer, say you don't have that on file and suggest what you can answer.
-- Be concise and plain — this is a text message. Prefer 1-4 short sentences or a short bullet list. No markdown headers, no tables.
+- Be concise and plain — this is a text message. No markdown headers, no tables. For a single fact, 1-2 sentences. For a list, a short bulleted list is fine — but include ALL relevant items, don't stop at a few.
 - Money as $ with commas; dates as written. When asked "how long" or "when", compute relative to today's date given below.
 - Sanctuary Office Park leases are full-service gross (landlord pays utilities, taxes, janitorial; no CAM). Mention this only if relevant.
-- If a question is ambiguous (e.g. a tenant name appears at multiple suites), give the best match and note the others briefly.`;
+- If a question is ambiguous (e.g. a tenant name appears at multiple suites), give the best match and note the others briefly.
+
+For questions about expiring / upcoming / renewing leases or "what's coming up":
+- Sort by date, soonest first.
+- List tenants who are VACATING or on notice first — that space needs re-leasing and is the most time-sensitive.
+- For each lease note whether it is auto-renew (rolls over automatically unless the tenant gives notice — so it's not truly "expiring") or fixed-term (genuinely ends and needs action).
+- Ignore lease end dates already in the PAST for auto-renew leases — those have already renewed and are ongoing, not expiring.
+- Be complete — include every matching lease, not just a sample.`;
 
 export default async function handler(req, res) {
   if (req.method !== "POST") { res.status(405).send("Method Not Allowed"); return; }
@@ -69,10 +76,7 @@ export default async function handler(req, res) {
     return reply(res, answer);
   } catch (e) {
     console.error("whatsapp handler error:", e && (e.stack || e.message));
-    // TEMPORARY diagnostic — surfaces the failure reason in the reply so setup
-    // issues can be spotted by text. Revert to a generic message once working.
-    const reason = (e && e.message ? String(e.message) : "unknown").slice(0, 200);
-    return reply(res, "Setup diagnostic — something failed:\n" + reason);
+    return reply(res, "Sorry, I hit a problem answering that. Please try again in a moment.");
   }
 }
 
