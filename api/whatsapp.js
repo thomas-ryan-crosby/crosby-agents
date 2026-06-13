@@ -14,7 +14,7 @@
 //   FIREBASE_SERVICE_ACCOUNT - service-account JSON (string) for Firestore read access
 //   GROQ_MODEL / OPENAI_MODEL - (optional) override model ids
 import crypto from "node:crypto";
-import { buildSnapshot } from "../lib/portfolio.mjs";
+import { buildSnapshot, logInteraction } from "../lib/portfolio.mjs";
 
 export const config = { maxDuration: 30 };
 
@@ -57,25 +57,34 @@ export default async function handler(req, res) {
   const fromNum = from.replace(/^whatsapp:/, "").trim();
   const body = (params.Body || "").trim();
 
+  const started = Date.now();
+  const base = { from: from, fromNumber: fromNum, question: body };
+
   // 2. Allowlist — only approved numbers may query (this is tenant/financial data)
   const allow = (process.env.ALLOWED_NUMBERS || "").split(",").map((s) => s.trim()).filter(Boolean);
   if (allow.length && !allow.includes(fromNum) && !allow.includes(from)) {
-    return reply(res, "Sorry — this number isn't authorized to use the Crosby property assistant. Please contact your administrator.");
+    const msg = "Sorry — this number isn't authorized to use the Crosby property assistant. Please contact your administrator.";
+    await logInteraction(Object.assign({}, base, { status: "blocked", answer: msg, model: null }));
+    return reply(res, msg);
   }
 
   // 3. Greeting / help
   if (!body || /^(hi|hello|hey|help|start|menu|\?)$/i.test(body)) {
-    return reply(res, "Hi! I'm the Crosby property assistant. Ask me things like:\n• Whats vacating at Sanctuary this year?\n• What does Wells Fargo pay?\n• Occupancy at Mandeville Lake Apartments?\n• Which COIs are expired?\n• When does Galloway's lease end?\n• Any space available in Building 4?");
+    const help = "Hi! I'm the Crosby property assistant. Ask me things like:\n• Whats vacating at Sanctuary this year?\n• What does Wells Fargo pay?\n• Occupancy at Mandeville Lake Apartments?\n• Which COIs are expired?\n• When does Galloway's lease end?\n• Any space available in Building 4?";
+    await logInteraction(Object.assign({}, base, { status: "help", answer: help, model: null }));
+    return reply(res, help);
   }
 
   // 4. Answer
   try {
     const today = new Date().toISOString().slice(0, 10);
     const snapshot = await buildSnapshot(today);
-    const answer = await askAssistant(snapshot, body, today);
-    return reply(res, answer);
+    const out = await askAssistant(snapshot, body, today);
+    await logInteraction(Object.assign({}, base, { status: "answered", answer: out.text, model: out.provider, ms: Date.now() - started }));
+    return reply(res, out.text);
   } catch (e) {
     console.error("whatsapp handler error:", e && (e.stack || e.message));
+    await logInteraction(Object.assign({}, base, { status: "error", answer: null, model: null, error: String((e && e.message) || "unknown").slice(0, 300), ms: Date.now() - started }));
     return reply(res, "Sorry, I hit a problem answering that. Please try again in a moment.");
   }
 }
@@ -118,7 +127,7 @@ async function askAssistant(snapshot, question, today) {
   if (!providers.length) throw new Error("No model provider configured (set GROQ_API_KEY and/or OPENAI_API_KEY)");
   let lastErr;
   for (const p of providers) {
-    try { return await callChat(p, system, user); }
+    try { return { text: await callChat(p, system, user), provider: p.name }; }
     catch (e) { lastErr = e; console.error(p.name + " failed" + (providers.length > 1 ? ", trying fallback" : "") + ":", e && e.message); }
   }
   throw lastErr;
