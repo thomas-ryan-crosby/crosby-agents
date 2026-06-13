@@ -89,7 +89,7 @@ export default async function handler(req, res) {
   } catch (e) {
     console.error("whatsapp handler error:", e && (e.stack || e.message));
     const msg = explainError(e);
-    await logInteraction(Object.assign({}, base, { status: "error", answer: msg, model: null, error: String((e && e.message) || "unknown").slice(0, 300), ms: Date.now() - started }));
+    await logInteraction(Object.assign({}, base, { status: "error", answer: msg, model: null, error: String((e && e.message) || "unknown").slice(0, 600), ms: Date.now() - started }));
     return reply(res, msg);
   }
 }
@@ -97,16 +97,18 @@ export default async function handler(req, res) {
 // Turn a technical failure into a plain-English message the user can act on.
 function explainError(err) {
   const m = String((err && err.message) || err || "").toLowerCase();
-  if (/\b413\b|too large|tokens per minute|\btpm\b|\b429\b|quota|rate.?limit|over.*limit/.test(m))
-    return "I couldn't answer that just now because the assistant briefly hit its usage limit (it's on a free AI plan with a per-minute cap). Please wait a minute and try again. If it keeps happening, the office can raise the limit.";
+  // Check the model's own failure to build a request BEFORE rate-limit, because
+  // a dead fallback may also report 429 even when the real cause was this.
+  if (/tool_use_failed/i.test(m))
+    return "I had trouble pulling that one up just now — the lookup didn't come together. Please try rewording it, and name the tenant, building, or property (e.g. \"When does M Squared's rent go up?\"). If it keeps happening, let the office know.";
   if (/abort|timed?.?out|etimedout|network|fetch failed|enotfound|socket|econn/.test(m))
     return "That took too long to look up and timed out. Please try again — and if it's a big question, asking for one property or building at a time usually works.";
+  if (/\b413\b|too large|tokens per minute|\btpm\b|\b429\b|quota|rate.?limit|over.*limit/.test(m))
+    return "I couldn't answer that just now because the assistant briefly hit its usage limit (it's on a free AI plan with a per-minute cap). Please wait a minute and try again. If it keeps happening, the office can raise the limit.";
   if (/firebase|firestore|credential|permission|service account|default credentials|unauthenticated/.test(m))
     return "I couldn't reach the property records just now, so I wasn't able to look that up. Please try again in a moment.";
   if (/no model provider|api key|\b401\b|invalid.*key|unauthorized/.test(m))
     return "The assistant isn't fully set up to answer right now (an AI service isn't connected). Please let the administrator know.";
-  if (/tool_use_failed/i.test(m))
-    return "I had trouble looking that up just now. Please try asking it a slightly different way — naming the tenant, building, or property usually helps.";
   return "Something went wrong on my end while answering that. Please try again, or reword the question. If it keeps failing, let the office know.";
 }
 
@@ -134,12 +136,14 @@ async function answerWithTools(question, today, ctx) {
     { name: "openai", key: process.env.OPENAI_API_KEY, url: "https://api.openai.com/v1/chat/completions", model: process.env.OPENAI_MODEL || "gpt-4o-mini" },
   ].filter((p) => p.key);
   if (!providers.length) throw new Error("No model provider configured (set GROQ_API_KEY and/or OPENAI_API_KEY)");
-  let lastErr;
+  // Collect every provider's failure so the user-facing message reflects the
+  // PRIMARY cause (e.g. Groq tool_use_failed), not just the fallback's error.
+  const errs = [];
   for (const p of providers) {
     try { return { text: await runToolLoop(p, system, question, ctx), provider: p.name }; }
-    catch (e) { lastErr = e; console.error(p.name + " failed" + (providers.length > 1 ? ", trying fallback" : "") + ":", e && e.message); }
+    catch (e) { errs.push(p.name + ": " + String((e && e.message) || e)); console.error(p.name + " failed:", e && e.message); }
   }
-  throw lastErr;
+  throw new Error(errs.join(" || "));
 }
 
 async function runToolLoop(p, system, question, ctx) {
@@ -206,10 +210,10 @@ async function oneChatCall(p, messages, temperature) {
     const r = await fetch(p.url, {
       method: "POST",
       headers: { "content-type": "application/json", authorization: "Bearer " + p.key },
-      body: JSON.stringify({ model: p.model, temperature, max_tokens: 800, tools: TOOL_DEFS, tool_choice: "auto", messages }),
+      body: JSON.stringify({ model: p.model, temperature, max_tokens: 800, tools: TOOL_DEFS, tool_choice: "auto", parallel_tool_calls: false, messages }),
       signal: ctrl.signal,
     });
-    if (!r.ok) { const t = await r.text(); throw new Error(p.model + " " + r.status + ": " + t.slice(0, 220)); }
+    if (!r.ok) { const t = await r.text(); throw new Error(p.model + " " + r.status + ": " + t.slice(0, 500)); }
     const data = await r.json();
     return (((data.choices || [])[0] || {}).message) || { role: "assistant", content: "" };
   } finally { clearTimeout(timer); }
