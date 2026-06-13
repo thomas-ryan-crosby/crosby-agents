@@ -109,7 +109,7 @@ function deriveInsurance(cois, required, today) {
   if (!cois || !cois.length) {
     return { status: "missing", label: "No COI on file", tone: "attention",
       expiry: "—", expiryIn: "", expiryTone: "neutral",
-      flags: ["No certificate of insurance on file"], doc: null, producer: null };
+      flags: ["No certificate of insurance on file"], doc: null, docs: [], producer: null };
   }
   const coi = cois.slice().sort((a, b) => String(b.date || "").localeCompare(String(a.date || "")))[0];
   const covs = coi.coverages || [];
@@ -131,10 +131,13 @@ function deriveInsurance(cois, required, today) {
   else if (flags.length) { status = "noncompliant"; label = "Action Needed"; tone = "urgent"; }
   else if (expiringSoon) { status = "expiring"; label = "Expiring Soon"; tone = "attention"; }
   else { status = "compliant"; label = "Compliant"; tone = "steady"; }
-  const doc = coi.url ? { docType: "COI", date: coi.date || null, url: coi.url,
-    htmlUrl: coi.htmlUrl || null, meta: coi.meta || null } : null;
+  const mkDoc = (c) => c.url ? { docType: "COI", date: c.date || null, url: c.url,
+    htmlUrl: c.htmlUrl || null, meta: c.meta || null } : null;
+  const docs = cois.slice()
+    .sort((a, b) => String(b.date || "").localeCompare(String(a.date || "")))
+    .map(mkDoc).filter(Boolean);
   return { status, label, tone, expiry: earliest || "—", expiryIn: humanUntil(earliest, today),
-    expiryTone: dateTone(expDays), flags, doc, producer: coi.producer || null };
+    expiryTone: dateTone(expDays), flags, doc: docs[0] || null, docs, producer: coi.producer || null };
 }
 
 export function deriveViewModel(entities) {
@@ -151,6 +154,22 @@ export function deriveViewModel(entities) {
   const coisByProp = groupBy(coisEnt, "propertyId");
   const tenantById = new Map(tenants.map((t) => [t.id, t]));
   const leaseByUnit = new Map(leases.map((l) => [l.unitId, l]));
+  const unitById = new Map(units.map((u) => [u.id, u]));
+  // Escalation lookup keyed by "tenantName||unitIdentifier" so each lease doc can
+  // surface the lease's escalation percentage and the month it applies.
+  const FULL_MONTHS = ["January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"];
+  const escByKey = {};
+  for (const l of leases) {
+    if (l.escalationPct == null) continue;
+    const u = unitById.get(l.unitId), t = tenantById.get(l.tenantId);
+    if (!u || !t) continue;
+    escByKey[t.name + "||" + u.identifier] = {
+      pct: Number(l.escalationPct),
+      month: l.escalationMonth || null,
+      date: l.escalationMonth ? FULL_MONTHS[l.escalationMonth - 1] : null,
+    };
+  }
   const unitsByProp = groupBy(units, "propertyId");
   const unitsByBldg = groupBy(units, "buildingId");
   const leasesByProp = groupBy(leases, "propertyId");
@@ -205,8 +224,12 @@ export function deriveViewModel(entities) {
   // LEASE_DOCS (active) grouped by propertyId -> building; MOVED_OUT collected separately.
   for (const d of leaseDocsEnt) {
     if (!d.tenant || !d.propertyId) continue; // skip unmatched/unlinked
+    const esc = escByKey[d.tenant + "||" + d.suite];
+    const dMeta = esc
+      ? Object.assign({}, d.meta || {}, { escalationPct: esc.pct, escalationMonth: esc.month, escalationDate: esc.date })
+      : (d.meta || null);
     const docView = { tenant: d.tenant, suite: d.suite, file: d.file, docType: d.docType,
-      url: d.url, htmlUrl: d.htmlUrl || null, meta: d.meta || null, date: d.date || null };
+      url: d.url, htmlUrl: d.htmlUrl || null, meta: dMeta, date: d.date || null };
     if (d.movedOut) {
       const arr = MOVED_OUT[d.propertyId] || (MOVED_OUT[d.propertyId] = []);
       let e = arr.find((x) => x.tenant === d.tenant && x.suite === d.suite);

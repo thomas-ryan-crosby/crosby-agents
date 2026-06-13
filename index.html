@@ -1746,7 +1746,7 @@ var detailCharts = {};
 
 // Show/hide columns for the commercial tenant tables. Column cells carry a
 // `c-<key>` class; hidden columns are suppressed by a single global <style>.
-var SOP_COLS = [['tenant','Tenant'],['suite','Suite'],['sf','Square Feet'],['rent','Monthly Rent'],['sfyr','$/SF/Yr'],['status','Status'],['expiry','Expiry'],['notice','Notice'],['action','Action'],['lease','Lease'],['legacy','Legacy Leases'],['coi','Insurance']];
+var SOP_COLS = [['tenant','Tenant'],['suite','Suite'],['sf','Square Feet'],['rent','Monthly Rent'],['sfyr','$/SF/Yr'],['status','Status'],['expiry','Expiry'],['notice','Notice'],['action','Action'],['lease','Lease'],['legacy','Legacy Leases'],['coistatus','Insurance Status'],['coidocs','Insurance Documents']];
 
 // One-time styles for the lease widget + metadata hover card.
 function ensureLeaseStyles() {
@@ -1760,28 +1760,58 @@ function ensureLeaseStyles() {
     '.lw a.html{color:#1648b0;border:1px solid #c7dbfb;background:#eaf1fe;}'+
     '.lw a.html:hover{color:#fff;background:#1f5fdb;border-color:#1f5fdb;}'+
     '.lw .tip{display:none;position:absolute;z-index:60;bottom:100%;left:0;margin-bottom:8px;width:280px;background:#0d1726;color:#dce3ee;font-size:11px;font-weight:400;line-height:1.6;text-align:left;padding:11px 13px;border-radius:11px;box-shadow:0 14px 40px rgba(13,23,38,.34),0 0 0 1px rgba(255,255,255,.06);white-space:normal;}'+
-    '.lw:hover .tip{display:block;}'+
     '.lw .tip b{color:#fff;font-weight:650;}.lw .tip .k{color:#94a3b8;}'+
     '.iw{position:relative;display:inline-flex;flex-direction:column;align-items:flex-start;gap:3px;}'+
     '.iw .tip{display:none;position:absolute;z-index:60;bottom:100%;left:0;margin-bottom:8px;width:270px;background:#0d1726;color:#dce3ee;font-size:11px;font-weight:400;line-height:1.6;text-align:left;padding:11px 13px;border-radius:11px;box-shadow:0 14px 40px rgba(13,23,38,.34),0 0 0 1px rgba(255,255,255,.06);white-space:normal;}'+
-    '.iw:hover > .tip{display:block;}.iw .tip b{color:#fff;font-weight:650;}';
+    '.iw .tip b{color:#fff;font-weight:650;}'+
+    '.tip.open{display:block!important;}'+
+    '.infoBtn{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border-radius:50%;border:1px solid #cbd5e1;color:#64748b;font-size:10px;font-weight:700;font-style:italic;font-family:Georgia,serif;line-height:1;cursor:pointer;user-select:none;flex:none;transition:all 120ms ease;}'+
+    '.infoBtn:hover{background:#1f5fdb;border-color:#1f5fdb;color:#fff;}'+
+    '.infoBtn.open{background:#1f5fdb;border-color:#1f5fdb;color:#fff;}';
   document.head.appendChild(s);
 }
-// Insurance/COI cell for a roster row: compliance badge + expiration countdown +
-// COI doc widget, with a hover card listing any compliance flags.
-function insuranceCell(ins){
+// Click-to-reveal info popovers (replaces hover). An ".infoBtn" toggles the
+// sibling ".tip" inside its parent; clicking anywhere else closes open tips.
+function toggleTip(btn, ev){
+  if(ev){ ev.stopPropagation(); }
+  var tip = btn.parentNode.querySelector('.tip');
+  if(!tip) return;
+  var isOpen = tip.classList.contains('open');
+  closeAllTips();
+  if(!isOpen){ tip.classList.add('open'); btn.classList.add('open'); }
+}
+function closeAllTips(){
+  var ts = document.querySelectorAll('.tip.open'); for(var i=0;i<ts.length;i++) ts[i].classList.remove('open');
+  var bs = document.querySelectorAll('.infoBtn.open'); for(var j=0;j<bs.length;j++) bs[j].classList.remove('open');
+}
+document.addEventListener('click', closeAllTips);
+// Small clickable info marker wrapping a popover (used for insurance flags and
+// suite notes). `color` optionally tints the marker.
+function infoMarker(html, color){
+  var st = color ? ' style="color:'+color+';border-color:'+color+';"' : '';
+  return '<span class="lw" style="vertical-align:middle;"><span class="infoBtn"'+st+' onclick="toggleTip(this,event)">i</span>'+
+    '<div class="tip" onclick="event.stopPropagation()">'+html+'</div></span>';
+}
+// Insurance STATUS cell: compliance badge + expiration countdown + a click info
+// marker listing compliance flags / producer.
+function insuranceStatusCell(ins){
   if(!ins) return '<span style="font-size:11px;color:#d1d5db;">—</span>';
   var toneBdg = {steady:'badge-approved',attention:'badge-pending',urgent:'badge-revision',neutral:'badge-idle'}[ins.tone||'neutral'];
   var toneCol = {urgent:'#dc2626',attention:'#b45309',steady:'#059669',neutral:'#9ca3af'};
   var badge = '<span class="badge '+toneBdg+'">'+ins.label+'</span>';
   var exp = (ins.expiry && ins.expiry!=='—') ? '<div style="font-size:11px;color:#374151;">Exp '+ins.expiry+(ins.expiryIn?' <span style="font-weight:600;color:'+(toneCol[ins.expiryTone]||'#9ca3af')+';">('+ins.expiryIn+')</span>':'')+'</div>' : '';
-  var docw = ins.doc ? leaseWidget(ins.doc) : '';
   var tipRows = [];
   if(ins.producer) tipRows.push('<b>'+ins.producer+'</b>');
   if(ins.flags && ins.flags.length) ins.flags.forEach(function(f){ tipRows.push('&bull; '+f); });
   else if(ins.status==='compliant') tipRows.push('Coverage on file meets the lease requirement ($1M GL, Crosby named as insured).');
-  var tip = tipRows.length ? '<div class="tip">'+tipRows.join('<br>')+'</div>' : '';
-  return '<span class="iw">'+badge+exp+docw+tip+'</span>';
+  var info = tipRows.length ? infoMarker(tipRows.join('<br>')) : '';
+  return '<span class="iw"><span style="display:inline-flex;align-items:center;gap:5px;">'+badge+info+'</span>'+exp+'</span>';
+}
+// Insurance DOCUMENTS cell: every COI on file (newest first), each a lease widget.
+function insuranceDocsCell(ins){
+  var docs = (ins && ins.docs && ins.docs.length) ? ins.docs : (ins && ins.doc ? [ins.doc] : []);
+  if(!docs.length) return '<span style="font-size:11px;color:#d1d5db;">—</span>';
+  return docs.map(leaseWidget).join('<br>');
 }
 function leaseTip(ld){
   var m = ld.meta || {}; var rows = [];
@@ -1789,15 +1819,20 @@ function leaseTip(ld){
   rows.push('<span class="k">Type:</span> '+ld.docType+(ld.date?'  <span class="k">Dated:</span> '+ld.date:''));
   if(m.monthlyRent) rows.push('<span class="k">Rent:</span> '+m.monthlyRent);
   if(m.commencement||m.termination) rows.push('<span class="k">Term:</span> '+(m.commencement||'?')+' → '+(m.termination||'?'));
-  if(m.escalation) rows.push('<span class="k">Escalation:</span> '+m.escalation);
+  if(m.escalationPct!=null){
+    var pct = (Number(m.escalationPct)%1 ? Number(m.escalationPct).toFixed(1) : Number(m.escalationPct));
+    rows.push('<span class="k">Escalation %:</span> '+pct+'%');
+    rows.push('<span class="k">Escalation date:</span> '+(m.escalationDate ? m.escalationDate+' (annually)' : '—'));
+  } else if(m.escalation){ rows.push('<span class="k">Escalation:</span> '+m.escalation); }
   if(m.lessor) rows.push('<span class="k">Lessor:</span> '+m.lessor);
-  return '<div class="tip">'+rows.join('<br>')+'</div>';
+  return '<div class="tip" onclick="event.stopPropagation()">'+rows.join('<br>')+'</div>';
 }
 function leaseWidget(ld){
   var nm = ld.docType + (ld.date ? ' <span style="font-weight:400;color:#9ca3af;">'+ld.date+'</span>' : '');
   return '<span class="lw"><span class="nm">'+nm+'</span>'+
     '<a class="pdf" href="'+ld.url+'" target="_blank" rel="noopener">PDF</a>'+
     (ld.htmlUrl?'<a class="html" href="'+ld.htmlUrl+'" target="_blank" rel="noopener">HTML</a>':'')+
+    '<span class="infoBtn" onclick="toggleTip(this,event)" title="Details">i</span>'+
     leaseTip(ld)+'</span>';
 }
 var sopHiddenCols = [];
@@ -1945,7 +1980,7 @@ function renderPropertyDetail(p) {
         Object.keys(docsByTenant).forEach(function(k){ docsByTenant[k].sort(function(a,b){ return String(b.date||'').localeCompare(String(a.date||'')); }); });
         var hasLeases = buildingLeases.length > 0;
 
-        html += '<table class="unit-table"><thead><tr><th class="c-tenant">Tenant</th><th class="c-suite">Suite</th><th class="c-sf">Square Feet</th><th class="c-rent">Monthly Rent</th><th class="c-sfyr">$/SF/Yr</th><th class="c-status">Status</th><th class="c-expiry">Expiry</th><th class="c-notice">Notice</th><th class="c-action">Action</th><th class="c-lease">Lease</th><th class="c-legacy">Legacy Leases</th><th class="c-coi">Insurance</th></tr></thead><tbody>';
+        html += '<table class="unit-table"><thead><tr><th class="c-tenant">Tenant</th><th class="c-suite">Suite</th><th class="c-sf">Square Feet</th><th class="c-rent">Monthly Rent</th><th class="c-sfyr">$/SF/Yr</th><th class="c-status">Status</th><th class="c-expiry">Expiry</th><th class="c-notice">Notice</th><th class="c-action">Action</th><th class="c-lease">Lease</th><th class="c-legacy">Legacy Leases</th><th class="c-coistatus">Insurance Status</th><th class="c-coidocs">Insurance Documents</th></tr></thead><tbody>';
         var bTotal = 0, bRent = 0;
         bTenants.forEach(function(t) {
           bTotal += t.sf;
@@ -1962,9 +1997,10 @@ function renderPropertyDetail(p) {
           var toneCol = {urgent:'#dc2626',attention:'#b45309',steady:'#059669',neutral:'#9ca3af'};
           var expSub = t.expiryIn ? '<div style="font-size:10px;font-weight:600;color:'+(toneCol[t.expiryTone]||'#9ca3af')+';">'+t.expiryIn+'</div>' : '';
           var notSub = t.noticeIn ? '<div style="font-size:10px;font-weight:600;color:'+(toneCol[t.noticeTone]||'#9ca3af')+';">'+t.noticeIn+'</div>' : '';
-          html += '<tr><td class="c-tenant" style="font-weight:500;">'+t.tenant+'</td><td class="c-suite">'+t.suite+(t.suiteNote?'<sup title="'+String(t.suiteNote).replace(/"/g,"&quot;")+'" style="color:#b45309;cursor:help;font-weight:700;font-size:11px;">&nbsp;*</sup>':'')+'</td><td class="c-sf">'+t.sf.toLocaleString()+'</td><td class="c-rent">'+(t.rent>0?'$'+t.rent.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}):'—')+'</td><td class="c-sfyr">'+sfyr+'</td><td class="c-status">'+statusBdg+'</td><td class="c-expiry" style="font-size:12px;'+(t.expiry==='—'?'color:#d1d5db;':'')+'">'+t.expiry+expSub+'</td><td class="c-notice" style="font-size:12px;'+(t.notice==='—'?'color:#d1d5db;':'')+'">'+t.notice+notSub+'</td><td class="c-action">'+actCell+'</td>'+leaseCell+legacyCell+'<td class="c-coi">'+insuranceCell(t.insurance)+'</td></tr>';
+          var suiteNote = t.suiteNote ? '&nbsp;'+infoMarker(String(t.suiteNote).replace(/"/g,"&quot;"),'#b45309') : '';
+          html += '<tr><td class="c-tenant" style="font-weight:500;">'+t.tenant+'</td><td class="c-suite">'+t.suite+suiteNote+'</td><td class="c-sf">'+t.sf.toLocaleString()+'</td><td class="c-rent">'+(t.rent>0?'$'+t.rent.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}):'—')+'</td><td class="c-sfyr">'+sfyr+'</td><td class="c-status">'+statusBdg+'</td><td class="c-expiry" style="font-size:12px;'+(t.expiry==='—'?'color:#d1d5db;':'')+'">'+t.expiry+expSub+'</td><td class="c-notice" style="font-size:12px;'+(t.notice==='—'?'color:#d1d5db;':'')+'">'+t.notice+notSub+'</td><td class="c-action">'+actCell+'</td>'+leaseCell+legacyCell+'<td class="c-coistatus">'+insuranceStatusCell(t.insurance)+'</td><td class="c-coidocs">'+insuranceDocsCell(t.insurance)+'</td></tr>';
         });
-        html += '<tr><td class="c-tenant" style="font-weight:700;">Total ('+bTenants.length+' tenants)</td><td class="c-suite"></td><td class="c-sf">'+bTotal.toLocaleString()+'</td><td class="c-rent">$'+bRent.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})+'</td><td class="c-sfyr"></td><td class="c-status"></td><td class="c-expiry"></td><td class="c-notice"></td><td class="c-action"></td><td class="c-lease"></td><td class="c-legacy"></td><td class="c-coi"></td></tr>';
+        html += '<tr><td class="c-tenant" style="font-weight:700;">Total ('+bTenants.length+' tenants)</td><td class="c-suite"></td><td class="c-sf">'+bTotal.toLocaleString()+'</td><td class="c-rent">$'+bRent.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})+'</td><td class="c-sfyr"></td><td class="c-status"></td><td class="c-expiry"></td><td class="c-notice"></td><td class="c-action"></td><td class="c-lease"></td><td class="c-legacy"></td><td class="c-coistatus"></td><td class="c-coidocs"></td></tr>';
         html += '</tbody></table>';
 
         html += '</div>';
