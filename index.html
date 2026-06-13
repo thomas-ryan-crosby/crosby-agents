@@ -2443,6 +2443,19 @@ var FLYER_POIS = [
   { n:11, name:'Enterprise',        cat:'Car Rental',  mi:'2.7', lat:30.36810, lng:-90.06969 },
 ];
 var SANCTUARY_LATLNG = [30.394593, -90.102901];
+// Nearby schools (lettered markers) and residential neighborhoods (area labels).
+var FLYER_SCHOOLS = [
+  { L:'A', name:'Mandeville High School',     lat:30.38141, lng:-90.10088 },
+  { L:'B', name:'Tchefuncte Middle School',   lat:30.38886, lng:-90.10241 },
+  { L:'C', name:'Pontchartrain Elementary',   lat:30.38859, lng:-90.10166 },
+  { L:'D', name:'Mary Queen of Peace',        lat:30.39185, lng:-90.09867 },
+  { L:'E', name:'Cedarwood School',           lat:30.39811, lng:-90.11418 },
+];
+var FLYER_HOODS = [
+  { name:'The Sanctuary',   lat:30.39860, lng:-90.10650 },
+  { name:'Rouquette Lodge', lat:30.39534, lng:-90.09728 },
+  { name:'Lewisburg',       lat:30.36980, lng:-90.10313 },
+];
 // Pin colors by use/type (also used by the legend badges).
 var CAT_COLORS = { Grocery:'#2f9e6b', Dining:'#e8833a', 'Fast Food':'#d4502e', Coffee:'#8a5a3c', Pharmacy:'#1f9aa8', Bank:'#2f6fe0', Fuel:'#b8860b', 'Car Rental':'#7c4dc4' };
 // A CARTO Positron tile box (no API key): returns the <image> tiles for a region
@@ -2467,6 +2480,13 @@ function flyerAmenityMap(){
     pois += '<g transform="translate('+xy[0]+','+xy[1]+')"><circle cx="0" cy="0" r="10" fill="'+col+'" stroke="#fff" stroke-width="2"/>'+
       '<text x="0" y="3.3" font-family="Segoe UI,Arial" font-size="10" font-weight="700" fill="#fff" text-anchor="middle">'+p.n+'</text></g>';
   });
+  var hoods='';
+  FLYER_HOODS.forEach(function(h){ var xy=P(h.lat,h.lng);
+    hoods += '<text x="'+xy[0]+'" y="'+xy[1]+'" font-family="Segoe UI,Arial" font-size="10.5" font-style="italic" font-weight="700" fill="#566" text-anchor="middle" style="paint-order:stroke;stroke:#fff;stroke-width:3px;">'+h.name+'</text>'; });
+  var schools='';
+  FLYER_SCHOOLS.forEach(function(s){ var xy=P(s.lat,s.lng);
+    schools += '<g transform="translate('+xy[0]+','+xy[1]+')"><rect x="-9" y="-9" width="18" height="18" rx="4" fill="#5b3fa0" stroke="#fff" stroke-width="2"/>'+
+      '<text x="0" y="3.5" font-family="Segoe UI,Arial" font-size="10" font-weight="700" fill="#fff" text-anchor="middle">'+s.L+'</text></g>'; });
   var m=P(SANCTUARY_LATLNG[0],SANCTUARY_LATLNG[1]);
   var marker='<g transform="translate('+m[0]+','+m[1]+')"><ellipse cx="0" cy="3" rx="10" ry="3.5" fill="rgba(0,0,0,.22)"/>'+
     '<path d="M0 -36 C-12 -36 -20 -27 -20 -17 C-20 -5 0 5 0 5 C0 5 20 -5 20 -17 C20 -27 12 -36 0 -36 Z" fill="#22315d" stroke="#fff" stroke-width="2.5"/>'+
@@ -2481,8 +2501,8 @@ function flyerAmenityMap(){
     '<line x1="0" y1="-1" x2="'+seg+'" y2="-1" stroke="#22315d" stroke-width="2.5"/><line x1="0" y1="-5" x2="0" y2="3" stroke="#22315d" stroke-width="2"/><line x1="'+seg+'" y1="-5" x2="'+seg+'" y2="3" stroke="#22315d" stroke-width="2"/>'+
     '<text x="'+(seg/2)+'" y="-4" font-family="Arial" font-size="9" font-weight="700" fill="#22315d" text-anchor="middle">¼ mi</text></g>';
   var attrib='<text x="330" y="'+(H-7)+'" font-family="Arial" font-size="8" fill="#8a93a3">© OpenStreetMap · © CARTO</text>';
-  // ── regional-access inset (bottom-right) ──
-  var iw=322, ih=238, ix=W-iw-14, iy=H-ih-14;
+  // ── regional-access inset (top-right; bottom-right holds the south amenities) ──
+  var iw=322, ih=238, ix=W-iw-14, iy=14;
   var inset=flyerTileBox(30.235,-90.115,8,iw,ih,ix,iy), IP=inset.P;
   var A=IP(30.36,-90.094), B=IP(30.05,-90.15);
   var arrow='<line x1="'+A[0]+'" y1="'+A[1]+'" x2="'+B[0]+'" y2="'+B[1]+'" stroke="#22315d" stroke-width="3"/>'+
@@ -2501,7 +2521,7 @@ function flyerAmenityMap(){
   return '<svg viewBox="0 0 '+W+' '+H+'" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="display:block;border:1px solid #d9e1ec;border-radius:10px;">'+
     '<defs><clipPath id="mapclip"><rect x="0" y="0" width="'+W+'" height="'+H+'" rx="10"/></clipPath>'+
     '<clipPath id="insetclip"><rect x="'+ix+'" y="'+iy+'" width="'+iw+'" height="'+ih+'" rx="6"/></clipPath></defs>'+
-    '<g clip-path="url(#mapclip)">'+main.tiles+pois+marker+label+north+scale+attrib+'</g>'+
+    '<g clip-path="url(#mapclip)">'+main.tiles+hoods+schools+pois+marker+label+north+scale+attrib+'</g>'+
     insetG+insetFrame+'</svg>';
 }
 function flyerDoc(r){
@@ -2615,7 +2635,12 @@ function flyerDoc(r){
       '<div class="lead" style="margin-bottom:16px;">Sanctuary sits on Mandeville’s US-190 / Causeway Blvd corridor — grocery, dining, coffee, pharmacy and banking are a short drive away, with immediate access to I-12 and the Causeway to the Southshore.</div>'+
       flyerAmenityMap()+
       '<div class="amleg">'+FLYER_POIS.map(function(p){ var col=CAT_COLORS[p.cat]||NAVY; return '<div class="row"><span class="num" style="background:'+col+';">'+p.n+'</span><div class="t"><b>'+escHtml(p.name)+'</b> — <span>'+escHtml(p.cat)+' · '+p.mi+' mi</span></div></div>'; }).join('')+'</div>'+
-      '<div style="font-size:10.5px;color:#9aa4b4;margin-top:8px;">Pins color-coded by use. Representative nearby businesses (OpenStreetMap); many more line the US-190 / Causeway Blvd corridor.</div>'+
+      '<div style="display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:13px;align-items:center;">'+
+        '<span style="font-size:11px;font-weight:800;color:#5b3fa0;text-transform:uppercase;letter-spacing:.04em;">Schools</span>'+
+        FLYER_SCHOOLS.map(function(s){ return '<span style="display:inline-flex;align-items:center;gap:5px;font-size:12px;color:#374151;"><span style="width:17px;height:17px;border-radius:4px;background:#5b3fa0;color:#fff;font-size:10px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;">'+s.L+'</span>'+escHtml(s.name)+'</span>'; }).join('')+
+      '</div>'+
+      '<div style="margin-top:8px;font-size:12px;color:#374151;"><span style="font-size:11px;font-weight:800;color:#566;text-transform:uppercase;letter-spacing:.04em;">Neighborhoods</span>&nbsp;&nbsp;'+FLYER_HOODS.map(function(h){ return escHtml(h.name); }).join(' &middot; ')+' &amp; more</div>'+
+      '<div style="font-size:10.5px;color:#9aa4b4;margin-top:9px;">Pins color-coded by use. Representative nearby places (OpenStreetMap); many more line the US-190 / Causeway Blvd corridor.</div>'+
     '</div>'+
     '<div class="foot"><div class="c"><b>Crosby Development Company, L.L.C.</b><br>'+
       '<span>#1 Sanctuary Blvd, Mandeville, LA 70471</span><br>'+
