@@ -1,0 +1,2079 @@
+[
+  {
+    "id": "ct-0BPCSyPUCVMzEfl3GNMo",
+    "tenantId": "tenant-edelman",
+    "group": "Edelman Financial Engines",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Jennifer Elmore",
+    "title": null,
+    "email": "jelmore@edelmanfinancialengines.com",
+    "phone": "913319810",
+    "roles": [
+      "Secondary"
+    ],
+    "isPrimary": false,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-0CfH7zYojYZQnfftxbD6",
+    "tenantId": "tenant-4-your-eyes",
+    "group": "4 Your Eyes, LLC",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Desiree Ditoro",
+    "title": null,
+    "email": "eyecarecfo@mac.com",
+    "phone": "(504) 228-7964",
+    "roles": [
+      "Secondary",
+      "Leasing",
+      "Billing"
+    ],
+    "isPrimary": false,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-0G01ymmiMHeATIgraUbM",
+    "tenantId": "tenant-assured-part",
+    "group": "Assured Partners Gulf Coast",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Kathy Mailhes",
+    "title": null,
+    "email": "kathy.mailhes@whitneyinsuranceagency.com",
+    "phone": null,
+    "roles": [
+      "Secondary"
+    ],
+    "isPrimary": false,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-0fTBbjx7RirRV4DwR3gj",
+    "tenantId": "tenant-baker-donelson",
+    "group": "Baker, Donelson, Bearman, Caldwell & Berkowitz",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Jean Leblanc",
+    "title": null,
+    "email": "jleblanc@bakerdonelson.com",
+    "phone": "(504) 578-4129",
+    "roles": [
+      "Secondary"
+    ],
+    "isPrimary": false,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-1L8oJ28LaFiITjmziJoL",
+    "tenantId": "tenant-pazos",
+    "group": "Chris Pazos",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Chris Pazos",
+    "title": null,
+    "email": "chris@pazosagencyllc.com",
+    "phone": "(504) 833-5369",
+    "roles": [
+      "Primary"
+    ],
+    "isPrimary": true,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-1Ubl6exUbbsqGC0WyIfV",
+    "tenantId": "tenant-cypress-key",
+    "group": "Cyprss Key Realty",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Chris Romero",
+    "title": null,
+    "email": "chris@cypresskeyrealty.com",
+    "phone": "(504) 250-4848",
+    "roles": [
+      "Primary"
+    ],
+    "isPrimary": true,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-1VqgJVrtQtITazqs7X28",
+    "tenantId": "tenant-hartford",
+    "group": "The Hartford",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Jack Sikora",
+    "title": "Leasing Agent",
+    "email": "jack.sikora@cbre.com",
+    "phone": "(504) 444-8936",
+    "roles": [
+      "Tenant Representative"
+    ],
+    "isPrimary": false,
+    "isBroker": true,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-33WSo1ubsfeXOE0vJTWG",
+    "tenantId": "tenant-carver",
+    "group": "Carver Darden Koretzky Tessier Finn Blossman & Areaux LLC",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Michelle Pender",
+    "title": null,
+    "email": "pender@carverdarden.com",
+    "phone": "(985) 237-8493",
+    "roles": [
+      "Secondary"
+    ],
+    "isPrimary": false,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-3SGjNIFtBmaT3BawLu4S",
+    "tenantId": "tenant-thomas",
+    "group": "Gary M. Thomas, CPA",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Gary Thomas",
+    "title": null,
+    "email": "gmtcpa@bellsouth.net",
+    "phone": "(985) 674-1701",
+    "roles": [
+      "Primary"
+    ],
+    "isPrimary": true,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-42QHPVDvO8Fb9zyJY7oF",
+    "tenantId": "tenant-standard",
+    "group": "Standard Mortgage",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Tiffanie Domil Lapene",
+    "title": null,
+    "email": "tdomil@stanmor.com",
+    "phone": "(504) 569-3912",
+    "roles": [
+      "Secondary"
+    ],
+    "isPrimary": false,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-4nWDynnDR2g5zY2VjegJ",
+    "tenantId": "tenant-maps",
+    "group": "Mediation Arbitration Professional Systems",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Corporate Realty Inc.",
+    "title": "Leasing Agent",
+    "email": null,
+    "phone": null,
+    "roles": [
+      "Tenant Representative"
+    ],
+    "isPrimary": false,
+    "isBroker": true,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-4y26FTFrZx41vvazONxO",
+    "tenantId": "tenant-monson",
+    "group": "Monson Law Firm",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Nancy Braud",
+    "title": null,
+    "email": "nancy@monsonfirm.com",
+    "phone": "(985) 778-0681",
+    "roles": [
+      "Secondary"
+    ],
+    "isPrimary": false,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-5I9RNvr0If9UNMWE4HRM",
+    "tenantId": "tenant-baker-donelson",
+    "group": "Baker, Donelson, Bearman, Caldwell & Berkowitz",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Gregory McCavera",
+    "title": "Leasing Agent",
+    "email": "gregory.mccavera@jll.com",
+    "phone": "(202) 550-0767",
+    "roles": [
+      "Tenant Representative"
+    ],
+    "isPrimary": false,
+    "isBroker": true,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-5adii6DBef9QPGhqX9No",
+    "tenantId": "tenant-cypress-key",
+    "group": "Cyprss Key Realty",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Shawn Burst",
+    "title": null,
+    "email": "shawn@theburstgroup.com",
+    "phone": "(985) 705-5626",
+    "roles": [
+      "Secondary"
+    ],
+    "isPrimary": false,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-5apER2uxGREW7rX6zU4T",
+    "tenantId": "tenant-monson",
+    "group": "Monson Law Firm",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Matthew Monson",
+    "title": null,
+    "email": null,
+    "phone": "98577806805042894939",
+    "roles": [
+      "Primary"
+    ],
+    "isPrimary": true,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-6QBrC5xqZiLewNEkw6RN",
+    "tenantId": "tenant-detox",
+    "group": "Detox Management Company, LLC",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Cassie Guidry",
+    "title": null,
+    "email": "cguidry@stepsrecoversolutions.com",
+    "phone": null,
+    "roles": [
+      "Secondary"
+    ],
+    "isPrimary": false,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-7Xjqh0H6Kqgs03oTs9ob",
+    "tenantId": "tenant-hartford",
+    "group": "The Hartford",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Kirby Barber",
+    "title": null,
+    "email": "Kirby.barber@thehartford.com",
+    "phone": "(985) 630-2425",
+    "roles": [
+      "Secondary"
+    ],
+    "isPrimary": false,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-7rtkboV2KknCEPLagJgc",
+    "tenantId": "tenant-fine-southern",
+    "group": "Fine Southern Properties",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Amanda Colceriu Dandu",
+    "title": "Realtor",
+    "email": "amanda@finesouthernproperties.com",
+    "phone": null,
+    "roles": [
+      "Secondary"
+    ],
+    "isPrimary": false,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-8BRB0gStE4uaAKFikldB",
+    "tenantId": "tenant-detox",
+    "group": "Detox Management Company, LLC",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Roy Viger",
+    "title": null,
+    "email": "rviger@contactlake.com",
+    "phone": "(504) 756-9242",
+    "roles": [
+      "Primary"
+    ],
+    "isPrimary": true,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-8SXV9pjs2ukikN7ocPvE",
+    "tenantId": "tenant-assured-part",
+    "group": "Assured Partners Gulf Coast",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Joseph (Joey) Ferris",
+    "title": null,
+    "email": "joey.ferris@assuredpartners.com",
+    "phone": "(985) 259-5924",
+    "roles": [
+      "Primary"
+    ],
+    "isPrimary": true,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-8XreGsRCP9EV5HK8WCOI",
+    "tenantId": "tenant-carver",
+    "group": "Carver Darden Koretzky Tessier Finn Blossman & Areaux LLC",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Cathy Alba",
+    "title": "Leasing Agent",
+    "email": "cathyalba@triplenetleased.com",
+    "phone": "(504) 669-1031",
+    "roles": [
+      "Tenant Representative"
+    ],
+    "isPrimary": false,
+    "isBroker": true,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-8rVEnc77KaS647Ip28Bf",
+    "tenantId": null,
+    "group": "Goodreau",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Moved Out",
+    "name": "Judy Goodreau",
+    "title": null,
+    "email": "goodreauent@gmail.com",
+    "phone": "(985) 789-1394",
+    "roles": [
+      "Primary"
+    ],
+    "isPrimary": true,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-9Gl4UaiLfcODuM7U1sGb",
+    "tenantId": "tenant-galloway",
+    "group": "Galloway Johnson",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Juliana Marengo",
+    "title": null,
+    "email": "jmarengo@gallowaylawfirm.com",
+    "phone": null,
+    "roles": [
+      "Secondary"
+    ],
+    "isPrimary": false,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-AOhbetzcNdRoPejzVm3f",
+    "tenantId": "tenant-monson",
+    "group": "Monson Law Firm",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Caroline Wadge",
+    "title": null,
+    "email": "cwadge@monsonfirm.com",
+    "phone": "98577806789855024411",
+    "roles": [
+      "Secondary"
+    ],
+    "isPrimary": false,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-BJQmkwB6QU6ihWIH8fwL",
+    "tenantId": "tenant-wells-fargo",
+    "group": "Wells Fargo Advisors",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Kristina Cummins",
+    "title": null,
+    "email": "kristina.cummins@wellsfargoadvisors.com",
+    "phone": "(985) 626-7717",
+    "roles": [
+      "Primary"
+    ],
+    "isPrimary": true,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-BZC8ArFP5ocJ0uTYhKcW",
+    "tenantId": null,
+    "group": "Edwards Jones",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Prospect",
+    "name": "Isa Ragland",
+    "title": "Cushman Wakefield Transaction Manager",
+    "email": "Isa.Ragland@cushwake.com",
+    "phone": "480-337-0976",
+    "roles": [
+      "Tenant Representative"
+    ],
+    "isPrimary": false,
+    "isBroker": true,
+    "notes": "Cushman Wakefield Transaction Manager",
+    "source": "proppli"
+  },
+  {
+    "id": "ct-BdUtG4iJsUdpM54kiIyq",
+    "tenantId": "tenant-baker-donelson",
+    "group": "Baker, Donelson, Bearman, Caldwell & Berkowitz",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Mark W. Mercante",
+    "title": null,
+    "email": "mmercante@bakerdonelson.com",
+    "phone": "(985) 819-8410",
+    "roles": [
+      "Primary"
+    ],
+    "isPrimary": true,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-BtpyFOCFjMohrMSHMG5K",
+    "tenantId": "tenant-4-your-eyes",
+    "group": "4 Your Eyes, LLC",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Neil Notaroberto",
+    "title": null,
+    "email": "neiln@mac.com",
+    "phone": "(985) 975-3456",
+    "roles": [
+      "Primary"
+    ],
+    "isPrimary": true,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-CCNpVWVY4PBx3Kp4GFI0",
+    "tenantId": "tenant-body-remedy",
+    "group": "Body Remedy Physical Therapy",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Aimee Ahrons",
+    "title": null,
+    "email": "aahrons@yahoo.com",
+    "phone": "(919) 780-7226",
+    "roles": [
+      "Primary"
+    ],
+    "isPrimary": true,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-CMp4tSjjiGN6m4zXAcw2",
+    "tenantId": "tenant-standard",
+    "group": "Standard Mortgage",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Eric Weller",
+    "title": null,
+    "email": "eweller@stanmor.com",
+    "phone": null,
+    "roles": [
+      "Secondary"
+    ],
+    "isPrimary": false,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-CrLvdHvB5WAulS2mvyxQ",
+    "tenantId": "tenant-ceco",
+    "group": "CECO",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Andrew Robertson",
+    "title": null,
+    "email": "andrew.robertson@cecoconcrete.com",
+    "phone": "(504) 415-4689",
+    "roles": [
+      "Primary"
+    ],
+    "isPrimary": true,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-DUu6FnA2Lfxb74gC5bCc",
+    "tenantId": null,
+    "group": "SIA Investments",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Margie Benjamin",
+    "title": null,
+    "email": "margie@siainvestments.com",
+    "phone": null,
+    "roles": [
+      "Secondary"
+    ],
+    "isPrimary": false,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-DZFj6xo5oYga9GXVu70E",
+    "tenantId": "tenant-wells-fargo",
+    "group": "Wells Fargo Advisors",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Jon Henderson",
+    "title": null,
+    "email": "jon.henderson@wellsfargoadvisors.com",
+    "phone": null,
+    "roles": [
+      "Secondary"
+    ],
+    "isPrimary": false,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-FXjQyRKnRrG4BHfzPGOq",
+    "tenantId": "tenant-galloway",
+    "group": "Galloway Johnson",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Becky Verdin",
+    "title": null,
+    "email": "bverdin@gallowaylawfirm.com",
+    "phone": "(985) 612-2724",
+    "roles": [
+      "Primary"
+    ],
+    "isPrimary": true,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-Fx3esKO45sKraOmsbm7A",
+    "tenantId": "tenant-edelman",
+    "group": "Edelman Financial Engines",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Lindsay Massey",
+    "title": "Senior Lease Admin. Analyst",
+    "email": "lindsay.massey@cbre.com",
+    "phone": "(901) 620-3155",
+    "roles": [
+      "Secondary",
+      "Leasing",
+      "Billing"
+    ],
+    "isPrimary": false,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-GqdtZfrrm2gJOVJQPZNC",
+    "tenantId": "tenant-wells-fargo",
+    "group": "Wells Fargo Advisors",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Andree Fague",
+    "title": null,
+    "email": "andree.fangue@wellsfargoadvisors.com",
+    "phone": "(985) 237-9829",
+    "roles": [
+      "Secondary"
+    ],
+    "isPrimary": false,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-HsMjaXRA7YMbh0VTR6Fj",
+    "tenantId": "tenant-maps",
+    "group": "Mediation Arbitration Professional Systems",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Amanda Hurst",
+    "title": null,
+    "email": "ahurst@maps-adr.com",
+    "phone": "5048312141104",
+    "roles": [
+      "Primary"
+    ],
+    "isPrimary": true,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-IaFBJVwql34v2dG3ciy0",
+    "tenantId": null,
+    "group": "Skin Solutions",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Jete Crosby",
+    "title": null,
+    "email": "jete@crosbydevelopment.com",
+    "phone": "(985) 789-4155",
+    "roles": [
+      "Primary"
+    ],
+    "isPrimary": true,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-ImHXlAgBGgJsvgQ07xed",
+    "tenantId": "tenant-edelman",
+    "group": "Edelman Financial Engines",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Jen Gegenheimer",
+    "title": null,
+    "email": "jgegenheimer@edelmanfinancialengines.com",
+    "phone": "(985) 727-8171",
+    "roles": [
+      "Secondary"
+    ],
+    "isPrimary": false,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-JY1e2Kqx28AGm5LCgy9j",
+    "tenantId": null,
+    "group": "Edwards Jones",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Prospect",
+    "name": "Daniel Cook",
+    "title": "Agent",
+    "email": "dcook@stirlingprop.com",
+    "phone": "9852640238",
+    "roles": [
+      "Tenant Representative"
+    ],
+    "isPrimary": false,
+    "isBroker": true,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-KMXOKbHCP4BRzzF9Xjlf",
+    "tenantId": "tenant-baker-donelson",
+    "group": "Baker, Donelson, Bearman, Caldwell & Berkowitz",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Greg Riera",
+    "title": "Leasing Agent",
+    "email": "greg.riera@jll.com",
+    "phone": "(504) 616-8194",
+    "roles": [
+      "Tenant Representative"
+    ],
+    "isPrimary": false,
+    "isBroker": true,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-KSrbUhSBSrYO0SzrFy7X",
+    "tenantId": "tenant-nirvana-massage",
+    "group": "Nirvana Massage Therapy",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Michael Brown",
+    "title": null,
+    "email": "contactnirvanamt@gmail.com",
+    "phone": "8071036",
+    "roles": [
+      "Primary"
+    ],
+    "isPrimary": true,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-KTRZ9LfwQDnEWHUajlYq",
+    "tenantId": "tenant-carver",
+    "group": "Carver Darden Koretzky Tessier Finn Blossman & Areaux LLC",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "David Landry",
+    "title": null,
+    "email": "landry@carverdarden.com",
+    "phone": "(985) 502-4737",
+    "roles": [
+      "Primary"
+    ],
+    "isPrimary": true,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-MuvLCRoEXNszOoDrUFPs",
+    "tenantId": "tenant-audubon",
+    "group": "Audubon Companies, LLC",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Martin O. Miller",
+    "title": "Leasing Agent",
+    "email": "momiller@ccim.net",
+    "phone": null,
+    "roles": [
+      "Tenant Representative"
+    ],
+    "isPrimary": false,
+    "isBroker": true,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-NOz89VD6PPDKjT2AU5QL",
+    "tenantId": "tenant-menard",
+    "group": "Menard",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Dylan Person",
+    "title": null,
+    "email": "dylan.pearson@menardusa.com",
+    "phone": "(985) 323-6927",
+    "roles": [
+      "Secondary"
+    ],
+    "isPrimary": false,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-OBaedrdQB6vuKrkNmFIb",
+    "tenantId": "tenant-watch-systems",
+    "group": "Watch Systems",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Jennifer Wetzel",
+    "title": null,
+    "email": "jwetzel@watchsystems.com",
+    "phone": "(985) 801-9996",
+    "roles": [
+      "Secondary"
+    ],
+    "isPrimary": false,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-OLIwJgtVgw3vr2gdqat8",
+    "tenantId": "tenant-watch-systems",
+    "group": "Watch Systems",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Erica Kraus",
+    "title": null,
+    "email": "ekraus@watchsystems.com",
+    "phone": null,
+    "roles": [
+      "Secondary"
+    ],
+    "isPrimary": false,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-PgxgUFg3g35JB922uVBq",
+    "tenantId": "tenant-baker-donelson",
+    "group": "Baker, Donelson, Bearman, Caldwell & Berkowitz",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Glenda Houidobre",
+    "title": null,
+    "email": "ghouidobre@bakerdonelson.com",
+    "phone": "(985) 819-8409",
+    "roles": [
+      "Secondary"
+    ],
+    "isPrimary": false,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-Qs4VgsuU6GsaRUtgodnC",
+    "tenantId": "tenant-assured-part",
+    "group": "Assured Partners Gulf Coast",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Richard Judge",
+    "title": "Leasing Agent",
+    "email": "rjuge@nolacommercial.com",
+    "phone": "(504) 915-8877",
+    "roles": [
+      "Tenant Representative"
+    ],
+    "isPrimary": false,
+    "isBroker": true,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-SGYRY5YuX7EQX7IGKayK",
+    "tenantId": "tenant-ceco",
+    "group": "CECO",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Michelle Laporte",
+    "title": null,
+    "email": "michelle.laporte@cecoconcrete.com",
+    "phone": null,
+    "roles": [
+      "Secondary"
+    ],
+    "isPrimary": false,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-TAAYMjpJRS1hnXJvN5l7",
+    "tenantId": "tenant-penzato",
+    "group": "Judge Penzato",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Jessica Keating",
+    "title": "Leasing Agent",
+    "email": "jessica.cordelleustis@gmail.com",
+    "phone": "(985) 789-4315",
+    "roles": [
+      "Tenant Representative"
+    ],
+    "isPrimary": false,
+    "isBroker": true,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-Td1qOhD1OTUXkhdmdSY1",
+    "tenantId": "tenant-hartford",
+    "group": "The Hartford",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Bill Brookshire",
+    "title": null,
+    "email": "william.brookshire@thehartford.com",
+    "phone": "(860) 626-3771",
+    "roles": [
+      "Secondary",
+      "Leasing",
+      "Billing"
+    ],
+    "isPrimary": false,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-VOuV36ZS4K5XD2lXnDV2",
+    "tenantId": "tenant-brandner-law",
+    "group": "Mike Brandner Law",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Mike Brandner",
+    "title": "CEO",
+    "email": "MBrandner@mikebrandner.com",
+    "phone": "5047158417",
+    "roles": [
+      "Primary",
+      "Leasing",
+      "Billing"
+    ],
+    "isPrimary": true,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-Viw0OM1lmsNQUlB4XpyM",
+    "tenantId": "tenant-standard",
+    "group": "Standard Mortgage",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Richard Wolcott",
+    "title": null,
+    "email": "rwolcott@stanmor.com",
+    "phone": null,
+    "roles": [
+      "Primary"
+    ],
+    "isPrimary": true,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-VyiE3Unv2r8l3iSi7LUe",
+    "tenantId": "tenant-wells-fargo",
+    "group": "Wells Fargo Advisors",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Jason Rohrbaugh",
+    "title": null,
+    "email": "Jason.Rohrbaugh@cushwake.com",
+    "phone": null,
+    "roles": [
+      "Secondary",
+      "Leasing",
+      "Tenant Representative"
+    ],
+    "isPrimary": false,
+    "isBroker": true,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-XUUpuwFFgbudJnFOKmGi",
+    "tenantId": "tenant-mandeville-technology",
+    "group": "Mandeville Technology",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Past",
+    "name": "Mark Olivier",
+    "title": "CEO",
+    "email": "mark@nocomputertroubles.com",
+    "phone": "(985) 809-0411",
+    "roles": [
+      "Primary",
+      "Leasing",
+      "Billing"
+    ],
+    "isPrimary": true,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-YX0M6WPm65wHunHPYnUL",
+    "tenantId": "tenant-jefferson-capital",
+    "group": "Jefferson Capital Management",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Paul Giffin",
+    "title": null,
+    "email": "pgiffin@jeffcap.com",
+    "phone": null,
+    "roles": [
+      "Primary"
+    ],
+    "isPrimary": true,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-Yg2zcHSyCY3HhsDG1yTu",
+    "tenantId": "tenant-galloway",
+    "group": "Galloway Johnson",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Tim Hassinger",
+    "title": null,
+    "email": "thassinger@gallowaylawfirm.com",
+    "phone": "(504) 237-5402",
+    "roles": [
+      "Secondary"
+    ],
+    "isPrimary": false,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-Ym7VqVRc73pin3shpJ0Y",
+    "tenantId": "tenant-st-paul",
+    "group": "Lain St. Paul",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Lain St. Paul",
+    "title": null,
+    "email": "fc7608@msn.com",
+    "phone": "(985) 502-0834",
+    "roles": [
+      "Primary"
+    ],
+    "isPrimary": true,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-ZBgWVLHdGXezccF60uoW",
+    "tenantId": "tenant-edelman",
+    "group": "Edelman Financial Engines",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Nicole Barefoot",
+    "title": null,
+    "email": "NHansen@edelmanfinancialengines.com",
+    "phone": null,
+    "roles": [
+      "Secondary",
+      "Billing"
+    ],
+    "isPrimary": false,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-aDBqutVJ9IVNbjP1vw8k",
+    "tenantId": null,
+    "group": "Rose Mountain",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Moved Out",
+    "name": "Max Rosenberg",
+    "title": null,
+    "email": "maxwellcrosenberg@gmail.com",
+    "phone": "(518) 275-9707",
+    "roles": [
+      "Primary"
+    ],
+    "isPrimary": true,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-aFSQzz7QRlzouljc8xVM",
+    "tenantId": "tenant-watch-systems",
+    "group": "Watch Systems",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Jenny Mutter",
+    "title": "Leasing Agent",
+    "email": null,
+    "phone": null,
+    "roles": [
+      "Tenant Representative"
+    ],
+    "isPrimary": false,
+    "isBroker": true,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-aSNJIFucUec9iFHcY0AB",
+    "tenantId": "tenant-penzato",
+    "group": "Judge Penzato",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Allison Penzato",
+    "title": null,
+    "email": "apenzato@la-fcca.org",
+    "phone": "(985) 373-3466",
+    "roles": [
+      "Primary"
+    ],
+    "isPrimary": true,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-blTdNtCowcVa7IyIX50Y",
+    "tenantId": "tenant-medsouth",
+    "group": "MedSouth",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Shirley TBD",
+    "title": null,
+    "email": null,
+    "phone": "(504) 913-3105",
+    "roles": [
+      "Secondary"
+    ],
+    "isPrimary": false,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-bzms3Crfuz7WgQL0enbN",
+    "tenantId": "tenant-galloway",
+    "group": "Galloway Johnson",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Candice Herrington",
+    "title": null,
+    "email": "cherrington@gallowaylawfirm.com",
+    "phone": null,
+    "roles": [
+      "Secondary"
+    ],
+    "isPrimary": false,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-cDbvVQiFjKVtTqAlVMpE",
+    "tenantId": "tenant-maps",
+    "group": "Mediation Arbitration Professional Systems",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Joe Hassinger",
+    "title": null,
+    "email": "joe@maps-adr.com",
+    "phone": null,
+    "roles": [
+      "Secondary"
+    ],
+    "isPrimary": false,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-cM3unkBCVe8w9L7yi7js",
+    "tenantId": "tenant-thomas",
+    "group": "Gary M. Thomas, CPA",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Meghan Scarlato",
+    "title": null,
+    "email": "meghan@gmt-cpa.com",
+    "phone": null,
+    "roles": [
+      "Secondary"
+    ],
+    "isPrimary": false,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-dWchvOh5W3w4TbhdilrK",
+    "tenantId": "tenant-sec-national",
+    "group": "Security National Life",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Guy Winstead",
+    "title": null,
+    "email": "guyw@securitynational.com",
+    "phone": "(601) 408-9161",
+    "roles": [
+      "Primary"
+    ],
+    "isPrimary": true,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-eH5DnknwvduicfKvyGN0",
+    "tenantId": null,
+    "group": "The Maven Group",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Carmen Brandner",
+    "title": "CEO",
+    "email": "lcarmenburton@gmail.com",
+    "phone": "6155098938",
+    "roles": [
+      "Primary",
+      "Leasing",
+      "Billing"
+    ],
+    "isPrimary": true,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-eQlZBJKtrm9HGtEOJxAA",
+    "tenantId": "tenant-wells-fargo",
+    "group": "Wells Fargo Advisors",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Adriana Renteria",
+    "title": null,
+    "email": "Adriana.Renteria@cushwake.com",
+    "phone": null,
+    "roles": [
+      "Secondary",
+      "Leasing",
+      "Tenant Representative"
+    ],
+    "isPrimary": false,
+    "isBroker": true,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-fGhJYZYeMDxLRwQGEcNl",
+    "tenantId": "tenant-hartford",
+    "group": "The Hartford",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Bridget Grady",
+    "title": null,
+    "email": "bridget.grady@thehartford.com",
+    "phone": "(985) 718-7591",
+    "roles": [
+      "Primary"
+    ],
+    "isPrimary": true,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-fKqfJbfckUqHrNz1eIAN",
+    "tenantId": "tenant-medsouth",
+    "group": "MedSouth",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Marla DeLatte",
+    "title": null,
+    "email": "marla@medsouthrecord.com",
+    "phone": "(985) 778-8545",
+    "roles": [
+      "Primary"
+    ],
+    "isPrimary": true,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-fcaVM3HdmxFDoNvYSEEX",
+    "tenantId": "tenant-audubon",
+    "group": "Audubon Companies, LLC",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Rachel Lorio",
+    "title": null,
+    "email": "rlorio@auduboncompanies.com",
+    "phone": "(504) 535-2069",
+    "roles": [
+      "Secondary"
+    ],
+    "isPrimary": false,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-gGVntFRxC6x6XYAxSXIV",
+    "tenantId": null,
+    "group": "Law Offices of Rebecca Gofolth Bush",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Rebecca Bush",
+    "title": null,
+    "email": "rgbush@travelers.com",
+    "phone": "(985) 373-7763",
+    "roles": [
+      "Secondary",
+      "Leasing"
+    ],
+    "isPrimary": false,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-go2dCbs9K6Rx6MAUdyaK",
+    "tenantId": "tenant-carver",
+    "group": "Carver Darden Koretzky Tessier Finn Blossman & Areaux LLC",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Angela Hurley",
+    "title": null,
+    "email": "hurley@carverdarden.com",
+    "phone": null,
+    "roles": [
+      "Secondary"
+    ],
+    "isPrimary": false,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-gp5RA9CewAl41OoGcL5y",
+    "tenantId": "tenant-edelman",
+    "group": "Edelman Financial Engines",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Edelman Docs",
+    "title": "Edelman Docs / Finance",
+    "email": "ps-edelmandocs@cbre.com",
+    "phone": null,
+    "roles": [
+      "Leasing",
+      "Billing"
+    ],
+    "isPrimary": false,
+    "isBroker": false,
+    "notes": "Billing / Finance Questions",
+    "source": "proppli"
+  },
+  {
+    "id": "ct-gxRGHz0Wx2DNevPwdlUP",
+    "tenantId": null,
+    "group": "Energy Properties,INC",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Moved Out",
+    "name": "Wiley Conn",
+    "title": null,
+    "email": "wileyc@e-connenergy.com",
+    "phone": "50483545465047227860",
+    "roles": [
+      "Primary"
+    ],
+    "isPrimary": true,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-iU7CLp5QxhFPa0ECNoKw",
+    "tenantId": "tenant-watch-systems",
+    "group": "Watch Systems",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Ben Luzynski",
+    "title": null,
+    "email": "bluzynski@watchsystems.com",
+    "phone": null,
+    "roles": [
+      "Primary"
+    ],
+    "isPrimary": true,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-iUcvIYB6uhf2VDwJIcrT",
+    "tenantId": "tenant-acorn-adoption",
+    "group": "Acorn Adoption",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Danita",
+    "title": null,
+    "email": "rdholladay@juno.com",
+    "phone": "6263800",
+    "roles": [
+      "Primary"
+    ],
+    "isPrimary": true,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-ja8CCGCpuhDBLPYfcmDV",
+    "tenantId": "tenant-hartford",
+    "group": "The Hartford",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Sandra Goulet",
+    "title": null,
+    "email": "sandra.goulet@thehartford.com",
+    "phone": "(860) 948-8073",
+    "roles": [
+      "Secondary"
+    ],
+    "isPrimary": false,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-kNMBcklHoskc4J3BYQj5",
+    "tenantId": "tenant-crosby-development",
+    "group": "Crosby Development",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Tommy Crosby",
+    "title": "Partner",
+    "email": "tommy@crosbydevelopment.com",
+    "phone": "9857896252",
+    "roles": [
+      "Secondary"
+    ],
+    "isPrimary": false,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-kkNAuhb3Zco8nEMo7Yal",
+    "tenantId": "tenant-edelman",
+    "group": "Edelman Financial Engines",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Beau Box",
+    "title": "Leasing Agent",
+    "email": null,
+    "phone": null,
+    "roles": [
+      "Tenant Representative"
+    ],
+    "isPrimary": false,
+    "isBroker": true,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-liPGVro902kmgs4irOfS",
+    "tenantId": "tenant-nationwide",
+    "group": "Nationwide",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Lynn Holbrook",
+    "title": null,
+    "email": "holbrl2@nationwide.com",
+    "phone": "(614) 249-8514",
+    "roles": [
+      "Secondary"
+    ],
+    "isPrimary": false,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-lsXAGOAsHnahUJYH8kM5",
+    "tenantId": "tenant-ns-laser",
+    "group": "North Shore Lazer",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Neil Notaroberto",
+    "title": null,
+    "email": null,
+    "phone": "(985) 975-3456",
+    "roles": [
+      "Primary"
+    ],
+    "isPrimary": true,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-mL4mbCLkkCfIC38lzBD9",
+    "tenantId": "tenant-ns-laser",
+    "group": "North Shore Lazer",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Desiree Ditoro",
+    "title": null,
+    "email": "eyecarecfo@mac.com",
+    "phone": "(504) 228-7964",
+    "roles": [
+      "Secondary"
+    ],
+    "isPrimary": false,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-mcMmgMaQtm7R5rwzOGZq",
+    "tenantId": "tenant-edelman",
+    "group": "Edelman Financial Engines",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Michael Gavin",
+    "title": null,
+    "email": "mgavin@edelmanfinancialengines.com",
+    "phone": "(985) 778-2023",
+    "roles": [
+      "Primary"
+    ],
+    "isPrimary": true,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-nMHOz3BYc6pWXsu5TwiP",
+    "tenantId": "tenant-crosby-development",
+    "group": "Crosby Development",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Patrick Crosby",
+    "title": "Partner",
+    "email": "Patrick@crosbydevelopment.com",
+    "phone": "9852647902",
+    "roles": [
+      "Secondary"
+    ],
+    "isPrimary": false,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-oSZ7E1I2A9N3T2Pb2Lie",
+    "tenantId": "tenant-menard",
+    "group": "Menard",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Jonathan Dwight",
+    "title": null,
+    "email": "jdwight@menardusa.com",
+    "phone": "(214) 356-2874",
+    "roles": [
+      "Primary"
+    ],
+    "isPrimary": true,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-qlcID0C3gcKAxnQaGShj",
+    "tenantId": "tenant-maps",
+    "group": "Mediation Arbitration Professional Systems",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Ashley Aguilar",
+    "title": null,
+    "email": "aaguilar@maps-adr.com",
+    "phone": "5048312141144",
+    "roles": [
+      "Secondary"
+    ],
+    "isPrimary": false,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-qvJxoLNdHPqL0pQ3I8EG",
+    "tenantId": null,
+    "group": "Rose Mountain",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Moved Out",
+    "name": "Bailey Maloney",
+    "title": null,
+    "email": "bailey@baileyroseevents.com",
+    "phone": "(985) 807-5692",
+    "roles": [
+      "Secondary"
+    ],
+    "isPrimary": false,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-r7SlqFDIni9czDIMUqlS",
+    "tenantId": "tenant-assured-part",
+    "group": "Assured Partners Gulf Coast",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Cody Warren",
+    "title": "Leasing Agent",
+    "email": "cody.warren@cbre.com",
+    "phone": "(813) 528-1072",
+    "roles": [
+      "Tenant Representative"
+    ],
+    "isPrimary": false,
+    "isBroker": true,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-rkbMw9aqIB1umQJlly8X",
+    "tenantId": "tenant-bayou-cpr",
+    "group": "Bayou CPR",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Michael Brown",
+    "title": null,
+    "email": "contactnirvanamt@gmail.com",
+    "phone": "8071036",
+    "roles": [
+      "Primary"
+    ],
+    "isPrimary": true,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-rojETFYsbmLgSKzkSWRu",
+    "tenantId": "tenant-baker-donelson",
+    "group": "Baker, Donelson, Bearman, Caldwell & Berkowitz",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Courtnie Flemming",
+    "title": null,
+    "email": "cflemming@bakerdonelson.com",
+    "phone": null,
+    "roles": [
+      "Secondary"
+    ],
+    "isPrimary": false,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-rxD4Y6x9sQbUGNOiFO0Q",
+    "tenantId": null,
+    "group": "SIA Investments",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Stefanie Childs",
+    "title": null,
+    "email": "stefanie@siainvestments.com",
+    "phone": "(985) 778-2802",
+    "roles": [
+      "Primary"
+    ],
+    "isPrimary": true,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-sJTKJEo486QaHEeZNone",
+    "tenantId": "tenant-crosby-development",
+    "group": "Crosby Development",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "John Crosby",
+    "title": "CEO",
+    "email": "jlcrosby@crosbydevelopment.com",
+    "phone": "5049092767",
+    "roles": [
+      "Primary",
+      "Leasing",
+      "Billing"
+    ],
+    "isPrimary": true,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-t5WaaIP26Elsvm7fUiO7",
+    "tenantId": "tenant-central-title",
+    "group": "Central Title",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Greg Callihan",
+    "title": null,
+    "email": "callihan@callihanlaw.com",
+    "phone": "(225) 261-6929",
+    "roles": [
+      "Primary"
+    ],
+    "isPrimary": true,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-tCeTMfbLyz26t4CO4De8",
+    "tenantId": "tenant-menard",
+    "group": "Menard",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Chris Rogers",
+    "title": null,
+    "email": "chris.rogers@menardusa.com",
+    "phone": "(985) 377-3425",
+    "roles": [
+      "Secondary"
+    ],
+    "isPrimary": false,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-tcRPGbSqwI4CpIv4pj3u",
+    "tenantId": "tenant-crosby-development",
+    "group": "Crosby Development",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Harry Crosby",
+    "title": "Partner",
+    "email": "harry@crosbydevelopment.com",
+    "phone": "9852641993",
+    "roles": [
+      "Secondary"
+    ],
+    "isPrimary": false,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-tpcTHH9jVjJDc6Vyz4YA",
+    "tenantId": "tenant-galloway",
+    "group": "Galloway Johnson",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Leigh Ann Clem",
+    "title": null,
+    "email": "lclem@gallowaylawfirm.com",
+    "phone": null,
+    "roles": [
+      "Secondary"
+    ],
+    "isPrimary": false,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-uX48wo2j4lfMp16LnsVW",
+    "tenantId": "tenant-nationwide",
+    "group": "Nationwide",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Dan Baggage",
+    "title": null,
+    "email": "dan.bagge@nationwide.com",
+    "phone": "67431219853179470",
+    "roles": [
+      "Primary"
+    ],
+    "isPrimary": true,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-vCPtlXivBwl3bAjQs81X",
+    "tenantId": "tenant-watch-systems",
+    "group": "Watch Systems",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Phyllis Jomes",
+    "title": null,
+    "email": "pjones@watchsystems.com",
+    "phone": null,
+    "roles": [
+      "Secondary"
+    ],
+    "isPrimary": false,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-w45MjtB45vCS2QWNeWoM",
+    "tenantId": null,
+    "group": "Edwards Jones",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Prospect",
+    "name": "Camilla Dufor",
+    "title": "CEO",
+    "email": "camilla.dufour@edwardjones.com",
+    "phone": "(985) 222-2580",
+    "roles": [
+      "Primary",
+      "Leasing",
+      "Billing"
+    ],
+    "isPrimary": true,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-xBIJmBPiC3pyuMaQ1ccj",
+    "tenantId": "tenant-nirvana-massage",
+    "group": "Nirvana Massage Therapy",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Kathleen Brown",
+    "title": null,
+    "email": "contactnirvanamt@gmail.com",
+    "phone": "(985) 273-0730",
+    "roles": [
+      "Secondary"
+    ],
+    "isPrimary": false,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-xbxj0p3LheZ5UVxPmGRZ",
+    "tenantId": "tenant-fine-southern",
+    "group": "Fine Southern Properties",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Christine Westenberger",
+    "title": null,
+    "email": "christine@finesouthernproperties.com",
+    "phone": null,
+    "roles": [
+      "Primary",
+      "Leasing",
+      "Billing"
+    ],
+    "isPrimary": true,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-yB3suRA7NdJ0jbUBT2xF",
+    "tenantId": null,
+    "group": "Law Offices of Rebecca Gofolth Bush",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Dwayne Maricle",
+    "title": null,
+    "email": "gdmaricl@travelers.com",
+    "phone": "(985) 727-5016",
+    "roles": [
+      "Secondary"
+    ],
+    "isPrimary": false,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-yECpM3nyLmo8DbhQClBa",
+    "tenantId": "tenant-standard",
+    "group": "Standard Mortgage",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Virna Bays",
+    "title": null,
+    "email": "vbays@stanmor.com",
+    "phone": null,
+    "roles": [
+      "Secondary"
+    ],
+    "isPrimary": false,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-z6fRfHU4KS6DQoxtpRlJ",
+    "tenantId": "tenant-menard",
+    "group": "Menard",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Timothy Lyons",
+    "title": null,
+    "email": "timothy.lyons@menardusa.com",
+    "phone": "(504) 264-6709",
+    "roles": [
+      "Secondary"
+    ],
+    "isPrimary": false,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  },
+  {
+    "id": "ct-z8s1z3CqPO79qOanMuWb",
+    "tenantId": null,
+    "group": "Law Offices of Rebecca Gofolth Bush",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Michelle Woodall",
+    "title": null,
+    "email": "mwoodall@travelers.com",
+    "phone": "(985) 727-5012",
+    "roles": [
+      "Primary"
+    ],
+    "isPrimary": true,
+    "isBroker": false,
+    "notes": null,
+    "source": "proppli"
+  }
+]

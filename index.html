@@ -574,6 +574,57 @@ function statusBadge(s) {
 function iconSvg(name, size, color) {
   return '<i data-lucide="'+name+'" style="width:'+size+'px;height:'+size+'px;'+(color?'color:'+color+';':'')+'"></i>';
 }
+function escHtml(t){ return String(t==null?'':t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// ── TENANT CONTACTS DIRECTORY (per commercial property) ───────────────────────
+// Contacts imported from Proppli (data/contacts.json -> contacts collection).
+// Grouped by tenant: current tenants first, then prospect/former-tenant groups.
+function sopContactsHTML(p) {
+  var E = window.__crosbyEntities || {};
+  var contacts = (E.contacts || []).filter(function(c){ return c.propertyId === p.slug; });
+  if(!contacts.length) return '';
+  var tById = {}; (E.tenants || []).forEach(function(t){ tById[t.id] = t; });
+  var groups = {};
+  contacts.forEach(function(c){
+    var key, label, status, isCurrent;
+    if(c.tenantId && tById[c.tenantId]) { key = 't:'+c.tenantId; label = tById[c.tenantId].name; status = null; isCurrent = true; }
+    else { key = 'g:'+(c.group||'Other'); label = c.group||'Other'; status = c.status||null; isCurrent = false; }
+    if(!groups[key]) groups[key] = { label: label, status: status, isCurrent: isCurrent, items: [] };
+    groups[key].items.push(c);
+  });
+  var keys = Object.keys(groups).sort(function(a,b){
+    if(groups[a].isCurrent !== groups[b].isCurrent) return groups[a].isCurrent ? -1 : 1;
+    return groups[a].label.localeCompare(groups[b].label);
+  });
+  var roleColor = { Primary:'#1d4ed8', Secondary:'#475569', Leasing:'#b45309', Billing:'#047857', 'Tenant Representative':'#7c3aed' };
+  var html = '<div class="card" style="margin-bottom:16px;">';
+  html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">'+iconSvg('users',18,'#1f5fdb')+'<span class="card-title" style="margin-bottom:0;">Tenant Contacts — '+contacts.length+'</span></div>';
+  html += '<div style="font-size:12px;color:#6b7280;margin-bottom:14px;">Imported from Proppli. Leasing brokers and prospect/former-tenant groups are labeled.</div>';
+  keys.forEach(function(k){
+    var g = groups[k];
+    var statusBadge = (g.status && g.status !== 'Active') ? ' <span class="badge badge-idle" style="font-size:10px;">'+escHtml(g.status)+'</span>' : '';
+    html += '<div style="margin-bottom:14px;">';
+    html += '<div style="font-weight:700;font-size:13px;color:#111827;margin-bottom:8px;border-bottom:1px solid #f1f5f9;padding-bottom:4px;">'+escHtml(g.label)+statusBadge+' <span style="font-weight:500;color:#9ca3af;">('+g.items.length+')</span></div>';
+    html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;">';
+    g.items.slice().sort(function(a,b){ return (b.isPrimary?1:0)-(a.isPrimary?1:0) || (a.name||'').localeCompare(b.name||''); }).forEach(function(c){
+      html += '<div style="border:1px solid #e5e7eb;border-radius:8px;padding:10px 12px;">';
+      html += '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:6px;"><div style="font-weight:600;font-size:13px;color:#111827;">'+escHtml(c.name||'—')+'</div>';
+      if(c.isBroker) html += '<span class="badge" style="background:#f3e8ff;color:#7c3aed;border:1px solid #e9d5ff;font-size:9px;white-space:nowrap;">Broker</span>';
+      html += '</div>';
+      if(c.title) html += '<div style="font-size:11px;color:#6b7280;margin-top:1px;">'+escHtml(c.title)+'</div>';
+      var pillRoles = (c.roles||[]).filter(function(r){ return r !== 'Tenant Representative'; }); // Broker shown as corner badge
+      if(pillRoles.length){ html += '<div style="margin-top:5px;display:flex;flex-wrap:wrap;gap:3px;">'; pillRoles.forEach(function(r){ var col = roleColor[r]||'#475569'; html += '<span style="font-size:9px;font-weight:600;color:'+col+';background:'+col+'14;border:1px solid '+col+'33;border-radius:4px;padding:1px 5px;">'+escHtml(r)+'</span>'; }); html += '</div>'; }
+      html += '<div style="margin-top:6px;font-size:11px;">';
+      if(c.email) html += '<div style="overflow-wrap:anywhere;">'+iconSvg('mail',11,'#9ca3af')+' <a href="mailto:'+escHtml(c.email)+'" style="color:#2563eb;text-decoration:none;">'+escHtml(c.email)+'</a></div>';
+      if(c.phone) html += '<div style="margin-top:2px;">'+iconSvg('phone',11,'#9ca3af')+' <a href="tel:'+escHtml(c.phone)+'" style="color:#2563eb;text-decoration:none;">'+escHtml(c.phone)+'</a></div>';
+      if(!c.email && !c.phone) html += '<span style="color:#9ca3af;font-style:italic;">no email or phone on file</span>';
+      html += '</div></div>';
+    });
+    html += '</div></div>';
+  });
+  html += '</div>';
+  return html;
+}
 function pendingOutputs() {
   return DOCUMENTS.filter(function(d){ return d.category==="Agent Output" && (docStatuses[d.id]||d.status)==="pending_review"; });
 }
@@ -2365,6 +2416,9 @@ function renderPropertyDetail(p) {
         html += '</div>';
       });
     }
+
+    // Tenant contacts directory (imported from Proppli)
+    html += sopContactsHTML(p);
 
     // Terminations & Notices — current tenants who have given termination/vacate notice
     var terminations = (typeof TERMINATIONS !== 'undefined' && TERMINATIONS[p.slug]) || [];
