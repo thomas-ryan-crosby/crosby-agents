@@ -2430,20 +2430,24 @@ function generateFlyer(key){
 // Real nearby amenities (verified OpenStreetMap POIs along the US-190 / Causeway
 // Blvd corridor). Numbered to match the pins on the location map.
 var FLYER_POIS = [
-  { n:1, name:'Rouses Market',   cat:'Grocery',   mi:'0.2', lat:30.39584, lng:-90.09986 },
-  { n:2, name:'The Italian Pie', cat:'Dining',    mi:'0.2', lat:30.39682, lng:-90.09996 },
-  { n:3, name:'Walgreens',       cat:'Pharmacy',  mi:'0.3', lat:30.39628, lng:-90.09846 },
-  { n:4, name:'Starbucks',       cat:'Coffee',    mi:'1.1', lat:30.39323, lng:-90.08515 },
-  { n:5, name:'Coffee Rani',     cat:'Café',      mi:'1.1', lat:30.39446, lng:-90.08438 },
-  { n:6, name:'Hancock Whitney', cat:'Bank',      mi:'1.2', lat:30.39251, lng:-90.08346 },
-  { n:7, name:'Comeback Burger', cat:'Dining',    mi:'1.2', lat:30.39239, lng:-90.08251 },
+  { n:1,  name:'Rouses Market',     cat:'Grocery',     mi:'0.2', lat:30.39584, lng:-90.09986 },
+  { n:2,  name:'Walgreens',         cat:'Pharmacy',    mi:'0.3', lat:30.39628, lng:-90.09846 },
+  { n:3,  name:'Discount Zone',     cat:'Fuel',        mi:'0.3', lat:30.39902, lng:-90.10522 },
+  { n:4,  name:'Parish Tacos',      cat:'Dining',      mi:'0.7', lat:30.40112, lng:-90.11213 },
+  { n:5,  name:"McDonald's",        cat:'Fast Food',   mi:'0.8', lat:30.39521, lng:-90.09027 },
+  { n:6,  name:'Chick-fil-A',       cat:'Dining',      mi:'1.0', lat:30.39400, lng:-90.08622 },
+  { n:7,  name:'Starbucks',         cat:'Coffee',      mi:'1.1', lat:30.39323, lng:-90.08515 },
+  { n:8,  name:'Hancock Whitney',   cat:'Bank',        mi:'1.2', lat:30.39251, lng:-90.08346 },
+  { n:9,  name:'Walmart Nbhd Mkt',  cat:'Grocery',     mi:'2.2', lat:30.37245, lng:-90.07730 },
+  { n:10, name:'Mandeville Pharmacy',cat:'Pharmacy',   mi:'2.3', lat:30.37141, lng:-90.07466 },
+  { n:11, name:'Enterprise',        cat:'Car Rental',  mi:'2.7', lat:30.36810, lng:-90.06969 },
 ];
 var SANCTUARY_LATLNG = [30.394593, -90.102901];
 // Clean light location map (CARTO Positron, no API key) centered on the Sanctuary /
 // US-190 corridor, with the property pin + numbered real-amenity pins. Rendered as
 // SVG <image> tiles so it prints to PDF.
 function flyerAmenityMap(){
-  var clat=30.3935, clng=-90.0905, z=15, W=1000, H=560;
+  var clat=30.382, clng=-90.088, z=14, W=1000, H=560;
   var n=Math.pow(2,z);
   var world=function(la,lo){ var r=la*Math.PI/180; return [ (lo+180)/360*n*256, (1-Math.log(Math.tan(r)+1/Math.cos(r))/Math.PI)/2*n*256 ]; };
   var c=world(clat,clng), ox=c[0]-W/2, oy=c[1]-H/2;
@@ -2456,8 +2460,8 @@ function flyerAmenityMap(){
   }}
   var pois='';
   FLYER_POIS.forEach(function(p){ var xy=P(p.lat,p.lng);
-    pois += '<g transform="translate('+xy[0]+','+xy[1]+')"><circle cx="0" cy="0" r="11" fill="#22315d" stroke="#fff" stroke-width="2"/>'+
-      '<text x="0" y="3.5" font-family="Segoe UI,Arial" font-size="11" font-weight="700" fill="#fff" text-anchor="middle">'+p.n+'</text></g>';
+    pois += '<g transform="translate('+xy[0]+','+xy[1]+')"><circle cx="0" cy="0" r="9.5" fill="#22315d" stroke="#fff" stroke-width="1.8"/>'+
+      '<text x="0" y="3.2" font-family="Segoe UI,Arial" font-size="10" font-weight="700" fill="#fff" text-anchor="middle">'+p.n+'</text></g>';
   });
   var m=P(SANCTUARY_LATLNG[0],SANCTUARY_LATLNG[1]);
   var marker='<g transform="translate('+m[0]+','+m[1]+')">'+
