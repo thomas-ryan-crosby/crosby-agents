@@ -3,7 +3,7 @@
 A WhatsApp chat assistant that lets your property-management team ask questions
 about the portfolio in plain English — no login, no dashboard. They text a
 number, the assistant reads the **live data** (the same Firestore the dashboard
-uses) and answers with Claude.
+uses) and answers with an LLM (Llama via Groq, with an OpenAI fallback).
 
 Example questions it handles:
 - "What's vacating at Sanctuary this year?"
@@ -21,7 +21,7 @@ It is **read-only** — it answers questions, it never changes data.
 WhatsApp message → Twilio → /api/whatsapp (Vercel function)
    → verify sender (allowlist + Twilio signature)
    → read live portfolio from Firestore (firebase-admin)
-   → build a snapshot + ask Claude
+   → build a snapshot + ask the model (Groq Llama, OpenAI fallback)
    → reply to the WhatsApp thread
 ```
 
@@ -29,11 +29,21 @@ Files:
 - `api/whatsapp.js` — the webhook
 - `lib/portfolio.mjs` — loads Firestore + builds the data snapshot (reuses `crosby-viewmodel.js`)
 
+## The model: Llama (Groq) with an OpenAI fallback
+
+The assistant answers using **Llama 3.3 70B via Groq** (open-source model, free
+tier) as the primary. If Groq ever errors or times out, it **automatically falls
+back to OpenAI `gpt-4o-mini`** so the bot never goes dark. The fallback only
+fires on failure, so OpenAI cost stays near zero.
+
 ## What you need (one-time)
 
-1. **Anthropic (Claude) API key** — https://console.anthropic.com → API Keys.
-2. **Twilio account** — https://www.twilio.com (free trial works for testing).
-3. **Firebase service account** — Firebase console → Project settings →
+1. **Groq API key** — https://console.groq.com → API Keys (free).
+2. **OpenAI API key** (fallback) — https://platform.openai.com → API Keys. This
+   is the developer platform (separate from your ChatGPT subscription) and is
+   pay-as-you-go, but it's only used when Groq fails, so it's pennies at most.
+3. **Twilio account** — https://www.twilio.com (free trial works for testing).
+4. **Firebase service account** — Firebase console → Project settings →
    Service accounts → *Generate new private key*. Downloads a JSON file. This
    lets the function read Firestore. (Keep it secret.)
 
@@ -43,13 +53,15 @@ In the Vercel project → Settings → Environment Variables, add:
 
 | Name | Value |
 |---|---|
-| `ANTHROPIC_API_KEY` | your Claude API key |
+| `GROQ_API_KEY` | your Groq API key (primary model) |
+| `OPENAI_API_KEY` | your OpenAI API key (fallback; optional but recommended) |
 | `FIREBASE_SERVICE_ACCOUNT` | the **entire** service-account JSON, pasted as one value |
 | `ALLOWED_NUMBERS` | comma-separated phone numbers allowed to use it, E.164 format, e.g. `+19855551234,+19855555678` |
 | `TWILIO_AUTH_TOKEN` | from the Twilio console (Account → API keys & tokens) — used to verify requests |
-| `ASSISTANT_MODEL` | *(optional)* Claude model id; defaults to `claude-sonnet-4-6` |
+| `GROQ_MODEL` / `OPENAI_MODEL` | *(optional)* override the model ids (defaults: `llama-3.3-70b-versatile`, `gpt-4o-mini`) |
 
-Redeploy after adding them.
+Redeploy after adding them. (You can set just `GROQ_API_KEY` to start; add
+`OPENAI_API_KEY` whenever you want the safety net.)
 
 ## Connect Twilio WhatsApp (fastest: sandbox, for testing)
 
@@ -83,7 +95,7 @@ number's inbound webhook at the same URL; ask and I'll wire an `/api/sms` twin.)
 - **Data location:** the function reads PII from the **auth-gated Firestore** at
   request time. No `data/*.json` is shipped to Vercel (see `.vercelignore`).
 - **Processors:** message text and the answer pass through Twilio (WhatsApp) and
-  Anthropic, your data processors. WhatsApp messages are encrypted in transit.
+  Groq and/or OpenAI, your data processors (none of them train on API data). WhatsApp messages are encrypted in transit.
 - The assistant is read-only and is instructed to answer only from the data and
   to say so when something isn't on file.
 
@@ -92,4 +104,4 @@ number's inbound webhook at the same URL; ask and I'll wire an `/api/sms` twin.)
 `lib/portfolio.mjs` can be exercised with the gcloud ADC credentials used for
 seeding (`GOOGLE_APPLICATION_CREDENTIALS` + `GOOGLE_CLOUD_PROJECT=crosby-agents`)
 by calling `loadEntities()` / `buildSnapshot()`. The full webhook needs the
-Twilio + Anthropic keys above.
+Twilio + Groq/OpenAI keys above.

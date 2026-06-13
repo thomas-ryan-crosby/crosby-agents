@@ -2,13 +2,17 @@
 // Inbound text -> verify sender -> load live portfolio snapshot -> ask Claude ->
 // reply with a plain-language answer (TwiML). Read-only Q&A.
 //
+// Model: open-source Llama 3.3 70B via Groq (primary), with OpenAI gpt-4o-mini
+// as an automatic fallback if Groq errors/times out. Both are OpenAI-compatible.
+//
 // Required env vars (set in Vercel project settings):
-//   ANTHROPIC_API_KEY      - Claude API key
+//   GROQ_API_KEY           - primary model (Groq, free tier)
+//   OPENAI_API_KEY         - fallback model (used only if Groq fails)
 //   ALLOWED_NUMBERS        - comma-separated E.164 numbers allowed to use it,
 //                            e.g. "+19855551234,+19855555678"
 //   TWILIO_AUTH_TOKEN      - (recommended) to verify requests really come from Twilio
 //   FIREBASE_SERVICE_ACCOUNT - service-account JSON (string) for Firestore read access
-//   ASSISTANT_MODEL        - (optional) Claude model id; default claude-sonnet-4-6
+//   GROQ_MODEL / OPENAI_MODEL - (optional) override model ids
 import crypto from "node:crypto";
 import { buildSnapshot } from "../lib/portfolio.mjs";
 
@@ -61,7 +65,7 @@ export default async function handler(req, res) {
   try {
     const today = new Date().toISOString().slice(0, 10);
     const snapshot = await buildSnapshot(today);
-    const answer = await askClaude(snapshot, body, today);
+    const answer = await askAssistant(snapshot, body, today);
     return reply(res, answer);
   } catch (e) {
     console.error("whatsapp handler error:", e && e.message);
@@ -95,20 +99,42 @@ function validTwilioSignature(authToken, signature, url, params) {
   } catch (e) { return false; }
 }
 
-async function askClaude(snapshot, question, today) {
-  const key = process.env.ANTHROPIC_API_KEY;
-  if (!key) throw new Error("ANTHROPIC_API_KEY not set");
-  const model = process.env.ASSISTANT_MODEL || "claude-sonnet-4-6";
-  const r = await fetch("https://api.anthropic.com/v1/messages", {
-    method: "POST",
-    headers: { "content-type": "application/json", "x-api-key": key, "anthropic-version": "2023-06-01" },
-    body: JSON.stringify({
-      model, max_tokens: 700, system: SYSTEM + "\n\nToday's date: " + today + ".",
-      messages: [{ role: "user", content: snapshot + "\n\n----\nQUESTION: " + question }],
-    }),
-  });
-  if (!r.ok) { const t = await r.text(); throw new Error("Anthropic " + r.status + ": " + t.slice(0, 300)); }
-  const data = await r.json();
-  const text = (data.content || []).filter((b) => b.type === "text").map((b) => b.text).join("").trim();
-  return text || "I couldn't find an answer to that. Try rephrasing, or ask about rents, occupancy, lease dates, vacancies, or COIs.";
+// Primary = Groq (open-source Llama 3.3 70B). Fallback = OpenAI gpt-4o-mini,
+// used only if Groq is missing/errors/times out — so the bot never goes dark.
+async function askAssistant(snapshot, question, today) {
+  const system = SYSTEM + "\n\nToday's date: " + today + ".";
+  const user = snapshot + "\n\n----\nQUESTION: " + question;
+  const providers = [
+    { name: "groq", key: process.env.GROQ_API_KEY, url: "https://api.groq.com/openai/v1/chat/completions", model: process.env.GROQ_MODEL || "llama-3.3-70b-versatile" },
+    { name: "openai", key: process.env.OPENAI_API_KEY, url: "https://api.openai.com/v1/chat/completions", model: process.env.OPENAI_MODEL || "gpt-4o-mini" },
+  ].filter((p) => p.key);
+  if (!providers.length) throw new Error("No model provider configured (set GROQ_API_KEY and/or OPENAI_API_KEY)");
+  let lastErr;
+  for (const p of providers) {
+    try { return await callChat(p, system, user); }
+    catch (e) { lastErr = e; console.error(p.name + " failed" + (providers.length > 1 ? ", trying fallback" : "") + ":", e && e.message); }
+  }
+  throw lastErr;
+}
+
+// One call to an OpenAI-compatible chat-completions endpoint (Groq or OpenAI).
+async function callChat(p, system, user) {
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), 15000);
+  try {
+    const r = await fetch(p.url, {
+      method: "POST",
+      headers: { "content-type": "application/json", authorization: "Bearer " + p.key },
+      body: JSON.stringify({
+        model: p.model, temperature: 0.2, max_tokens: 700,
+        messages: [{ role: "system", content: system }, { role: "user", content: user }],
+      }),
+      signal: ctrl.signal,
+    });
+    if (!r.ok) { const t = await r.text(); throw new Error(p.model + " " + r.status + ": " + t.slice(0, 200)); }
+    const data = await r.json();
+    const text = ((((data.choices || [])[0] || {}).message || {}).content || "").trim();
+    if (!text) throw new Error(p.model + ": empty response");
+    return text;
+  } finally { clearTimeout(timer); }
 }
