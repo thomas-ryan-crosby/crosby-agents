@@ -2427,36 +2427,44 @@ function generateFlyer(key){
   if(!w){ alert('Please allow pop-ups to open the flyer in a new tab.'); return; }
   w.document.open(); w.document.write(flyerDoc(r)); w.document.close();
 }
-// Real street map centered on Sanctuary (#1 Sanctuary Blvd, 30.3946,-90.1029),
-// rendered from live CARTO Voyager tiles (no API key) as SVG <image> tiles so it
-// prints cleanly to PDF. A navy pin marks the property.
+// Aerial location map centered on Sanctuary (#1 Sanctuary Blvd, 30.3946,-90.1029).
+// Hybrid of Esri World Imagery (satellite) + World Transportation (road labels),
+// rendered from live tiles (no API key) as SVG <image> tiles so it prints to PDF.
 function flyerAmenityMap(){
-  var lat=30.394593, lng=-90.102901, z=13, W=1000, H=620;
+  var lat=30.394593, lng=-90.102901, z=16, W=1000, H=560;
   var n=Math.pow(2,z), latRad=lat*Math.PI/180;
   var cwx=(lng+180)/360*n*256;
   var cwy=(1-Math.log(Math.tan(latRad)+1/Math.cos(latRad))/Math.PI)/2*n*256;
   var ox=cwx-W/2, oy=cwy-H/2;
   var tx0=Math.floor(ox/256), tx1=Math.floor((ox+W)/256);
   var ty0=Math.floor(oy/256), ty1=Math.floor((oy+H)/256);
-  var subs=['a','b','c','d'], si=0, imgs='';
-  for(var tx=tx0; tx<=tx1; tx++){ for(var ty=ty0; ty<=ty1; ty++){
-    var url='https://'+subs[si++%4]+'.basemaps.cartocdn.com/rastertiles/voyager/'+z+'/'+tx+'/'+ty+'@2x.png';
-    imgs += '<image href="'+url+'" xlink:href="'+url+'" x="'+(tx*256-ox)+'" y="'+(ty*256-oy)+'" width="256" height="256"/>';
-  }}
+  var layer=function(base){ var s=''; for(var tx=tx0;tx<=tx1;tx++){ for(var ty=ty0;ty<=ty1;ty++){ var u=base+'/'+z+'/'+ty+'/'+tx; s+='<image href="'+u+'" xlink:href="'+u+'" x="'+(tx*256-ox)+'" y="'+(ty*256-oy)+'" width="256" height="256"/>'; } } return s; };
+  var imagery=layer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile');
+  var roads=layer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer/tile');
   var mx=Math.round(cwx-ox), my=Math.round(cwy-oy);
+  var mpp=156543.03*Math.cos(latRad)/n;            // meters per pixel
+  var seg=Math.round(402.336/mpp);                 // ¼-mile scale bar, in px
   var marker='<g transform="translate('+mx+','+my+')">'+
-    '<ellipse cx="0" cy="3" rx="11" ry="4" fill="rgba(15,23,42,.28)"/>'+
-    '<path d="M0 -36 C-11 -36 -19 -27 -19 -17 C-19 -5 0 5 0 5 C0 5 19 -5 19 -17 C19 -27 11 -36 0 -36 Z" fill="#22315d" stroke="#fff" stroke-width="2.5"/>'+
-    '<circle cx="0" cy="-18" r="6.5" fill="#fff"/></g>';
-  var label='<g transform="translate(20,'+(H-58)+')">'+
-    '<rect x="0" y="0" width="290" height="40" rx="7" fill="#22315d"/>'+
-    '<text x="14" y="17" font-family="Segoe UI,Arial" font-size="13" font-weight="800" fill="#fff">SANCTUARY OFFICE PARK</text>'+
-    '<text x="14" y="31" font-family="Segoe UI,Arial" font-size="9.5" fill="#bcd0ee">#1 Sanctuary Blvd · Mandeville, LA 70471</text></g>';
-  var attrib='<g transform="translate('+(W-4)+','+(H-6)+')"><rect x="-208" y="-13" width="208" height="13" fill="rgba(255,255,255,.78)"/>'+
-    '<text x="-4" y="-3" font-family="Arial" font-size="8.5" fill="#5b6b82" text-anchor="end">© OpenStreetMap contributors · © CARTO</text></g>';
+    '<circle cx="0" cy="-17" r="21" fill="rgba(255,255,255,.30)"/>'+
+    '<ellipse cx="0" cy="4" rx="10" ry="3.5" fill="rgba(0,0,0,.35)"/>'+
+    '<path d="M0 -38 C-12 -38 -21 -29 -21 -18 C-21 -5 0 6 0 6 C0 6 21 -5 21 -18 C21 -29 12 -38 0 -38 Z" fill="#22315d" stroke="#fff" stroke-width="3"/>'+
+    '<circle cx="0" cy="-19" r="7" fill="#fff"/></g>';
+  var label='<g transform="translate(18,'+(H-60)+')">'+
+    '<rect x="0" y="0" width="296" height="44" rx="8" fill="#22315d"/>'+
+    '<rect x="0" y="0" width="4" height="44" rx="2" fill="#5e8ed0"/>'+
+    '<text x="16" y="19" font-family="Segoe UI,Arial" font-size="13.5" font-weight="800" fill="#fff" letter-spacing="0.3">SANCTUARY OFFICE PARK</text>'+
+    '<text x="16" y="34" font-family="Segoe UI,Arial" font-size="10" fill="#c5d6f0">#1 Sanctuary Blvd · Mandeville, LA 70471</text></g>';
+  var north='<g transform="translate('+(W-30)+',28)"><circle cx="0" cy="0" r="15" fill="rgba(15,23,42,.55)"/>'+
+    '<path d="M0 -9 L5 6 L0 2 L-5 6 Z" fill="#fff"/><text x="0" y="-11" font-family="Arial" font-size="8" font-weight="700" fill="#fff" text-anchor="middle">N</text></g>';
+  var scale='<g transform="translate('+(W-18-seg)+','+(H-20)+')">'+
+    '<rect x="-8" y="-13" width="'+(seg+16)+'" height="22" rx="4" fill="rgba(15,23,42,.55)"/>'+
+    '<line x1="0" y1="0" x2="'+seg+'" y2="0" stroke="#fff" stroke-width="2.5"/>'+
+    '<line x1="0" y1="-4" x2="0" y2="4" stroke="#fff" stroke-width="2"/><line x1="'+seg+'" y1="-4" x2="'+seg+'" y2="4" stroke="#fff" stroke-width="2"/>'+
+    '<text x="'+(seg/2)+'" y="-5" font-family="Arial" font-size="9" font-weight="700" fill="#fff" text-anchor="middle">¼ mi</text></g>';
+  var attrib='<text x="'+(W-6)+'" y="'+(H-6)+'" font-family="Arial" font-size="8.5" fill="#fff" text-anchor="end" style="paint-order:stroke;stroke:rgba(0,0,0,.45);stroke-width:2.5px;">Imagery © Esri, Maxar, Earthstar Geographics</text>';
   return '<svg viewBox="0 0 '+W+' '+H+'" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="display:block;border:1px solid #d9e1ec;border-radius:10px;">'+
     '<defs><clipPath id="mapclip"><rect x="0" y="0" width="'+W+'" height="'+H+'" rx="10"/></clipPath></defs>'+
-    '<g clip-path="url(#mapclip)">'+imgs+label+attrib+marker+'</g></svg>';
+    '<g clip-path="url(#mapclip)">'+imagery+roads+label+north+scale+attrib+marker+'</g></svg>';
 }
 function flyerDoc(r){
   var office = r.slug==='sanctuary-office-park';
