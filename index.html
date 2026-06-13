@@ -1746,7 +1746,7 @@ var detailCharts = {};
 
 // Show/hide columns for the commercial tenant tables. Column cells carry a
 // `c-<key>` class; hidden columns are suppressed by a single global <style>.
-var SOP_COLS = [['tenant','Tenant'],['suite','Suite'],['sf','Square Feet'],['rent','Monthly Rent'],['sfyr','$/SF/Yr'],['status','Status'],['expiry','Expiry'],['notice','Notice'],['action','Action'],['lease','Lease'],['legacy','Legacy Leases'],['coistatus','Insurance Status'],['coidocs','Insurance Documents']];
+var SOP_COLS = [['tenant','Tenant'],['suite','Suite'],['sf','Square Feet'],['rent','Monthly Rent'],['sfyr','$/SF/Yr'],['status','Status'],['expiry','Expiry'],['notice','Notice'],['action','Lease Action'],['lease','Lease'],['legacy','Legacy Leases'],['coistatus','Insurance Status'],['coidocs','Insurance Documents']];
 
 // One-time styles for the lease widget + metadata hover card.
 function ensureLeaseStyles() {
@@ -1765,6 +1765,11 @@ function ensureLeaseStyles() {
     '.iw .tip{display:none;position:absolute;z-index:60;bottom:100%;left:0;margin-bottom:8px;width:270px;background:#0d1726;color:#dce3ee;font-size:11px;font-weight:400;line-height:1.6;text-align:left;padding:11px 13px;border-radius:11px;box-shadow:0 14px 40px rgba(13,23,38,.34),0 0 0 1px rgba(255,255,255,.06);white-space:normal;}'+
     '.iw .tip b{color:#fff;font-weight:650;}'+
     '.tip.open{display:block!important;}'+
+    '.tip.down{top:100%;bottom:auto;margin-top:8px;margin-bottom:0;}'+
+    '.tip.right{right:0;left:auto;}'+
+    '.tip.wide{width:330px;}'+
+    '.tip .lg{display:flex;align-items:flex-start;gap:7px;margin:4px 0;}'+
+    '.tip .dot{width:9px;height:9px;border-radius:50%;flex:none;margin-top:4px;}'+
     '.infoBtn{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border-radius:50%;border:1px solid #cbd5e1;color:#64748b;font-size:10px;font-weight:700;font-style:italic;font-family:Georgia,serif;line-height:1;cursor:pointer;user-select:none;flex:none;transition:all 120ms ease;}'+
     '.infoBtn:hover{background:#1f5fdb;border-color:#1f5fdb;color:#fff;}'+
     '.infoBtn.open{background:#1f5fdb;border-color:#1f5fdb;color:#fff;}';
@@ -1813,6 +1818,35 @@ function insuranceDocsCell(ins){
   if(!docs.length) return '<span style="font-size:11px;color:#d1d5db;">—</span>';
   return docs.map(leaseWidget).join('<br>');
 }
+// Legend popover for the "Lease Action" column header — explains each pill,
+// grouped by urgency tone. Opens downward/right so it isn't clipped at the top.
+function actionLegend(){
+  var C = {urgent:'#dc2626',attention:'#b45309',steady:'#059669',neutral:'#9ca3af'};
+  function grp(color,title,items){
+    return '<div style="margin-top:8px;"><div style="display:flex;align-items:center;gap:6px;font-weight:650;color:#fff;"><span class="dot" style="background:'+color+';margin-top:0;"></span>'+title+'</div>'+
+      items.map(function(it){ return '<div class="lg"><span style="color:#94a3b8;">&bull;</span><span><b>'+it[0]+'</b> — '+it[1]+'</span></div>'; }).join('')+'</div>';
+  }
+  var body = '<b>What the Lease Action pills mean</b><div style="color:#94a3b8;margin-top:3px;">Each pill is the recommended next step for that lease, color-coded by urgency.</div>'+
+    grp(C.urgent,'Urgent — act now',[
+      ['Begin Marketing','suite is vacant or the tenant has given notice to vacate'],
+      ['Renewal Decision Due','auto-renew lease — notice deadline is within 60 days'],
+      ['Renew or Re-market','fixed-term lease expires within 90 days'],
+      ['Expired — Re-market / Verify','lease is past its expiration date']])+
+    grp(C.attention,'Attention — plan ahead',[
+      ['Negotiate Renewal','fixed-term lease expires within ~6 months'],
+      ['Renewal Decision','auto-renew lease — notice window 60–150 days out'],
+      ['Confirm Renewal','auto-renew lease nearing expiry, no notice deadline on file'],
+      ['Formalize Lease','tenant is month-to-month and needs a signed lease'],
+      ['Confirm / Verify Terms','rent is on file but dates or terms are still pending']])+
+    grp(C.steady,'Steady — no action',[
+      ['Cash Checks','lease is in good standing with no near-term action needed']])+
+    grp(C.neutral,'Informational',[
+      ['Owner-Occupied','owner-occupant unit — not leased to a third party'],
+      ['—','no active lease on file']]);
+  return '<span class="lw" style="vertical-align:middle;font-weight:400;">'+
+    '<span class="infoBtn" onclick="toggleTip(this,event)" title="What do these mean?">i</span>'+
+    '<div class="tip down right wide" onclick="event.stopPropagation()">'+body+'</div></span>';
+}
 function leaseTip(ld){
   var m = ld.meta || {}; var rows = [];
   rows.push('<b>'+(m.lessee||ld.tenant)+'</b> &middot; Suite '+(ld.suite||'—'));
@@ -1834,6 +1868,109 @@ function leaseWidget(ld){
     (ld.htmlUrl?'<a class="html" href="'+ld.htmlUrl+'" target="_blank" rel="noopener">HTML</a>':'')+
     '<span class="infoBtn" onclick="toggleTip(this,event)" title="Details">i</span>'+
     leaseTip(ld)+'</span>';
+}
+// ── Rent Roll generator ─────────────────────────────────────────────────────
+// Forward-looking rent roll for a property, computed from current lease records
+// and each lease's contractual escalation. No historical data needed.
+var __rentRollHTML = '';
+function rrMoney(n){ return '$'+Number(n).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function rrProject(rent, pct, month, fromD, toD){
+  if(!pct || !month) return rent;
+  var c=0;
+  for(var y=fromD.getFullYear(); y<=toD.getFullYear(); y++){
+    var d=new Date(y, month-1, 1);
+    if(d>fromD && d<=toD) c++;
+  }
+  return rent*Math.pow(1+pct/100, c);
+}
+function rentRollCSS(){
+  return 'body{font-family:Inter,Arial,sans-serif;color:#1f2937;margin:24px;}'+
+    '.rr-doc{font-family:Inter,Arial,sans-serif;color:#1f2937;}'+
+    '.rr-head{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #1f5fdb;padding-bottom:10px;margin-bottom:16px;}'+
+    '.rr-title{font-size:22px;font-weight:700;color:#0f172a;}.rr-sub{font-size:13px;color:#475569;margin-top:2px;}.rr-meta{font-size:12px;color:#475569;text-align:right;}'+
+    '.rr-table{border-collapse:collapse;width:100%;font-size:12px;margin-bottom:8px;}'+
+    '.rr-table th,.rr-table td{border:1px solid #e2e8f0;padding:5px 8px;text-align:left;}'+
+    '.rr-table th{background:#f1f5f9;font-weight:650;color:#334155;}'+
+    '.rr-table td.r,.rr-table th.r{text-align:right;}'+
+    '.rr-table .rr-sm{font-size:11px;color:#475569;}'+
+    '.rr-tot td{font-weight:700;background:#f8fafc;border-top:2px solid #cbd5e1;}'+
+    '.rr-flag{font-size:9px;font-weight:700;color:#b45309;background:#fffbeb;border:1px solid #fde68a;border-radius:4px;padding:0 4px;margin-left:4px;}'+
+    '.rr-proj-title{font-size:13px;font-weight:650;color:#1e3a8a;margin:18px 0 6px;}'+
+    '.rr-proj{max-width:460px;}'+
+    '.rr-foot{font-size:10.5px;color:#94a3b8;margin-top:12px;line-height:1.5;}';
+}
+function ensureRentRollStyles(){ if(document.getElementById('rentRollStyle'))return; var s=document.createElement('style'); s.id='rentRollStyle'; s.textContent=rentRollCSS(); document.head.appendChild(s); }
+function openRentRoll(slug){
+  var ent = window.__crosbyEntities || {};
+  var prop = (window.PROPERTIES||[]).find(function(p){return p.slug===slug;}) || {name:slug, location:''};
+  var unitById={}, tenantById={}, bldgById={};
+  (ent.units||[]).forEach(function(u){unitById[u.id]=u;});
+  (ent.tenants||[]).forEach(function(t){tenantById[t.id]=t;});
+  (ent.buildings||[]).forEach(function(b){bldgById[b.id]=b;});
+  var now = new Date();
+  var MN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  function dstr(d){ return d? MN[d.getMonth()]+' '+d.getFullYear() : '—'; }
+  var rows = (ent.leases||[]).filter(function(l){return l.propertyId===slug && l.status!=='owner-occupant';})
+    .map(function(l){
+      var u=unitById[l.unitId]||{}, t=tenantById[l.tenantId]||{}, b=bldgById[u.buildingId]||{};
+      var rent=Number(l.monthlyRent)||0, sf=Number(u.sf)||0;
+      return { tenant:t.name||u.identifier||'—', building:b.name||'—', suite:u.identifier||'—', sf:sf,
+        rent:rent, annual:rent*12, sfyr:(sf>0&&rent>0)? rent*12/sf : 0,
+        pct:l.escalationPct, month:l.escalationMonth, commenced:l.commenced||null, terminates:l.terminates||null,
+        status:l.status||'active' };
+    })
+    .filter(function(r){return r.rent>0;})
+    .sort(function(a,b){ return (a.building+a.suite).localeCompare(b.building+b.suite, undefined,{numeric:true}); });
+  rows.forEach(function(r){
+    if(r.pct && r.month){ var d=new Date(now.getFullYear(), r.month-1, 1); if(d<=now) d=new Date(now.getFullYear()+1, r.month-1, 1); r.nextDate=d; r.nextRent=r.rent*(1+r.pct/100); }
+    else { r.nextDate=null; r.nextRent=null; }
+  });
+  var totSF=0, totMo=0; rows.forEach(function(r){ totSF+=r.sf; totMo+=r.rent; });
+  var projRows = rows.filter(function(r){return r.status!=='vacating';});
+  var horizons=[0,1,2,3].map(function(yrs){
+    var target=new Date(now.getFullYear()+yrs, now.getMonth(), now.getDate());
+    var src = yrs===0 ? rows : projRows; // year 0 matches the contractual total; future years drop tenants on notice
+    var mo=src.reduce(function(s,r){return s+rrProject(r.rent, r.pct, r.month, now, target);},0);
+    return { label: yrs===0?'Current':('+'+yrs+' yr'+(yrs>1?'s':'')), mo:mo, annual:mo*12, year:now.getFullYear()+yrs };
+  });
+  var asOf = now.toLocaleDateString(undefined,{year:'numeric',month:'long',day:'numeric'});
+  var body = '<div class="rr-doc">';
+  body += '<div class="rr-head"><div><div class="rr-title">Rent Roll</div><div class="rr-sub">'+prop.name+(prop.location?' &middot; '+prop.location:'')+'</div></div>'+
+    '<div class="rr-meta">As of '+asOf+'<br><span style="color:#9ca3af;">Forward-looking · from current lease records</span></div></div>';
+  body += '<table class="rr-table"><thead><tr><th>Tenant</th><th>Bldg</th><th>Suite</th><th class="r">SF</th><th class="r">Monthly Rent</th><th class="r">Annual Rent</th><th class="r">$/SF/Yr</th><th>Lease Term</th><th>Escalation</th><th>Next Increase</th></tr></thead><tbody>';
+  rows.forEach(function(r){
+    var esc = r.pct!=null ? ((Number(r.pct)%1?Number(r.pct).toFixed(1):r.pct)+'%'+(r.month?' · '+MN[r.month-1]:'')) : '—';
+    var term = (r.commenced||'—')+' → '+(r.terminates||(r.status==='mtm'?'MTM':'—'));
+    var next = r.nextRent? (dstr(r.nextDate)+' → '+rrMoney(r.nextRent)) : '—';
+    var flag = r.status==='vacating'?'<span class="rr-flag">VACATING</span>':(r.status==='mtm'?'<span class="rr-flag">MTM</span>':'');
+    body += '<tr><td>'+r.tenant+' '+flag+'</td><td>'+r.building.replace('Building ','')+'</td><td>'+r.suite+'</td><td class="r">'+r.sf.toLocaleString()+'</td><td class="r">'+rrMoney(r.rent)+'</td><td class="r">'+rrMoney(r.annual)+'</td><td class="r">'+(r.sfyr?'$'+r.sfyr.toFixed(2):'—')+'</td><td class="rr-sm">'+term+'</td><td class="rr-sm">'+esc+'</td><td class="r rr-sm">'+next+'</td></tr>';
+  });
+  body += '<tr class="rr-tot"><td>Total ('+rows.length+' tenants)</td><td></td><td></td><td class="r">'+totSF.toLocaleString()+'</td><td class="r">'+rrMoney(totMo)+'</td><td class="r">'+rrMoney(totMo*12)+'</td><td class="r">'+(totSF>0?'$'+(totMo*12/totSF).toFixed(2):'—')+'</td><td></td><td></td><td></td></tr>';
+  body += '</tbody></table>';
+  body += '<div class="rr-proj-title">Projected base rent &mdash; occupancy held constant</div>';
+  body += '<table class="rr-table rr-proj"><thead><tr><th>Period</th><th class="r">Total Monthly</th><th class="r">Total Annual</th></tr></thead><tbody>';
+  horizons.forEach(function(h){ body += '<tr><td>'+h.label+(h.label==='Current'?'':' ('+h.year+')')+'</td><td class="r">'+rrMoney(h.mo)+'</td><td class="r">'+rrMoney(h.annual)+'</td></tr>'; });
+  body += '</tbody></table>';
+  body += '<div class="rr-foot">Projections apply each lease&rsquo;s contractual escalation to the current tenant and assume continued occupancy; tenants on notice to vacate are excluded from the forward projection. Figures are base rent only (full-service gross). Source: current lease records as of '+asOf+'.</div>';
+  body += '</div>';
+  __rentRollHTML = body;
+  var ov=document.getElementById('rentRollModal');
+  if(!ov){ ov=document.createElement('div'); ov.id='rentRollModal'; ov.style.cssText='position:fixed;inset:0;z-index:200;background:rgba(15,23,42,.55);display:flex;align-items:center;justify-content:center;padding:24px;'; ov.addEventListener('click',function(e){ if(e.target===ov) closeRentRoll(); }); document.body.appendChild(ov); }
+  ov.innerHTML = '<div style="background:#fff;width:100%;max-width:1080px;max-height:90vh;border-radius:14px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 24px 70px rgba(0,0,0,.45);">'+
+    '<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-bottom:1px solid #e5e7eb;flex:none;">'+
+    '<span style="font-weight:700;font-size:14px;color:#0f172a;">Rent Roll — '+prop.name+'</span>'+
+    '<div style="display:flex;align-items:center;gap:12px;"><button onclick="printRentRoll()" style="font-size:12px;font-weight:600;color:#1d4ed8;background:#eaf1fe;border:1px solid #c7dbfb;border-radius:6px;padding:5px 12px;cursor:pointer;">Print / Save PDF</button>'+
+    '<button onclick="closeRentRoll()" style="border:none;background:#f1f5f9;border-radius:6px;width:28px;height:28px;cursor:pointer;font-size:18px;line-height:1;color:#334155;">&times;</button></div></div>'+
+    '<div style="overflow:auto;padding:20px 22px;">'+body+'</div></div>';
+  ov.style.display='flex';
+  ensureRentRollStyles();
+}
+function closeRentRoll(){ var ov=document.getElementById('rentRollModal'); if(ov) ov.style.display='none'; }
+function printRentRoll(){
+  var w=window.open('','_blank');
+  if(!w){ alert('Please allow pop-ups to print the rent roll.'); return; }
+  w.document.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>Rent Roll</title><style>'+rentRollCSS()+'</style></head><body>'+__rentRollHTML+'</body></html>');
+  w.document.close(); w.focus(); setTimeout(function(){ try{ w.print(); }catch(e){} }, 250);
 }
 var sopHiddenCols = [];
 try { sopHiddenCols = JSON.parse(localStorage.getItem('sopHiddenCols')||'[]'); } catch(e) {}
@@ -1959,6 +2096,7 @@ function renderPropertyDetail(p) {
     // ── Commercial detail: building cards with full tenant rosters ──
     var tenantData = TENANT_ROSTER[p.slug];
     if(tenantData && p.buildings) {
+      html += '<div style="display:flex;justify-content:flex-end;margin-bottom:12px;"><button onclick="openRentRoll(\''+p.slug+'\')" style="font-size:13px;font-weight:600;color:#fff;background:#1f5fdb;border:none;border-radius:8px;padding:8px 16px;cursor:pointer;box-shadow:0 2px 6px rgba(31,95,219,.25);">Generate Rent Roll</button></div>';
       html += sopColToggleBar();
       p.buildings.forEach(function(b) {
         var bTenants = tenantData[b.name] || [];
@@ -1980,7 +2118,7 @@ function renderPropertyDetail(p) {
         Object.keys(docsByTenant).forEach(function(k){ docsByTenant[k].sort(function(a,b){ return String(b.date||'').localeCompare(String(a.date||'')); }); });
         var hasLeases = buildingLeases.length > 0;
 
-        html += '<table class="unit-table"><thead><tr><th class="c-tenant">Tenant</th><th class="c-suite">Suite</th><th class="c-sf">Square Feet</th><th class="c-rent">Monthly Rent</th><th class="c-sfyr">$/SF/Yr</th><th class="c-status">Status</th><th class="c-expiry">Expiry</th><th class="c-notice">Notice</th><th class="c-action">Action</th><th class="c-lease">Lease</th><th class="c-legacy">Legacy Leases</th><th class="c-coistatus">Insurance Status</th><th class="c-coidocs">Insurance Documents</th></tr></thead><tbody>';
+        html += '<table class="unit-table"><thead><tr><th class="c-tenant">Tenant</th><th class="c-suite">Suite</th><th class="c-sf">Square Feet</th><th class="c-rent">Monthly Rent</th><th class="c-sfyr">$/SF/Yr</th><th class="c-status">Status</th><th class="c-expiry">Expiry</th><th class="c-notice">Notice</th><th class="c-action" style="position:relative;">Lease Action '+actionLegend()+'</th><th class="c-lease">Lease</th><th class="c-legacy">Legacy Leases</th><th class="c-coistatus">Insurance Status</th><th class="c-coidocs">Insurance Documents</th></tr></thead><tbody>';
         var bTotal = 0, bRent = 0;
         bTenants.forEach(function(t) {
           bTotal += t.sf;
