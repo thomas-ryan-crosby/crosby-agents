@@ -9,9 +9,9 @@
 // Required env vars (Vercel project settings):
 //   GROQ_API_KEY, OPENAI_API_KEY (fallback), ALLOWED_NUMBERS,
 //   TWILIO_AUTH_TOKEN, FIREBASE_SERVICE_ACCOUNT,  GROQ_MODEL/OPENAI_MODEL (optional)
-import crypto from "node:crypto";
 import { logInteraction, setFeedback, getSession, setSession } from "../lib/portfolio.mjs";
 import { buildContext, directoryText, runTool, TOOL_DEFS } from "../lib/assistant-tools.mjs";
+import { readRaw, validTwilioSignature, requestUrl } from "../lib/twilio.mjs";
 
 export const config = { maxDuration: 30 };
 
@@ -36,13 +36,17 @@ export default async function handler(req, res) {
   // 1. Verify the request is genuinely from Twilio (if configured)
   const authToken = process.env.TWILIO_AUTH_TOKEN;
   if (authToken) {
-    const proto = req.headers["x-forwarded-proto"] || "https";
-    const host = req.headers["x-forwarded-host"] || req.headers.host;
-    const url = proto + "://" + host + req.url;
-    if (!validTwilioSignature(authToken, req.headers["x-twilio-signature"], url, params)) {
+    if (!validTwilioSignature(authToken, req.headers["x-twilio-signature"], requestUrl(req), params)) {
       res.status(403).send("Invalid signature"); return;
     }
   }
+
+  // Delivery telemetry: every <Message> we emit reports its status to this
+  // endpoint, so a reply Twilio fails to deliver notifies the user instead of
+  // vanishing silently. Derived from the inbound request's own host.
+  const proto = req.headers["x-forwarded-proto"] || "https";
+  const host = req.headers["x-forwarded-host"] || req.headers.host;
+  const statusCb = host ? `${proto}://${host}/api/whatsapp-status` : null;
 
   const from = (params.From || "").trim();
   const fromNum = from.replace(/^whatsapp:/, "").trim();
@@ -55,7 +59,7 @@ export default async function handler(req, res) {
   if (allow.length && !allow.includes(fromNum) && !allow.includes(from)) {
     const msg = "Sorry — this number isn't authorized to use the Crosby property assistant. Please contact your administrator.";
     await logInteraction(Object.assign({}, base, { status: "blocked", answer: msg, model: null }));
-    return reply(res, msg);
+    return reply(res, msg, null, statusCb);
   }
 
   // 3. Is this a 👍/👎 about the previous answer?
@@ -67,7 +71,7 @@ export default async function handler(req, res) {
       await setSession(fromNum, { lastLogId: null });
       return reply(res, fb.rating === "positive"
         ? "👍 Glad that helped!"
-        : "Thanks for the feedback — I've flagged this so we can keep improving the assistant.");
+        : "Thanks for the feedback — I've flagged this so we can keep improving the assistant.", null, statusCb);
     }
   }
 
@@ -75,7 +79,7 @@ export default async function handler(req, res) {
   if (!body || /^(hi|hello|hey|help|start|menu|\?)$/i.test(body)) {
     const help = "Hi! I'm the Crosby property assistant. Ask me things like:\n• Whats vacating at Sanctuary this year?\n• What does Wells Fargo pay?\n• Annual rent for Building 2?\n• Send me the Pazos lease link\n• Which COIs are expired?\n• Any space available in Building 4?";
     await logInteraction(Object.assign({}, base, { status: "help", answer: help, model: null }));
-    return reply(res, help);
+    return reply(res, help, null, statusCb);
   }
 
   // 5. Answer (model calls tools)
@@ -85,12 +89,12 @@ export default async function handler(req, res) {
     const out = await answerWithTools(body, today, ctx);
     const logId = await logInteraction(Object.assign({}, base, { status: "answered", answer: out.text, model: out.provider, ms: Date.now() - started }));
     await setSession(fromNum, { lastLogId: logId, question: body });
-    return reply(res, out.text, "Was this helpful? Reply 👍 or 👎 — or tell me what was off.");
+    return reply(res, out.text, "Was this helpful? Reply 👍 or 👎 — or tell me what was off.", statusCb);
   } catch (e) {
     console.error("whatsapp handler error:", e && (e.stack || e.message));
     const msg = explainError(e);
     await logInteraction(Object.assign({}, base, { status: "error", answer: msg, model: null, error: String((e && e.message) || "unknown").slice(0, 600), ms: Date.now() - started }));
-    return reply(res, msg);
+    return reply(res, msg, null, statusCb);
   }
 }
 
@@ -230,12 +234,6 @@ async function oneChatCall(p, messages, temperature) {
 }
 
 // ── plumbing ─────────────────────────────────────────────────────────────────
-function readRaw(req) {
-  return new Promise((resolve, reject) => {
-    let d = ""; req.on("data", (c) => (d += c)); req.on("end", () => resolve(d)); req.on("error", reject);
-  });
-}
-
 // WhatsApp's hard limit is 1600 characters PER message; Twilio silently fails to
 // deliver a <Message> whose body exceeds it. Lease answers list several documents
 // with ~250-char Firebase tokenized URLs and easily blow past that — which is why
@@ -259,7 +257,7 @@ function chunkText(text) {
   return chunks.length ? chunks : [""];
 }
 
-function reply(res, text, followup) {
+function reply(res, text, followup, statusCb) {
   const chunks = chunkText(text);
   if (followup) {
     const tail = "\n\n— — —\n" + followup;
@@ -269,20 +267,13 @@ function reply(res, text, followup) {
     if ((last + tail).length <= WA_LIMIT) chunks[chunks.length - 1] = last + tail;
     else chunks.push(followup);
   }
-  const inner = chunks.map((c) => "<Message>" + xmlEscape(c) + "</Message>").join("");
+  // statusCallback on each <Message> => Twilio reports delivery to /api/whatsapp-status.
+  const cbAttr = statusCb ? ` statusCallback="${xmlEscape(statusCb)}"` : "";
+  const inner = chunks.map((c) => "<Message" + cbAttr + ">" + xmlEscape(c) + "</Message>").join("");
   res.setHeader("Content-Type", "text/xml");
   res.status(200).send('<?xml version="1.0" encoding="UTF-8"?><Response>' + inner + "</Response>");
 }
 
 function xmlEscape(s) {
   return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-}
-
-function validTwilioSignature(authToken, signature, url, params) {
-  try {
-    const data = url + Object.keys(params).sort().map((k) => k + params[k]).join("");
-    const expected = crypto.createHmac("sha1", authToken).update(Buffer.from(data, "utf-8")).digest("base64");
-    const a = Buffer.from(expected), b = Buffer.from(String(signature || ""));
-    return a.length === b.length && crypto.timingSafeEqual(a, b);
-  } catch (e) { return false; }
 }
