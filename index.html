@@ -2335,23 +2335,65 @@ function flagMarketingFromEl(el, ev){
   switchView('leasing');
 }
 function unflagMarketing(key){ setMarketing(getMarketing().filter(function(r){ return mktKey(r)!==key; })); renderLeasing(); }
+// Size bands for office suites (Sanctuary runs ~200–13,455 SF). Each band carries
+// a suggested FSG rate and a demand read distilled from the St. Tammany office
+// study (LACDB 883-listing pull): full-service band $24–28, median ~142 days on
+// market with a heavy slow tail, small professional tenants dominating demand.
+function suiteSizeBand(sf){
+  if(!sf) return null;
+  if(sf < 800) return 'micro';
+  if(sf < 2000) return 'small';
+  if(sf < 5000) return 'mid';
+  if(sf < 10000) return 'large';
+  return 'block';
+}
+var SUITE_INSIGHTS = {
+  micro: { label:'Executive / micro suite · under 800 SF', rate:28, demand:'Deepest, fastest-moving segment', tone:'steady',
+    time:'Usually leases well under the ~142-day market median', tenants:'Solo practitioners, satellite/branch offices, insurance & financial advisors',
+    tips:['A small tenant has no facilities staff — lead with turnkey full-service ("one number, janitorial included").','Price at the top of the band; this size rarely sits vacant.'] },
+  small: { label:'Small suite · 800–2,000 SF', rate:27, demand:'Strongest, most liquid demand on the Northshore', tone:'steady',
+    time:'Typically faster than the ~142-day median', tenants:'Law, insurance, title, medical & financial-advisory firms — the dominant local tenant size',
+    tips:['Keep it listed full-service and priced firm — this is the bread-and-butter Northshore office tenant.','Target CAM-fatigued tenants just off an NNN year-end reconciliation.'] },
+  mid: { label:'Mid-size suite · 2,000–5,000 SF', rate:27, demand:'Steady, but a smaller buyer pool than small suites', tone:'attention',
+    time:'Around the ~142-day median — plan a 4–6 month runway', tenants:'Established firms, small regional HQs, group medical/professional practices',
+    tips:['Carry the all-in comparison vs a $19 NNN quote — at this size the annual reconciliation swing is real money.','Hold the 3% step and sell budget certainty for a multi-person office.'] },
+  large: { label:'Large suite · 5,000–10,000 SF', rate:26, demand:'Thinner pool — fewer tenants can absorb this footprint', tone:'attention',
+    time:'Expect longer than median; the slow tail starts here (often 6–12+ months)', tenants:'Regional offices, larger firms, multi-department users',
+    tips:['Activate broker co-op early — Stirling & KPG touch the most large-tenant flow; hand them a one-page full-service all-in sheet.','Flex on term length or TI before the headline rate — protect the per-SF number.'] },
+  block: { label:'Full-floor block · 10,000+ SF', rate:25, demand:'Scarce local demand — the hardest size to place on the Northshore', tone:'urgent',
+    time:'Long — blocks this size routinely carry 12+ months here', tenants:'Anchor / regional-HQ tenants — a small set, often relocating from across the lake',
+    tips:['Consider dividing into 2–3 sub-suites to tap the much deeper small/mid demand.','Run a direct, named-broker outreach — this size does not lease passively.'] },
+};
 function marketingSuiteCard(r){
-  var rate = (r.slug==='sanctuary-office-park') ? MARKET_TLDR.sfRate : 0;
+  var office = r.slug==='sanctuary-office-park';
+  var ins = office ? SUITE_INSIGHTS[suiteSizeBand(r.sf)] : null;
+  var rate = ins ? ins.rate : 0;
   var moAsk = rate ? Math.round(r.sf*rate/12) : 0;
   var yrAsk = rate ? r.sf*rate : 0;
+  var toneCol = {steady:'#059669',attention:'#b45309',urgent:'#dc2626'};
   var reasonTone = {'Begin Marketing':'#dc2626','Renew or Re-market':'#b45309','Expired — Re-market / Verify':'#dc2626'};
   var reason = r.action ? '<span class="badge" style="background:'+((reasonTone[r.action]||'#e5e7eb'))+'1a;color:'+(reasonTone[r.action]||'#6b7280')+';border:1px solid '+(reasonTone[r.action]||'#e5e7eb')+'55;font-size:11px;">'+escHtml(r.action)+'</span>' : '';
+  var stat = function(l,v,s){ return '<div><div style="font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#9ca3af;font-weight:700;">'+l+'</div><div style="font-size:18px;font-weight:700;color:#0f172a;">'+v+(s?' <span style="font-size:12px;font-weight:500;color:#6b7280;">'+s+'</span>':'')+'</div></div>'; };
+  var row = function(l,v){ return '<div><div style="font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#9ca3af;font-weight:700;margin-bottom:1px;">'+l+'</div><div style="font-size:12px;color:#374151;line-height:1.4;">'+v+'</div></div>'; };
   var h = '<div class="card" style="margin-bottom:14px;">';
   h += '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;">';
   h += '<div><div style="font-size:15px;font-weight:700;color:#0f172a;">'+escHtml(r.building)+' · Suite '+escHtml(r.suite)+'</div>'+
-       '<div style="font-size:12px;color:#6b7280;margin-top:2px;">'+escHtml(MARKET_TLDR.property==='Sanctuary Office Park'&&r.slug==='sanctuary-office-park'?'Sanctuary Office Park':r.slug)+' · '+(r.sf?r.sf.toLocaleString()+' SF':'SF n/a')+(r.tenant&&r.tenant!=='(Vacant)'?' · currently '+escHtml(r.tenant):' · vacant')+'</div></div>';
+       '<div style="font-size:12px;color:#6b7280;margin-top:2px;">'+escHtml(office?'Sanctuary Office Park':r.slug)+' · '+(r.sf?r.sf.toLocaleString()+' SF':'SF n/a')+(r.tenant&&r.tenant!=='(Vacant)'?' · currently '+escHtml(r.tenant):' · vacant')+'</div></div>';
   h += '<div style="display:flex;gap:8px;align-items:center;">'+reason+'<button type="button" class="mkt-remove" onclick="unflagMarketing(\''+escHtml(mktKey(r)).replace(/'/g,"\\'")+'\')" title="Remove from marketing">'+iconSvg('x',14)+'</button></div>';
   h += '</div>';
-  if(rate){
-    h += '<div style="display:flex;gap:24px;flex-wrap:wrap;margin-top:12px;padding-top:12px;border-top:1px solid #f1f5f9;">'+
-      '<div><div style="font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#9ca3af;font-weight:700;">Suggested asking</div><div style="font-size:18px;font-weight:700;color:#0f172a;">$'+rate+'/SF <span style="font-size:12px;font-weight:500;color:#6b7280;">FSG</span></div></div>'+
-      '<div><div style="font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#9ca3af;font-weight:700;">Monthly</div><div style="font-size:18px;font-weight:700;color:#0f172a;">$'+moAsk.toLocaleString()+'</div></div>'+
-      '<div><div style="font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#9ca3af;font-weight:700;">Annual</div><div style="font-size:18px;font-weight:700;color:#0f172a;">$'+yrAsk.toLocaleString()+'</div></div></div>';
+  if(ins){
+    h += '<div style="margin-top:12px;padding-top:12px;border-top:1px solid #f1f5f9;">';
+    h += '<div style="display:flex;align-items:center;gap:7px;margin-bottom:11px;">'+iconSvg('ruler',14,'#1f5fdb')+'<span style="font-size:12px;font-weight:700;color:#374151;">'+escHtml(ins.label)+'</span></div>';
+    h += '<div style="display:flex;gap:26px;flex-wrap:wrap;margin-bottom:13px;">'+stat('Suggested asking','$'+rate+'/SF','FSG')+stat('Monthly','$'+moAsk.toLocaleString(),'')+stat('Annual','$'+yrAsk.toLocaleString(),'')+'</div>';
+    h += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;">'+
+      row('Demand','<span style="color:'+toneCol[ins.tone]+';font-weight:600;">'+escHtml(ins.demand)+'</span>')+
+      row('Time to lease',escHtml(ins.time))+
+      row('Likely tenants',escHtml(ins.tenants))+'</div>';
+    h += '<ul style="margin:11px 0 0;padding-left:18px;font-size:12px;color:#374151;line-height:1.5;">'+ins.tips.map(function(t){ return '<li style="margin-bottom:3px;">'+escHtml(t)+'</li>'; }).join('')+'</ul>';
+    h += '<div style="font-size:10px;color:#9ca3af;margin-top:8px;">Size-tailored from the St. Tammany office study · full-service band $24–28.</div>';
+    h += '</div>';
+  } else if(r.sf){
+    h += '<div style="margin-top:12px;padding-top:12px;border-top:1px solid #f1f5f9;font-size:12px;color:#9ca3af;">'+r.sf.toLocaleString()+' SF · size-tailored pricing insight is available for Sanctuary office suites.</div>';
   }
   h += '<div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;">';
   h += '<span style="font-size:12px;color:#9ca3af;">Marketing assets (listing, flyer, outreach) can be generated for this suite — coming soon.</span>';
