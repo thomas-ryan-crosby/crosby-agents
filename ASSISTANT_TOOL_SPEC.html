@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Crosby Property Assistant — Tool &amp; Capability Spec</title>
+<style>
+  :root{ --ink:#0f172a; --sub:#475569; --line:#e2e8f0; --bg:#f8fafc; --blue:#1f5fdb; }
+  *{box-sizing:border-box;}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Arial,sans-serif;color:var(--ink);max-width:980px;margin:0 auto;padding:36px 26px 64px;line-height:1.55;}
+  h1{font-size:26px;margin:0 0 4px;}
+  .lede{color:var(--sub);font-size:15px;margin:0 0 6px;}
+  h2{font-size:18px;margin:34px 0 6px;border-top:2px solid var(--blue);padding-top:16px;}
+  h2 .n{color:var(--blue);}
+  .desc{color:var(--sub);font-size:13.5px;margin:0 0 12px;}
+  .legend{display:flex;gap:18px;flex-wrap:wrap;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin:14px 0 4px;font-size:13px;}
+  .legend b{font-weight:600;}
+  table{border-collapse:collapse;width:100%;font-size:13px;margin:8px 0 6px;}
+  th,td{border:1px solid var(--line);padding:8px 11px;text-align:left;vertical-align:top;}
+  th{background:#f1f5f9;font-weight:650;color:#334155;}
+  td.t{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;color:#0b2a6b;white-space:nowrap;}
+  .ex{color:var(--sub);font-style:italic;}
+  .pill{display:inline-block;font-size:11px;font-weight:700;border-radius:999px;padding:2px 9px;white-space:nowrap;}
+  .built{background:#ecfdf5;color:#047857;border:1px solid #a7f3d0;}
+  .prop{background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;}
+  .needs{background:#fef2f2;color:#b91c1c;border:1px solid #fecaca;}
+  .eff{font-size:11px;color:#64748b;}
+  .check{width:26px;text-align:center;color:#cbd5e1;font-size:16px;}
+  .note{background:#fffbeb;border:1px solid #fde68a;border-left:3px solid #f59e0b;border-radius:8px;padding:11px 14px;font-size:13px;color:#7c5e10;margin:16px 0;}
+  footer{margin-top:30px;color:var(--sub);font-size:13px;border-top:1px solid var(--line);padding-top:14px;}
+</style>
+</head>
+<body>
+
+<h1>Crosby Property Assistant — Tool &amp; Capability Spec</h1>
+<p class="lede">For review before implementation. The WhatsApp assistant answers by calling <b>tools</b> — small functions that fetch or compute exact figures straight from the live data — instead of guessing. This is the menu of tools that exist today and the ones we could add. Tick what you want and I'll build it.</p>
+
+<div class="legend">
+  <span><span class="pill built">✅ Built</span> &nbsp;live now</span>
+  <span><span class="pill prop">🟡 Proposed</span> &nbsp;data already exists — quick to add</span>
+  <span><span class="pill needs">🔴 Needs data</span> &nbsp;requires a new data source / integration</span>
+  <span class="eff">Effort: S = hours · M = half-day · L = multi-day</span>
+</div>
+
+<h2><span class="n">A.</span> Built &amp; live today</h2>
+<p class="desc">These answer reliably right now — figures come from code, not the model's memory.</p>
+<table>
+  <thead><tr><th>Tool</th><th>What it answers</th><th>Example question</th></tr></thead>
+  <tbody>
+    <tr><td class="t">find_tenant</td><td>A tenant's lease facts: property/building/suite, SF, monthly rent, dates, escalation, auto-renew, notice, status</td><td class="ex">"What does Wells Fargo pay? When does it end?"</td></tr>
+    <tr><td class="t">get_lease_documents</td><td>Lease &amp; amendment documents for a tenant, with shareable PDF/HTML links</td><td class="ex">"Send me the Pazos lease"</td></tr>
+    <tr><td class="t">building_or_property_rent</td><td>Exact total monthly &amp; annual base rent for a property or a specific building</td><td class="ex">"Annual rent for Building 2?"</td></tr>
+    <tr><td class="t">portfolio_totals</td><td>Rent by property, portfolio total, highest-grossing property &amp; building</td><td class="ex">"What's our highest-grossing building?"</td></tr>
+    <tr><td class="t">property_summary</td><td>Occupancy &amp; rent summary for one property (SF/occupancy for commercial; units for apartments)</td><td class="ex">"Occupancy at Mandeville Lake?"</td></tr>
+    <tr><td class="t">expiring_leases</td><td>Expiring/vacating leases, soonest first, flagged vacating / auto-renew / fixed-term</td><td class="ex">"What's vacating at Sanctuary this year?"</td></tr>
+    <tr><td class="t">vacancies</td><td>Vacant / available units, optionally per property</td><td class="ex">"Any space available in Building 4?"</td></tr>
+    <tr><td class="t">insurance_status</td><td>Certificate-of-insurance status (current / expiring / EXPIRED) per tenant</td><td class="ex">"Which COIs are expired?"</td></tr>
+    <tr><td class="t">monthly_rent_roll</td><td>Month-by-month (Jan–Dec) rent for a tenant, or monthly totals for a property/building</td><td class="ex">"Give me the 2026 monthly rent roll for M Squared"</td></tr>
+  </tbody>
+</table>
+
+<h2><span class="n">B.</span> Proposed — data already exists (quick wins)</h2>
+<p class="desc">All buildable now from the data we already have. The check column is for you to mark.</p>
+<table>
+  <thead><tr><th class="check">✓</th><th>Tool</th><th>What it would answer</th><th>Example</th><th>Effort</th></tr></thead>
+  <tbody>
+    <tr><td class="check">☐</td><td class="t">next_rent_increase</td><td>When a tenant's rent next steps up and to what amount (escalation projection)</td><td class="ex">"When does Galloway's rent go up, and to how much?"</td><td class="eff">S</td></tr>
+    <tr><td class="check">☐</td><td class="t">lease_action</td><td>The recommended next step for a lease (renew / re-market / negotiate / cash checks) — same logic as the dashboard "Lease Action" column</td><td class="ex">"What should I do about Wells Fargo's lease?"</td><td class="eff">S</td></tr>
+    <tr><td class="check">☐</td><td class="t">notice_deadlines</td><td>Upcoming renewal-notice deadlines — the must-act-by dates, soonest first</td><td class="ex">"Whose renewal notice is due in the next 90 days?"</td><td class="eff">S</td></tr>
+    <tr><td class="check">☐</td><td class="t">building_directory</td><td>Every tenant in a building, with suite &amp; rent</td><td class="ex">"Who's in Building 4?"</td><td class="eff">S</td></tr>
+    <tr><td class="check">☐</td><td class="t">space_search</td><td>Available units matching a size range</td><td class="ex">"Any space between 1,000 and 2,000 SF?"</td><td class="eff">S</td></tr>
+    <tr><td class="check">☐</td><td class="t">rent_per_sf</td><td>$/SF rate for a tenant, building, or property</td><td class="ex">"What's the per-SF rate for Galloway?"</td><td class="eff">S</td></tr>
+    <tr><td class="check">☐</td><td class="t">occupancy_outlook</td><td>Committed-occupancy projection by year — when major space rolls off and you'll need to lease</td><td class="ex">"When's our biggest vacancy exposure?"</td><td class="eff">M</td></tr>
+    <tr><td class="check">☐</td><td class="t">portfolio_kpis</td><td>Vacancy rate, weighted-average lease term (WALT), total SF &amp; units at a glance</td><td class="ex">"What's our overall vacancy rate?"</td><td class="eff">M</td></tr>
+    <tr><td class="check">☐</td><td class="t">tenant_contact</td><td>Contact name / email / phone for a tenant <span class="eff">(data is sparse today — many tenants have no contact on file)</span></td><td class="ex">"What's the contact for MedSouth?"</td><td class="eff">S</td></tr>
+    <tr><td class="check">☐</td><td class="t">suite_history</td><td>Former tenants of a suite (move-outs) and who's there now</td><td class="ex">"Who was in Suite 302 before?"</td><td class="eff">M</td></tr>
+  </tbody>
+</table>
+
+<h2><span class="n">C.</span> Proposed — needs a new data source or integration</h2>
+<p class="desc">Valuable, but the data isn't in the system yet — these need a connection or a new feed first.</p>
+<table>
+  <thead><tr><th class="check">✓</th><th>Capability</th><th>What it would answer</th><th>What it needs</th></tr></thead>
+  <tbody>
+    <tr><td class="check">☐</td><td class="t">rent_arrears</td><td>Who is behind on rent, and how much</td><td>Accounting / rent-ledger feed (e.g. QuickBooks, AppFolio, Yardi)</td></tr>
+    <tr><td class="check">☐</td><td class="t">work_orders</td><td>Open maintenance requests by property/unit</td><td>Maintenance / work-order system integration</td></tr>
+    <tr><td class="check">☐</td><td class="t">lease_clause_search</td><td>Search the actual lease text — "which leases have a CAM clause / renewal option / exclusivity?"</td><td>Full-text indexing of the lease PDFs/HTML we already store</td></tr>
+    <tr><td class="check">☐</td><td class="t">market_comps</td><td>Market rate / comps for a suite or submarket to support pricing</td><td>Market data feed (CoStar/LoopNet) or your knowledge-base comp reports</td></tr>
+    <tr><td class="check">☐</td><td class="t">opex_recovery</td><td>Operating expenses / CAM reconciliation (less relevant — your leases are full-service gross)</td><td>Operating-expense data</td></tr>
+  </tbody>
+</table>
+
+<h2><span class="n">D.</span> Bigger capabilities (beyond Q&amp;A)</h2>
+<p class="desc">Direction-setting items — these change what the assistant <i>is</i>, not just what it knows.</p>
+<table>
+  <thead><tr><th class="check">✓</th><th>Capability</th><th>Description</th><th>Note</th></tr></thead>
+  <tbody>
+    <tr><td class="check">☐</td><td><b>Write actions</b></td><td>Let staff update data by text — "mark Suite 206 vacated", "log a renewal" — with a confirm-before-saving step</td><td>Read-only today; needs confirmation flow + audit</td></tr>
+    <tr><td class="check">☐</td><td><b>Proactive alerts</b></td><td>The assistant texts you <i>first</i> — COI expiring, notice deadline approaching, big lease rolling off</td><td>A scheduled job + push messaging</td></tr>
+    <tr><td class="check">☐</td><td><b>Weekly digest</b></td><td>A short "what needs attention this week" summary texted to managers each Monday</td><td>Scheduled job</td></tr>
+    <tr><td class="check">☐</td><td><b>Document generation</b></td><td>Draft a renewal-offer letter or a rent-roll PDF on request</td><td>Generates a doc + link</td></tr>
+    <tr><td class="check">☐</td><td><b>Email delivery</b></td><td>Email a lease/COI to a third party (broker, attorney) on request</td><td>Needs send-mail + confirm step</td></tr>
+    <tr><td class="check">☐</td><td><b>Per-user permissions</b></td><td>Restrict some staff to certain properties</td><td>Maps phone numbers → allowed properties</td></tr>
+    <tr><td class="check">☐</td><td><b>SMS channel</b></td><td>Plain text/SMS alongside WhatsApp for staff who prefer it</td><td>Same backend, second webhook</td></tr>
+    <tr><td class="check">☐</td><td><b>Spanish / multilingual</b></td><td>Answer in the language the question is asked in</td><td>Prompt-level; low effort</td></tr>
+  </tbody>
+</table>
+
+<div class="note"><b>Reliability dependency:</b> every tool above runs through the model, which on the free Groq tier has a 12,000 tokens/minute cap. Adding a small amount of OpenAI billing credit makes the paid fallback work during busy moments — recommended before rolling more tools out to the whole team.</div>
+
+<footer>
+  Crosby Development — property assistant. Mark the items you'd like in sections B–D and send it back, and I'll implement them. Generated for review; not a contract.
+</footer>
+
+</body>
+</html>
