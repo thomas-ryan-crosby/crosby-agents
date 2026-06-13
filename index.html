@@ -610,24 +610,15 @@ function contactBlock(c){
 // Broker column, not the Lease/Legacy columns. Classify by docType.
 var BROKER_DOC_TYPES = { 'Commission Agreement': 1, 'Listing Agreement': 1, 'Brokerage Agreement': 1, 'Co-Brokerage Agreement': 1 };
 function isBrokerDoc(d){ return !!BROKER_DOC_TYPES[(d && d.docType) || '']; }
-function tenantContactsCell(tenantId){
-  var list = contactsForTenant(tenantId).filter(function(c){ return !c.isBroker; });
-  if(!list.length) return '<span style="font-size:11px;color:#d1d5db;">—</span>';
-  return list.map(contactBlock).join('');
-}
-// brokerDocs: array of lease-doc records (Commission Agreement etc.) for this
-// tenant, split out of the building's doc list and passed in from the renderer.
-function brokerContactsCell(tenantId, brokerDocs){
-  brokerDocs = brokerDocs || [];
-  var brokers = contactsForTenant(tenantId).filter(function(c){ return c.isBroker; });
-  if(!brokers.length && !brokerDocs.length) return '<span style="font-size:11px;color:#d1d5db;">—</span>';
-  var h = brokers.map(contactBlock).join('');
-  h += '<div style="margin-top:4px;border-top:1px dashed #e5e7eb;padding-top:4px;">';
-  h += '<div style="font-size:8px;font-weight:700;letter-spacing:.04em;color:#9ca3af;text-transform:uppercase;margin-bottom:3px;">Broker Docs</div>';
-  if(brokerDocs.length){ brokerDocs.forEach(function(d){ h += '<div style="margin-bottom:3px;">'+leaseWidget(d)+'</div>'; }); }
-  else { h += '<div style="font-size:10px;color:#cbd5e1;font-style:italic;">none on file</div>'; }
-  h += '</div>';
-  return h;
+// One contact per column (Contact 1, Contact 2, …) keeps rows flat. Empty slots
+// render a dash so every row has the same number of columns.
+function contactColCell(c){ return c ? contactBlock(c) : '<span style="font-size:11px;color:#d1d5db;">—</span>'; }
+// brokerDocs: lease-doc records (Commission Agreement etc.) for this tenant,
+// split out of the building's doc list and rendered in their own Broker Docs column.
+function brokerDocsColCell(docs){
+  docs = docs || [];
+  if(!docs.length) return '<span style="font-size:11px;color:#d1d5db;">—</span>';
+  return docs.map(function(d){ return '<div style="margin-bottom:3px;">'+leaseWidget(d)+'</div>'; }).join('');
 }
 
 // ── OTHER CONTACTS DIRECTORY (non-current-tenant groups only) ─────────────────
@@ -2446,7 +2437,26 @@ function renderPropertyDetail(p) {
         Object.keys(brokerDocsByTenant).forEach(function(k){ brokerDocsByTenant[k].sort(byDateDesc); });
         var hasLeases = buildingLeases.length > 0;
 
-        html += '<table class="unit-table"><thead><tr><th class="c-tenant">Tenant</th><th class="c-suite">Suite</th><th class="c-sf">Square Feet</th><th class="c-rent">Monthly Rent</th><th class="c-sfyr">$/SF/Yr</th><th class="c-status">Status</th><th class="c-expiry">Expiry</th><th class="c-notice">Notice</th><th class="c-action" style="position:relative;">Lease Action '+actionLegend()+'</th><th class="c-lease">Lease</th><th class="c-legacy">Legacy Leases</th><th class="c-coistatus">Insurance Status</th><th class="c-coidocs">Insurance Documents</th><th class="c-tencontacts">Tenant Contacts</th><th class="c-brokers">Broker Contacts &amp; Docs</th></tr></thead><tbody>';
+        // One contact per column → flatter rows. Size the column block to the most
+        // contacts/brokers any tenant in THIS building has.
+        var maxC = 0, maxB = 0, anyBrokerDocs = false, hi;
+        bTenants.forEach(function(t) {
+          if(t.vacant) return;
+          var cs = contactsForTenant(t.tenantId);
+          maxC = Math.max(maxC, cs.filter(function(c){ return !c.isBroker; }).length);
+          maxB = Math.max(maxB, cs.filter(function(c){ return c.isBroker; }).length);
+          if((brokerDocsByTenant[t.tenant]||[]).length) anyBrokerDocs = true;
+        });
+        var contactHdr = '';
+        for(hi=1; hi<=maxC; hi++) contactHdr += '<th class="c-contact">Contact '+hi+'</th>';
+        for(hi=1; hi<=maxB; hi++) contactHdr += '<th class="c-broker">Broker '+hi+'</th>';
+        if(anyBrokerDocs) contactHdr += '<th class="c-brokerdocs">Broker Docs</th>';
+        var emptyContactCells = '';
+        for(hi=0; hi<maxC; hi++) emptyContactCells += '<td class="c-contact"></td>';
+        for(hi=0; hi<maxB; hi++) emptyContactCells += '<td class="c-broker"></td>';
+        if(anyBrokerDocs) emptyContactCells += '<td class="c-brokerdocs"></td>';
+
+        html += '<table class="unit-table"><thead><tr><th class="c-tenant">Tenant</th><th class="c-suite">Suite</th><th class="c-sf">Square Feet</th><th class="c-rent">Monthly Rent</th><th class="c-sfyr">$/SF/Yr</th><th class="c-status">Status</th><th class="c-expiry">Expiry</th><th class="c-notice">Notice</th><th class="c-action" style="position:relative;">Lease Action '+actionLegend()+'</th><th class="c-lease">Lease</th><th class="c-legacy">Legacy Leases</th><th class="c-coistatus">Insurance Status</th><th class="c-coidocs">Insurance Documents</th>'+contactHdr+'</tr></thead><tbody>';
         var bTotal = 0, bRent = 0;
         bTenants.forEach(function(t) {
           bTotal += t.sf;
@@ -2464,11 +2474,15 @@ function renderPropertyDetail(p) {
           var expSub = t.expiryIn ? '<div style="font-size:10px;font-weight:600;color:'+(toneCol[t.expiryTone]||'#9ca3af')+';">'+t.expiryIn+'</div>' : '';
           var notSub = t.noticeIn ? '<div style="font-size:10px;font-weight:600;color:'+(toneCol[t.noticeTone]||'#9ca3af')+';">'+t.noticeIn+'</div>' : '';
           var suiteNote = t.suiteNote ? '&nbsp;'+infoMarker(String(t.suiteNote).replace(/"/g,"&quot;"),'#b45309') : '';
-          var tenContacts = t.vacant ? '<span style="font-size:11px;color:#d1d5db;">—</span>' : tenantContactsCell(t.tenantId);
-          var brokerContacts = t.vacant ? '<span style="font-size:11px;color:#d1d5db;">—</span>' : brokerContactsCell(t.tenantId, brokerDocsByTenant[t.tenant] || []);
-          html += '<tr><td class="c-tenant" style="font-weight:500;">'+t.tenant+'</td><td class="c-suite">'+t.suite+suiteNote+'</td><td class="c-sf">'+t.sf.toLocaleString()+'</td><td class="c-rent">'+(t.rent>0?'$'+t.rent.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}):'—')+'</td><td class="c-sfyr">'+sfyr+'</td><td class="c-status">'+statusBdg+'</td><td class="c-expiry" style="font-size:12px;'+(t.expiry==='—'?'color:#d1d5db;':'')+'">'+t.expiry+expSub+'</td><td class="c-notice" style="font-size:12px;'+(t.notice==='—'?'color:#d1d5db;':'')+'">'+t.notice+notSub+'</td><td class="c-action">'+actCell+'</td>'+leaseCell+legacyCell+'<td class="c-coistatus">'+insuranceStatusCell(t.insurance)+'</td><td class="c-coidocs">'+insuranceDocsCell(t.insurance)+'</td><td class="c-tencontacts" style="vertical-align:top;min-width:170px;">'+tenContacts+'</td><td class="c-brokers" style="vertical-align:top;min-width:170px;">'+brokerContacts+'</td></tr>';
+          var tenCs = t.vacant ? [] : contactsForTenant(t.tenantId).filter(function(c){ return !c.isBroker; });
+          var brkCs = t.vacant ? [] : contactsForTenant(t.tenantId).filter(function(c){ return c.isBroker; });
+          var contactCells = '', ci;
+          for(ci=0; ci<maxC; ci++) contactCells += '<td class="c-contact" style="vertical-align:top;min-width:150px;">'+contactColCell(tenCs[ci])+'</td>';
+          for(ci=0; ci<maxB; ci++) contactCells += '<td class="c-broker" style="vertical-align:top;min-width:150px;">'+contactColCell(brkCs[ci])+'</td>';
+          if(anyBrokerDocs) contactCells += '<td class="c-brokerdocs" style="vertical-align:top;min-width:150px;">'+(t.vacant?'<span style="font-size:11px;color:#d1d5db;">—</span>':brokerDocsColCell(brokerDocsByTenant[t.tenant] || []))+'</td>';
+          html += '<tr><td class="c-tenant" style="font-weight:500;">'+t.tenant+'</td><td class="c-suite">'+t.suite+suiteNote+'</td><td class="c-sf">'+t.sf.toLocaleString()+'</td><td class="c-rent">'+(t.rent>0?'$'+t.rent.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}):'—')+'</td><td class="c-sfyr">'+sfyr+'</td><td class="c-status">'+statusBdg+'</td><td class="c-expiry" style="font-size:12px;'+(t.expiry==='—'?'color:#d1d5db;':'')+'">'+t.expiry+expSub+'</td><td class="c-notice" style="font-size:12px;'+(t.notice==='—'?'color:#d1d5db;':'')+'">'+t.notice+notSub+'</td><td class="c-action">'+actCell+'</td>'+leaseCell+legacyCell+'<td class="c-coistatus">'+insuranceStatusCell(t.insurance)+'</td><td class="c-coidocs">'+insuranceDocsCell(t.insurance)+'</td>'+contactCells+'</tr>';
         });
-        html += '<tr><td class="c-tenant" style="font-weight:700;">Total ('+bTenants.length+' tenants)</td><td class="c-suite"></td><td class="c-sf">'+bTotal.toLocaleString()+'</td><td class="c-rent">$'+bRent.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})+'</td><td class="c-sfyr"></td><td class="c-status"></td><td class="c-expiry"></td><td class="c-notice"></td><td class="c-action"></td><td class="c-lease"></td><td class="c-legacy"></td><td class="c-coistatus"></td><td class="c-coidocs"></td><td class="c-tencontacts"></td><td class="c-brokers"></td></tr>';
+        html += '<tr><td class="c-tenant" style="font-weight:700;">Total ('+bTenants.length+' tenants)</td><td class="c-suite"></td><td class="c-sf">'+bTotal.toLocaleString()+'</td><td class="c-rent">$'+bRent.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})+'</td><td class="c-sfyr"></td><td class="c-status"></td><td class="c-expiry"></td><td class="c-notice"></td><td class="c-action"></td><td class="c-lease"></td><td class="c-legacy"></td><td class="c-coistatus"></td><td class="c-coidocs"></td>'+emptyContactCells+'</tr>';
         html += '</tbody></table>';
 
         html += '</div>';
