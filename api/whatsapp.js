@@ -237,8 +237,12 @@ function readRaw(req) {
 }
 
 function reply(res, text, followup) {
-  let inner = "<Message>" + xmlEscape(text) + "</Message>";
-  if (followup) inner += "<Message>" + xmlEscape(followup) + "</Message>";
+  // IMPORTANT: send ONE WhatsApp message. Twilio's WhatsApp sender throttles a
+  // burst of multiple <Message> verbs in a single TwiML response and commonly
+  // drops all but the last — which silently swallowed the actual answer and only
+  // delivered the "Was this helpful?" prompt. Fold the followup into one body.
+  const body = followup ? (text + "\n\n— — —\n" + followup) : text;
+  const inner = "<Message>" + xmlEscape(body) + "</Message>";
   res.setHeader("Content-Type", "text/xml");
   res.status(200).send('<?xml version="1.0" encoding="UTF-8"?><Response>' + inner + "</Response>");
 }
