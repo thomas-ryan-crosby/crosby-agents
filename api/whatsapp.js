@@ -68,8 +68,11 @@ export default async function handler(req, res) {
     const answer = await askAssistant(snapshot, body, today);
     return reply(res, answer);
   } catch (e) {
-    console.error("whatsapp handler error:", e && e.message);
-    return reply(res, "Sorry, I hit a problem answering that. Please try again in a moment.");
+    console.error("whatsapp handler error:", e && (e.stack || e.message));
+    // TEMPORARY diagnostic — surfaces the failure reason in the reply so setup
+    // issues can be spotted by text. Revert to a generic message once working.
+    const reason = (e && e.message ? String(e.message) : "unknown").slice(0, 200);
+    return reply(res, "Setup diagnostic — something failed:\n" + reason);
   }
 }
 
