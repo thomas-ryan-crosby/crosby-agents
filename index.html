@@ -1930,7 +1930,14 @@ function rentRollCSS(){
     '.rr-ypills{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:16px;}'+
     '.rr-ypill{font-size:12px;font-weight:600;color:#475569;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:7px;padding:5px 13px;cursor:pointer;}'+
     '.rr-ypill:hover{background:#e2e8f0;}'+
-    '.rr-ypill.active{background:#1f5fdb;border-color:#1f5fdb;color:#fff;}';
+    '.rr-ypill.active{background:#1f5fdb;border-color:#1f5fdb;color:#fff;}'+
+    '.rr-bpill{font-size:12px;font-weight:600;color:#475569;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:7px;padding:5px 13px;cursor:pointer;}'+
+    '.rr-bpill:hover{background:#e2e8f0;}'+
+    '.rr-bpill.active{background:#0f766e;border-color:#0f766e;color:#fff;}'+
+    '.rr-ctl{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:10px;}'+
+    '.rr-ctl-lbl{font-size:11px;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;margin-right:4px;min-width:62px;}'+
+    '.rr-ctl-hint{font-size:10.5px;color:#94a3b8;margin-left:6px;}'+
+    '.rr-yrhd{font-size:14px;font-weight:700;color:#1e3a8a;margin:18px 0 8px;border-top:2px solid #1f5fdb;padding-top:10px;}';
 }
 function ensureRentRollStyles(){ if(document.getElementById('rentRollStyle'))return; var s=document.createElement('style'); s.id='rentRollStyle'; s.textContent=rentRollCSS(); document.head.appendChild(s); }
 var __rr = null;
@@ -1999,7 +2006,7 @@ function openRentRoll(slug){
   var bYear={}; bnames.forEach(function(bn){ bYear[bn]={}; years.forEach(function(Y){ var s=byB[bn].reduce(function(a,l){return a+annualRent(l,Y);},0); bYear[bn][Y]=s; complexYear[Y]+=s; }); });
   __rr={ prop:prop, asOf:asOf, curYear:curYear, maxYear:maxYear, years:years, MN:MN, num2:num2,
     occByB:occByB, totRent:totRent, totOcc:totOcc, occRows:occRows, thresh:thresh, bnames:bnames, byB:byB, bYear:bYear, complexYear:complexYear,
-    monthRent:monthRent, annualRent:annualRent, typeLabel:typeLabel, tab:'overview', year:curYear };
+    monthRent:monthRent, annualRent:annualRent, typeLabel:typeLabel, tab:'overview', years_sel:[curYear], bldgs_sel:bnames.slice() };
   var ov=document.getElementById('rentRollModal');
   if(!ov){ ov=document.createElement('div'); ov.id='rentRollModal'; ov.style.cssText='position:fixed;inset:0;z-index:200;background:rgba(15,23,42,.55);display:flex;align-items:center;justify-content:center;padding:24px;'; ov.addEventListener('click',function(e){ if(e.target===ov) closeRentRoll(); }); document.body.appendChild(ov); }
   ov.innerHTML = '<div style="background:#fff;width:100%;max-width:1080px;max-height:90vh;border-radius:14px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 24px 70px rgba(0,0,0,.45);">'+
@@ -2014,7 +2021,21 @@ function openRentRoll(slug){
   rrRender();
 }
 function rrSetTab(t){ if(__rr){ __rr.tab=t; rrRender(); var c=document.getElementById('rrContent'); if(c) c.scrollTop=0; } }
-function rrSetYear(y){ if(__rr){ __rr.year=y; rrRender(); } }
+function rrToggleYear(y, ev){
+  if(!__rr) return;
+  var multi = ev && (ev.ctrlKey || ev.metaKey);
+  var s=__rr.years_sel, i=s.indexOf(y);
+  if(multi){ if(i>=0){ if(s.length>1) s.splice(i,1); } else { s.push(y); } }
+  else { __rr.years_sel=[y]; }
+  __rr.years_sel.sort(function(a,b){return a-b;});
+  rrRender();
+}
+function rrToggleBldg(bn){
+  if(!__rr) return;
+  var s=__rr.bldgs_sel, i=s.indexOf(bn);
+  if(i>=0) s.splice(i,1); else s.push(bn);
+  rrRender();
+}
 function rrRender(){
   if(!__rr) return;
   var ob=document.getElementById('rrTab-overview'), db=document.getElementById('rrTab-detail');
@@ -2077,10 +2098,23 @@ function rrYearGrid(bn, Y){
 }
 function rrDetailHTML(){
   var R=__rr;
-  var pills='<div class="rr-ypills"><span style="font-size:11px;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;margin-right:4px;">Year</span>'+
-    R.years.map(function(y){ return '<button class="rr-ypill'+(y===R.year?' active':'')+'" onclick="rrSetYear('+y+')">'+y+'</button>'; }).join('')+'</div>';
-  var grids=R.bnames.map(function(bn){ return rrYearGrid(bn, R.year); }).join('');
-  return pills+grids+'<div class="rr-foot">Projected base rent for each month of '+R.year+' (calendar year). Rent steps up in each lease&rsquo;s escalation month; a lease whose committed term ends mid-year shows a partial year then drops to &mdash; (auto-renew leases are committed only through their current term until their notice date passes). Holdover/MTM tenants held at current rent. Base rent only; excludes owner-occupied units.</div>';
+  var yctl='<div class="rr-ctl"><span class="rr-ctl-lbl">Years</span>'+
+    R.years.map(function(y){ return '<button class="rr-ypill'+(R.years_sel.indexOf(y)>=0?' active':'')+'" onclick="rrToggleYear('+y+',event)">'+y+'</button>'; }).join('')+
+    '<span class="rr-ctl-hint">Click a year; Ctrl/&#8984;-click to add or remove years.</span></div>';
+  var bctl='<div class="rr-ctl"><span class="rr-ctl-lbl">Buildings</span>'+
+    R.bnames.map(function(bn){ return '<button class="rr-bpill'+(R.bldgs_sel.indexOf(bn)>=0?' active':'')+'" onclick="rrToggleBldg(\''+bn.replace(/'/g,"\\'")+'\')">'+bn.replace('Building ','Bldg ')+'</button>'; }).join('')+
+    '<span class="rr-ctl-hint">Click to show/hide.</span></div>';
+  var selYears=R.years.filter(function(y){return R.years_sel.indexOf(y)>=0;});
+  var selB=R.bnames.filter(function(bn){return R.bldgs_sel.indexOf(bn)>=0;});
+  var grids='';
+  if(!selB.length){ grids='<div class="rr-note">Select at least one building above to show its rent detail.</div>'; }
+  else if(!selYears.length){ grids='<div class="rr-note">Select at least one year above.</div>'; }
+  else {
+    selYears.forEach(function(Y){
+      grids += '<div class="rr-yrhd">'+Y+'</div>'+selB.map(function(bn){ return rrYearGrid(bn, Y); }).join('');
+    });
+  }
+  return yctl+bctl+grids+'<div class="rr-foot">Projected base rent per month (calendar year). Rent steps up in each lease&rsquo;s escalation month and is &mdash; before the lease commences or after its committed term ends (auto-renew leases are committed only through their current term until their notice date passes). Holdover/MTM tenants held at current rent. Base rent only; excludes owner-occupied units.</div>';
 }
 function rrPrintHTML(){
   var R=__rr;
