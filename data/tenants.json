@@ -2809,7 +2809,7 @@
   },
   {
     "id": "tenant-baker-donelson",
-    "name": "Baker Donelson",
+    "name": "Baker, Donelson, Bearman, Caldwell & Berkowitz, PC",
     "type": "commercial",
     "contactName": null,
     "email": null,
@@ -2818,7 +2818,7 @@
   },
   {
     "id": "tenant-st-paul",
-    "name": "St. Paul",
+    "name": "Lain St. Paul",
     "type": "commercial",
     "contactName": null,
     "email": null,
@@ -2827,7 +2827,7 @@
   },
   {
     "id": "tenant-edelman",
-    "name": "Edelman",
+    "name": "Edelman Financial Engines, LLC",
     "type": "commercial",
     "contactName": null,
     "email": null,
@@ -2854,7 +2854,7 @@
   },
   {
     "id": "tenant-menard",
-    "name": "Menard",
+    "name": "USW-Menard, Inc.",
     "type": "commercial",
     "contactName": null,
     "email": null,
@@ -2881,7 +2881,7 @@
   },
   {
     "id": "tenant-monson",
-    "name": "Monson",
+    "name": "The Monson Law Firm, LLC",
     "type": "commercial",
     "contactName": null,
     "email": null,
@@ -4363,5 +4363,14 @@
     "email": null,
     "phone": "225-235-0144",
     "notes": "Unit 107, Metairie Lake Apartments."
+  },
+  {
+    "id": "tenant-jefferson-capital",
+    "name": "Jefferson Capital (JCM II LLC)",
+    "type": "commercial",
+    "contactName": null,
+    "email": null,
+    "phone": null,
+    "notes": "Building #4, Suite 306. Lessee of record JCM II LLC; lobby directory 'Jefferson Capital Partners'. Lease originated 2021-04-01 ($427/mo), auto-renews annually with 3% escalation."
   }
 ]

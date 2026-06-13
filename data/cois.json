@@ -277,5 +277,70 @@
       "dated": "2022-02-08",
       "title": "COI — Galloway (Building #3) — GL $1M/$2M, umbrella $10M, blanket AI/Crosby cert holder; exp 2023-02-09"
     }
-  }
+  },
+    {
+        "id": "coi-jeffersoncapitalcoi2022",
+        "propertyId": "sanctuary-office-park",
+        "building": "Building #4",
+        "tenant": "Jefferson Capital (JCM II LLC)",
+        "suite": "306",
+        "producer": "CJ Ladner / State Farm Insurance (Covington, LA)",
+        "certificateHolder": "Crosby Development Company LLC",
+        "additionalInsured": true,
+        "coverages": [
+            {
+                "type": "General Liability",
+                "eachOccurrence": 1000000,
+                "generalAggregate": 2000000,
+                "policyNumber": "95-BS-L486-8",
+                "expiration": "2023-02-07"
+            }
+        ],
+        "expiration": "2023-02-07",
+        "file": "JeffersonCapital_COI_2022.pdf",
+        "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/cois%2FJeffersonCapital_COI_2022.pdf?alt=media&token=604e24fe-d67c-4f8f-9b4f-e78da3addb6a",
+        "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/cois-html%2FJeffersonCapital_COI_2022.html?alt=media&token=9fa52105-eb9b-4c3d-a3cf-d91914e2be4d",
+        "date": "2022-09-26",
+        "meta": {
+            "insured": "Jefferson Capital Management LLC",
+            "carrier": "State Farm Fire and Casualty Company",
+            "policyNumber": "95-BS-L486-8",
+            "documentType": "Certificate of Liability Insurance (ACORD 25)",
+            "dated": "2022-09-26",
+            "title": "COI — Jefferson Capital / JCM II (Building #4, Suite 306) — GL $1M/$2M, Crosby AI + cert holder; EXPIRED 2023-02-07"
+        }
+    },
+    {
+        "id": "coi-monsoncoi2024",
+        "propertyId": "sanctuary-office-park",
+        "building": "Building #5",
+        "tenant": "The Monson Law Firm, LLC",
+        "suite": "101 & 202",
+        "producer": "CS&S / Gilsbar Specialty Insurance Services LLC",
+        "certificateHolder": "Crosby Development Company, LLC",
+        "additionalInsured": true,
+        "coverages": [
+            {
+                "type": "General Liability",
+                "eachOccurrence": 1000000,
+                "generalAggregate": 2000000,
+                "productsCompletedOps": 4000000,
+                "policyNumber": "4024411867",
+                "expiration": "2026-01-17"
+            }
+        ],
+        "expiration": "2026-01-17",
+        "file": "Monson_COI_2024.pdf",
+        "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/cois%2FMonson_COI_2024.pdf?alt=media&token=0f8dad99-cfc4-40a1-a832-a77e39c5d668",
+        "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/cois-html%2FMonson_COI_2024.html?alt=media&token=b863cbc1-f924-4e25-8f9a-593ec40f9f1e",
+        "date": "2024-12-07",
+        "meta": {
+            "insured": "The Monson Law Firm, LLC",
+            "carrier": "Continental Casualty Company",
+            "policyNumber": "4024411867",
+            "documentType": "Certificate of Liability Insurance (ACORD 25)",
+            "dated": "2024-12-07",
+            "title": "COI — Monson Law Firm (Building #5, Suite 101) — GL $1M/$2M (prod/comp-ops $4M), Crosby AI + cert holder; EXPIRED 2026-01-17"
+        }
+    }
 ]
