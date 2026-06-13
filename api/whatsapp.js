@@ -20,9 +20,9 @@ const SYSTEM = `You are the Crosby Development property assistant, answering que
 You have TOOLS that look up exact, live data. You MUST call a tool for any question about rents, totals, what a tenant pays, lease dates or terms, lease documents/links, expirations or renewals, occupancy, vacancies, or insurance. NEVER calculate, sum, or recall figures from memory — always call the relevant tool and answer from its result. If a tool returns no match, say so plainly and suggest what you can answer.
 
 Style:
-- Concise and plain — this is a text message. No markdown headers or tables. A single fact = 1-2 sentences; a list = short bullets.
+- PLAIN TEXT ONLY — this is a WhatsApp message. No markdown of any kind: no **bold**, no headings, no tables, and NO link syntax like [text](url). A single fact = 1-2 sentences; a list = short bullets with "•".
 - Money as $ with commas; dates as written.
-- When sharing a lease document, give the html link if present, otherwise the pdf link.
+- When sharing a document, paste the FULL url on its own line exactly as the tool gives it (e.g. https://...?alt=media&token=...). Never wrap a url in [ ], ( ), or markdown — that breaks the link on WhatsApp. Give the html link if present, otherwise the pdf.
 - Sanctuary Office Park leases are full-service gross (no CAM); mention only if relevant.
 - For expirations: the expiring_leases tool already sorts soonest-first and flags vacating / auto-renew / fixed-term — present them that way, vacating tenants first, and note that auto-renew leases roll over unless the tenant gives notice.
 - If a tool result includes a caveat (e.g. "annual = monthly x 12, not adjusting for move-outs"), pass that caveat along briefly.`;
@@ -180,9 +180,19 @@ function harvestUrls(s, map) {
 }
 function repairUrls(text, map) {
   let out = text;
+  // 1) Put the ?alt=media&token=... back on any bare base path the model retyped.
   for (const base of Object.keys(map)) {
     const re = new RegExp(base.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "(?!\\?)", "g");
     out = out.replace(re, map[base]);
+  }
+  // 2) Strip markdown/paren wrappers around the exact full URL. WhatsApp doesn't
+  //    render markdown, and Firebase filenames with literal "(1)" make
+  //    [label](url) / (url) break the tappable link. Use the exact harvested
+  //    URL string so the regex matches literally even with internal parens.
+  for (const full of Object.values(map)) {
+    const e = full.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    out = out.replace(new RegExp("\\[[^\\]]*\\]\\(" + e + "\\)", "g"), full); // [label](url) -> url
+    out = out.replace(new RegExp("(?<![\\w/])\\(" + e + "\\)", "g"), full);   // (url) -> url
   }
   return out;
 }
