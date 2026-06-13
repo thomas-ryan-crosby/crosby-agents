@@ -107,6 +107,20 @@
     .table-scroll .unit-table tr:last-child .c-tenant { background: #f9fafb; }
     .table-scroll::-webkit-scrollbar { height: 9px; }
     .table-scroll::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 5px; }
+    /* Column show/hide control (pill toggles) */
+    .colbar { margin-bottom: 16px; padding: 14px 16px; }
+    .colbar-head { display: flex; align-items: center; gap: 7px; font-size: 11px; font-weight: 700; color: #374151; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 13px; }
+    .colbar-reset { margin-left: auto; font-size: 11px; font-weight: 600; text-transform: none; letter-spacing: 0; color: #1f5fdb; background: transparent; border: 1px solid #dbe4f3; border-radius: 6px; padding: 4px 11px; cursor: pointer; transition: background .12s ease; }
+    .colbar-reset:hover { background: #eff4fd; }
+    .colbar-body { display: flex; flex-direction: column; gap: 11px; }
+    .colgrp { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+    .colgrp-lbl { flex: 0 0 64px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: #9ca3af; }
+    .colgrp-pills { display: flex; flex-wrap: wrap; gap: 6px; }
+    .colpill { font-size: 12px; font-weight: 500; padding: 4px 12px; border-radius: 999px; cursor: pointer; border: 1px solid; line-height: 1.45; transition: all .12s ease; }
+    .colpill[data-on="1"] { background: #1f5fdb; color: #fff; border-color: #1f5fdb; }
+    .colpill[data-on="1"]:hover { background: #1a52bd; border-color: #1a52bd; }
+    .colpill[data-on="0"] { background: #fff; color: #9ca3af; border-color: #e5e7eb; }
+    .colpill[data-on="0"]:hover { border-color: #cbd5e1; color: #6b7280; }
     .table-scroll::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
     .prop-expand { font-size: 11px; color: #2563eb; display: flex; align-items: center; gap: 4px; margin-top: 10px; font-weight: 500; }
     .prop-card:hover .prop-expand { color: #1d4ed8; }
@@ -1883,7 +1897,14 @@ var detailCharts = {};
 
 // Show/hide columns for the commercial tenant tables. Column cells carry a
 // `c-<key>` class; hidden columns are suppressed by a single global <style>.
-var SOP_COLS = [['tenant','Tenant'],['suite','Suite'],['sf','Square Feet'],['rent','Monthly Rent'],['sfyr','$/SF/Yr'],['status','Status'],['expiry','Expiry'],['notice','Notice'],['action','Lease Action'],['lease','Lease'],['legacy','Legacy Leases'],['coistatus','Insurance Status'],['coidocs','Insurance Documents']];
+// Column show/hide groups. Keys map to the .c-<key> class on each column, so a
+// single toggle hides every column in that group (e.g. all Legacy / COI / Contact
+// columns at once). Tenant stays pinned and is not toggleable.
+var SOP_COL_GROUPS = [
+  ['Lease', [['suite','Suite'],['sf','Sq Ft'],['rent','Rent'],['sfyr','$/SF/Yr'],['status','Status'],['expiry','Expiry'],['notice','Notice'],['action','Lease Action']]],
+  ['Documents', [['lease','Lease'],['legacy','Legacy'],['coistatus','Insurance'],['coidocs','COI Docs']]],
+  ['People', [['contact','Tenant Contacts'],['broker','Brokers'],['brokerdocs','Broker Docs']]],
+];
 
 // One-time styles for the lease widget + metadata hover card.
 function ensureLeaseStyles() {
@@ -2294,17 +2315,33 @@ function applySopCols() {
   if(!el){ el = document.createElement('style'); el.id = 'sopColStyle'; document.head.appendChild(el); }
   el.textContent = css;
 }
-function toggleSopCol(col, show) {
-  sopHiddenCols = sopHiddenCols.filter(function(c){ return c!==col; });
-  if(!show) sopHiddenCols.push(col);
+function toggleSopCol(col, el) {
+  var i = sopHiddenCols.indexOf(col);
+  if(i>=0) sopHiddenCols.splice(i,1); else sopHiddenCols.push(col);
   try { localStorage.setItem('sopHiddenCols', JSON.stringify(sopHiddenCols)); } catch(e) {}
   applySopCols();
+  if(el) el.setAttribute('data-on', sopHiddenCols.indexOf(col)<0 ? '1' : '0');
 }
+function resetSopCols() {
+  sopHiddenCols = [];
+  try { localStorage.setItem('sopHiddenCols','[]'); } catch(e) {}
+  applySopCols();
+  document.querySelectorAll('.colpill').forEach(function(p){ p.setAttribute('data-on','1'); });
+}
+// Design-forward column control: pill toggles grouped by purpose. A filled pill
+// is showing; a muted pill is hidden. One pill controls a whole column group.
 function sopColToggleBar() {
-  return '<div class="card" style="margin-bottom:16px;padding:10px 14px;"><div style="display:flex;align-items:center;flex-wrap:wrap;gap:14px;">'+
-    '<span style="font-size:11px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;">Columns</span>'+
-    SOP_COLS.map(function(c){ var ck = sopHiddenCols.indexOf(c[0])<0?'checked':''; return '<label style="font-size:12px;color:#374151;display:inline-flex;align-items:center;gap:5px;cursor:pointer;"><input type="checkbox" '+ck+' onchange="toggleSopCol(\''+c[0]+'\',this.checked)"> '+c[1]+'</label>'; }).join('')+
-    '</div></div>';
+  var groups = SOP_COL_GROUPS.map(function(g){
+    var pills = g[1].map(function(c){
+      var on = sopHiddenCols.indexOf(c[0])<0;
+      return '<button type="button" class="colpill" data-on="'+(on?'1':'0')+'" onclick="toggleSopCol(\''+c[0]+'\',this)">'+c[1]+'</button>';
+    }).join('');
+    return '<div class="colgrp"><span class="colgrp-lbl">'+g[0]+'</span><div class="colgrp-pills">'+pills+'</div></div>';
+  }).join('');
+  return '<div class="card colbar">'+
+    '<div class="colbar-head">'+iconSvg('sliders-horizontal',15,'#1f5fdb')+'<span>Columns</span>'+
+      '<button type="button" class="colbar-reset" onclick="resetSopCols()">Show all</button></div>'+
+    '<div class="colbar-body">'+groups+'</div></div>';
 }
 
 // Current Market Info modal — shows the hosted market study in an overlay iframe.
@@ -2447,16 +2484,29 @@ function renderPropertyDetail(p) {
           maxB = Math.max(maxB, cs.filter(function(c){ return c.isBroker; }).length);
           if((brokerDocsByTenant[t.tenant]||[]).length) anyBrokerDocs = true;
         });
-        var contactHdr = '';
+        // Legacy leases + insurance docs also flatten to one-per-column.
+        var insDocsOf = function(t){ var ins=t.insurance; return (ins&&ins.docs&&ins.docs.length)?ins.docs:(ins&&ins.doc?[ins.doc]:[]); };
+        var maxLegacy = 0, maxCoi = 0;
+        bTenants.forEach(function(t) {
+          if(t.vacant) return;
+          maxLegacy = Math.max(maxLegacy, Math.max(0, (docsByTenant[t.tenant]||[]).length - 1));
+          maxCoi = Math.max(maxCoi, insDocsOf(t).length);
+        });
+        var legacyHdr = '', coiHdr = '', contactHdr = '';
+        for(hi=1; hi<=maxLegacy; hi++) legacyHdr += '<th class="c-legacy">Legacy '+hi+'</th>';
+        for(hi=1; hi<=maxCoi; hi++) coiHdr += '<th class="c-coidocs">COI '+hi+'</th>';
         for(hi=1; hi<=maxC; hi++) contactHdr += '<th class="c-contact">Contact '+hi+'</th>';
         for(hi=1; hi<=maxB; hi++) contactHdr += '<th class="c-broker">Broker '+hi+'</th>';
         if(anyBrokerDocs) contactHdr += '<th class="c-brokerdocs">Broker Docs</th>';
-        var emptyContactCells = '';
-        for(hi=0; hi<maxC; hi++) emptyContactCells += '<td class="c-contact"></td>';
-        for(hi=0; hi<maxB; hi++) emptyContactCells += '<td class="c-broker"></td>';
-        if(anyBrokerDocs) emptyContactCells += '<td class="c-brokerdocs"></td>';
+        var emptyTail = '';
+        for(hi=0; hi<maxLegacy; hi++) emptyTail += '<td class="c-legacy"></td>';
+        emptyTail += '<td class="c-coistatus"></td>';
+        for(hi=0; hi<maxCoi; hi++) emptyTail += '<td class="c-coidocs"></td>';
+        for(hi=0; hi<maxC; hi++) emptyTail += '<td class="c-contact"></td>';
+        for(hi=0; hi<maxB; hi++) emptyTail += '<td class="c-broker"></td>';
+        if(anyBrokerDocs) emptyTail += '<td class="c-brokerdocs"></td>';
 
-        html += '<table class="unit-table"><thead><tr><th class="c-tenant">Tenant</th><th class="c-suite">Suite</th><th class="c-sf">Square Feet</th><th class="c-rent">Monthly Rent</th><th class="c-sfyr">$/SF/Yr</th><th class="c-status">Status</th><th class="c-expiry">Expiry</th><th class="c-notice">Notice</th><th class="c-action" style="position:relative;">Lease Action '+actionLegend()+'</th><th class="c-lease">Lease</th><th class="c-legacy">Legacy Leases</th><th class="c-coistatus">Insurance Status</th><th class="c-coidocs">Insurance Documents</th>'+contactHdr+'</tr></thead><tbody>';
+        html += '<table class="unit-table"><thead><tr><th class="c-tenant">Tenant</th><th class="c-suite">Suite</th><th class="c-sf">Square Feet</th><th class="c-rent">Monthly Rent</th><th class="c-sfyr">$/SF/Yr</th><th class="c-status">Status</th><th class="c-expiry">Expiry</th><th class="c-notice">Notice</th><th class="c-action" style="position:relative;">Lease Action '+actionLegend()+'</th><th class="c-lease">Lease</th>'+legacyHdr+'<th class="c-coistatus">Insurance Status</th>'+coiHdr+contactHdr+'</tr></thead><tbody>';
         var bTotal = 0, bRent = 0;
         bTenants.forEach(function(t) {
           bTotal += t.sf;
@@ -2466,8 +2516,13 @@ function renderPropertyDetail(p) {
           var tdocs = docsByTenant[t.tenant] || [];
           var curDoc = tdocs[0] || null;
           var legacyDocs = tdocs.slice(1);
-          var leaseCell = '<td class="c-lease">'+(curDoc ? leaseWidget(curDoc) : '<span style="font-size:11px;color:#d1d5db;">—</span>')+'</td>';
-          var legacyCell = '<td class="c-legacy">'+(legacyDocs.length ? legacyDocs.map(leaseWidget).join('<br>') : '<span style="font-size:11px;color:#d1d5db;">—</span>')+'</td>';
+          var dash = '<span style="font-size:11px;color:#d1d5db;">—</span>';
+          var leaseCell = '<td class="c-lease">'+(curDoc ? leaseWidget(curDoc) : dash)+'</td>';
+          var legacyCells = '', di;
+          for(di=0; di<maxLegacy; di++) legacyCells += '<td class="c-legacy" style="vertical-align:top;">'+(legacyDocs[di] ? leaseWidget(legacyDocs[di]) : dash)+'</td>';
+          var coiArr = t.vacant ? [] : insDocsOf(t);
+          var coiCells = '';
+          for(di=0; di<maxCoi; di++) coiCells += '<td class="c-coidocs" style="vertical-align:top;">'+(coiArr[di] ? leaseWidget(coiArr[di]) : dash)+'</td>';
           var actTone = {steady:'badge-approved',attention:'badge-pending',urgent:'badge-revision',neutral:'badge-idle'}[(t.action&&t.action.tone)||'neutral'];
           var actCell = t.action && t.action.label !== '—' ? '<span class="badge '+actTone+'">'+t.action.label+'</span>' : '<span style="color:#d1d5db;">—</span>';
           var toneCol = {urgent:'#dc2626',attention:'#b45309',steady:'#059669',neutral:'#9ca3af'};
@@ -2480,9 +2535,9 @@ function renderPropertyDetail(p) {
           for(ci=0; ci<maxC; ci++) contactCells += '<td class="c-contact" style="vertical-align:top;min-width:150px;">'+contactColCell(tenCs[ci])+'</td>';
           for(ci=0; ci<maxB; ci++) contactCells += '<td class="c-broker" style="vertical-align:top;min-width:150px;">'+contactColCell(brkCs[ci])+'</td>';
           if(anyBrokerDocs) contactCells += '<td class="c-brokerdocs" style="vertical-align:top;min-width:150px;">'+(t.vacant?'<span style="font-size:11px;color:#d1d5db;">—</span>':brokerDocsColCell(brokerDocsByTenant[t.tenant] || []))+'</td>';
-          html += '<tr><td class="c-tenant" style="font-weight:500;">'+t.tenant+'</td><td class="c-suite">'+t.suite+suiteNote+'</td><td class="c-sf">'+t.sf.toLocaleString()+'</td><td class="c-rent">'+(t.rent>0?'$'+t.rent.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}):'—')+'</td><td class="c-sfyr">'+sfyr+'</td><td class="c-status">'+statusBdg+'</td><td class="c-expiry" style="font-size:12px;'+(t.expiry==='—'?'color:#d1d5db;':'')+'">'+t.expiry+expSub+'</td><td class="c-notice" style="font-size:12px;'+(t.notice==='—'?'color:#d1d5db;':'')+'">'+t.notice+notSub+'</td><td class="c-action">'+actCell+'</td>'+leaseCell+legacyCell+'<td class="c-coistatus">'+insuranceStatusCell(t.insurance)+'</td><td class="c-coidocs">'+insuranceDocsCell(t.insurance)+'</td>'+contactCells+'</tr>';
+          html += '<tr><td class="c-tenant" style="font-weight:500;">'+t.tenant+'</td><td class="c-suite">'+t.suite+suiteNote+'</td><td class="c-sf">'+t.sf.toLocaleString()+'</td><td class="c-rent">'+(t.rent>0?'$'+t.rent.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}):'—')+'</td><td class="c-sfyr">'+sfyr+'</td><td class="c-status">'+statusBdg+'</td><td class="c-expiry" style="font-size:12px;'+(t.expiry==='—'?'color:#d1d5db;':'')+'">'+t.expiry+expSub+'</td><td class="c-notice" style="font-size:12px;'+(t.notice==='—'?'color:#d1d5db;':'')+'">'+t.notice+notSub+'</td><td class="c-action">'+actCell+'</td>'+leaseCell+legacyCells+'<td class="c-coistatus">'+insuranceStatusCell(t.insurance)+'</td>'+coiCells+contactCells+'</tr>';
         });
-        html += '<tr><td class="c-tenant" style="font-weight:700;">Total ('+bTenants.length+' tenants)</td><td class="c-suite"></td><td class="c-sf">'+bTotal.toLocaleString()+'</td><td class="c-rent">$'+bRent.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})+'</td><td class="c-sfyr"></td><td class="c-status"></td><td class="c-expiry"></td><td class="c-notice"></td><td class="c-action"></td><td class="c-lease"></td><td class="c-legacy"></td><td class="c-coistatus"></td><td class="c-coidocs"></td>'+emptyContactCells+'</tr>';
+        html += '<tr><td class="c-tenant" style="font-weight:700;">Total ('+bTenants.length+' tenants)</td><td class="c-suite"></td><td class="c-sf">'+bTotal.toLocaleString()+'</td><td class="c-rent">$'+bRent.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})+'</td><td class="c-sfyr"></td><td class="c-status"></td><td class="c-expiry"></td><td class="c-notice"></td><td class="c-action"></td><td class="c-lease"></td>'+emptyTail+'</tr>';
         html += '</tbody></table>';
 
         html += '</div>';
