@@ -2476,7 +2476,7 @@ function flyerTileBox(clat, clng, z, bw, bh, offx, offy){
 // everyday amenities color-coded by use, schools, and neighborhoods — plus a
 // small regional-access inset. Far destinations appear as Drive Times in the legend.
 function flyerAmenityMap(){
-  var W=1000, H=600;
+  var W=1000, H=556;
   var main=flyerTileBox(30.391,-90.0905,15,W,H,0,0), P=main.P;
   var hoods='';
   FLYER_HOODS.forEach(function(h){ var xy=P(h.lat,h.lng);
@@ -2532,15 +2532,29 @@ function flyerDoc(r){
   var rate = ins ? ins.rate : MARKET_TLDR.sfRate;
   var moAsk = r.sf ? Math.round(r.sf*rate/12) : 0;
   var yrAsk = r.sf ? r.sf*rate : 0;
-  var leasing = { name:'Ryan Crosby', phone:'(985) 373-2383', email:'ryan@crosbydevelopment.com' };
+  var leasing = [
+    { name:'Ryan Crosby',  phone:'(985) 373-2383', email:'ryan@crosbydevelopment.com' },
+    { name:'Tommy Crosby', phone:'(985) 789-6252', email:'tommy@crosbydevelopment.com' },
+  ];
   var fmt = function(n){ return n ? '$'+n.toLocaleString() : '—'; };
   var NAVY='#22315d', BLUE='#5e8ed0';
+  var avail = (!r.tenant || r.tenant==='(Vacant)') ? 'Immediate' : 'Call for timing';
   var hi = [
     'Class A, full-service office on a 5-building, ~96,000 SF campus — currently ~99% leased.',
-    'Causeway-adjacent in Mandeville: a ~25-minute commute to Metairie / New Orleans across the lake.',
+    'Causeway-adjacent in Mandeville — a ~25-minute commute to Metairie & New Orleans across the lake.',
     'Full-service gross: one number covers taxes, insurance, CAM and janitorial — no year-end reconciliation.',
-    'Predictable economics: a fixed 3% annual step for the life of the lease.',
-    'Professional tenancy — law, insurance, financial, title and medical firms.',
+    'Move-in ready, professionally managed, with ample surface parking on a beautifully landscaped campus.',
+    'Established professional tenancy — law, insurance, financial, title and medical firms.',
+  ];
+  var terms = [
+    ['Asking Rate', '$'+rate+' / SF <em>FSG</em>'],
+    ['Lease Type', 'Full-Service Gross'],
+    ['Est. Monthly', fmt(moAsk)],
+    ['Lease Term', 'Flexible · 3–7 yrs'],
+    ['Escalations', 'Fixed 3% / year'],
+    ['Improvements', 'Negotiable to suit'],
+    ['Parking', 'Ample surface'],
+    ['Availability', avail],
   ];
   var suiteLine = escHtml(r.building)+' · Suite '+escHtml(r.suite);
   return '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'+
@@ -2555,30 +2569,35 @@ function flyerDoc(r){
   '.topbar img{height:38px;}'+
   '.tag{font-size:11px;font-weight:800;letter-spacing:.18em;color:'+NAVY+';text-align:right;}'+
   '.tag span{display:block;font-size:9px;font-weight:600;letter-spacing:.12em;color:#8a93a3;margin-top:3px;}'+
-  '.hero{background:linear-gradient(135deg,'+NAVY+' 0%,#2c3f72 60%,'+BLUE+' 160%);color:#fff;padding:24px 0.6in 22px;}'+
+  '.hero{background:linear-gradient(135deg,'+NAVY+' 0%,#2c3f72 60%,'+BLUE+' 160%);color:#fff;padding:18px 0.6in 16px;}'+
   '.hero h1{margin:0;font-size:30px;letter-spacing:-.01em;}'+
   '.hero .sub{font-size:13px;color:#c5d6f0;margin-top:6px;letter-spacing:.02em;}'+
   '.hero .suite{margin-top:18px;display:inline-block;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:8px;padding:9px 16px;font-size:15px;font-weight:700;}'+
+  '.hero .ribbon{margin-top:14px;font-size:11px;font-weight:700;letter-spacing:.04em;color:#cfe0f6;text-transform:uppercase;}'+
+  '.hero .ribbon span{color:#7fa8e0;margin:0 9px;}'+
   '.facts{display:flex;gap:0;border-bottom:1px solid #e7ecf3;}'+
   '.facts>div{flex:1;padding:16px 18px;border-right:1px solid #eef2f7;}'+
   '.facts>div:last-child{border-right:0;}'+
   '.facts .l{font-size:9px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:#9aa4b4;}'+
   '.facts .v{font-size:21px;font-weight:800;color:'+NAVY+';margin-top:3px;}'+
   '.facts .v small{font-size:11px;font-weight:600;color:#8a93a3;}'+
-  '.cols{display:flex;gap:26px;margin-top:22px;}'+
+  '.cols{display:flex;gap:26px;margin-top:14px;}'+
   '.h{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:'+BLUE+';margin:0 0 9px;}'+
   '.lead{font-size:13px;line-height:1.6;color:#36404f;}'+
   'ul.hl{margin:8px 0 0;padding-left:0;list-style:none;}'+
   'ul.hl li{position:relative;padding-left:20px;font-size:12.5px;line-height:1.5;margin-bottom:9px;color:#2b3441;}'+
   'ul.hl li:before{content:"";position:absolute;left:0;top:6px;width:9px;height:9px;background:'+BLUE+';border-radius:2px;}'+
-  '.insbox{background:#f5f8fc;border:1px solid #e4ecf6;border-radius:10px;padding:15px 16px;}'+
-  '.insrow{margin-bottom:11px;}'+
-  '.insrow .k{font-size:9px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#9aa4b4;}'+
-  '.insrow .d{font-size:12.5px;color:#2b3441;line-height:1.45;margin-top:1px;}'+
-  '.pitch{margin:26px 0.6in 0;background:'+NAVY+';color:#fff;border-radius:12px;padding:20px 24px;}'+
+  '.terms{background:#f5f8fc;border:1px solid #e4ecf6;border-radius:10px;padding:4px 16px;}'+
+  '.trow{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:7.5px 0;border-bottom:1px solid #e8eef7;font-size:12.5px;}'+
+  '.trow:last-child{border-bottom:0;}'+
+  '.tk{color:#7e8794;font-weight:600;}'+
+  '.tv{color:'+NAVY+';font-weight:700;text-align:right;white-space:nowrap;}'+
+  '.tv em{font-style:normal;font-weight:600;color:#8a93a3;font-size:11px;}'+
+  '.terms-note{font-size:11px;color:#6b7480;line-height:1.5;margin-top:11px;font-style:italic;border-left:2px solid '+BLUE+';padding-left:10px;}'+
+  '.pitch{margin:16px 0.6in 0;background:'+NAVY+';color:#fff;border-radius:12px;padding:17px 22px;}'+
   '.pitch .q{font-size:16px;font-weight:700;line-height:1.45;}'+
   '.pitch .a{font-size:12px;color:#bcd0ee;margin-top:8px;line-height:1.5;}'+
-  '.leg{margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:13px 28px;}'+
+  '.leg{margin-top:13px;display:grid;grid-template-columns:1fr 1fr;gap:11px 28px;}'+
   '.leg-sec.full{grid-column:1 / -1;}'+
   '.leg-h{font-size:10px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:'+BLUE+';margin-bottom:7px;border-bottom:1px solid #eef2f7;padding-bottom:4px;}'+
   '.leg-items{display:flex;flex-wrap:wrap;gap:7px 16px;}'+
@@ -2592,12 +2611,19 @@ function flyerDoc(r){
   '.drive{display:flex;justify-content:space-between;align-items:baseline;gap:8px;border-bottom:1px dotted #e2e8f0;padding-bottom:3px;font-size:12px;}'+
   '.drive span{color:#475569;}'+
   '.drive b{color:'+NAVY+';font-weight:700;white-space:nowrap;}'+
-  '.foot{position:absolute;bottom:0;left:0;right:0;background:'+NAVY+';color:#fff;padding:16px 0.6in;display:flex;justify-content:space-between;align-items:center;}'+
-  '.foot .c{font-size:12px;line-height:1.5;}'+
-  '.foot .c b{font-size:13px;}'+
-  '.foot .c span{color:#bcd0ee;}'+
-  '.foot img{height:40px;filter:brightness(0) invert(1);opacity:.95;}'+
-  '.disc{font-size:8.5px;color:#9aa4b4;padding:10px 0.6in;line-height:1.4;}'+
+  '.contact{position:absolute;bottom:0;left:0;right:0;background:'+NAVY+';color:#fff;padding:18px 0.6in 15px;}'+
+  '.contact .ch{font-size:11px;font-weight:800;letter-spacing:.14em;color:#9fc0ee;text-transform:uppercase;margin-bottom:13px;}'+
+  '.contact-grid{display:flex;gap:38px;align-items:flex-start;}'+
+  '.cc .nm{font-size:16px;font-weight:800;letter-spacing:-.01em;}'+
+  '.cc .ln{font-size:12.5px;color:#dce8f8;line-height:1.65;margin-top:2px;}'+
+  '.cc .ln a{color:#dce8f8;text-decoration:none;}'+
+  '.contact .co{margin-left:auto;text-align:right;}'+
+  '.contact .co img{height:34px;filter:brightness(0) invert(1);}'+
+  '.contact .co .addr{font-size:10px;color:#9fb6da;margin-top:7px;line-height:1.5;}'+
+  '.p1foot{position:absolute;bottom:0;left:0;right:0;padding:9px 0.6in;border-top:1px solid #eef2f7;display:flex;justify-content:space-between;align-items:center;gap:14px;}'+
+  '.p1foot .lz{font-size:11px;color:#475569;}'+
+  '.p1foot .lz b{color:'+NAVY+';}'+
+  '.p1foot .dz{font-size:8.5px;color:#aab2c0;text-align:right;line-height:1.35;max-width:3in;}'+
   '.bar{display:none;}'+
   '@media screen{body{padding:18px 0;}.page{box-shadow:0 8px 40px rgba(0,0,0,.28);margin-bottom:24px;}'+
     '.bar{display:flex;gap:10px;justify-content:center;margin-bottom:18px;}'+
@@ -2612,28 +2638,26 @@ function flyerDoc(r){
     '<div class="topbar"><img src="'+CROSBY_LOGO_URL+'" alt="Crosby Development"><div class="tag">FOR LEASE<span>OFFERING SUMMARY</span></div></div>'+
     '<div class="hero"><h1>Sanctuary Office Park</h1>'+
       '<div class="sub">Class A Office Campus · #1 Sanctuary Blvd, Mandeville, LA 70471</div>'+
-      '<div class="suite">'+suiteLine+'  ·  '+(r.sf?r.sf.toLocaleString()+' SF':'SF available')+'</div></div>'+
+      '<div class="suite">'+suiteLine+'  ·  '+(r.sf?r.sf.toLocaleString()+' SF':'SF available')+'</div>'+
+      '<div class="ribbon">~99% Leased<span>•</span>5-Building Class A Campus<span>•</span>Full-Service Gross<span>•</span>25 Min to New Orleans</div></div>'+
     '<div class="facts">'+
       '<div><div class="l">Available</div><div class="v">'+(r.sf?r.sf.toLocaleString()+' <small>SF</small>':'—')+'</div></div>'+
       '<div><div class="l">Asking</div><div class="v">$'+rate+' <small>/SF · FSG</small></div></div>'+
       '<div><div class="l">Est. Monthly</div><div class="v">'+fmt(moAsk)+'</div></div>'+
       '<div><div class="l">Lease Type</div><div class="v" style="font-size:15px;">Full-Service Gross</div></div>'+
     '</div>'+
-    '<div class="pad" style="padding-top:22px;padding-bottom:8px;"><div class="cols">'+
+    '<div class="pad" style="padding-top:16px;padding-bottom:6px;"><div class="cols">'+
       '<div style="flex:1.25;"><div class="h">The Opportunity</div>'+
         '<div class="lead">A rare full-service availability on Mandeville’s premier Class A office campus. Sanctuary Office Park sits at the foot of the Lake Pontchartrain Causeway — a quick commute to Metairie and New Orleans — and runs ~99% leased, a standout in a Northshore market where the typical office sits ~142 days. Sign one number; we cover the rest.</div>'+
         '<ul class="hl">'+hi.map(function(x){ return '<li>'+escHtml(x)+'</li>'; }).join('')+'</ul></div>'+
-      '<div style="flex:1;">'+(ins?('<div class="h">Suite Profile</div><div class="insbox">'+
-        '<div style="font-size:13px;font-weight:800;color:'+NAVY+';margin-bottom:10px;">'+escHtml(ins.label)+'</div>'+
-        '<div class="insrow"><div class="k">Suggested Asking</div><div class="d"><b>$'+rate+'/SF</b> full-service gross · '+fmt(yrAsk)+'/yr</div></div>'+
-        '<div class="insrow"><div class="k">Demand</div><div class="d">'+escHtml(ins.demand)+'</div></div>'+
-        '<div class="insrow"><div class="k">Time to Lease</div><div class="d">'+escHtml(ins.time)+'</div></div>'+
-        '<div class="insrow" style="margin-bottom:0;"><div class="k">Ideal Tenant</div><div class="d">'+escHtml(ins.tenants)+'</div></div>'+
-        '</div>'):'')+'</div>'+
+      '<div style="flex:1;"><div class="h">Lease Terms</div><div class="terms">'+
+        terms.map(function(t){ return '<div class="trow"><span class="tk">'+t[0]+'</span><span class="tv">'+t[1]+'</span></div>'; }).join('')+
+        '</div><div class="terms-note">Asking rate is a starting point — open to discussion based on lease term, tenant-improvement needs, and other factors. Let’s tailor a deal that works.</div></div>'+
     '</div></div>'+
     '<div class="pitch"><div class="q">“Our number is your total number — no CAM, no chargebacks, no January reconciliation, janitorial included.”</div>'+
       '<div class="a">A competing NNN building quotes ~$19 base, then bills taxes, insurance, CAM and your own cleaning — roughly $23–$31 all-in — and trues it up every year. Full-service is rare here: just three Class A buildings in the parish offer it, and Sanctuary is priced right with them.</div></div>'+
-    '<div class="disc" style="position:absolute;bottom:14px;">Prepared '+new Date().toLocaleDateString("en-US",{month:"long",year:"numeric"})+' by Crosby Development Company, L.L.C. Rates and availability subject to change; verify all figures before relying on them.</div>'+
+    '<div class="p1foot"><div class="lz"><b>Leasing:</b> Ryan Crosby (985) 373-2383 &middot; Tommy Crosby (985) 789-6252 &middot; crosbydevelopment.com</div>'+
+      '<div class="dz">Prepared '+new Date().toLocaleDateString("en-US",{month:"long",year:"numeric"})+' &middot; Rates &amp; availability subject to change.</div></div>'+
   '</div>'+
 
   // PAGE 2
@@ -2641,7 +2665,7 @@ function flyerDoc(r){
     '<div class="topbar"><img src="'+CROSBY_LOGO_URL+'" alt="Crosby Development"><div class="tag">LOCATION & AMENITIES<span>SANCTUARY OFFICE PARK</span></div></div>'+
     '<div class="pad" style="padding-bottom:0;">'+
       '<div class="h">At the Heart of the Mandeville–Covington Northshore</div>'+
-      '<div class="lead" style="margin-bottom:16px;">Sanctuary anchors St. Tammany’s premier office submarket — minutes from top-rated schools, regional healthcare, the parish seat and courthouse, and the full US-190 retail corridor, and ~25 minutes to New Orleans across the Lake Pontchartrain Causeway.</div>'+
+      '<div class="lead" style="margin-bottom:12px;">Sanctuary anchors St. Tammany’s premier office submarket — minutes from top-rated schools, regional healthcare, the parish seat and courthouse, and the full US-190 retail corridor, and ~25 minutes to New Orleans across the Lake Pontchartrain Causeway.</div>'+
       flyerAmenityMap()+
       '<div class="leg">'+
         '<div class="leg-sec full"><div class="leg-h">Drive Times</div>'+
@@ -2656,10 +2680,11 @@ function flyerDoc(r){
         '<div class="leg-sec full"><div class="leg-h">Residential Neighborhoods</div><div class="leg-items"><span class="leg-item">'+FLYER_HOODS.map(function(h){ return escHtml(h.name); }).join(' &middot; ')+' &middot; and more of Mandeville’s established communities</span></div></div>'+
       '</div>'+
     '</div>'+
-    '<div class="foot"><div class="c"><b>Crosby Development Company, L.L.C.</b><br>'+
-      '<span>#1 Sanctuary Blvd, Mandeville, LA 70471</span><br>'+
-      '<span>Leasing: '+escHtml(leasing.name)+' &middot; '+escHtml(leasing.phone)+' &middot; '+escHtml(leasing.email)+'</span></div>'+
-      '<img src="'+CROSBY_LOGO_URL+'" alt="Crosby Development"></div>'+
+    '<div class="contact"><div class="ch">For Leasing Inquiries &amp; Tours</div>'+
+      '<div class="contact-grid">'+
+        leasing.map(function(c){ return '<div class="cc"><div class="nm">'+escHtml(c.name)+'</div><div class="ln">'+escHtml(c.phone)+'<br><a href="mailto:'+escHtml(c.email)+'">'+escHtml(c.email)+'</a></div></div>'; }).join('')+
+        '<div class="co"><img src="'+CROSBY_LOGO_URL+'" alt="Crosby Development"><div class="addr">Crosby Development Company, L.L.C.<br>#1 Sanctuary Blvd, Mandeville, LA 70471</div></div>'+
+      '</div></div>'+
   '</div>'+
   '</body></html>';
 }
