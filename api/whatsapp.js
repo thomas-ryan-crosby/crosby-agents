@@ -105,6 +105,8 @@ function explainError(err) {
     return "I couldn't reach the property records just now, so I wasn't able to look that up. Please try again in a moment.";
   if (/no model provider|api key|\b401\b|invalid.*key|unauthorized/.test(m))
     return "The assistant isn't fully set up to answer right now (an AI service isn't connected). Please let the administrator know.";
+  if (/tool_use_failed/i.test(m))
+    return "I had trouble looking that up just now. Please try asking it a slightly different way — naming the tenant, building, or property usually helps.";
   return "Something went wrong on my end while answering that. Please try again, or reword the question. If it keeps failing, let the office know.";
 }
 
@@ -181,17 +183,33 @@ function repairUrls(text, map) {
   return out;
 }
 
+// Groq sometimes returns 400 "tool_use_failed" when the model generates a tool
+// call that fails its validation — usually transient. Retry a few times with
+// more sampling variability to shake out a valid call.
 async function callChat(p, messages) {
+  let lastErr;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try { return await oneChatCall(p, messages, attempt === 0 ? 0.1 : 0.6); }
+    catch (e) {
+      lastErr = e;
+      if (attempt < 2 && /tool_use_failed/i.test(String(e && e.message))) continue;
+      throw e;
+    }
+  }
+  throw lastErr;
+}
+
+async function oneChatCall(p, messages, temperature) {
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), 18000);
   try {
     const r = await fetch(p.url, {
       method: "POST",
       headers: { "content-type": "application/json", authorization: "Bearer " + p.key },
-      body: JSON.stringify({ model: p.model, temperature: 0.1, max_tokens: 800, tools: TOOL_DEFS, tool_choice: "auto", messages }),
+      body: JSON.stringify({ model: p.model, temperature, max_tokens: 800, tools: TOOL_DEFS, tool_choice: "auto", messages }),
       signal: ctrl.signal,
     });
-    if (!r.ok) { const t = await r.text(); throw new Error(p.model + " " + r.status + ": " + t.slice(0, 200)); }
+    if (!r.ok) { const t = await r.text(); throw new Error(p.model + " " + r.status + ": " + t.slice(0, 220)); }
     const data = await r.json();
     return (((data.choices || [])[0] || {}).message) || { role: "assistant", content: "" };
   } finally { clearTimeout(timer); }
