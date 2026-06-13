@@ -2427,48 +2427,36 @@ function generateFlyer(key){
   if(!w){ alert('Please allow pop-ups to open the flyer in a new tab.'); return; }
   w.document.open(); w.document.write(flyerDoc(r)); w.document.close();
 }
-// Stylized location/amenity map centered on Sanctuary (#1 Sanctuary Blvd). Schematic,
-// not to scale; geographic anchors (Causeway, US-190, I-12, the lake) are accurate.
+// Real street map centered on Sanctuary (#1 Sanctuary Blvd, 30.3946,-90.1029),
+// rendered from live CARTO Voyager tiles (no API key) as SVG <image> tiles so it
+// prints cleanly to PDF. A navy pin marks the property.
 function flyerAmenityMap(){
-  var pin = function(x,y,c){ return '<circle cx="'+x+'" cy="'+y+'" r="7" fill="'+c+'" stroke="#fff" stroke-width="2"/>'; };
-  return ''+
-  '<svg viewBox="0 0 740 430" width="100%" xmlns="http://www.w3.org/2000/svg" style="display:block;border:1px solid #e4e9f1;border-radius:10px;">'+
-    '<rect x="0" y="0" width="740" height="430" fill="#eef3f8"/>'+
-    // lake
-    '<rect x="0" y="372" width="740" height="58" fill="#bcd6ec"/>'+
-    '<text x="24" y="408" font-family="Arial" font-size="13" font-weight="700" letter-spacing="2" fill="#3f6f96">LAKE PONTCHARTRAIN</text>'+
-    // I-12 (top)
-    '<rect x="0" y="44" width="740" height="22" fill="#d4dce8"/>'+
-    '<text x="20" y="59" font-family="Arial" font-size="11" font-weight="700" fill="#5b6b82">I-12  ·  Baton Rouge ↔ Slidell  ·  ~5 min N</text>'+
-    // US-190 (mid)
-    '<rect x="0" y="236" width="740" height="20" fill="#dde5f0"/>'+
-    '<text x="20" y="250" font-family="Arial" font-size="11" font-weight="700" fill="#5b6b82">US-190  ·  E Causeway Approach / Florida St</text>'+
-    // Causeway (vertical to lake)
-    '<rect x="352" y="256" width="22" height="116" fill="#cdd9e9"/>'+
-    '<text x="363" y="330" font-family="Arial" font-size="10.5" font-weight="700" fill="#5b6b82" transform="rotate(90 363 330)">Causeway → Metairie / New Orleans (~25 min)</text>'+
-    // Sanctuary Blvd local road
-    '<rect x="250" y="200" width="230" height="10" fill="#e7edf5"/>'+
-    // 5-min ring
-    '<circle cx="363" cy="180" r="118" fill="none" stroke="#5e8ed0" stroke-width="1.5" stroke-dasharray="5 5" opacity="0.7"/>'+
-    '<text x="363" y="74" font-family="Arial" font-size="10" font-weight="600" fill="#5e8ed0" text-anchor="middle">~5-minute drive</text>'+
-    // amenity pins
-    pin(252,150,'#e8833a')+pin(470,150,'#e8833a')+pin(300,300,'#e8833a')+ // dining
-    pin(430,118,'#8a5a3c')+ // coffee
-    pin(250,235,'#2f9e6b')+pin(486,232,'#2f9e6b')+ // banking
-    pin(515,182,'#7c4dc4')+pin(214,182,'#7c4dc4')+ // lodging
-    pin(300,108,'#c0392b')+ // healthcare
-    pin(515,300,'#1f9aa8')+pin(214,300,'#1f9aa8')+ // retail
-    pin(430,300,'#3f74c9')+ // fitness
-    // courthouse / Covington callout (west edge)
-    '<text x="14" y="150" font-family="Arial" font-size="10.5" font-weight="700" fill="#22315d">◀ Covington · St. Tammany Justice Center (~15 min)</text>'+
-    // property marker
-    '<circle cx="363" cy="180" r="15" fill="#22315d" stroke="#fff" stroke-width="3"/>'+
-    '<path d="M363 173 l4 7 -8 0 z" fill="#5e8ed0"/>'+
-    '<rect x="266" y="118" width="194" height="0" fill="none"/>'+
-    '<g transform="translate(363,180)"><rect x="-97" y="22" width="194" height="34" rx="6" fill="#22315d"/>'+
-      '<text x="0" y="36" font-family="Arial" font-size="11" font-weight="800" fill="#fff" text-anchor="middle">SANCTUARY OFFICE PARK</text>'+
-      '<text x="0" y="49" font-family="Arial" font-size="9" fill="#bcd0ee" text-anchor="middle">#1 Sanctuary Blvd · Mandeville, LA 70471</text></g>'+
-  '</svg>';
+  var lat=30.394593, lng=-90.102901, z=13, W=1000, H=620;
+  var n=Math.pow(2,z), latRad=lat*Math.PI/180;
+  var cwx=(lng+180)/360*n*256;
+  var cwy=(1-Math.log(Math.tan(latRad)+1/Math.cos(latRad))/Math.PI)/2*n*256;
+  var ox=cwx-W/2, oy=cwy-H/2;
+  var tx0=Math.floor(ox/256), tx1=Math.floor((ox+W)/256);
+  var ty0=Math.floor(oy/256), ty1=Math.floor((oy+H)/256);
+  var subs=['a','b','c','d'], si=0, imgs='';
+  for(var tx=tx0; tx<=tx1; tx++){ for(var ty=ty0; ty<=ty1; ty++){
+    var url='https://'+subs[si++%4]+'.basemaps.cartocdn.com/rastertiles/voyager/'+z+'/'+tx+'/'+ty+'@2x.png';
+    imgs += '<image href="'+url+'" xlink:href="'+url+'" x="'+(tx*256-ox)+'" y="'+(ty*256-oy)+'" width="256" height="256"/>';
+  }}
+  var mx=Math.round(cwx-ox), my=Math.round(cwy-oy);
+  var marker='<g transform="translate('+mx+','+my+')">'+
+    '<ellipse cx="0" cy="3" rx="11" ry="4" fill="rgba(15,23,42,.28)"/>'+
+    '<path d="M0 -36 C-11 -36 -19 -27 -19 -17 C-19 -5 0 5 0 5 C0 5 19 -5 19 -17 C19 -27 11 -36 0 -36 Z" fill="#22315d" stroke="#fff" stroke-width="2.5"/>'+
+    '<circle cx="0" cy="-18" r="6.5" fill="#fff"/></g>';
+  var label='<g transform="translate(20,'+(H-58)+')">'+
+    '<rect x="0" y="0" width="290" height="40" rx="7" fill="#22315d"/>'+
+    '<text x="14" y="17" font-family="Segoe UI,Arial" font-size="13" font-weight="800" fill="#fff">SANCTUARY OFFICE PARK</text>'+
+    '<text x="14" y="31" font-family="Segoe UI,Arial" font-size="9.5" fill="#bcd0ee">#1 Sanctuary Blvd · Mandeville, LA 70471</text></g>';
+  var attrib='<g transform="translate('+(W-4)+','+(H-6)+')"><rect x="-208" y="-13" width="208" height="13" fill="rgba(255,255,255,.78)"/>'+
+    '<text x="-4" y="-3" font-family="Arial" font-size="8.5" fill="#5b6b82" text-anchor="end">© OpenStreetMap contributors · © CARTO</text></g>';
+  return '<svg viewBox="0 0 '+W+' '+H+'" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="display:block;border:1px solid #d9e1ec;border-radius:10px;">'+
+    '<defs><clipPath id="mapclip"><rect x="0" y="0" width="'+W+'" height="'+H+'" rx="10"/></clipPath></defs>'+
+    '<g clip-path="url(#mapclip)">'+imgs+label+attrib+marker+'</g></svg>';
 }
 function flyerDoc(r){
   var office = r.slug==='sanctuary-office-park';
