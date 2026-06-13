@@ -2427,22 +2427,25 @@ function generateFlyer(key){
   if(!w){ alert('Please allow pop-ups to open the flyer in a new tab.'); return; }
   w.document.open(); w.document.write(flyerDoc(r)); w.document.close();
 }
-// Real nearby amenities (verified OpenStreetMap POIs along the US-190 / Causeway
-// Blvd corridor). Numbered to match the pins on the location map.
-// Everyday amenities near the property (numbered, color-coded by use).
+// Everyday amenities at the property's doorstep (numbered, color-coded by use).
 var FLYER_POIS = [
-  { n:1, name:'Rouses Market',   cat:'Grocery',  mi:'0.2', lat:30.39584, lng:-90.09986 },
-  { n:2, name:'Walgreens',       cat:'Pharmacy', mi:'0.3', lat:30.39628, lng:-90.09846 },
-  { n:3, name:'Chick-fil-A',     cat:'Dining',   mi:'1.0', lat:30.39400, lng:-90.08622 },
-  { n:4, name:'Starbucks',       cat:'Coffee',   mi:'1.1', lat:30.39323, lng:-90.08515 },
-  { n:5, name:'Hancock Whitney', cat:'Bank',     mi:'1.2', lat:30.39251, lng:-90.08346 },
-  { n:6, name:'Parish Tacos',    cat:'Dining',   mi:'0.7', lat:30.40112, lng:-90.11213 },
+  { n:1, name:'Rouses Market',   cat:'Grocery',   lat:30.39584, lng:-90.09986 },
+  { n:2, name:'Walgreens',       cat:'Pharmacy',  lat:30.39628, lng:-90.09846 },
+  { n:3, name:'Discount Zone',   cat:'Fuel',      lat:30.39902, lng:-90.10522 },
+  { n:4, name:"McDonald's",      cat:'Fast Food', lat:30.39521, lng:-90.09027 },
+  { n:5, name:'Chick-fil-A',     cat:'Dining',    lat:30.39400, lng:-90.08622 },
+  { n:6, name:'Starbucks',       cat:'Coffee',    lat:30.39323, lng:-90.08515 },
+  { n:7, name:'Hancock Whitney', cat:'Bank',      lat:30.39251, lng:-90.08346 },
+  { n:8, name:'Coffee Rani',     cat:'Dining',    lat:30.39446, lng:-90.08438 },
 ];
-// Marquee destinations across the Mandeville–Covington submarket (labeled on map).
-var FLYER_DEST = [
-  { name:'Lakeview Regional Medical', cat:'Healthcare',    mi:'2 mi',  lat:30.41113, lng:-90.08032, side:'L' },
-  { name:'St. Tammany Justice Center',cat:'Courts / Civic',mi:'6 mi',  lat:30.48016, lng:-90.09618, side:'R' },
-  { name:'Bogue Falaya Park',         cat:'Recreation',    mi:'5 mi',  lat:30.47087, lng:-90.09387, side:'L' },
+// Drive times to major destinations (shown as a Drive Times panel, not map pins).
+var FLYER_DRIVES = [
+  { name:'New Orleans CBD',             mins:'25 min' },
+  { name:'Metairie',                    mins:'25 min' },
+  { name:'Louis Armstrong Int’l (MSY)', mins:'35 min' },
+  { name:'Covington · Parish Seat',     mins:'15 min' },
+  { name:'Lakeview Regional Medical',   mins:'5 min'  },
+  { name:'I-12 Interchange',            mins:'5 min'  },
 ];
 var SANCTUARY_LATLNG = [30.394593, -90.102901];
 // Nearby schools (lettered markers) and residential neighborhoods (area labels).
@@ -2450,18 +2453,13 @@ var FLYER_SCHOOLS = [
   { L:'A', name:'Mandeville High School',   lat:30.38141, lng:-90.10088 },
   { L:'B', name:'Tchefuncte Middle School', lat:30.38886, lng:-90.10241 },
   { L:'C', name:'Mary Queen of Peace',      lat:30.39185, lng:-90.09867 },
-  { L:'D', name:'Cedarwood School',         lat:30.39811, lng:-90.11418 },
 ];
 var FLYER_HOODS = [
-  { name:'The Sanctuary',   lat:30.39820, lng:-90.10780 },
-  { name:'Rouquette Lodge', lat:30.39534, lng:-90.09700 },
-];
-var FLYER_CITIES = [
-  { name:'COVINGTON',  lat:30.4690, lng:-90.1210 },
-  { name:'MANDEVILLE', lat:30.3740, lng:-90.1170 },
+  { name:'The Sanctuary',   lat:30.39830, lng:-90.10720 },
+  { name:'Rouquette Lodge', lat:30.39534, lng:-90.09640 },
 ];
 // Pin colors by use/type (also used by the legend badges).
-var CAT_COLORS = { Grocery:'#2f9e6b', Dining:'#e8833a', Coffee:'#8a5a3c', Pharmacy:'#1f9aa8', Bank:'#2f6fe0', Healthcare:'#c0392b', 'Courts / Civic':'#8e44ad', Recreation:'#ca8a04' };
+var CAT_COLORS = { Grocery:'#2f9e6b', Dining:'#e8833a', 'Fast Food':'#d4502e', Coffee:'#8a5a3c', Pharmacy:'#1f9aa8', Bank:'#2f6fe0', Fuel:'#6b7280' };
 // A CARTO Positron tile box (no API key): returns the <image> tiles for a region
 // plus a projection P(lat,lng)->[x,y] in the SVG, offset to the box origin.
 function flyerTileBox(clat, clng, z, bw, bh, offx, offy){
@@ -2474,31 +2472,23 @@ function flyerTileBox(clat, clng, z, bw, bh, offx, offy){
   }}
   return { tiles:s, P:function(la,lo){ var w=world(la,lo); return [Math.round(offx+w[0]-ox), Math.round(offy+w[1]-oy)]; }, mpp:156543.03*Math.cos(clat*Math.PI/180)/n };
 }
-// Location map: the Mandeville–Covington submarket — marquee destinations
-// (healthcare, courts, recreation) + everyday amenities color-coded by use,
-// schools, neighborhoods, and a Causeway/New-Orleans regional inset.
+// Location map: a tight, full-frame map of the property's immediate area —
+// everyday amenities color-coded by use, schools, and neighborhoods — plus a
+// small regional-access inset. Far destinations appear as Drive Times in the legend.
 function flyerAmenityMap(){
-  var W=1000, H=640;
-  var main=flyerTileBox(30.426,-90.093,13,W,H,0,0), P=main.P;
-  var cities='';
-  FLYER_CITIES.forEach(function(c){ var xy=P(c.lat,c.lng);
-    cities += '<text x="'+xy[0]+'" y="'+xy[1]+'" font-family="Segoe UI,Arial" font-size="15" font-weight="800" letter-spacing="0.14em" fill="#aab2c0" text-anchor="middle">'+c.name+'</text>'; });
+  var W=1000, H=600;
+  var main=flyerTileBox(30.391,-90.0905,15,W,H,0,0), P=main.P;
   var hoods='';
   FLYER_HOODS.forEach(function(h){ var xy=P(h.lat,h.lng);
-    hoods += '<text x="'+xy[0]+'" y="'+xy[1]+'" font-family="Segoe UI,Arial" font-size="10" font-style="italic" font-weight="700" fill="#566" text-anchor="middle" style="paint-order:stroke;stroke:#fff;stroke-width:3px;">'+h.name+'</text>'; });
-  var dest='';
-  FLYER_DEST.forEach(function(p){ var xy=P(p.lat,p.lng), col=CAT_COLORS[p.cat]||'#22315d';
-    var lx = p.side==='L' ? xy[0]-12 : xy[0]+12, anc = p.side==='L' ? 'end' : 'start';
-    dest += '<g><circle cx="'+xy[0]+'" cy="'+xy[1]+'" r="8" fill="'+col+'" stroke="#fff" stroke-width="2"/>'+
-      '<text x="'+lx+'" y="'+(xy[1]+3.5)+'" text-anchor="'+anc+'" font-family="Segoe UI,Arial" font-size="10.5" font-weight="700" fill="'+col+'" style="paint-order:stroke;stroke:#fff;stroke-width:3px;">'+p.name+'</text></g>'; });
+    hoods += '<text x="'+xy[0]+'" y="'+xy[1]+'" font-family="Segoe UI,Arial" font-size="10.5" font-style="italic" font-weight="700" fill="#566" text-anchor="middle" style="paint-order:stroke;stroke:#fff;stroke-width:3px;">'+h.name+'</text>'; });
   var pois='';
   FLYER_POIS.forEach(function(p){ var xy=P(p.lat,p.lng), col=CAT_COLORS[p.cat]||'#22315d';
-    pois += '<g transform="translate('+xy[0]+','+xy[1]+')"><circle cx="0" cy="0" r="9" fill="'+col+'" stroke="#fff" stroke-width="2"/>'+
-      '<text x="0" y="3.2" font-family="Segoe UI,Arial" font-size="9.5" font-weight="700" fill="#fff" text-anchor="middle">'+p.n+'</text></g>'; });
+    pois += '<g transform="translate('+xy[0]+','+xy[1]+')"><circle cx="0" cy="0" r="11" fill="'+col+'" stroke="#fff" stroke-width="2.5"/>'+
+      '<text x="0" y="3.6" font-family="Segoe UI,Arial" font-size="11" font-weight="700" fill="#fff" text-anchor="middle">'+p.n+'</text></g>'; });
   var schools='';
   FLYER_SCHOOLS.forEach(function(s){ var xy=P(s.lat,s.lng);
-    schools += '<g transform="translate('+xy[0]+','+xy[1]+')"><rect x="-8.5" y="-8.5" width="17" height="17" rx="4" fill="#5b3fa0" stroke="#fff" stroke-width="2"/>'+
-      '<text x="0" y="3.3" font-family="Segoe UI,Arial" font-size="9.5" font-weight="700" fill="#fff" text-anchor="middle">'+s.L+'</text></g>'; });
+    schools += '<g transform="translate('+xy[0]+','+xy[1]+')"><rect x="-9.5" y="-9.5" width="19" height="19" rx="4" fill="#5b3fa0" stroke="#fff" stroke-width="2.5"/>'+
+      '<text x="0" y="3.6" font-family="Segoe UI,Arial" font-size="11" font-weight="700" fill="#fff" text-anchor="middle">'+s.L+'</text></g>'; });
   var m=P(SANCTUARY_LATLNG[0],SANCTUARY_LATLNG[1]);
   var marker='<g transform="translate('+m[0]+','+m[1]+')"><ellipse cx="0" cy="3" rx="10" ry="3.5" fill="rgba(0,0,0,.22)"/>'+
     '<path d="M0 -36 C-12 -36 -20 -27 -20 -17 C-20 -5 0 5 0 5 C0 5 20 -5 20 -17 C20 -27 12 -36 0 -36 Z" fill="#22315d" stroke="#fff" stroke-width="2.5"/>'+
@@ -2513,8 +2503,8 @@ function flyerAmenityMap(){
     '<line x1="0" y1="-1" x2="'+seg+'" y2="-1" stroke="#22315d" stroke-width="2.5"/><line x1="0" y1="-5" x2="0" y2="3" stroke="#22315d" stroke-width="2"/><line x1="'+seg+'" y1="-5" x2="'+seg+'" y2="3" stroke="#22315d" stroke-width="2"/>'+
     '<text x="'+(seg/2)+'" y="-4" font-family="Arial" font-size="9" font-weight="700" fill="#22315d" text-anchor="middle">1 mi</text></g>';
   var attrib='<text x="330" y="'+(H-7)+'" font-family="Arial" font-size="8" fill="#8a93a3">© OpenStreetMap · © CARTO</text>';
-  // ── regional inset (empty NE corner — clear of all pins) ──
-  var iw=300, ih=224, ix=W-iw-14, iy=14;
+  // ── regional inset (empty SE corner — clear of all pins) ──
+  var iw=300, ih=206, ix=W-iw-14, iy=H-ih-14;
   var inset=flyerTileBox(30.235,-90.115,8,iw,ih,ix,iy), IP=inset.P;
   var A=IP(30.36,-90.094), B=IP(30.05,-90.15);
   var arrow='<line x1="'+A[0]+'" y1="'+A[1]+'" x2="'+B[0]+'" y2="'+B[1]+'" stroke="#22315d" stroke-width="3"/>'+
@@ -2533,7 +2523,7 @@ function flyerAmenityMap(){
   return '<svg viewBox="0 0 '+W+' '+H+'" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="display:block;border:1px solid #d9e1ec;border-radius:10px;">'+
     '<defs><clipPath id="mapclip"><rect x="0" y="0" width="'+W+'" height="'+H+'" rx="10"/></clipPath>'+
     '<clipPath id="insetclip"><rect x="'+ix+'" y="'+iy+'" width="'+iw+'" height="'+ih+'" rx="6"/></clipPath></defs>'+
-    '<g clip-path="url(#mapclip)">'+main.tiles+cities+hoods+dest+schools+pois+marker+label+north+scale+attrib+'</g>'+
+    '<g clip-path="url(#mapclip)">'+main.tiles+hoods+schools+pois+marker+label+north+scale+attrib+'</g>'+
     insetG+insetFrame+'</svg>';
 }
 function flyerDoc(r){
@@ -2598,6 +2588,10 @@ function flyerDoc(r){
   '.leg .dot{width:13px;height:13px;border-radius:50%;flex:0 0 auto;}'+
   '.leg .num{width:18px;height:18px;border-radius:50%;color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:0 0 auto;}'+
   '.leg .sq{width:18px;height:18px;border-radius:4px;background:#5b3fa0;color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:0 0 auto;}'+
+  '.drives{display:grid;grid-template-columns:repeat(3,1fr);gap:4px 26px;}'+
+  '.drive{display:flex;justify-content:space-between;align-items:baseline;gap:8px;border-bottom:1px dotted #e2e8f0;padding-bottom:3px;font-size:12px;}'+
+  '.drive span{color:#475569;}'+
+  '.drive b{color:'+NAVY+';font-weight:700;white-space:nowrap;}'+
   '.foot{position:absolute;bottom:0;left:0;right:0;background:'+NAVY+';color:#fff;padding:16px 0.6in;display:flex;justify-content:space-between;align-items:center;}'+
   '.foot .c{font-size:12px;line-height:1.5;}'+
   '.foot .c b{font-size:13px;}'+
@@ -2650,9 +2644,9 @@ function flyerDoc(r){
       '<div class="lead" style="margin-bottom:16px;">Sanctuary anchors St. Tammany’s premier office submarket — minutes from top-rated schools, regional healthcare, the parish seat and courthouse, and the full US-190 retail corridor, and ~25 minutes to New Orleans across the Lake Pontchartrain Causeway.</div>'+
       flyerAmenityMap()+
       '<div class="leg">'+
-        '<div class="leg-sec full"><div class="leg-h">Key Destinations</div><div class="leg-items">'+
-          FLYER_DEST.map(function(p){ var col=CAT_COLORS[p.cat]||NAVY; return '<span class="leg-item"><span class="dot" style="background:'+col+';"></span><b>'+escHtml(p.name)+'</b> <span class="muted">'+escHtml(p.cat)+' · '+escHtml(p.mi)+'</span></span>'; }).join('')+
-        '</div></div>'+
+        '<div class="leg-sec full"><div class="leg-h">Drive Times</div>'+
+          '<div class="drives">'+FLYER_DRIVES.map(function(dv){ return '<div class="drive"><span>'+escHtml(dv.name)+'</span><b>'+escHtml(dv.mins)+'</b></div>'; }).join('')+'</div>'+
+        '</div>'+
         '<div class="leg-sec"><div class="leg-h">Everyday Amenities</div><div class="leg-items">'+
           FLYER_POIS.map(function(p){ var col=CAT_COLORS[p.cat]||NAVY; return '<span class="leg-item"><span class="num" style="background:'+col+';">'+p.n+'</span><b>'+escHtml(p.name)+'</b> <span class="muted">'+escHtml(p.cat)+'</span></span>'; }).join('')+
         '</div></div>'+
