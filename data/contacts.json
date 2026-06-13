@@ -592,7 +592,7 @@
   },
   {
     "id": "ct-DUu6FnA2Lfxb74gC5bCc",
-    "tenantId": null,
+    "tenantId": "tenant-benjamin",
     "group": "SIA Investments",
     "property": "Sanctuary Office Park",
     "propertyId": "sanctuary-office-park",
@@ -712,7 +712,7 @@
     "group": "Skin Solutions",
     "property": "Sanctuary Office Park",
     "propertyId": "sanctuary-office-park",
-    "status": "Active",
+    "status": "Owner-Occupied",
     "name": "Jete Crosby",
     "title": null,
     "email": "jete@crosbydevelopment.com",
@@ -1310,7 +1310,7 @@
     "group": "The Maven Group",
     "property": "Sanctuary Office Park",
     "propertyId": "sanctuary-office-park",
-    "status": "Active",
+    "status": "Moved Out",
     "name": "Carmen Brandner",
     "title": "CEO",
     "email": "lcarmenburton@gmail.com",
@@ -1405,7 +1405,7 @@
   },
   {
     "id": "ct-gGVntFRxC6x6XYAxSXIV",
-    "tenantId": null,
+    "tenantId": "tenant-travelers",
     "group": "Law Offices of Rebecca Gofolth Bush",
     "property": "Sanctuary Office Park",
     "propertyId": "sanctuary-office-park",
@@ -1787,7 +1787,7 @@
   },
   {
     "id": "ct-rxD4Y6x9sQbUGNOiFO0Q",
-    "tenantId": null,
+    "tenantId": "tenant-benjamin",
     "group": "SIA Investments",
     "property": "Sanctuary Office Park",
     "propertyId": "sanctuary-office-park",
@@ -2002,7 +2002,7 @@
   },
   {
     "id": "ct-yB3suRA7NdJ0jbUBT2xF",
-    "tenantId": null,
+    "tenantId": "tenant-travelers",
     "group": "Law Offices of Rebecca Gofolth Bush",
     "property": "Sanctuary Office Park",
     "propertyId": "sanctuary-office-park",
@@ -2059,7 +2059,7 @@
   },
   {
     "id": "ct-z8s1z3CqPO79qOanMuWb",
-    "tenantId": null,
+    "tenantId": "tenant-travelers",
     "group": "Law Offices of Rebecca Gofolth Bush",
     "property": "Sanctuary Office Park",
     "propertyId": "sanctuary-office-park",
