@@ -40,9 +40,12 @@ export default async function handler(req, res) {
   const from = params.From || null;    // our WhatsApp sender number
   const errorCode = params.ErrorCode || null;
 
-  // Act only on terminal failures. queued/sent/delivered/read need no action.
+  // Log EVERY delivery state (queued/sent/delivered/read/failed/undelivered) so a
+  // message that never reaches "delivered" is diagnosable.
+  await logDelivery({ sid, to, from, status, errorCode, reason: params.ErrorMessage || null });
+
+  // Notify the user only on a terminal failure.
   if (status === "failed" || status === "undelivered") {
-    await logDelivery({ sid, to, from, status, errorCode, reason: params.ErrorMessage || null });
     try {
       const accountSid = params.AccountSid; // from the verified callback — no env needed
       if (accountSid && authToken && from && to) {
