@@ -2369,11 +2369,23 @@ function renderPropertyDetail(p) {
       var active = allTermsFlat.filter(function(t){ return t.daysLeft !== null && !t.ownerOccupant; });
       var mtm = allTermsFlat.filter(function(t){ return t.mtm; });
       var owner = allTermsFlat.filter(function(t){ return t.ownerOccupant; });
-      // Sort by notice deadline days (most urgent first)
+      // Sort by re-leasing urgency = the soonest actionable date. For a vacating
+      // tenant that's its vacate date (confirmed departure — back-fill now); for
+      // everyone else it's the soonest UPCOMING notice deadline or lease end.
+      // Past-due dates (auto-renew / holdover leases already past term) are not
+      // urgent, so they fall to the bottom. Ties break to confirmed departures.
+      var urgencyKey = function(t){
+        if(t.vacating) return t.daysLeft != null ? t.daysLeft : 99999;
+        var c=[];
+        if(t.noticeDeadlineDays != null && t.noticeDeadlineDays >= 0) c.push(t.noticeDeadlineDays);
+        if(t.daysLeft != null && t.daysLeft >= 0) c.push(t.daysLeft);
+        return c.length ? Math.min.apply(null, c) : 99999;
+      };
       active.sort(function(a,b){
-        var da = a.noticeDeadlineDays !== null ? a.noticeDeadlineDays : 9999;
-        var db = b.noticeDeadlineDays !== null ? b.noticeDeadlineDays : 9999;
-        return da - db;
+        var d = urgencyKey(a) - urgencyKey(b);
+        if(d !== 0) return d;
+        if(!!a.vacating !== !!b.vacating) return a.vacating ? -1 : 1;
+        return 0;
       });
 
       html += '<div class="card" style="margin-bottom:16px;">';
