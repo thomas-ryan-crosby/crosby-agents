@@ -88,9 +88,24 @@ export default async function handler(req, res) {
     return reply(res, out.text, "Was this helpful? Reply 👍 or 👎 — or tell me what was off.");
   } catch (e) {
     console.error("whatsapp handler error:", e && (e.stack || e.message));
-    await logInteraction(Object.assign({}, base, { status: "error", answer: null, model: null, error: String((e && e.message) || "unknown").slice(0, 300), ms: Date.now() - started }));
-    return reply(res, "Sorry, I hit a problem answering that. Please try again in a moment.");
+    const msg = explainError(e);
+    await logInteraction(Object.assign({}, base, { status: "error", answer: msg, model: null, error: String((e && e.message) || "unknown").slice(0, 300), ms: Date.now() - started }));
+    return reply(res, msg);
   }
+}
+
+// Turn a technical failure into a plain-English message the user can act on.
+function explainError(err) {
+  const m = String((err && err.message) || err || "").toLowerCase();
+  if (/\b413\b|too large|tokens per minute|\btpm\b|\b429\b|quota|rate.?limit|over.*limit/.test(m))
+    return "I couldn't answer that just now because the assistant briefly hit its usage limit (it's on a free AI plan with a per-minute cap). Please wait a minute and try again. If it keeps happening, the office can raise the limit.";
+  if (/abort|timed?.?out|etimedout|network|fetch failed|enotfound|socket|econn/.test(m))
+    return "That took too long to look up and timed out. Please try again — and if it's a big question, asking for one property or building at a time usually works.";
+  if (/firebase|firestore|credential|permission|service account|default credentials|unauthenticated/.test(m))
+    return "I couldn't reach the property records just now, so I wasn't able to look that up. Please try again in a moment.";
+  if (/no model provider|api key|\b401\b|invalid.*key|unauthorized/.test(m))
+    return "The assistant isn't fully set up to answer right now (an AI service isn't connected). Please let the administrator know.";
+  return "Something went wrong on my end while answering that. Please try again, or reword the question. If it keeps failing, let the office know.";
 }
 
 // ── feedback detection ───────────────────────────────────────────────────────
