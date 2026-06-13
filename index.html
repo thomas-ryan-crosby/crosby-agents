@@ -2443,47 +2443,66 @@ var FLYER_POIS = [
   { n:11, name:'Enterprise',        cat:'Car Rental',  mi:'2.7', lat:30.36810, lng:-90.06969 },
 ];
 var SANCTUARY_LATLNG = [30.394593, -90.102901];
-// Clean light location map (CARTO Positron, no API key) centered on the Sanctuary /
-// US-190 corridor, with the property pin + numbered real-amenity pins. Rendered as
-// SVG <image> tiles so it prints to PDF.
-function flyerAmenityMap(){
-  var clat=30.382, clng=-90.088, z=14, W=1000, H=560;
+// Pin colors by use/type (also used by the legend badges).
+var CAT_COLORS = { Grocery:'#2f9e6b', Dining:'#e8833a', 'Fast Food':'#d4502e', Coffee:'#8a5a3c', Pharmacy:'#1f9aa8', Bank:'#2f6fe0', Fuel:'#b8860b', 'Car Rental':'#7c4dc4' };
+// A CARTO Positron tile box (no API key): returns the <image> tiles for a region
+// plus a projection P(lat,lng)->[x,y] in the SVG, offset to the box origin.
+function flyerTileBox(clat, clng, z, bw, bh, offx, offy){
   var n=Math.pow(2,z);
   var world=function(la,lo){ var r=la*Math.PI/180; return [ (lo+180)/360*n*256, (1-Math.log(Math.tan(r)+1/Math.cos(r))/Math.PI)/2*n*256 ]; };
-  var c=world(clat,clng), ox=c[0]-W/2, oy=c[1]-H/2;
-  var P=function(la,lo){ var w=world(la,lo); return [Math.round(w[0]-ox), Math.round(w[1]-oy)]; };
-  var tx0=Math.floor(ox/256), tx1=Math.floor((ox+W)/256), ty0=Math.floor(oy/256), ty1=Math.floor((oy+H)/256);
-  var subs=['a','b','c','d'], si=0, tiles='';
-  for(var tx=tx0;tx<=tx1;tx++){ for(var ty=ty0;ty<=ty1;ty++){
+  var c=world(clat,clng), ox=c[0]-bw/2, oy=c[1]-bh/2, subs=['a','b','c','d'], si=0, s='';
+  for(var tx=Math.floor(ox/256);tx<=Math.floor((ox+bw)/256);tx++){ for(var ty=Math.floor(oy/256);ty<=Math.floor((oy+bh)/256);ty++){
     var u='https://'+subs[si++%4]+'.basemaps.cartocdn.com/light_all/'+z+'/'+tx+'/'+ty+'@2x.png';
-    tiles += '<image href="'+u+'" xlink:href="'+u+'" x="'+(tx*256-ox)+'" y="'+(ty*256-oy)+'" width="256" height="256"/>';
+    s += '<image href="'+u+'" xlink:href="'+u+'" x="'+(offx+tx*256-ox)+'" y="'+(offy+ty*256-oy)+'" width="256" height="256"/>';
   }}
+  return { tiles:s, P:function(la,lo){ var w=world(la,lo); return [Math.round(offx+w[0]-ox), Math.round(offy+w[1]-oy)]; }, mpp:156543.03*Math.cos(clat*Math.PI/180)/n };
+}
+// Location map: detailed local amenities color-coded by use (main), plus a
+// regional-access inset showing the Causeway link to Covington & the NOLA metro.
+function flyerAmenityMap(){
+  var W=1000, H=560;
+  var main=flyerTileBox(30.382,-90.088,14,W,H,0,0), P=main.P;
   var pois='';
-  FLYER_POIS.forEach(function(p){ var xy=P(p.lat,p.lng);
-    pois += '<g transform="translate('+xy[0]+','+xy[1]+')"><circle cx="0" cy="0" r="9.5" fill="#22315d" stroke="#fff" stroke-width="1.8"/>'+
-      '<text x="0" y="3.2" font-family="Segoe UI,Arial" font-size="10" font-weight="700" fill="#fff" text-anchor="middle">'+p.n+'</text></g>';
+  FLYER_POIS.forEach(function(p){ var xy=P(p.lat,p.lng), col=CAT_COLORS[p.cat]||'#22315d';
+    pois += '<g transform="translate('+xy[0]+','+xy[1]+')"><circle cx="0" cy="0" r="10" fill="'+col+'" stroke="#fff" stroke-width="2"/>'+
+      '<text x="0" y="3.3" font-family="Segoe UI,Arial" font-size="10" font-weight="700" fill="#fff" text-anchor="middle">'+p.n+'</text></g>';
   });
   var m=P(SANCTUARY_LATLNG[0],SANCTUARY_LATLNG[1]);
-  var marker='<g transform="translate('+m[0]+','+m[1]+')">'+
-    '<ellipse cx="0" cy="3" rx="10" ry="3.5" fill="rgba(0,0,0,.22)"/>'+
+  var marker='<g transform="translate('+m[0]+','+m[1]+')"><ellipse cx="0" cy="3" rx="10" ry="3.5" fill="rgba(0,0,0,.22)"/>'+
     '<path d="M0 -36 C-12 -36 -20 -27 -20 -17 C-20 -5 0 5 0 5 C0 5 20 -5 20 -17 C20 -27 12 -36 0 -36 Z" fill="#22315d" stroke="#fff" stroke-width="2.5"/>'+
     '<circle cx="0" cy="-18" r="6.5" fill="#fff"/></g>';
-  var mpp=156543.03*Math.cos(clat*Math.PI/180)/n, seg=Math.round(402.336/mpp);
-  var label='<g transform="translate(16,'+(H-58)+')">'+
-    '<rect x="0" y="0" width="300" height="42" rx="8" fill="#22315d"/><rect x="0" y="0" width="4" height="42" rx="2" fill="#5e8ed0"/>'+
+  var seg=Math.round(402.336/main.mpp);
+  var label='<g transform="translate(16,'+(H-58)+')"><rect x="0" y="0" width="300" height="42" rx="8" fill="#22315d"/><rect x="0" y="0" width="4" height="42" rx="2" fill="#5e8ed0"/>'+
     '<text x="16" y="18" font-family="Segoe UI,Arial" font-size="13" font-weight="800" fill="#fff">SANCTUARY OFFICE PARK</text>'+
     '<text x="16" y="33" font-family="Segoe UI,Arial" font-size="10" fill="#c5d6f0">#1 Sanctuary Blvd · Mandeville, LA 70471</text></g>';
-  var north='<g transform="translate('+(W-28)+',26)"><circle cx="0" cy="0" r="14" fill="#fff" stroke="#cbd5e1" stroke-width="1"/>'+
+  var north='<g transform="translate(28,26)"><circle cx="0" cy="0" r="14" fill="#fff" stroke="#cbd5e1" stroke-width="1"/>'+
     '<path d="M0 -8 L4.5 5 L0 1.5 L-4.5 5 Z" fill="#22315d"/><text x="0" y="-9.5" font-family="Arial" font-size="7.5" font-weight="700" fill="#22315d" text-anchor="middle">N</text></g>';
-  var scale='<g transform="translate('+(W-16-seg)+','+(H-18)+')">'+
-    '<rect x="-7" y="-12" width="'+(seg+14)+'" height="20" rx="4" fill="rgba(255,255,255,.82)"/>'+
-    '<line x1="0" y1="0" x2="'+seg+'" y2="0" stroke="#22315d" stroke-width="2.5"/>'+
-    '<line x1="0" y1="-4" x2="0" y2="4" stroke="#22315d" stroke-width="2"/><line x1="'+seg+'" y1="-4" x2="'+seg+'" y2="4" stroke="#22315d" stroke-width="2"/>'+
+  var scale='<g transform="translate(54,26)"><rect x="-7" y="-11" width="'+(seg+14)+'" height="20" rx="4" fill="rgba(255,255,255,.85)"/>'+
+    '<line x1="0" y1="-1" x2="'+seg+'" y2="-1" stroke="#22315d" stroke-width="2.5"/><line x1="0" y1="-5" x2="0" y2="3" stroke="#22315d" stroke-width="2"/><line x1="'+seg+'" y1="-5" x2="'+seg+'" y2="3" stroke="#22315d" stroke-width="2"/>'+
     '<text x="'+(seg/2)+'" y="-4" font-family="Arial" font-size="9" font-weight="700" fill="#22315d" text-anchor="middle">¼ mi</text></g>';
-  var attrib='<text x="'+(W-6)+'" y="'+(H-6)+'" font-family="Arial" font-size="8" fill="#8a93a3" text-anchor="end">© OpenStreetMap contributors · © CARTO</text>';
+  var attrib='<text x="330" y="'+(H-7)+'" font-family="Arial" font-size="8" fill="#8a93a3">© OpenStreetMap · © CARTO</text>';
+  // ── regional-access inset (bottom-right) ──
+  var iw=322, ih=238, ix=W-iw-14, iy=H-ih-14;
+  var inset=flyerTileBox(30.235,-90.115,8,iw,ih,ix,iy), IP=inset.P;
+  var A=IP(30.36,-90.094), B=IP(30.05,-90.15);
+  var arrow='<line x1="'+A[0]+'" y1="'+A[1]+'" x2="'+B[0]+'" y2="'+B[1]+'" stroke="#22315d" stroke-width="3"/>'+
+    '<path d="M'+B[0]+' '+(B[1]+9)+' L'+(B[0]-6)+' '+(B[1]-5)+' L'+(B[0]+6)+' '+(B[1]-5)+' Z" fill="#22315d"/>';
+  var rl=function(la,lo,nm,col){ var p=IP(la,lo); return '<circle cx="'+p[0]+'" cy="'+p[1]+'" r="4.5" fill="'+col+'" stroke="#fff" stroke-width="1.5"/>'+
+    '<text x="'+(p[0]+7)+'" y="'+(p[1]+3)+'" font-family="Segoe UI,Arial" font-size="9" font-weight="700" fill="'+col+'" style="paint-order:stroke;stroke:#fff;stroke-width:2.6px;">'+nm+'</text>'; };
+  var sP=IP(SANCTUARY_LATLNG[0],SANCTUARY_LATLNG[1]);
+  var sanc='<path d="M'+sP[0]+' '+(sP[1]-11)+' l7 8 l-7 7 l-7 -7 z" fill="#22315d" stroke="#fff" stroke-width="1.5"/>'+
+    '<text x="'+(sP[0]+9)+'" y="'+(sP[1]+2)+'" font-family="Segoe UI,Arial" font-size="9" font-weight="800" fill="#22315d" style="paint-order:stroke;stroke:#fff;stroke-width:2.6px;">Sanctuary</text>';
+  var causeLbl='<text x="'+((A[0]+B[0])/2+8)+'" y="'+((A[1]+B[1])/2)+'" font-family="Arial" font-size="8.5" font-weight="700" fill="#22315d" style="paint-order:stroke;stroke:#fff;stroke-width:2.6px;">Causeway · 24 mi · ~25 min</text>';
+  var insetG='<g clip-path="url(#insetclip)">'+inset.tiles+arrow+causeLbl+
+    rl(30.4755,-90.1009,'Covington','#22315d')+rl(29.9841,-90.1529,'Metairie','#c0392b')+rl(29.9511,-90.0715,'New Orleans','#c0392b')+sanc+'</g>';
+  var insetFrame='<rect x="'+ix+'" y="'+iy+'" width="'+iw+'" height="18" fill="#22315d"/>'+
+    '<text x="'+(ix+9)+'" y="'+(iy+13)+'" font-family="Segoe UI,Arial" font-size="9" font-weight="800" fill="#fff" letter-spacing="0.05em">REGIONAL ACCESS · NEW ORLEANS METRO</text>'+
+    '<rect x="'+ix+'" y="'+iy+'" width="'+iw+'" height="'+ih+'" rx="6" fill="none" stroke="#22315d" stroke-width="2"/>';
   return '<svg viewBox="0 0 '+W+' '+H+'" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="display:block;border:1px solid #d9e1ec;border-radius:10px;">'+
-    '<defs><clipPath id="mapclip"><rect x="0" y="0" width="'+W+'" height="'+H+'" rx="10"/></clipPath></defs>'+
-    '<g clip-path="url(#mapclip)">'+tiles+pois+marker+label+north+scale+attrib+'</g></svg>';
+    '<defs><clipPath id="mapclip"><rect x="0" y="0" width="'+W+'" height="'+H+'" rx="10"/></clipPath>'+
+    '<clipPath id="insetclip"><rect x="'+ix+'" y="'+iy+'" width="'+iw+'" height="'+ih+'" rx="6"/></clipPath></defs>'+
+    '<g clip-path="url(#mapclip)">'+main.tiles+pois+marker+label+north+scale+attrib+'</g>'+
+    insetG+insetFrame+'</svg>';
 }
 function flyerDoc(r){
   var office = r.slug==='sanctuary-office-park';
@@ -2540,7 +2559,7 @@ function flyerDoc(r){
   '.pitch .a{font-size:12px;color:#bcd0ee;margin-top:8px;line-height:1.5;}'+
   '.amleg{display:grid;grid-template-columns:1fr 1fr;gap:9px 22px;margin-top:18px;}'+
   '.amleg .row{display:flex;gap:9px;align-items:center;}'+
-  '.amleg .num{width:19px;height:19px;border-radius:50%;background:'+NAVY+';color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:0 0 auto;}'+
+  '.amleg .num{width:19px;height:19px;border-radius:50%;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:0 0 auto;}'+
   '.amleg .t{font-size:12.5px;}'+
   '.amleg .t b{color:'+NAVY+';}'+
   '.amleg .t span{color:#6b7480;}'+
@@ -2595,8 +2614,8 @@ function flyerDoc(r){
       '<div class="h">Everything an Office Tenant Needs — Minutes Away</div>'+
       '<div class="lead" style="margin-bottom:16px;">Sanctuary sits on Mandeville’s US-190 / Causeway Blvd corridor — grocery, dining, coffee, pharmacy and banking are a short drive away, with immediate access to I-12 and the Causeway to the Southshore.</div>'+
       flyerAmenityMap()+
-      '<div class="amleg">'+FLYER_POIS.map(function(p){ return '<div class="row"><span class="num">'+p.n+'</span><div class="t"><b>'+escHtml(p.name)+'</b> — <span>'+escHtml(p.cat)+' · '+p.mi+' mi</span></div></div>'; }).join('')+'</div>'+
-      '<div style="font-size:10.5px;color:#9aa4b4;margin-top:8px;">Representative nearby businesses (OpenStreetMap); many more line the US-190 / Causeway Blvd corridor.</div>'+
+      '<div class="amleg">'+FLYER_POIS.map(function(p){ var col=CAT_COLORS[p.cat]||NAVY; return '<div class="row"><span class="num" style="background:'+col+';">'+p.n+'</span><div class="t"><b>'+escHtml(p.name)+'</b> — <span>'+escHtml(p.cat)+' · '+p.mi+' mi</span></div></div>'; }).join('')+'</div>'+
+      '<div style="font-size:10.5px;color:#9aa4b4;margin-top:8px;">Pins color-coded by use. Representative nearby businesses (OpenStreetMap); many more line the US-190 / Causeway Blvd corridor.</div>'+
     '</div>'+
     '<div class="foot"><div class="c"><b>Crosby Development Company, L.L.C.</b><br>'+
       '<span>#1 Sanctuary Blvd, Mandeville, LA 70471</span><br>'+
