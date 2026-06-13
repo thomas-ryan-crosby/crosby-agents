@@ -121,6 +121,12 @@
     .colpill[data-on="1"]:hover { background: #1a52bd; border-color: #1a52bd; }
     .colpill[data-on="0"] { background: #fff; color: #9ca3af; border-color: #e5e7eb; }
     .colpill[data-on="0"]:hover { border-color: #cbd5e1; color: #6b7280; }
+    /* Begin-marketing button (in Lease Action cell) + Leasing area */
+    .mktbtn { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 22px; border-radius: 6px; border: 1px solid #e5e7eb; background: #fff; color: #9ca3af; cursor: pointer; transition: all .12s ease; flex: 0 0 auto; }
+    .mktbtn:hover { border-color: #1f5fdb; color: #1f5fdb; background: #eff4fd; }
+    .mktbtn.on { background: #1f5fdb; border-color: #1f5fdb; color: #fff; }
+    .mkt-remove { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 6px; border: 1px solid #fecaca; background: #fff; color: #dc2626; cursor: pointer; }
+    .mkt-remove:hover { background: #fef2f2; }
     .table-scroll::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
     .prop-expand { font-size: 11px; color: #2563eb; display: flex; align-items: center; gap: 4px; margin-top: 10px; font-weight: 500; }
     .prop-card:hover .prop-expand { color: #1d4ed8; }
@@ -308,6 +314,7 @@
     <button class="nav-btn" data-view="agents"><i data-lucide="bot" style="width:15px;height:15px;"></i> Agents</button>
     <button class="nav-btn" data-view="outputs"><i data-lucide="file-check" style="width:15px;height:15px;"></i> Outputs <span class="nav-badge" id="outputsBadge">0</span></button>
     <button class="nav-btn" data-view="kb"><i data-lucide="book-open" style="width:15px;height:15px;"></i> Knowledge Base</button>
+    <button class="nav-btn" data-view="leasing"><i data-lucide="megaphone" style="width:15px;height:15px;"></i> Leasing <span class="nav-badge" id="leasingBadge" style="display:none;">0</span></button>
     <button class="nav-btn" data-view="metrics"><i data-lucide="trending-up" style="width:15px;height:15px;"></i> Metrics</button>
     <button class="nav-btn" data-view="assistant"><i data-lucide="message-square" style="width:15px;height:15px;"></i> Assistant</button>
   </nav>
@@ -324,6 +331,11 @@
       </div>
       <div id="recentActivity"></div>
     </div>
+  </div>
+
+  <!-- ═══ LEASING / MARKETING ═══ -->
+  <div class="view" id="view-leasing">
+    <div id="leasingContent"></div>
   </div>
 
   <!-- ═══ AGENTS (+ Schedule) ═══ -->
@@ -703,6 +715,7 @@ function switchView(id) {
   if(id==="kb") renderKB(null);
   if(id==="metrics") renderMetrics();
   if(id==="assistant") renderAssistantLog();
+  if(id==="leasing") renderLeasing();
   lucide.createIcons();
 }
 
@@ -2356,6 +2369,11 @@ function openMarketInfo(url) {
       '<span style="font-weight:700;font-size:14px;color:#0f172a;">Current Market Info — St. Tammany Office Leasing</span>'+
       '<div style="display:flex;align-items:center;gap:14px;"><a id="marketNewTab" href="#" target="_blank" rel="noopener" style="font-size:12px;color:#2563eb;text-decoration:none;">Open in new tab &#8599;</a>'+
       '<button onclick="closeMarketInfo()" style="border:none;background:#f1f5f9;border-radius:6px;width:28px;height:28px;cursor:pointer;font-size:18px;line-height:1;color:#334155;">&times;</button></div></div>'+
+      '<div style="padding:11px 16px;background:linear-gradient(90deg,#eef4fd,#f8fafc);border-bottom:1px solid #e5e7eb;display:flex;align-items:center;gap:13px;flex-wrap:wrap;">'+
+        '<span style="font-size:10px;font-weight:800;letter-spacing:.07em;color:#1f5fdb;border:1px solid #bfd4f5;border-radius:5px;padding:2px 7px;">TL;DR</span>'+
+        '<span style="font-size:20px;font-weight:800;color:#0f172a;letter-spacing:-.01em;">'+MARKET_TLDR.suggested+'</span>'+
+        '<span style="font-size:12.5px;color:#475569;max-width:660px;">'+MARKET_TLDR.basis+' — price with the parish&#39;s 3 full-service Class A comps ($24–28) and hold; at ~99% leased, a vacancy here is measured in quarters, not weeks.</span>'+
+      '</div>'+
       '<iframe id="marketFrame" title="Market study" style="border:0;width:100%;flex:1;"></iframe></div>';
     ov.addEventListener("click", function(e){ if(e.target === ov) closeMarketInfo(); });
     document.body.appendChild(ov);
@@ -2367,6 +2385,98 @@ function openMarketInfo(url) {
 function closeMarketInfo() {
   var ov = document.getElementById("marketModal");
   if(ov) { ov.style.display = "none"; document.getElementById("marketFrame").src = "about:blank"; }
+}
+
+// ── MARKET PRICING TL;DR ──────────────────────────────────────────────────────
+// Suggested asking for Sanctuary, distilled from the St. Tammany office market
+// study (LACDB 883-listing pull, June 2026). Shown atop Current Market Info and
+// in the Leasing area.
+var MARKET_TLDR = {
+  property: 'Sanctuary Office Park',
+  suggested: '$27–28 / SF',
+  basis: 'full-service gross · fixed 3% annual steps',
+  points: [
+    'Full-service is rare on the Northshore — only 3 Class A buildings in the whole parish offer it, all priced $24–28. Sanctuary belongs at the top of that band.',
+    'At ~99% leased in a market where the median office sits ~142 days (and the slow tail runs 12+ months), scarcity supports holding price — don\'t discount to fill.',
+    'Reframe NNN competitors: a "$19 base" Class A NNN becomes ~$23–31 all-in once taxes, insurance, CAM and janitorial are added back — Sanctuary\'s single number wins on certainty.',
+  ],
+  asOf: 'June 2026 · LACDB 883-listing pull',
+  sfRate: 27, // $/SF/yr used for suggested-rent math in the Leasing area
+};
+function marketTldrCard() {
+  var t = MARKET_TLDR;
+  return '<div class="card" style="border-left:4px solid #1f5fdb;margin-bottom:20px;">'+
+    '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">'+iconSvg('badge-dollar-sign',18,'#1f5fdb')+'<span class="card-title" style="margin-bottom:0;">Suggested asking — '+t.property+'</span></div>'+
+    '<div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:12px;"><span style="font-size:32px;font-weight:800;color:#0f172a;letter-spacing:-.02em;">'+t.suggested+'</span><span style="font-size:13px;color:#6b7280;">'+t.basis+'</span></div>'+
+    '<ul style="margin:0;padding-left:18px;font-size:13px;color:#374151;line-height:1.55;">'+t.points.map(function(x){ return '<li style="margin-bottom:5px;">'+x+'</li>'; }).join('')+'</ul>'+
+    '<div style="font-size:11px;color:#9ca3af;margin-top:8px;">'+t.asOf+'</div></div>';
+}
+
+// ── BEGIN MARKETING / LEASING AREA ────────────────────────────────────────────
+// Flagging a suite for marketing is stored locally (no auth needed) and surfaced
+// in the Leasing view. Records: {slug,building,suite,tenant,sf,rent,action,flaggedAt}.
+function getMarketing(){ try { return JSON.parse(localStorage.getItem('marketingSuites')||'[]'); } catch(e){ return []; } }
+function setMarketing(a){ try { localStorage.setItem('marketingSuites', JSON.stringify(a)); } catch(e){} updateLeasingBadge(); }
+function mktKey(r){ return r.slug+'|'+r.building+'|'+r.suite; }
+function isMarketingFlagged(key){ return getMarketing().some(function(r){ return mktKey(r)===key; }); }
+function updateLeasingBadge(){ var el=document.getElementById('leasingBadge'); if(el){ var n=getMarketing().length; el.textContent=n; el.style.display=n>0?'':'none'; } }
+function marketBtn(p, b, t){
+  if(t.action && t.action.label === 'Owner-Occupied') return '';
+  var rec = { slug:p.slug, building:b.name, suite:t.suite, tenant: t.vacant?'(Vacant)':t.tenant, sf:t.sf||0, rent:t.rent||0, action:(t.action&&t.action.label)||'' };
+  var flagged = isMarketingFlagged(mktKey(rec));
+  var enc = encodeURIComponent(JSON.stringify(rec));
+  return '<button type="button" class="mktbtn'+(flagged?' on':'')+'" data-rec="'+enc+'" onclick="flagMarketingFromEl(this,event)" title="'+(flagged?'In marketing — open Leasing':'Begin marketing this suite')+'">'+iconSvg('megaphone',12)+'</button>';
+}
+function flagMarketingFromEl(el, ev){
+  if(ev){ ev.stopPropagation(); }
+  var rec; try { rec = JSON.parse(decodeURIComponent(el.getAttribute('data-rec'))); } catch(e){ return; }
+  rec.flaggedAt = new Date().toISOString();
+  var arr = getMarketing();
+  if(!arr.some(function(x){ return mktKey(x)===mktKey(rec); })){ arr.push(rec); setMarketing(arr); }
+  switchView('leasing');
+}
+function unflagMarketing(key){ setMarketing(getMarketing().filter(function(r){ return mktKey(r)!==key; })); renderLeasing(); }
+function marketingSuiteCard(r){
+  var rate = (r.slug==='sanctuary-office-park') ? MARKET_TLDR.sfRate : 0;
+  var moAsk = rate ? Math.round(r.sf*rate/12) : 0;
+  var yrAsk = rate ? r.sf*rate : 0;
+  var reasonTone = {'Begin Marketing':'#dc2626','Renew or Re-market':'#b45309','Expired — Re-market / Verify':'#dc2626'};
+  var reason = r.action ? '<span class="badge" style="background:'+((reasonTone[r.action]||'#e5e7eb'))+'1a;color:'+(reasonTone[r.action]||'#6b7280')+';border:1px solid '+(reasonTone[r.action]||'#e5e7eb')+'55;font-size:11px;">'+escHtml(r.action)+'</span>' : '';
+  // existing marketing assets for this suite (agent outputs whose title mentions the suite)
+  var sNum = String(r.suite).match(/\d+/); sNum = sNum ? sNum[0] : '';
+  var assets = (typeof DOCUMENTS!=='undefined'?DOCUMENTS:[]).filter(function(d){
+    return d.category==='Agent Output' && /market|listing|brochure|email|social|pitch|brief/i.test((d.title||'')+(d.id||'')) && sNum && ((d.title||'')+(d.id||'')).indexOf(sNum)>=0;
+  });
+  var h = '<div class="card" style="margin-bottom:14px;">';
+  h += '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;">';
+  h += '<div><div style="font-size:15px;font-weight:700;color:#0f172a;">'+escHtml(r.building)+' · Suite '+escHtml(r.suite)+'</div>'+
+       '<div style="font-size:12px;color:#6b7280;margin-top:2px;">'+escHtml(MARKET_TLDR.property==='Sanctuary Office Park'&&r.slug==='sanctuary-office-park'?'Sanctuary Office Park':r.slug)+' · '+(r.sf?r.sf.toLocaleString()+' SF':'SF n/a')+(r.tenant&&r.tenant!=='(Vacant)'?' · currently '+escHtml(r.tenant):' · vacant')+'</div></div>';
+  h += '<div style="display:flex;gap:8px;align-items:center;">'+reason+'<button type="button" class="mkt-remove" onclick="unflagMarketing(\''+escHtml(mktKey(r)).replace(/'/g,"\\'")+'\')" title="Remove from marketing">'+iconSvg('x',14)+'</button></div>';
+  h += '</div>';
+  if(rate){
+    h += '<div style="display:flex;gap:24px;flex-wrap:wrap;margin-top:12px;padding-top:12px;border-top:1px solid #f1f5f9;">'+
+      '<div><div style="font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#9ca3af;font-weight:700;">Suggested asking</div><div style="font-size:18px;font-weight:700;color:#0f172a;">$'+rate+'/SF <span style="font-size:12px;font-weight:500;color:#6b7280;">FSG</span></div></div>'+
+      '<div><div style="font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#9ca3af;font-weight:700;">Monthly</div><div style="font-size:18px;font-weight:700;color:#0f172a;">$'+moAsk.toLocaleString()+'</div></div>'+
+      '<div><div style="font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#9ca3af;font-weight:700;">Annual</div><div style="font-size:18px;font-weight:700;color:#0f172a;">$'+yrAsk.toLocaleString()+'</div></div></div>';
+  }
+  h += '<div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;">';
+  if(assets.length){ assets.forEach(function(d){ h += '<button type="button" class="link-btn" style="font-size:12px;color:#2563eb;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:5px;" onclick="switchView(\'outputs\')">'+iconSvg('file-text',13)+escHtml(d.title||'Marketing doc')+'</button>'; }); }
+  else { h += '<span style="font-size:12px;color:#9ca3af;">No marketing assets generated yet for this suite.</span>'; }
+  h += '<button type="button" class="link-btn" style="margin-left:auto;font-size:12px;color:#1f5fdb;font-weight:600;cursor:pointer;" onclick="switchView(\'outputs\')">Marketing outputs →</button>';
+  h += '</div></div>';
+  return h;
+}
+function renderLeasing(){
+  var c = document.getElementById('leasingContent');
+  if(!c) return;
+  var arr = getMarketing().slice().sort(function(a,b){ return String(b.flaggedAt||'').localeCompare(String(a.flaggedAt||'')); });
+  var html = marketTldrCard();
+  html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;"><span class="card-title" style="margin-bottom:0;">Suites in Marketing — '+arr.length+'</span>'+
+    '<button type="button" class="link-btn" style="font-size:12px;color:#2563eb;font-weight:500;cursor:pointer;" onclick="switchView(\'portfolio\')">Browse properties →</button></div>';
+  if(!arr.length){ html += '<div class="card" style="color:#6b7280;font-size:13px;line-height:1.5;">No suites are flagged for marketing yet.<br>Open a property, find a suite in the roster, and click the '+iconSvg('megaphone',13,'#1f5fdb')+' button in its Lease Action cell to begin marketing it.</div>'; }
+  else { arr.forEach(function(r){ html += marketingSuiteCard(r); }); }
+  c.innerHTML = html;
+  if(window.lucide) lucide.createIcons();
 }
 
 function renderPropertyDetail(p) {
@@ -2535,7 +2645,7 @@ function renderPropertyDetail(p) {
           for(ci=0; ci<maxC; ci++) contactCells += '<td class="c-contact" style="vertical-align:top;min-width:150px;">'+contactColCell(tenCs[ci])+'</td>';
           for(ci=0; ci<maxB; ci++) contactCells += '<td class="c-broker" style="vertical-align:top;min-width:150px;">'+contactColCell(brkCs[ci])+'</td>';
           if(anyBrokerDocs) contactCells += '<td class="c-brokerdocs" style="vertical-align:top;min-width:150px;">'+(t.vacant?'<span style="font-size:11px;color:#d1d5db;">—</span>':brokerDocsColCell(brokerDocsByTenant[t.tenant] || []))+'</td>';
-          html += '<tr><td class="c-tenant" style="font-weight:500;">'+t.tenant+'</td><td class="c-suite">'+t.suite+suiteNote+'</td><td class="c-sf">'+t.sf.toLocaleString()+'</td><td class="c-rent">'+(t.rent>0?'$'+t.rent.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}):'—')+'</td><td class="c-sfyr">'+sfyr+'</td><td class="c-status">'+statusBdg+'</td><td class="c-expiry" style="font-size:12px;'+(t.expiry==='—'?'color:#d1d5db;':'')+'">'+t.expiry+expSub+'</td><td class="c-notice" style="font-size:12px;'+(t.notice==='—'?'color:#d1d5db;':'')+'">'+t.notice+notSub+'</td><td class="c-action">'+actCell+'</td>'+leaseCell+legacyCells+'<td class="c-coistatus">'+insuranceStatusCell(t.insurance)+'</td>'+coiCells+contactCells+'</tr>';
+          html += '<tr><td class="c-tenant" style="font-weight:500;">'+t.tenant+'</td><td class="c-suite">'+t.suite+suiteNote+'</td><td class="c-sf">'+t.sf.toLocaleString()+'</td><td class="c-rent">'+(t.rent>0?'$'+t.rent.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}):'—')+'</td><td class="c-sfyr">'+sfyr+'</td><td class="c-status">'+statusBdg+'</td><td class="c-expiry" style="font-size:12px;'+(t.expiry==='—'?'color:#d1d5db;':'')+'">'+t.expiry+expSub+'</td><td class="c-notice" style="font-size:12px;'+(t.notice==='—'?'color:#d1d5db;':'')+'">'+t.notice+notSub+'</td><td class="c-action"><div style="display:flex;align-items:center;gap:6px;">'+actCell+marketBtn(p,b,t)+'</div></td>'+leaseCell+legacyCells+'<td class="c-coistatus">'+insuranceStatusCell(t.insurance)+'</td>'+coiCells+contactCells+'</tr>';
         });
         html += '<tr><td class="c-tenant" style="font-weight:700;">Total ('+bTenants.length+' tenants)</td><td class="c-suite"></td><td class="c-sf">'+bTotal.toLocaleString()+'</td><td class="c-rent">$'+bRent.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})+'</td><td class="c-sfyr"></td><td class="c-status"></td><td class="c-expiry"></td><td class="c-notice"></td><td class="c-action"></td><td class="c-lease"></td>'+emptyTail+'</tr>';
         html += '</tbody></table>';
@@ -3631,6 +3741,7 @@ function init() {
   renderPortfolio();
   updateCounts();
   updateOutputsBadge();
+  updateLeasingBadge();
   if(window.lucide) lucide.createIcons();
 }
 
