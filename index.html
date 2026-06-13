@@ -2427,44 +2427,59 @@ function generateFlyer(key){
   if(!w){ alert('Please allow pop-ups to open the flyer in a new tab.'); return; }
   w.document.open(); w.document.write(flyerDoc(r)); w.document.close();
 }
-// Aerial location map centered on Sanctuary (#1 Sanctuary Blvd, 30.3946,-90.1029).
-// Hybrid of Esri World Imagery (satellite) + World Transportation (road labels),
-// rendered from live tiles (no API key) as SVG <image> tiles so it prints to PDF.
+// Real nearby amenities (verified OpenStreetMap POIs along the US-190 / Causeway
+// Blvd corridor). Numbered to match the pins on the location map.
+var FLYER_POIS = [
+  { n:1, name:'Rouses Market',   cat:'Grocery',   mi:'0.2', lat:30.39584, lng:-90.09986 },
+  { n:2, name:'The Italian Pie', cat:'Dining',    mi:'0.2', lat:30.39682, lng:-90.09996 },
+  { n:3, name:'Walgreens',       cat:'Pharmacy',  mi:'0.3', lat:30.39628, lng:-90.09846 },
+  { n:4, name:'Starbucks',       cat:'Coffee',    mi:'1.1', lat:30.39323, lng:-90.08515 },
+  { n:5, name:'Coffee Rani',     cat:'Café',      mi:'1.1', lat:30.39446, lng:-90.08438 },
+  { n:6, name:'Hancock Whitney', cat:'Bank',      mi:'1.2', lat:30.39251, lng:-90.08346 },
+  { n:7, name:'Comeback Burger', cat:'Dining',    mi:'1.2', lat:30.39239, lng:-90.08251 },
+];
+var SANCTUARY_LATLNG = [30.394593, -90.102901];
+// Clean light location map (CARTO Positron, no API key) centered on the Sanctuary /
+// US-190 corridor, with the property pin + numbered real-amenity pins. Rendered as
+// SVG <image> tiles so it prints to PDF.
 function flyerAmenityMap(){
-  var lat=30.394593, lng=-90.102901, z=16, W=1000, H=560;
-  var n=Math.pow(2,z), latRad=lat*Math.PI/180;
-  var cwx=(lng+180)/360*n*256;
-  var cwy=(1-Math.log(Math.tan(latRad)+1/Math.cos(latRad))/Math.PI)/2*n*256;
-  var ox=cwx-W/2, oy=cwy-H/2;
-  var tx0=Math.floor(ox/256), tx1=Math.floor((ox+W)/256);
-  var ty0=Math.floor(oy/256), ty1=Math.floor((oy+H)/256);
-  var layer=function(base){ var s=''; for(var tx=tx0;tx<=tx1;tx++){ for(var ty=ty0;ty<=ty1;ty++){ var u=base+'/'+z+'/'+ty+'/'+tx; s+='<image href="'+u+'" xlink:href="'+u+'" x="'+(tx*256-ox)+'" y="'+(ty*256-oy)+'" width="256" height="256"/>'; } } return s; };
-  var imagery=layer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile');
-  var roads=layer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer/tile');
-  var mx=Math.round(cwx-ox), my=Math.round(cwy-oy);
-  var mpp=156543.03*Math.cos(latRad)/n;            // meters per pixel
-  var seg=Math.round(402.336/mpp);                 // ¼-mile scale bar, in px
-  var marker='<g transform="translate('+mx+','+my+')">'+
-    '<circle cx="0" cy="-17" r="21" fill="rgba(255,255,255,.30)"/>'+
-    '<ellipse cx="0" cy="4" rx="10" ry="3.5" fill="rgba(0,0,0,.35)"/>'+
-    '<path d="M0 -38 C-12 -38 -21 -29 -21 -18 C-21 -5 0 6 0 6 C0 6 21 -5 21 -18 C21 -29 12 -38 0 -38 Z" fill="#22315d" stroke="#fff" stroke-width="3"/>'+
-    '<circle cx="0" cy="-19" r="7" fill="#fff"/></g>';
-  var label='<g transform="translate(18,'+(H-60)+')">'+
-    '<rect x="0" y="0" width="296" height="44" rx="8" fill="#22315d"/>'+
-    '<rect x="0" y="0" width="4" height="44" rx="2" fill="#5e8ed0"/>'+
-    '<text x="16" y="19" font-family="Segoe UI,Arial" font-size="13.5" font-weight="800" fill="#fff" letter-spacing="0.3">SANCTUARY OFFICE PARK</text>'+
-    '<text x="16" y="34" font-family="Segoe UI,Arial" font-size="10" fill="#c5d6f0">#1 Sanctuary Blvd · Mandeville, LA 70471</text></g>';
-  var north='<g transform="translate('+(W-30)+',28)"><circle cx="0" cy="0" r="15" fill="rgba(15,23,42,.55)"/>'+
-    '<path d="M0 -9 L5 6 L0 2 L-5 6 Z" fill="#fff"/><text x="0" y="-11" font-family="Arial" font-size="8" font-weight="700" fill="#fff" text-anchor="middle">N</text></g>';
-  var scale='<g transform="translate('+(W-18-seg)+','+(H-20)+')">'+
-    '<rect x="-8" y="-13" width="'+(seg+16)+'" height="22" rx="4" fill="rgba(15,23,42,.55)"/>'+
-    '<line x1="0" y1="0" x2="'+seg+'" y2="0" stroke="#fff" stroke-width="2.5"/>'+
-    '<line x1="0" y1="-4" x2="0" y2="4" stroke="#fff" stroke-width="2"/><line x1="'+seg+'" y1="-4" x2="'+seg+'" y2="4" stroke="#fff" stroke-width="2"/>'+
-    '<text x="'+(seg/2)+'" y="-5" font-family="Arial" font-size="9" font-weight="700" fill="#fff" text-anchor="middle">¼ mi</text></g>';
-  var attrib='<text x="'+(W-6)+'" y="'+(H-6)+'" font-family="Arial" font-size="8.5" fill="#fff" text-anchor="end" style="paint-order:stroke;stroke:rgba(0,0,0,.45);stroke-width:2.5px;">Imagery © Esri, Maxar, Earthstar Geographics</text>';
+  var clat=30.3935, clng=-90.0905, z=15, W=1000, H=560;
+  var n=Math.pow(2,z);
+  var world=function(la,lo){ var r=la*Math.PI/180; return [ (lo+180)/360*n*256, (1-Math.log(Math.tan(r)+1/Math.cos(r))/Math.PI)/2*n*256 ]; };
+  var c=world(clat,clng), ox=c[0]-W/2, oy=c[1]-H/2;
+  var P=function(la,lo){ var w=world(la,lo); return [Math.round(w[0]-ox), Math.round(w[1]-oy)]; };
+  var tx0=Math.floor(ox/256), tx1=Math.floor((ox+W)/256), ty0=Math.floor(oy/256), ty1=Math.floor((oy+H)/256);
+  var subs=['a','b','c','d'], si=0, tiles='';
+  for(var tx=tx0;tx<=tx1;tx++){ for(var ty=ty0;ty<=ty1;ty++){
+    var u='https://'+subs[si++%4]+'.basemaps.cartocdn.com/light_all/'+z+'/'+tx+'/'+ty+'@2x.png';
+    tiles += '<image href="'+u+'" xlink:href="'+u+'" x="'+(tx*256-ox)+'" y="'+(ty*256-oy)+'" width="256" height="256"/>';
+  }}
+  var pois='';
+  FLYER_POIS.forEach(function(p){ var xy=P(p.lat,p.lng);
+    pois += '<g transform="translate('+xy[0]+','+xy[1]+')"><circle cx="0" cy="0" r="11" fill="#22315d" stroke="#fff" stroke-width="2"/>'+
+      '<text x="0" y="3.5" font-family="Segoe UI,Arial" font-size="11" font-weight="700" fill="#fff" text-anchor="middle">'+p.n+'</text></g>';
+  });
+  var m=P(SANCTUARY_LATLNG[0],SANCTUARY_LATLNG[1]);
+  var marker='<g transform="translate('+m[0]+','+m[1]+')">'+
+    '<ellipse cx="0" cy="3" rx="10" ry="3.5" fill="rgba(0,0,0,.22)"/>'+
+    '<path d="M0 -36 C-12 -36 -20 -27 -20 -17 C-20 -5 0 5 0 5 C0 5 20 -5 20 -17 C20 -27 12 -36 0 -36 Z" fill="#22315d" stroke="#fff" stroke-width="2.5"/>'+
+    '<circle cx="0" cy="-18" r="6.5" fill="#fff"/></g>';
+  var mpp=156543.03*Math.cos(clat*Math.PI/180)/n, seg=Math.round(402.336/mpp);
+  var label='<g transform="translate(16,'+(H-58)+')">'+
+    '<rect x="0" y="0" width="300" height="42" rx="8" fill="#22315d"/><rect x="0" y="0" width="4" height="42" rx="2" fill="#5e8ed0"/>'+
+    '<text x="16" y="18" font-family="Segoe UI,Arial" font-size="13" font-weight="800" fill="#fff">SANCTUARY OFFICE PARK</text>'+
+    '<text x="16" y="33" font-family="Segoe UI,Arial" font-size="10" fill="#c5d6f0">#1 Sanctuary Blvd · Mandeville, LA 70471</text></g>';
+  var north='<g transform="translate('+(W-28)+',26)"><circle cx="0" cy="0" r="14" fill="#fff" stroke="#cbd5e1" stroke-width="1"/>'+
+    '<path d="M0 -8 L4.5 5 L0 1.5 L-4.5 5 Z" fill="#22315d"/><text x="0" y="-9.5" font-family="Arial" font-size="7.5" font-weight="700" fill="#22315d" text-anchor="middle">N</text></g>';
+  var scale='<g transform="translate('+(W-16-seg)+','+(H-18)+')">'+
+    '<rect x="-7" y="-12" width="'+(seg+14)+'" height="20" rx="4" fill="rgba(255,255,255,.82)"/>'+
+    '<line x1="0" y1="0" x2="'+seg+'" y2="0" stroke="#22315d" stroke-width="2.5"/>'+
+    '<line x1="0" y1="-4" x2="0" y2="4" stroke="#22315d" stroke-width="2"/><line x1="'+seg+'" y1="-4" x2="'+seg+'" y2="4" stroke="#22315d" stroke-width="2"/>'+
+    '<text x="'+(seg/2)+'" y="-4" font-family="Arial" font-size="9" font-weight="700" fill="#22315d" text-anchor="middle">¼ mi</text></g>';
+  var attrib='<text x="'+(W-6)+'" y="'+(H-6)+'" font-family="Arial" font-size="8" fill="#8a93a3" text-anchor="end">© OpenStreetMap contributors · © CARTO</text>';
   return '<svg viewBox="0 0 '+W+' '+H+'" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="display:block;border:1px solid #d9e1ec;border-radius:10px;">'+
     '<defs><clipPath id="mapclip"><rect x="0" y="0" width="'+W+'" height="'+H+'" rx="10"/></clipPath></defs>'+
-    '<g clip-path="url(#mapclip)">'+imagery+roads+label+north+scale+attrib+marker+'</g></svg>';
+    '<g clip-path="url(#mapclip)">'+tiles+pois+marker+label+north+scale+attrib+'</g></svg>';
 }
 function flyerDoc(r){
   var office = r.slug==='sanctuary-office-park';
@@ -2476,15 +2491,6 @@ function flyerDoc(r){
   var lead = cc[0] || null;
   var fmt = function(n){ return n ? '$'+n.toLocaleString() : '—'; };
   var NAVY='#22315d', BLUE='#5e8ed0';
-  var amenities = [
-    ['#e8833a','Dining & Cafés','20+ restaurants & coffee within ~5 min along the US-190 / Causeway corridor'],
-    ['#2f9e6b','Banking & Financial','Regions, Chase, Hancock Whitney & local branches minutes away'],
-    ['#7c4dc4','Hotels & Lodging','Courtyard, Fairfield & boutique lodging for visiting clients'],
-    ['#22315d','Courts & Civic','St. Tammany Justice Center (Covington) ~15 min · City of Mandeville nearby'],
-    ['#c0392b','Healthcare','Lakeview Regional Medical Center & urgent care within minutes'],
-    ['#1f9aa8','Retail & Services','Grocery, postal/printing, professional services along Hwy 190'],
-    ['#3f74c9','Fitness & Wellness','Gyms, studios & the Mandeville Trailhead / lakefront path'],
-  ];
   var hi = [
     'Class A, full-service office on a 5-building, ~96,000 SF campus — currently ~99% leased.',
     'Causeway-adjacent in Mandeville: a ~25-minute commute to Metairie / New Orleans across the lake.',
@@ -2528,10 +2534,10 @@ function flyerDoc(r){
   '.pitch{margin:26px 0.6in 0;background:'+NAVY+';color:#fff;border-radius:12px;padding:20px 24px;}'+
   '.pitch .q{font-size:16px;font-weight:700;line-height:1.45;}'+
   '.pitch .a{font-size:12px;color:#bcd0ee;margin-top:8px;line-height:1.5;}'+
-  '.amleg{display:grid;grid-template-columns:1fr 1fr;gap:10px 22px;margin-top:18px;}'+
-  '.amleg .row{display:flex;gap:9px;align-items:flex-start;}'+
-  '.amleg .dot{width:13px;height:13px;border-radius:50%;margin-top:2px;flex:0 0 auto;}'+
-  '.amleg .t{font-size:12px;}'+
+  '.amleg{display:grid;grid-template-columns:1fr 1fr;gap:9px 22px;margin-top:18px;}'+
+  '.amleg .row{display:flex;gap:9px;align-items:center;}'+
+  '.amleg .num{width:19px;height:19px;border-radius:50%;background:'+NAVY+';color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:0 0 auto;}'+
+  '.amleg .t{font-size:12.5px;}'+
   '.amleg .t b{color:'+NAVY+';}'+
   '.amleg .t span{color:#6b7480;}'+
   '.foot{position:absolute;bottom:0;left:0;right:0;background:'+NAVY+';color:#fff;padding:16px 0.6in;display:flex;justify-content:space-between;align-items:center;}'+
@@ -2583,9 +2589,10 @@ function flyerDoc(r){
     '<div class="topbar"><img src="'+CROSBY_LOGO_URL+'" alt="Crosby Development"><div class="tag">LOCATION & AMENITIES<span>SANCTUARY OFFICE PARK</span></div></div>'+
     '<div class="pad" style="padding-bottom:0;">'+
       '<div class="h">Everything an Office Tenant Needs — Minutes Away</div>'+
-      '<div class="lead" style="margin-bottom:16px;">At the Causeway approach off US-190, Sanctuary puts dining, banking, lodging, courts, healthcare and the Mandeville lakefront within a short drive — with immediate access to I-12 and the bridge to the Southshore.</div>'+
+      '<div class="lead" style="margin-bottom:16px;">Sanctuary sits on Mandeville’s US-190 / Causeway Blvd corridor — grocery, dining, coffee, pharmacy and banking are a short drive away, with immediate access to I-12 and the Causeway to the Southshore.</div>'+
       flyerAmenityMap()+
-      '<div class="amleg">'+amenities.map(function(a){ return '<div class="row"><span class="dot" style="background:'+a[0]+';"></span><div class="t"><b>'+escHtml(a[1])+'</b> — <span>'+escHtml(a[2])+'</span></div></div>'; }).join('')+'</div>'+
+      '<div class="amleg">'+FLYER_POIS.map(function(p){ return '<div class="row"><span class="num">'+p.n+'</span><div class="t"><b>'+escHtml(p.name)+'</b> — <span>'+escHtml(p.cat)+' · '+p.mi+' mi</span></div></div>'; }).join('')+'</div>'+
+      '<div style="font-size:10.5px;color:#9aa4b4;margin-top:8px;">Representative nearby businesses (OpenStreetMap); many more line the US-190 / Causeway Blvd corridor.</div>'+
     '</div>'+
     '<div class="foot"><div class="c"><b>Crosby Development Company, L.L.C.</b><br>'+
       '<span>#1 Sanctuary Blvd, Mandeville, LA 70471</span><br>'+
