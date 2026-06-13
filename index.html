@@ -1956,7 +1956,7 @@ function openRentRoll(slug){
     if(term && new Date(term) < now && l.autoRenew!==true){ holdover=true; term=null; } // expired & still active → holding over
     var noticePassed = !!(l.noticeDeadline && new Date(l.noticeDeadline) < now);
     L.push({ tenant:t.name||u.identifier||'—', suite:u.identifier||'—', sf:Number(u.sf)||0, building:b.name||'—',
-      rent:rent, pct:l.escalationPct, escMonth:l.escalationMonth, terminates:term, autoRenew:l.autoRenew,
+      rent:rent, pct:l.escalationPct, escMonth:l.escalationMonth, commenced:l.commenced||null, terminates:term, autoRenew:l.autoRenew,
       noticeDeadline:l.noticeDeadline||null, noticePassed:noticePassed,
       continuesForward:(l.autoRenew===true && noticePassed), status:l.status||'active', holdover:holdover });
   });
@@ -1966,6 +1966,7 @@ function openRentRoll(slug){
   var years=[]; for(var yy=curYear; yy<=maxYear; yy++) years.push(yy);
   function monthRent(l, Y, m){
     var ms=new Date(Y, m, 1);
+    if(l.commenced && new Date(Y, m+1, 0) < new Date(l.commenced)) return 0; // month entirely before the lease starts
     if(l.terminates){ var td=new Date(l.terminates); if(ms>td && !l.continuesForward) return 0; }
     if(l.pct && l.escMonth){ var c=0; for(var y=curYear; y<=Y; y++){ var ed=new Date(y, l.escMonth-1, 1); if(ed>now && ed<=ms) c++; } return l.rent*Math.pow(1+l.pct/100, c); }
     return l.rent;
