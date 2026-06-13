@@ -291,14 +291,10 @@
       <div class="header-logo"><i data-lucide="building-2" style="width:20px;height:20px;"></i></div>
       <div>
         <div class="header-title">Crosby Development</div>
-        <div class="header-sub">Agent Interaction Dashboard</div>
+        <div class="header-sub">Property &amp; Leasing Dashboard</div>
       </div>
     </div>
     <div class="header-right">
-      <button class="alert-btn" id="alertBtn" onclick="switchView('outputs')">
-        <i data-lucide="alert-circle" style="width:14px;height:14px;"></i>
-        <span id="alertText"></span>
-      </button>
       <button onclick="refreshDashboard()" style="display:flex;align-items:center;gap:4px;font-size:12px;color:#6b7280;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:6px;padding:4px 10px;cursor:pointer;margin-left:8px;" title="Refresh dashboard data">
         <i data-lucide="refresh-cw" style="width:12px;height:12px;"></i> Refresh
       </button>
@@ -311,11 +307,7 @@
 <div class="container">
   <nav class="nav" id="mainNav">
     <button class="nav-btn active" data-view="portfolio"><i data-lucide="layout-dashboard" style="width:15px;height:15px;"></i> Portfolio</button>
-    <button class="nav-btn" data-view="agents"><i data-lucide="bot" style="width:15px;height:15px;"></i> Agents</button>
-    <button class="nav-btn" data-view="outputs"><i data-lucide="file-check" style="width:15px;height:15px;"></i> Outputs <span class="nav-badge" id="outputsBadge">0</span></button>
-    <button class="nav-btn" data-view="kb"><i data-lucide="book-open" style="width:15px;height:15px;"></i> Knowledge Base</button>
     <button class="nav-btn" data-view="leasing"><i data-lucide="megaphone" style="width:15px;height:15px;"></i> Leasing <span class="nav-badge" id="leasingBadge" style="display:none;">0</span></button>
-    <button class="nav-btn" data-view="metrics"><i data-lucide="trending-up" style="width:15px;height:15px;"></i> Metrics</button>
     <button class="nav-btn" data-view="assistant"><i data-lucide="message-square" style="width:15px;height:15px;"></i> Assistant</button>
   </nav>
 
@@ -324,85 +316,11 @@
     <div class="grid-4" id="portfolioStats"></div>
     <h2 class="card-title">Properties</h2>
     <div class="grid-2" id="propertyGrid" style="margin-bottom:24px;"></div>
-    <div class="card">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-        <span class="card-title" style="margin-bottom:0;">Recent Activity</span>
-        <button class="link-btn" onclick="switchView('outputs')" style="font-size:12px;color:#2563eb;font-weight:500;cursor:pointer;">View all outputs →</button>
-      </div>
-      <div id="recentActivity"></div>
-    </div>
   </div>
 
   <!-- ═══ LEASING / MARKETING ═══ -->
   <div class="view" id="view-leasing">
     <div id="leasingContent"></div>
-  </div>
-
-  <!-- ═══ AGENTS (+ Schedule) ═══ -->
-  <div class="view" id="view-agents">
-    <div id="agentsContent"></div>
-  </div>
-
-  <!-- ═══ OUTPUTS (unified: activity + approvals + agent docs) ═══ -->
-  <div class="view" id="view-outputs">
-    <div id="outputsContent"></div>
-  </div>
-
-  <!-- ═══ KNOWLEDGE BASE (formative docs + strategy) ═══ -->
-  <div class="view" id="view-kb">
-    <div id="kbContent"></div>
-  </div>
-
-  <!-- ═══ METRICS ═══ -->
-  <div class="view" id="view-metrics">
-    <div class="grid-4" id="metricsStats"></div>
-    <div class="grid-2" style="margin-bottom:24px;">
-      <div class="card">
-        <div class="card-title">Metairie Plaza — Unit Mix</div>
-        <table class="unit-table">
-          <thead><tr><th>Floor Plan</th><th>Beds/Baths</th><th>Sq Ft</th><th>Rent Range</th><th>Count</th><th>Vacant</th></tr></thead>
-          <tbody id="mpUnitTable"></tbody>
-        </table>
-      </div>
-      <div class="card">
-        <div class="card-title">Metairie Lake — Unit Mix</div>
-        <table class="unit-table">
-          <thead><tr><th>Floor Plan</th><th>Beds/Baths</th><th>Sq Ft</th><th>Rent Range</th><th>Count</th><th>Vacant</th></tr></thead>
-          <tbody id="mlUnitTable"></tbody>
-        </table>
-      </div>
-    </div>
-    <div class="card" style="margin-bottom:24px;">
-      <div class="card-title">Sanctuary Office Park — Building Breakdown</div>
-      <table class="unit-table">
-        <thead><tr><th>Building</th><th>Rentable SF</th><th>Occupied SF</th><th>Vacant SF</th><th>Tenants</th><th>Monthly Rent</th></tr></thead>
-        <tbody id="sopBuildingTable"></tbody>
-      </table>
-    </div>
-    <div class="grid-2" style="margin-bottom:24px;">
-      <div class="card">
-        <div class="card-title">Sanctuary Office Park — Rent by Building</div>
-        <div style="position:relative;height:250px;"><canvas id="sopRentChart"></canvas></div>
-      </div>
-      <div class="card">
-        <div class="card-title">Sanctuary Office Park — SF by Building</div>
-        <div style="position:relative;height:250px;"><canvas id="sopSFChart"></canvas></div>
-      </div>
-    </div>
-    <div class="grid-2" style="margin-bottom:24px;">
-      <div class="card">
-        <div class="card-title">Metairie Plaza — Occupancy</div>
-        <div style="position:relative;height:220px;"><canvas id="mpOccChart"></canvas></div>
-      </div>
-      <div class="card">
-        <div class="card-title">Metairie Lake — Occupancy</div>
-        <div style="position:relative;height:220px;"><canvas id="mlOccChart"></canvas></div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-title">Portfolio Summary</div>
-      <div id="portfolioSummaryGrid"></div>
-    </div>
   </div>
 
   <!-- ═══ ASSISTANT ACTIVITY ═══ -->
@@ -562,14 +480,6 @@ function applyDashboardState(partial) {
 // current, so this just repaints.
 function rerenderActiveViews() {
   renderPortfolio();
-  updateCounts();
-  updateOutputsBadge();
-  var activeView = document.querySelector(".view.active");
-  if(activeView) {
-    var id = activeView.id.replace("view-","");
-    if(id==="agents") renderAgents(null);
-    if(id==="outputs") renderOutputs(null);
-  }
   var el = document.getElementById("lastRefresh");
   if(el) el.innerHTML = '<span class="live-dot"></span>Updated ' + new Date().toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"});
   if(window.lucide) lucide.createIcons();
@@ -710,10 +620,6 @@ function switchView(id) {
   document.getElementById("view-"+id).classList.add("active");
   var btn = document.querySelector('.nav-btn[data-view="'+id+'"]');
   if(btn) btn.classList.add("active");
-  if(id==="agents") renderAgents(null);
-  if(id==="outputs") renderOutputs(null);
-  if(id==="kb") renderKB(null);
-  if(id==="metrics") renderMetrics();
   if(id==="assistant") renderAssistantLog();
   if(id==="leasing") renderLeasing();
   lucide.createIcons();
@@ -816,13 +722,6 @@ function renderPortfolio() {
     propHTML += '</div>';
   });
   document.getElementById("propertyGrid").innerHTML = propHTML;
-
-  // Recent Activity
-  if(activities.length === 0) {
-    document.getElementById("recentActivity").innerHTML = '<div class="empty-state" style="padding:30px;"><i data-lucide="inbox" style="width:24px;height:24px;color:#d1d5db;"></i><p>No agent activity yet. Activity will appear here once agents are deployed and begin producing outputs.</p></div>';
-  } else {
-    document.getElementById("recentActivity").innerHTML = activities.slice(0,5).map(activityRowHTML).join("");
-  }
   lucide.createIcons();
 }
 
@@ -2442,11 +2341,6 @@ function marketingSuiteCard(r){
   var yrAsk = rate ? r.sf*rate : 0;
   var reasonTone = {'Begin Marketing':'#dc2626','Renew or Re-market':'#b45309','Expired — Re-market / Verify':'#dc2626'};
   var reason = r.action ? '<span class="badge" style="background:'+((reasonTone[r.action]||'#e5e7eb'))+'1a;color:'+(reasonTone[r.action]||'#6b7280')+';border:1px solid '+(reasonTone[r.action]||'#e5e7eb')+'55;font-size:11px;">'+escHtml(r.action)+'</span>' : '';
-  // existing marketing assets for this suite (agent outputs whose title mentions the suite)
-  var sNum = String(r.suite).match(/\d+/); sNum = sNum ? sNum[0] : '';
-  var assets = (typeof DOCUMENTS!=='undefined'?DOCUMENTS:[]).filter(function(d){
-    return d.category==='Agent Output' && /market|listing|brochure|email|social|pitch|brief/i.test((d.title||'')+(d.id||'')) && sNum && ((d.title||'')+(d.id||'')).indexOf(sNum)>=0;
-  });
   var h = '<div class="card" style="margin-bottom:14px;">';
   h += '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;">';
   h += '<div><div style="font-size:15px;font-weight:700;color:#0f172a;">'+escHtml(r.building)+' · Suite '+escHtml(r.suite)+'</div>'+
@@ -2460,9 +2354,7 @@ function marketingSuiteCard(r){
       '<div><div style="font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#9ca3af;font-weight:700;">Annual</div><div style="font-size:18px;font-weight:700;color:#0f172a;">$'+yrAsk.toLocaleString()+'</div></div></div>';
   }
   h += '<div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;">';
-  if(assets.length){ assets.forEach(function(d){ h += '<button type="button" class="link-btn" style="font-size:12px;color:#2563eb;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:5px;" onclick="switchView(\'outputs\')">'+iconSvg('file-text',13)+escHtml(d.title||'Marketing doc')+'</button>'; }); }
-  else { h += '<span style="font-size:12px;color:#9ca3af;">No marketing assets generated yet for this suite.</span>'; }
-  h += '<button type="button" class="link-btn" style="margin-left:auto;font-size:12px;color:#1f5fdb;font-weight:600;cursor:pointer;" onclick="switchView(\'outputs\')">Marketing outputs →</button>';
+  h += '<span style="font-size:12px;color:#9ca3af;">Marketing assets (listing, flyer, outreach) can be generated for this suite — coming soon.</span>';
   h += '</div></div>';
   return h;
 }
