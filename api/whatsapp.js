@@ -127,6 +127,7 @@ async function answerWithTools(question, today, ctx) {
 
 async function runToolLoop(p, system, question, ctx) {
   const messages = [{ role: "system", content: system }, { role: "user", content: question }];
+  const urlMap = {}; // base path -> full tokenized URL, harvested from tool results
   for (let i = 0; i < 5; i++) {
     const msg = await callChat(p, messages);
     messages.push(msg);
@@ -136,15 +137,33 @@ async function runToolLoop(p, system, question, ctx) {
         let args = {};
         try { args = JSON.parse((tc.function && tc.function.arguments) || "{}"); } catch (e) {}
         const result = runTool(tc.function && tc.function.name, args, ctx);
-        messages.push({ role: "tool", tool_call_id: tc.id, content: JSON.stringify(result).slice(0, 8000) });
+        const content = JSON.stringify(result).slice(0, 8000);
+        harvestUrls(content, urlMap);
+        messages.push({ role: "tool", tool_call_id: tc.id, content });
       }
       continue;
     }
-    const text = (msg.content || "").trim();
+    const text = repairUrls((msg.content || "").trim(), urlMap);
     if (text) return text;
     return "I couldn't find an answer to that. Try asking about a tenant, a building's rent, occupancy, expirations, vacancies, or insurance.";
   }
   return "That needed several lookups and I didn't finish — please try a more specific question.";
+}
+
+// Firebase Storage links only work WITH their ?alt=media&token=... — but models
+// often drop the long query string when retyping a URL. Harvest the exact URLs
+// from tool results and put the token back on any the model truncated.
+function harvestUrls(s, map) {
+  const re = /https?:\/\/[^\s"'<>]+\?alt=media&token=[A-Za-z0-9-]+/g;
+  let m; while ((m = re.exec(s))) { const full = m[0]; map[full.split("?")[0]] = full; }
+}
+function repairUrls(text, map) {
+  let out = text;
+  for (const base of Object.keys(map)) {
+    const re = new RegExp(base.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "(?!\\?)", "g");
+    out = out.replace(re, map[base]);
+  }
+  return out;
 }
 
 async function callChat(p, messages) {
