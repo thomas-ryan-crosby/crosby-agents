@@ -2618,15 +2618,24 @@ function generateFlyer(key){
   w.document.open(); w.document.write(flyerDoc(r)); w.document.close();
 }
 // Everyday amenities at the property's doorstep (numbered, color-coded by use).
+// Everyday amenities within ~1 mi (numbered, color-coded by use). Coordinates are
+// real OSM/Nominatim locations along the US-190 / North Causeway Blvd retail corridor.
 var FLYER_POIS = [
-  { n:1, name:'Rouses Market',   cat:'Grocery',   lat:30.39584, lng:-90.09986 },
-  { n:2, name:'Walgreens',       cat:'Pharmacy',  lat:30.39628, lng:-90.09846 },
-  { n:3, name:'Discount Zone',   cat:'Fuel',      lat:30.39902, lng:-90.10522 },
-  { n:4, name:"McDonald's",      cat:'Fast Food', lat:30.39521, lng:-90.09027 },
-  { n:5, name:'Chick-fil-A',     cat:'Dining',    lat:30.39400, lng:-90.08622 },
-  { n:6, name:'Starbucks',       cat:'Coffee',    lat:30.39323, lng:-90.08515 },
-  { n:7, name:'Hancock Whitney', cat:'Bank',      lat:30.39251, lng:-90.08346 },
-  { n:8, name:'Coffee Rani',     cat:'Dining',    lat:30.39446, lng:-90.08438 },
+  { n:1,  name:'Rouses Market',     cat:'Grocery',   lat:30.39584, lng:-90.09986 },
+  { n:2,  name:'Whole Foods Market',cat:'Grocery',   lat:30.39049, lng:-90.08592 },
+  { n:3,  name:'Target',            cat:'Retail',    lat:30.39073, lng:-90.08618 },
+  { n:4,  name:'Dollar Tree',       cat:'Retail',    lat:30.39271, lng:-90.08383 },
+  { n:5,  name:'Walgreens',         cat:'Pharmacy',  lat:30.39628, lng:-90.09846 },
+  { n:6,  name:"McDonald's",        cat:'Fast Food', lat:30.39521, lng:-90.09027 },
+  { n:7,  name:'Chick-fil-A',       cat:'Fast Food', lat:30.39400, lng:-90.08622 },
+  { n:8,  name:"Jersey Mike's",     cat:'Fast Food', lat:30.39294, lng:-90.08391 },
+  { n:9,  name:'Starbucks',         cat:'Coffee',    lat:30.39323, lng:-90.08515 },
+  { n:10, name:'Coffee Rani',       cat:'Dining',    lat:30.39446, lng:-90.08438 },
+  { n:11, name:'Viet Kitchen',      cat:'Dining',    lat:30.39397, lng:-90.08402 },
+  { n:12, name:'Honey Baked Ham',   cat:'Dining',    lat:30.39419, lng:-90.08410 },
+  { n:13, name:'Comeback Burger',   cat:'Dining',    lat:30.39239, lng:-90.08251 },
+  { n:14, name:'The Italian Pie',   cat:'Dining',    lat:30.39682, lng:-90.09996 },
+  { n:15, name:'Hancock Whitney',   cat:'Bank',      lat:30.39251, lng:-90.08346 },
 ];
 // Drive times to major destinations (shown as a Drive Times panel, not map pins).
 var FLYER_DRIVES = [
@@ -2656,7 +2665,7 @@ var FLYER_COMMUNITIES = [
   { name:'Tchefuncta Country Club',  note:'golf · Covington', mins:'10 min' },
 ];
 // Pin colors by use/type (also used by the legend badges).
-var CAT_COLORS = { Grocery:'#2f9e6b', Dining:'#e8833a', 'Fast Food':'#d4502e', Coffee:'#8a5a3c', Pharmacy:'#1f9aa8', Bank:'#2f6fe0', Fuel:'#6b7280' };
+var CAT_COLORS = { Grocery:'#2f9e6b', Retail:'#8456c4', Dining:'#e8833a', 'Fast Food':'#d4502e', Coffee:'#8a5a3c', Pharmacy:'#1f9aa8', Bank:'#2f6fe0', Fuel:'#6b7280' };
 // A CARTO Positron tile box (no API key): returns the <image> tiles for a region
 // plus a projection P(lat,lng)->[x,y] in the SVG, offset to the box origin.
 function flyerTileBox(clat, clng, z, bw, bh, offx, offy){
@@ -2678,22 +2687,35 @@ function flyerAmenityMap(){
   var hoods='';
   FLYER_HOODS.forEach(function(h){ var xy=P(h.lat,h.lng);
     hoods += '<text x="'+xy[0]+'" y="'+xy[1]+'" font-family="Segoe UI,Arial" font-size="10.5" font-style="italic" font-weight="700" fill="#566" text-anchor="middle" style="paint-order:stroke;stroke:#fff;stroke-width:3px;">'+h.name+'</text>'; });
+  // Place numbered amenity pins, then de-collide them — the US-190 / N. Causeway
+  // retail node is dense, so true positions overlap. A short leader line + a small
+  // dot keep each pin tied to its real location when it has to be nudged apart.
+  var pts = FLYER_POIS.map(function(p){ var xy=P(p.lat,p.lng); return { p:p, tx:xy[0], ty:xy[1], x:xy[0], y:xy[1] }; });
+  (function(){ var minD=24; for(var k=0;k<90;k++){ for(var i=0;i<pts.length;i++){ for(var j=i+1;j<pts.length;j++){
+    var a=pts[i], b=pts[j], dx=b.x-a.x, dy=b.y-a.y, d=Math.sqrt(dx*dx+dy*dy)||0.01;
+    if(d<minD){ var push=(minD-d)/2, ux=dx/d, uy=dy/d; a.x-=ux*push; a.y-=uy*push; b.x+=ux*push; b.y+=uy*push; }
+  }}}
+    pts.forEach(function(o){ o.x=Math.max(13,Math.min(W-13,o.x)); o.y=Math.max(13,Math.min(H-13,o.y)); });
+  })();
   var pois='';
-  FLYER_POIS.forEach(function(p){ var xy=P(p.lat,p.lng), col=CAT_COLORS[p.cat]||'#22315d';
-    pois += '<g transform="translate('+xy[0]+','+xy[1]+')"><circle cx="0" cy="0" r="11" fill="'+col+'" stroke="#fff" stroke-width="2.5"/>'+
-      '<text x="0" y="3.6" font-family="Segoe UI,Arial" font-size="11" font-weight="700" fill="#fff" text-anchor="middle">'+p.n+'</text></g>'; });
+  pts.forEach(function(o){ if(Math.abs(o.x-o.tx)+Math.abs(o.y-o.ty)>7){
+    pois += '<line x1="'+o.tx+'" y1="'+o.ty+'" x2="'+Math.round(o.x)+'" y2="'+Math.round(o.y)+'" stroke="#9aa4b4" stroke-width="1"/>'+
+      '<circle cx="'+o.tx+'" cy="'+o.ty+'" r="1.7" fill="#6b7280"/>'; } });
+  pts.forEach(function(o){ var col=CAT_COLORS[o.p.cat]||'#22315d';
+    pois += '<g transform="translate('+Math.round(o.x)+','+Math.round(o.y)+')"><circle cx="0" cy="0" r="10.5" fill="'+col+'" stroke="#fff" stroke-width="2.5"/>'+
+      '<text x="0" y="3.5" font-family="Segoe UI,Arial" font-size="10.5" font-weight="700" fill="#fff" text-anchor="middle">'+o.p.n+'</text></g>'; });
   var schools='';
   FLYER_SCHOOLS.forEach(function(s){ var xy=P(s.lat,s.lng);
     schools += '<g transform="translate('+xy[0]+','+xy[1]+')"><rect x="-9.5" y="-9.5" width="19" height="19" rx="4" fill="#5b3fa0" stroke="#fff" stroke-width="2.5"/>'+
       '<text x="0" y="3.6" font-family="Segoe UI,Arial" font-size="11" font-weight="700" fill="#fff" text-anchor="middle">'+s.L+'</text></g>'; });
   var m=P(SANCTUARY_LATLNG[0],SANCTUARY_LATLNG[1]);
-  var marker='<g transform="translate('+m[0]+','+m[1]+')"><ellipse cx="0" cy="3" rx="10" ry="3.5" fill="rgba(0,0,0,.22)"/>'+
-    '<path d="M0 -36 C-12 -36 -20 -27 -20 -17 C-20 -5 0 5 0 5 C0 5 20 -5 20 -17 C20 -27 12 -36 0 -36 Z" fill="#22315d" stroke="#fff" stroke-width="2.5"/>'+
-    '<circle cx="0" cy="-18" r="6.5" fill="#fff"/></g>';
+  // Subject property = a navy star with a small white-haloed label (no callout box).
+  var starPts='0,-17 4.11,-5.66 16.17,-5.25 6.66,2.16 9.99,13.75 0,7 -9.99,13.75 -6.66,2.16 -16.17,-5.25 -4.11,-5.66';
+  var marker='<g transform="translate('+m[0]+','+m[1]+')"><ellipse cx="0" cy="15" rx="11" ry="3.2" fill="rgba(0,0,0,.20)"/>'+
+    '<polygon points="'+starPts+'" fill="#22315d" stroke="#fff" stroke-width="2.6" stroke-linejoin="round"/></g>'+
+    '<text x="'+m[0]+'" y="'+(m[1]+30)+'" text-anchor="middle" font-family="Segoe UI,Arial" font-size="12.5" font-weight="800" fill="#22315d" style="paint-order:stroke;stroke:#fff;stroke-width:3.6px;">Sanctuary Office Park</text>';
   var seg=Math.round(1609.34/main.mpp);
-  var label='<g transform="translate(16,'+(H-58)+')"><rect x="0" y="0" width="300" height="42" rx="8" fill="#22315d"/><rect x="0" y="0" width="4" height="42" rx="2" fill="#5e8ed0"/>'+
-    '<text x="16" y="18" font-family="Segoe UI,Arial" font-size="13" font-weight="800" fill="#fff">SANCTUARY OFFICE PARK</text>'+
-    '<text x="16" y="33" font-family="Segoe UI,Arial" font-size="10" fill="#c5d6f0">#1 Sanctuary Blvd · Mandeville, LA 70471</text></g>';
+  var label='';
   var north='<g transform="translate(28,26)"><circle cx="0" cy="0" r="14" fill="#fff" stroke="#cbd5e1" stroke-width="1"/>'+
     '<path d="M0 -8 L4.5 5 L0 1.5 L-4.5 5 Z" fill="#22315d"/><text x="0" y="-9.5" font-family="Arial" font-size="7.5" font-weight="700" fill="#22315d" text-anchor="middle">N</text></g>';
   var scale='<g transform="translate(54,26)"><rect x="-7" y="-11" width="'+(seg+14)+'" height="20" rx="4" fill="rgba(255,255,255,.85)"/>'+
@@ -2868,10 +2890,10 @@ function flyerDoc(r){
   '.pitch .cmp .big{font-size:20px;font-weight:800;color:#fff;}'+
   '.pitch .cmp .big small{font-size:11px;font-weight:600;color:#9fc0ee;}'+
   '.pitch .cmp .sm{font-size:10.5px;color:#bcd0ee;margin-top:5px;line-height:1.45;}'+
-  '.leg{margin-top:13px;display:grid;grid-template-columns:1fr 1fr;gap:11px 28px;}'+
+  '.leg{margin-top:11px;display:grid;grid-template-columns:1fr 1fr;gap:9px 28px;}'+
   '.leg-sec.full{grid-column:1 / -1;}'+
-  '.leg-h{font-size:10px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:'+BLUE+';margin-bottom:7px;border-bottom:1px solid #eef2f7;padding-bottom:4px;}'+
-  '.leg-items{display:flex;flex-wrap:wrap;gap:7px 16px;}'+
+  '.leg-h{font-size:10px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:'+BLUE+';margin-bottom:6px;border-bottom:1px solid #eef2f7;padding-bottom:4px;}'+
+  '.leg-items{display:flex;flex-wrap:wrap;gap:6px 15px;}'+
   '.leg-item{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:#475569;}'+
   '.leg-item b{color:'+NAVY+';font-weight:600;}'+
   '.leg-item .muted{color:#9aa4b4;font-size:11px;}'+
@@ -2956,21 +2978,20 @@ function flyerDoc(r){
     '<div class="topbar"><img src="'+CROSBY_LOGO_URL+'" alt="Crosby Development"><div class="tag">LOCATION & AMENITIES<span>SANCTUARY OFFICE PARK</span></div></div>'+
     '<div class="pad" style="padding-bottom:0;">'+
       '<div class="h">At the Heart of the Mandeville–Covington Northshore</div>'+
-      '<div class="lead" style="margin-bottom:12px;">Sanctuary anchors St. Tammany’s premier office submarket — minutes from top-rated schools, regional healthcare, the parish seat and courthouse, and the full US-190 retail corridor, and ~25 minutes to New Orleans across the Lake Pontchartrain Causeway.</div>'+
+      '<div class="lead" style="margin-bottom:9px;">Sanctuary anchors St. Tammany’s premier office submarket — minutes from top-rated schools, regional healthcare, the parish seat and courthouse, and the full US-190 retail corridor, and ~25 minutes to New Orleans across the Lake Pontchartrain Causeway.</div>'+
       flyerAmenityMap()+
       '<div class="leg">'+
         '<div class="leg-sec full"><div class="leg-h">Drive Times</div>'+
           '<div class="drives">'+FLYER_DRIVES.map(function(dv){ return '<div class="drive"><span>'+escHtml(dv.name)+'</span><b>'+escHtml(dv.mins)+'</b></div>'; }).join('')+'</div>'+
         '</div>'+
-        '<div class="leg-sec"><div class="leg-h">Everyday Amenities</div><div class="leg-items">'+
+        '<div class="leg-sec full"><div class="leg-h">Everyday Amenities</div><div class="leg-items">'+
           FLYER_POIS.map(function(p){ var col=CAT_COLORS[p.cat]||NAVY; return '<span class="leg-item"><span class="num" style="background:'+col+';">'+p.n+'</span><b>'+escHtml(p.name)+'</b> <span class="muted">'+escHtml(p.cat)+'</span></span>'; }).join('')+
         '</div></div>'+
         '<div class="leg-sec"><div class="leg-h">Schools</div><div class="leg-items">'+
           FLYER_SCHOOLS.map(function(s){ return '<span class="leg-item"><span class="sq">'+s.L+'</span>'+escHtml(s.name)+'</span>'; }).join('')+
         '</div></div>'+
-        '<div class="leg-sec full"><div class="leg-h">Affluent Residential Base</div><div class="leg-items">'+
+        '<div class="leg-sec"><div class="leg-h">Affluent Residential Base</div><div class="leg-items">'+
           FLYER_COMMUNITIES.map(function(c){ return '<span class="leg-item"><b>'+escHtml(c.name)+'</b> <span class="muted">'+escHtml(c.note)+' · '+escHtml(c.mins)+'</span></span>'; }).join('')+
-          '<span class="leg-item muted">+ Mandeville &amp; Covington’s established communities</span>'+
         '</div></div>'+
       '</div>'+
     '</div>'+
