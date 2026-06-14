@@ -2915,6 +2915,9 @@ function flyerDoc(r){
   'body{margin:0;font-family:Segoe UI,Helvetica,Arial,sans-serif;color:#1f2733;background:#586;}'+
   'body{background:#5a6678;}'+
   '.page{width:8.5in;min-height:11in;background:#fff;margin:0 auto;position:relative;overflow:hidden;page-break-after:always;}'+
+  // The last page must NOT force a page break, or browsers (esp. mobile) emit a
+  // trailing blank page that shows only the browser URL/date/page-number chrome.
+  '.page:last-child{page-break-after:auto;break-after:auto;}'+
   '.pad{padding:0.55in 0.6in;}'+
   '.topbar{display:flex;align-items:center;justify-content:space-between;padding:0.16in 0.55in;border-bottom:3px solid '+BLUE+';}'+
   '.topbar img{height:38px;}'+
