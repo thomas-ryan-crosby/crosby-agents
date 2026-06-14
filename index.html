@@ -2707,9 +2707,12 @@ function flyerDoc(r){
   '.tv{color:'+NAVY+';font-weight:700;text-align:right;white-space:nowrap;}'+
   '.tv em{font-style:normal;font-weight:600;color:#8a93a3;font-size:11px;}'+
   '.terms-note{font-size:11px;color:#6b7480;line-height:1.5;margin-top:11px;font-style:italic;border-left:2px solid '+BLUE+';padding-left:10px;}'+
-  '.fp{margin-top:14px;border:1px solid #e4ecf6;border-radius:10px;padding:16px;background:#fafbfc;display:flex;align-items:center;justify-content:center;}'+
-  '.fp img{max-width:100%;max-height:7.4in;object-fit:contain;}'+
+  '.fp-page{display:flex;flex-direction:column;}'+
+  '.fp-body{flex:1;display:flex;flex-direction:column;justify-content:center;padding:0.34in 0.6in 0.2in;min-height:0;}'+
+  '.fp{margin-top:14px;border:1px solid #e4ecf6;border-radius:10px;padding:16px;background:#fafbfc;display:flex;align-items:center;justify-content:center;min-height:0;flex:0 1 auto;}'+
+  '.fp img{max-width:100%;max-height:8in;object-fit:contain;}'+
   '.fp-note{font-size:10.5px;color:#9aa4b4;margin-top:11px;font-style:italic;}'+
+  '.fp-page .p1foot{position:static;margin-top:auto;}'+
   '.pitch{margin:14px 0.6in 0;background:'+NAVY+';color:#fff;border-radius:12px;padding:13px 22px;}'+
   '.pitch .q{font-size:16px;font-weight:700;line-height:1.45;}'+
   '.pitch .a{font-size:12px;color:#bcd0ee;margin-top:8px;line-height:1.5;}'+
@@ -2788,9 +2791,9 @@ function flyerDoc(r){
   '</div>'+
 
   // FLOOR PLAN PAGE (only when a floor plan is on file)
-  (r.floorplan ? ('<div class="page">'+
+  (r.floorplan ? ('<div class="page fp-page">'+
     '<div class="topbar"><img src="'+CROSBY_LOGO_URL+'" alt="Crosby Development"><div class="tag">FLOOR PLAN<span>SANCTUARY OFFICE PARK</span></div></div>'+
-    '<div class="pad">'+
+    '<div class="fp-body">'+
       '<div class="h">Suite Floor Plan</div>'+
       '<div class="lead" style="margin-bottom:4px;">'+suiteLine+(r.sf?'  ·  '+r.sf.toLocaleString()+' SF':'')+'  ·  Sanctuary Office Park, Mandeville, LA</div>'+
       '<div class="fp"><img src="'+escHtml(r.floorplan)+'" alt="Suite floor plan"></div>'+
