@@ -18,6 +18,19 @@ service cloud.firestore {
           && request.auth.token.email == "thomas.ryan.crosby@gmail.com";
     }
 
+    // Shared leasing/marketing state — promoted suites and their flyer media.
+    // The dashboard runs unauthenticated (AUTH_ENABLED = false), so these two
+    // collections allow public WRITE as well as read; that is what makes the
+    // Leasing area multi-user / cross-device. Firestore caps each doc at ~1 MB,
+    // so each photo is stored as its own marketingMedia doc. To lock this down
+    // later, re-enable auth and change write back to isOperator().
+    match /marketing/{doc} {
+      allow read, write: if true;
+    }
+    match /marketingMedia/{doc} {
+      allow read, write: if true;
+    }
+
     // ⚠ TEMPORARY: public read for the unauthenticated dashboard preview
     // (firebase-config.js AUTH_ENABLED = false). This exposes ALL tenant PII
     // publicly. To re-secure, restore `allow read: if isOperator();` and set

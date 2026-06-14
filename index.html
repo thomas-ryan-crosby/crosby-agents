@@ -2336,8 +2336,24 @@ function marketTldrCard() {
 // ── BEGIN MARKETING / LEASING AREA ────────────────────────────────────────────
 // Flagging a suite for marketing is stored locally (no auth needed) and surfaced
 // in the Leasing view. Records: {slug,building,suite,tenant,sf,rent,action,flaggedAt}.
-function getMarketing(){ try { return JSON.parse(localStorage.getItem('marketingSuites')||'[]'); } catch(e){ return []; } }
-function setMarketing(a){ try { localStorage.setItem('marketingSuites', JSON.stringify(a)); } catch(e){} updateLeasingBadge(); }
+// SHARED multi-user state: promoted suites + their flyer media live in Firestore
+// (collections `marketing` + `marketingMedia`), kept live by the module at the end
+// of <body>, which maintains window.__marketingCache and exposes write functions on
+// window.__mkt. localStorage is only a fallback for local/preview mode (no Firebase)
+// and a one-time migration source — see migrateLocalMarketing() in the module.
+function mktReady(){ return !!(window.__mkt && window.__mkt.ready); }
+function mktGenId(){ return 'm'+Date.now().toString(36)+Math.random().toString(36).slice(2,8); }
+function mktFloorplanId(key){ return encodeURIComponent(key)+'__floorplan'; }
+function getMarketing(){
+  if(!window.__marketingCache){
+    try { window.__marketingCache = JSON.parse(localStorage.getItem('marketingSuites')||'[]'); } catch(e){ window.__marketingCache = []; }
+  }
+  return window.__marketingCache;
+}
+// Mirror the in-memory cache to localStorage ONLY in fallback mode (Firestore is the
+// source of truth otherwise — its snapshot listener owns the cache).
+function mktLocalSave(){ if(!mktReady()){ try { localStorage.setItem('marketingSuites', JSON.stringify(window.__marketingCache||[])); } catch(e){} } updateLeasingBadge(); }
+function setMarketing(a){ window.__marketingCache = a; mktLocalSave(); }
 function mktKey(r){ return r.slug+'|'+r.building+'|'+r.suite; }
 function isMarketingFlagged(key){ return getMarketing().some(function(r){ return mktKey(r)===key; }); }
 function updateLeasingBadge(){ var el=document.getElementById('leasingBadge'); if(el){ var n=getMarketing().length; el.textContent=n; el.style.display=n>0?'':'none'; } }
@@ -2351,16 +2367,33 @@ function marketBtn(p, b, t){
 function flagMarketingFromEl(el, ev){
   if(ev){ ev.stopPropagation(); }
   var rec; try { rec = JSON.parse(decodeURIComponent(el.getAttribute('data-rec'))); } catch(e){ return; }
-  rec.flaggedAt = new Date().toISOString();
-  var arr = getMarketing();
-  if(!arr.some(function(x){ return mktKey(x)===mktKey(rec); })){ arr.push(rec); setMarketing(arr); }
+  var key = mktKey(rec);
+  if(!isMarketingFlagged(key)){
+    rec.flaggedAt = new Date().toISOString();
+    rec.key = key; rec.video = rec.video||''; rec.photos = rec.photos||[]; rec.floorplan = rec.floorplan||'';
+    getMarketing().push(rec); // optimistic
+    if(mktReady()){
+      window.__mkt.upsertSuite({ key:key, slug:rec.slug, building:rec.building, suite:rec.suite, tenant:rec.tenant||'', sf:rec.sf||0, rent:rec.rent||0, action:rec.action||'', flaggedAt:rec.flaggedAt, video:'' })
+        .catch(function(e){ console.error(e); alert('Could not save to the shared database: '+((e&&e.message)||e)); });
+    }
+    mktLocalSave();
+  }
   switchView('leasing');
 }
-function unflagMarketing(key){ setMarketing(getMarketing().filter(function(r){ return mktKey(r)!==key; })); renderLeasing(); }
-// Save a per-suite flyer asset (photo / video URL) onto the marketing record.
+function unflagMarketing(key){
+  window.__marketingCache = getMarketing().filter(function(r){ return mktKey(r)!==key; }); // optimistic
+  if(mktReady()){ window.__mkt.deleteSuite(key).catch(function(e){ console.error(e); }); }
+  mktLocalSave(); renderLeasing();
+}
+// Save a per-suite flyer field (video URL) onto the suite's marketing doc.
 function updateMarketingField(key, field, value){
-  var arr=getMarketing(), rec=arr.find(function(r){ return mktKey(r)===key; });
-  if(rec){ rec[field]=(value||'').trim(); setMarketing(arr); }
+  var rec = getMarketing().find(function(r){ return mktKey(r)===key; }); if(!rec) return;
+  rec[field] = (value||'').trim(); // optimistic
+  if(mktReady()){
+    var patch = { key:key }; patch[field] = rec[field];
+    window.__mkt.upsertSuite(patch).catch(function(e){ console.error(e); });
+  }
+  mktLocalSave();
 }
 // Drag-and-drop / file-select a hero photo: compress in the browser to a JPEG
 // data URL and store it on the record (self-contained — no upload needed).
@@ -2397,14 +2430,18 @@ function dzDrop(e,key,kind){ e.preventDefault(); e.currentTarget.classList.remov
 function suitePhotos(rec){ if(rec.photos && rec.photos.length) return rec.photos; return rec.photo ? [rec.photo] : []; }
 function ensurePhotosArray(rec){ if(!rec.photos){ rec.photos = rec.photo ? [rec.photo] : []; } if('photo' in rec){ delete rec.photo; } return rec.photos; }
 function photosDrop(e,key){ e.preventDefault(); e.currentTarget.classList.remove('over'); var fs=e.dataTransfer && e.dataTransfer.files; if(fs && fs.length){ handlePhotosFiles(key, fs); } }
-// Compress and APPEND each chosen image to rec.photos, in the order selected.
+// Compress and APPEND each chosen image, in the order selected. In Firestore mode
+// each photo becomes its own marketingMedia doc (so it stays under the 1 MB/doc
+// limit); in fallback mode it's pushed onto rec.photos and saved to localStorage.
 function handlePhotosFiles(key, files){
   var list = [].slice.call(files||[]).filter(function(f){ return f && f.type.indexOf('image/')===0; });
   if(!list.length){ if(files && files.length) alert('Please choose image files (JPG or PNG).'); return; }
+  var rec=getMarketing().find(function(r){ return mktKey(r)===key; }); if(!rec) return;
+  var startOrder = (rec.__photoDocs && rec.__photoDocs.length) || (rec.photos && rec.photos.length) || 0;
   var i=0;
   (function next(){
-    if(i>=list.length){ renderLeasing(); return; }
-    var f=list[i++];
+    if(i>=list.length){ if(!mktReady()){ renderLeasing(); } return; }
+    var idx=i, f=list[i++];
     var fr=new FileReader();
     fr.onload=function(ev){
       var img=new Image();
@@ -2413,11 +2450,21 @@ function handlePhotosFiles(key, files){
         if(Math.max(w,h)>max){ var s=max/Math.max(w,h); w=Math.round(w*s); h=Math.round(h*s); }
         var cv=document.createElement('canvas'); cv.width=w; cv.height=h; cv.getContext('2d').drawImage(img,0,0,w,h);
         var url=cv.toDataURL('image/jpeg',0.82);
-        var arr=getMarketing(), rec=arr.find(function(r){ return mktKey(r)===key; }); if(!rec){ next(); return; }
-        var ph=ensurePhotosArray(rec); ph.push(url);
-        try { localStorage.setItem('marketingSuites', JSON.stringify(arr)); }
-        catch(e){ ph.pop(); alert('Browser storage is full — that photo (and any after it) couldn’t be saved. Remove a photo or use smaller images.'); renderLeasing(); return; }
-        next();
+        if(url.length>950000){ // keep each media doc under Firestore's ~1 MB cap
+          var s2=1200/Math.max(w,h), w2=Math.round(w*s2), h2=Math.round(h*s2);
+          var cv2=document.createElement('canvas'); cv2.width=w2; cv2.height=h2; cv2.getContext('2d').drawImage(img,0,0,w2,h2);
+          url=cv2.toDataURL('image/jpeg',0.78);
+        }
+        if(mktReady()){
+          window.__mkt.putMedia({ id:mktGenId(), key:key, kind:'photo', order:startOrder+idx, url:url })
+            .catch(function(e){ console.error(e); alert('A photo failed to save to the shared database: '+((e&&e.message)||e)); });
+          next();
+        } else {
+          var ph=ensurePhotosArray(rec); ph.push(url);
+          try { localStorage.setItem('marketingSuites', JSON.stringify(getMarketing())); }
+          catch(e){ ph.pop(); alert('Browser storage is full — that photo (and any after it) couldn’t be saved. Remove a photo or use smaller images.'); renderLeasing(); return; }
+          next();
+        }
       };
       img.onerror=function(){ next(); };
       img.src=ev.target.result;
@@ -2426,15 +2473,29 @@ function handlePhotosFiles(key, files){
   })();
 }
 function removeSuitePhoto(key, idx){
-  var arr=getMarketing(), rec=arr.find(function(r){ return mktKey(r)===key; }); if(!rec) return;
-  var ph=ensurePhotosArray(rec); if(idx<0||idx>=ph.length) return;
-  ph.splice(idx,1); setMarketing(arr); renderLeasing();
+  var rec=getMarketing().find(function(r){ return mktKey(r)===key; }); if(!rec) return;
+  if(mktReady()){
+    var docs=rec.__photoDocs||[], d=docs[idx]; if(!d) return;
+    window.__mkt.deleteMedia(d.id).catch(function(e){ console.error(e); });
+    if(rec.photos) rec.photos.splice(idx,1); docs.splice(idx,1); renderLeasing(); // optimistic
+  } else {
+    var ph=ensurePhotosArray(rec); if(idx<0||idx>=ph.length) return;
+    ph.splice(idx,1); setMarketing(getMarketing()); renderLeasing();
+  }
 }
 function moveSuitePhoto(key, from, to){
-  var arr=getMarketing(), rec=arr.find(function(r){ return mktKey(r)===key; }); if(!rec) return;
-  var ph=ensurePhotosArray(rec);
-  if(from<0||from>=ph.length||to<0||to>=ph.length||from===to) return;
-  var it=ph.splice(from,1)[0]; ph.splice(to,0,it); setMarketing(arr); renderLeasing();
+  var rec=getMarketing().find(function(r){ return mktKey(r)===key; }); if(!rec) return;
+  if(mktReady()){
+    var docs=rec.__photoDocs||[]; if(from<0||from>=docs.length||to<0||to>=docs.length||from===to) return;
+    var d=docs.splice(from,1)[0]; docs.splice(to,0,d);
+    if(rec.photos){ var u=rec.photos.splice(from,1)[0]; rec.photos.splice(to,0,u); }
+    var updates=docs.map(function(dd,k){ dd.order=k; return { id:dd.id, order:k }; });
+    window.__mkt.reorderMedia(updates).catch(function(e){ console.error(e); });
+    renderLeasing(); // optimistic
+  } else {
+    var ph=ensurePhotosArray(rec); if(from<0||from>=ph.length||to<0||to>=ph.length||from===to) return;
+    var it=ph.splice(from,1)[0]; ph.splice(to,0,it); setMarketing(getMarketing()); renderLeasing();
+  }
 }
 var __photoDragFrom=-1;
 function photoThumbDragStart(e,idx){ __photoDragFrom=idx; e.dataTransfer.effectAllowed='move'; try{ e.dataTransfer.setData('text/plain',String(idx)); }catch(_){ } e.currentTarget.classList.add('dragging'); }
@@ -2442,13 +2503,37 @@ function photoThumbDragEnd(e){ __photoDragFrom=-1; e.currentTarget.classList.rem
 function photoThumbDragOver(e){ e.preventDefault(); e.dataTransfer.dropEffect='move'; e.currentTarget.classList.add('drop-into'); }
 function photoThumbDragLeave(e){ e.currentTarget.classList.remove('drop-into'); }
 function photoThumbDrop(e,key,idx){ e.preventDefault(); e.currentTarget.classList.remove('drop-into'); var from=__photoDragFrom; if(from<0) { from=parseInt(e.dataTransfer.getData('text/plain'),10); } if(isNaN(from)||from===idx) return; moveSuitePhoto(key,from,idx); }
-// Save a media data URL onto a record field with quota handling.
+// Re-encode an oversized data URL down to fit Firestore's ~1 MB/doc cap.
+function mktShrink(url, cb){
+  var img=new Image();
+  img.onload=function(){
+    var w=img.width, h=img.height, max=1500;
+    if(Math.max(w,h)>max){ var s=max/Math.max(w,h); w=Math.round(w*s); h=Math.round(h*s); }
+    var cv=document.createElement('canvas'); cv.width=w; cv.height=h; cv.getContext('2d').drawImage(img,0,0,w,h);
+    cb(cv.toDataURL('image/jpeg',0.74));
+  };
+  img.onerror=function(){ cb(url); };
+  img.src=url;
+}
+// Save the floor plan (image or rasterized PDF). In Firestore mode it's one
+// marketingMedia doc per suite (kind:'floorplan'); empty url removes it.
 function saveMedia(key, field, url){
-  var arr=getMarketing(), rec=arr.find(function(r){ return mktKey(r)===key; }); if(!rec) return;
-  var prev=rec[field]; rec[field]=url;
-  try { localStorage.setItem('marketingSuites', JSON.stringify(arr)); }
-  catch(e){ rec[field]=prev; alert('That file is too large to store in the browser. Please use a smaller file.'); return; }
-  renderLeasing();
+  var rec=getMarketing().find(function(r){ return mktKey(r)===key; }); if(!rec) return;
+  if(mktReady()){
+    if(field!=='floorplan'){ updateMarketingField(key, field, url); return; }
+    var put=function(u){
+      if(u){ window.__mkt.putMedia({ id:mktFloorplanId(key), key:key, kind:'floorplan', order:0, url:u })
+        .catch(function(e){ console.error(e); alert('Floor plan failed to save: '+((e&&e.message)||e)); }); }
+      else { window.__mkt.deleteMedia(mktFloorplanId(key)).catch(function(e){ console.error(e); }); }
+      rec.floorplan=u||''; renderLeasing(); // optimistic
+    };
+    if(url && url.length>950000){ mktShrink(url, put); } else { put(url); }
+  } else {
+    var prev=rec[field]; rec[field]=url;
+    try { localStorage.setItem('marketingSuites', JSON.stringify(getMarketing())); }
+    catch(e){ rec[field]=prev; alert('That file is too large to store in the browser. Please use a smaller file.'); return; }
+    renderLeasing();
+  }
 }
 // Floor plan: accepts an image OR a PDF (first page is rasterized to an image so
 // it displays inline on the flyer). Stored as a JPEG data URL on the record.
@@ -2520,7 +2605,7 @@ function mediaDz(mkey, kind, value, accept, prompt){
   if(value){
     return '<div class="dropzone has" ondragover="dzOver(event)" ondragleave="dzLeave(event)" ondrop="dzDrop(event,\''+mkey+'\',\''+kind+'\')" onclick="this.querySelector(\'input\').click()" title="Click or drop to replace">'+
       '<img src="'+escHtml(value)+'" alt="">'+
-      '<button type="button" class="dz-x" onclick="event.stopPropagation();updateMarketingField(\''+mkey+'\',\''+kind+'\',\'\');renderLeasing();" title="Remove">&times;</button>'+
+      '<button type="button" class="dz-x" onclick="event.stopPropagation();saveMedia(\''+mkey+'\',\''+kind+'\',\'\');" title="Remove">&times;</button>'+
       '<input type="file" accept="'+accept+'" style="display:none" onchange="'+hh+'(\''+mkey+'\',this.files[0])"></div>';
   }
   return '<div class="dropzone" ondragover="dzOver(event)" ondragleave="dzLeave(event)" ondrop="dzDrop(event,\''+mkey+'\',\''+kind+'\')" onclick="this.querySelector(\'input\').click()">'+
@@ -4285,7 +4370,8 @@ document.addEventListener("DOMContentLoaded", init);
 </div>
 
 <script type="module">
-  import { DATA_MODE, startAuth, signIn, signOutUser, loadEntities, subscribeState, setDocumentStatus, loadAssistantLog }
+  import { DATA_MODE, startAuth, signIn, signOutUser, loadEntities, subscribeState, setDocumentStatus, loadAssistantLog,
+           subscribeMarketing, upsertMarketingSuite, deleteMarketingSuite, putMarketingMedia, deleteMarketingMedia, reorderMarketingMedia }
     from "./crosby-data.js";
   import { deriveViewModel } from "./crosby-viewmodel.js";
 
@@ -4294,6 +4380,61 @@ document.addEventListener("DOMContentLoaded", init);
   window.loadAssistantLog = loadAssistantLog;
   window.__signIn  = () => signIn().catch((e) => alert("Sign-in failed: " + e.message));
   window.__signOut = () => signOutUser();
+
+  // Shared marketing/leasing writes, used by the classic script's mutators.
+  window.__mkt = {
+    ready: false, mode: DATA_MODE,
+    upsertSuite: upsertMarketingSuite, deleteSuite: deleteMarketingSuite,
+    putMedia: putMarketingMedia, deleteMedia: deleteMarketingMedia, reorderMedia: reorderMarketingMedia,
+  };
+
+  // Merge the two live collections into the render-ready array the dashboard reads
+  // (window.__marketingCache), then repaint the Leasing view + nav badge.
+  let __mktSuites = [], __mktMedia = [], __mktFirst = true;
+  function rebuildMarketing() {
+    const byKey = {};
+    __mktSuites.forEach((s) => { byKey[s.key] = { ...s, photos: [], floorplan: "", __photoDocs: [] }; });
+    const photoBuckets = {};
+    __mktMedia.forEach((m) => {
+      const rec = byKey[m.key]; if (!rec) return;
+      if (m.kind === "floorplan") rec.floorplan = m.url || "";
+      else (photoBuckets[m.key] = photoBuckets[m.key] || []).push(m);
+    });
+    Object.keys(photoBuckets).forEach((k) => {
+      const list = photoBuckets[k].sort((a, b) => (a.order || 0) - (b.order || 0));
+      if (byKey[k]) { byKey[k].photos = list.map((m) => m.url); byKey[k].__photoDocs = list.map((m) => ({ id: m.id, order: m.order || 0 })); }
+    });
+    window.__marketingCache = Object.values(byKey)
+      .sort((a, b) => String(b.flaggedAt || "").localeCompare(String(a.flaggedAt || "")));
+    if (typeof renderLeasing === "function") renderLeasing();
+    if (typeof updateLeasingBadge === "function") updateLeasingBadge();
+  }
+
+  // One-time lift of any pre-existing localStorage promotions (incl. photos/floor
+  // plan) into Firestore, so nothing a user already set up is lost. Skips suites
+  // already present in Firestore; runs once per browser (guard flag).
+  async function migrateLocalMarketing(existingKeys) {
+    if (localStorage.getItem("marketingMigratedV1")) return;
+    let local = [];
+    try { local = JSON.parse(localStorage.getItem("marketingSuites") || "[]"); } catch (e) { local = []; }
+    try {
+      for (const r of local) {
+        const key = r.slug + "|" + r.building + "|" + r.suite;
+        if (existingKeys.has(key)) continue;
+        await upsertMarketingSuite({ key, slug: r.slug, building: r.building, suite: r.suite,
+          tenant: r.tenant || "", sf: r.sf || 0, rent: r.rent || 0, action: r.action || "",
+          flaggedAt: r.flaggedAt || "", video: r.video || "" });
+        const photos = (r.photos && r.photos.length) ? r.photos : (r.photo ? [r.photo] : []);
+        for (let i = 0; i < photos.length; i++) {
+          await putMarketingMedia({ id: "m" + Date.now().toString(36) + Math.random().toString(36).slice(2, 8),
+            key, kind: "photo", order: i, url: photos[i] });
+        }
+        if (r.floorplan) await putMarketingMedia({ id: encodeURIComponent(key) + "__floorplan", key, kind: "floorplan", order: 0, url: r.floorplan });
+      }
+      localStorage.setItem("marketingMigratedV1", "1");
+      if (local.length) console.info("[crosby] migrated " + local.length + " local marketing suite(s) to Firestore");
+    } catch (e) { console.error("[crosby] marketing migration failed (will retry next load):", e); }
+  }
 
   const overlay = document.getElementById("authOverlay");
   const authMsg = document.getElementById("authMsg");
@@ -4329,6 +4470,18 @@ document.addEventListener("DOMContentLoaded", init);
       onScheduled:     (a) => { applyDashboardState({ scheduled: a });     rerenderActiveViews(); },
       onDocuments:     (a) => { applyDashboardState({ documents: a });     rerenderActiveViews(); },
       onActivity:      (a) => { applyDashboardState({ activity: a });      rerenderActiveViews(); },
+    });
+
+    // Live SHARED marketing/leasing state (promoted suites + flyer media).
+    await subscribeMarketing({
+      onReady:  (ok) => { window.__mkt.ready = ok; },
+      onSuites: (a) => {
+        __mktSuites = a;
+        if (__mktFirst) { __mktFirst = false; migrateLocalMarketing(new Set(a.map((s) => s.key))); }
+        rebuildMarketing();
+      },
+      onMedia:  (a) => { __mktMedia = a; rebuildMarketing(); },
+      onError:  (e) => console.error("[crosby] marketing sync error:", e),
     });
 
     // In local fallback mode, wire the manual Refresh button to re-pull JSON.

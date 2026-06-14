@@ -33,7 +33,9 @@ async function ensureFirebase() {
     db: fsMod.getFirestore(app),
     auth: authMod.getAuth(app),
     collection: fsMod.collection, getDocs: fsMod.getDocs, onSnapshot: fsMod.onSnapshot,
-    doc: fsMod.doc, updateDoc: fsMod.updateDoc, serverTimestamp: fsMod.serverTimestamp,
+    doc: fsMod.doc, updateDoc: fsMod.updateDoc, setDoc: fsMod.setDoc, deleteDoc: fsMod.deleteDoc,
+    query: fsMod.query, where: fsMod.where, writeBatch: fsMod.writeBatch,
+    serverTimestamp: fsMod.serverTimestamp,
     GoogleAuthProvider: authMod.GoogleAuthProvider, signInWithPopup: authMod.signInWithPopup,
     onAuthStateChanged: authMod.onAuthStateChanged, signOut: authMod.signOut,
   };
@@ -141,4 +143,66 @@ export async function setDocumentStatus(id, status, reviewerEmail) {
     reviewedAt: fb.serverTimestamp(),
   });
   return true;
+}
+
+// ── Marketing / Leasing (SHARED, multi-user state) ────────────────────────────
+// Promoted suites live in the `marketing` collection (one small doc per suite);
+// their flyer photos/floor plan live in `marketingMedia` (one doc per image, to
+// stay under Firestore's ~1 MB/doc limit). Both are public read+write so the
+// unauthenticated dashboard can keep them in sync across every user and device.
+const MKT = "marketing";
+const MKT_MEDIA = "marketingMedia";
+const mktDocId = (key) => encodeURIComponent(key);
+
+// Live two-collection subscription. handlers: { onReady(bool), onSuites(arr),
+// onMedia(arr), onError(e) }. Returns an unsubscribe function.
+export async function subscribeMarketing(handlers) {
+  if (DATA_MODE === "local") { handlers.onReady?.(false); return () => {}; }
+  const fb = await ensureFirebase();
+  const unsubs = [];
+  unsubs.push(fb.onSnapshot(fb.collection(fb.db, MKT),
+    (s) => handlers.onSuites?.(s.docs.map((d) => d.data())),
+    (e) => handlers.onError?.(e)));
+  unsubs.push(fb.onSnapshot(fb.collection(fb.db, MKT_MEDIA),
+    (s) => handlers.onMedia?.(s.docs.map((d) => ({ id: d.id, ...d.data() }))),
+    (e) => handlers.onError?.(e)));
+  handlers.onReady?.(true);
+  return () => unsubs.forEach((u) => u());
+}
+
+// Create/merge a promoted-suite doc. `suite` must include a stable `key`.
+export async function upsertMarketingSuite(suite) {
+  const fb = await ensureFirebase();
+  await fb.setDoc(fb.doc(fb.db, MKT, mktDocId(suite.key)),
+    { ...suite, updatedAt: fb.serverTimestamp() }, { merge: true });
+}
+
+// Remove a suite and all of its media (batched).
+export async function deleteMarketingSuite(key) {
+  const fb = await ensureFirebase();
+  const snap = await fb.getDocs(fb.query(fb.collection(fb.db, MKT_MEDIA), fb.where("key", "==", key)));
+  const batch = fb.writeBatch(fb.db);
+  snap.docs.forEach((d) => batch.delete(d.ref));
+  batch.delete(fb.doc(fb.db, MKT, mktDocId(key)));
+  await batch.commit();
+}
+
+// Upsert one media item: { id, key, kind:'photo'|'floorplan', order, url }.
+export async function putMarketingMedia(media) {
+  const fb = await ensureFirebase();
+  await fb.setDoc(fb.doc(fb.db, MKT_MEDIA, media.id),
+    { ...media, updatedAt: fb.serverTimestamp() });
+}
+
+export async function deleteMarketingMedia(id) {
+  const fb = await ensureFirebase();
+  await fb.deleteDoc(fb.doc(fb.db, MKT_MEDIA, id));
+}
+
+// Persist a new photo order: [{ id, order }, …].
+export async function reorderMarketingMedia(updates) {
+  const fb = await ensureFirebase();
+  const batch = fb.writeBatch(fb.db);
+  updates.forEach((u) => batch.update(fb.doc(fb.db, MKT_MEDIA, u.id), { order: u.order }));
+  await batch.commit();
 }
