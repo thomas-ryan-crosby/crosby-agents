@@ -2912,5 +2912,29 @@
             "title": "Notice of Merger — Building #5, Suite 300 (Audubon) — Audubon Engineering Company, LP merged into Audubon Companies, LLC (surviving), eff 2026-01-01, new tax ID 26-3937890"
         },
         "date": "2026-01-09"
+    },
+    {
+        "id": "leasedoc-diannesbldg1ste305binit",
+        "propertyId": "sanctuary-office-park",
+        "building": "Building #1",
+        "tenant": "Dianne's Esthetic and Waxing",
+        "suite": "305B",
+        "file": "Diannes_BLDG1_STE305B_Init.pdf",
+        "docType": "Init",
+        "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FDiannes_BLDG1_STE305B_Init.pdf?alt=media&token=005f3477-7568-4e65-b07e-bbdf98138640",
+        "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FDiannes_BLDG1_STE305B_Init.html?alt=media&token=2eb6be9e-26f9-4132-80da-b0bbd7f8e95f",
+        "meta": {
+            "lessor": "Crosby Development Company, LLC",
+            "lessee": "Dianne's Esthetic and Waxing",
+            "property": "Sanctuary Office Park, Building #1, Floor 3, Suite 305B, Mandeville, LA 70471",
+            "suite": "Suite 305B",
+            "documentType": "Init",
+            "dated": "2025-11-03",
+            "monthlyRent": "USD 550.00",
+            "commencement": "2025-12-01",
+            "termination": "2026-11-30",
+            "title": "Lease of Commercial Property — Building #1, Suite 305B (Dianne's Esthetic and Waxing) — 300 SF, $550/mo, 12-mo term eff 2025-12-01, 3% esc, auto-renew, deposit $550, full-service gross"
+        },
+        "date": "2025-11-03"
     }
 ]
