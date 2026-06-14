@@ -2644,9 +2644,16 @@ var FLYER_SCHOOLS = [
   { L:'B', name:'Tchefuncte Middle School', lat:30.38886, lng:-90.10241 },
   { L:'C', name:'Mary Queen of Peace',      lat:30.39185, lng:-90.09867 },
 ];
+// On-map neighborhood labels (must sit inside the tight z15 frame).
 var FLYER_HOODS = [
-  { name:'The Sanctuary',   lat:30.39830, lng:-90.10720 },
-  { name:'Rouquette Lodge', lat:30.39534, lng:-90.09640 },
+  { name:'The Sanctuary', lat:30.39830, lng:-90.10720 },
+];
+// Affluent residential communities nearby — shown in the legend as the upscale
+// rooftop base that anchors Northshore office demand (drive time from the campus).
+var FLYER_COMMUNITIES = [
+  { name:'The Sanctuary',            note:'gated',          mins:'at the door' },
+  { name:'Beau Chêne',               note:'gated golf',     mins:'7 min' },
+  { name:'Tchefuncta Country Club',  note:'golf · Covington', mins:'10 min' },
 ];
 // Pin colors by use/type (also used by the legend badges).
 var CAT_COLORS = { Grocery:'#2f9e6b', Dining:'#e8833a', 'Fast Food':'#d4502e', Coffee:'#8a5a3c', Pharmacy:'#1f9aa8', Bank:'#2f6fe0', Fuel:'#6b7280' };
@@ -2793,7 +2800,11 @@ function flyerDoc(r){
   return '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'+
   '<title>Sanctuary Office Park — '+suiteLine+' — For Lease</title>'+
   '<style>'+
-  '@page{size:letter;margin:0;}*{box-sizing:border-box;}'+
+  '@page{size:letter;margin:0;}'+
+  // Force backgrounds/gradients to render when printing or "Save as PDF" — without
+  // this, browsers drop the navy hero, pitch box, contact band, etc. (blues vanish).
+  'html{-webkit-print-color-adjust:exact;print-color-adjust:exact;}'+
+  '*{box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact;}'+
   'body{margin:0;font-family:Segoe UI,Helvetica,Arial,sans-serif;color:#1f2733;background:#586;}'+
   'body{background:#5a6678;}'+
   '.page{width:8.5in;min-height:11in;background:#fff;margin:0 auto;position:relative;overflow:hidden;page-break-after:always;}'+
@@ -2889,7 +2900,7 @@ function flyerDoc(r){
     '.bar{display:flex;gap:10px;justify-content:center;margin-bottom:18px;}'+
     '.bar button{font-size:13px;font-weight:600;border:0;border-radius:8px;padding:10px 20px;cursor:pointer;}'+
     '.bar .p{background:'+NAVY+';color:#fff;}.bar .c2{background:#e7ecf3;color:#2b3441;}}'+
-  '@media print{.bar{display:none;}body{background:#fff;}}'+
+  '@media print{.bar{display:none;}body{background:#fff;}*{-webkit-print-color-adjust:exact;print-color-adjust:exact;}}'+
   '</style></head><body>'+
   '<div class="bar"><button class="p" onclick="window.print()">Print / Save as PDF</button><button class="c2" onclick="window.close()">Close</button></div>'+
 
@@ -2957,7 +2968,10 @@ function flyerDoc(r){
         '<div class="leg-sec"><div class="leg-h">Schools</div><div class="leg-items">'+
           FLYER_SCHOOLS.map(function(s){ return '<span class="leg-item"><span class="sq">'+s.L+'</span>'+escHtml(s.name)+'</span>'; }).join('')+
         '</div></div>'+
-        '<div class="leg-sec full"><div class="leg-h">Residential Neighborhoods</div><div class="leg-items"><span class="leg-item">'+FLYER_HOODS.map(function(h){ return escHtml(h.name); }).join(' &middot; ')+' &middot; and more of Mandeville’s established communities</span></div></div>'+
+        '<div class="leg-sec full"><div class="leg-h">Affluent Residential Base</div><div class="leg-items">'+
+          FLYER_COMMUNITIES.map(function(c){ return '<span class="leg-item"><b>'+escHtml(c.name)+'</b> <span class="muted">'+escHtml(c.note)+' · '+escHtml(c.mins)+'</span></span>'; }).join('')+
+          '<span class="leg-item muted">+ Mandeville &amp; Covington’s established communities</span>'+
+        '</div></div>'+
       '</div>'+
     '</div>'+
     '<div class="contact"><div class="ch">For Leasing Inquiries &amp; Tours</div>'+
