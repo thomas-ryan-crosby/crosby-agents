@@ -2338,6 +2338,11 @@ function flagMarketingFromEl(el, ev){
   switchView('leasing');
 }
 function unflagMarketing(key){ setMarketing(getMarketing().filter(function(r){ return mktKey(r)!==key; })); renderLeasing(); }
+// Save a per-suite flyer asset (photo / video URL) onto the marketing record.
+function updateMarketingField(key, field, value){
+  var arr=getMarketing(), rec=arr.find(function(r){ return mktKey(r)===key; });
+  if(rec){ rec[field]=(value||'').trim(); setMarketing(arr); }
+}
 // Size bands for office suites (Sanctuary runs ~200–13,455 SF). Each band carries
 // a suggested FSG rate and a demand read distilled from the St. Tammany office
 // study (LACDB 883-listing pull): full-service band $24–28, median ~142 days on
@@ -2398,8 +2403,15 @@ function marketingSuiteCard(r){
   } else if(r.sf){
     h += '<div style="margin-top:12px;padding-top:12px;border-top:1px solid #f1f5f9;font-size:12px;color:#9ca3af;">'+r.sf.toLocaleString()+' SF · size-tailored pricing insight is available for Sanctuary office suites.</div>';
   }
+  var mkey = escHtml(mktKey(r)).replace(/'/g,"\\'");
+  var inp = function(field,label,ph){ return '<label style="font-size:11px;color:#6b7280;font-weight:600;">'+label+
+    '<input type="url" value="'+escHtml(r[field]||'')+'" placeholder="'+ph+'" onchange="updateMarketingField(\''+mkey+'\',\''+field+'\',this.value)" '+
+    'style="display:block;width:100%;margin-top:4px;font-size:12px;font-weight:400;padding:7px 10px;border:1px solid #e2e8f0;border-radius:7px;color:#1f2733;"></label>'; };
+  h += '<div style="margin-top:14px;padding-top:13px;border-top:1px solid #f1f5f9;">'+
+    '<div style="font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#9ca3af;font-weight:700;margin-bottom:9px;">Flyer Media '+(r.photo?'<span style="color:#059669;">· photo set</span>':'')+(r.video?'<span style="color:#059669;">· video set</span>':'')+'</div>'+
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">'+inp('photo','Hero photo URL','https://… campus or suite .jpg')+inp('video','Video / virtual-tour URL','https://… YouTube, Matterport, Vimeo')+'</div></div>';
   h += '<div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;">';
-  h += '<button type="button" class="flyer-btn" onclick="generateFlyer(\''+escHtml(mktKey(r)).replace(/'/g,"\\'")+'\')">'+iconSvg('file-text',14)+' Generate flyer</button>';
+  h += '<button type="button" class="flyer-btn" onclick="generateFlyer(\''+mkey+'\')">'+iconSvg('file-text',14)+' Generate flyer</button>';
   h += '<span style="font-size:11px;color:#9ca3af;">Branded 2-page offering memorandum — opens to print or save as PDF.</span>';
   h += '</div></div>';
   return h;
@@ -2539,6 +2551,8 @@ function flyerDoc(r){
   var fmt = function(n){ return n ? '$'+n.toLocaleString() : '—'; };
   var NAVY='#22315d', BLUE='#5e8ed0';
   var avail = (!r.tenant || r.tenant==='(Vacant)') ? 'Immediate' : 'Call for timing';
+  var heroBg = r.photo ? (' style="background-image:linear-gradient(115deg,rgba(34,49,93,.92),rgba(34,49,93,.55) 56%,rgba(94,142,208,.42)),url(&quot;'+escHtml(r.photo)+'&quot;);background-size:cover;background-position:center;"') : '';
+  var tour = r.video ? ('<a href="'+escHtml(r.video)+'" target="_blank" rel="noopener" class="tourbtn"><span class="tri"></span>Watch Video Tour</a>') : '';
   var hi = [
     'Class A, full-service office on a 5-building, ~96,000 SF campus — currently ~99% leased.',
     'Causeway-adjacent in Mandeville — a ~25-minute commute to Metairie & New Orleans across the lake.',
@@ -2569,14 +2583,17 @@ function flyerDoc(r){
   '.topbar img{height:38px;}'+
   '.tag{font-size:11px;font-weight:800;letter-spacing:.18em;color:'+NAVY+';text-align:right;}'+
   '.tag span{display:block;font-size:9px;font-weight:600;letter-spacing:.12em;color:#8a93a3;margin-top:3px;}'+
-  '.hero{background:linear-gradient(135deg,'+NAVY+' 0%,#2c3f72 60%,'+BLUE+' 160%);color:#fff;padding:18px 0.6in 16px;}'+
+  '.hero{background:linear-gradient(135deg,'+NAVY+' 0%,#2c3f72 60%,'+BLUE+' 160%);color:#fff;padding:14px 0.6in 13px;}'+
   '.hero h1{margin:0;font-size:30px;letter-spacing:-.01em;}'+
   '.hero .sub{font-size:13px;color:#c5d6f0;margin-top:6px;letter-spacing:.02em;}'+
-  '.hero .suite{margin-top:18px;display:inline-block;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:8px;padding:9px 16px;font-size:15px;font-weight:700;}'+
+  '.hero .suiterow{margin-top:18px;display:flex;gap:11px;align-items:center;flex-wrap:wrap;}'+
+  '.hero .suite{display:inline-block;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);border-radius:8px;padding:9px 16px;font-size:15px;font-weight:700;}'+
+  '.hero .tourbtn{display:inline-flex;align-items:center;gap:8px;background:#fff;color:'+NAVY+';font-size:13px;font-weight:700;text-decoration:none;border-radius:8px;padding:9px 16px;}'+
+  '.hero .tourbtn .tri{width:0;height:0;border-style:solid;border-width:5px 0 5px 8px;border-color:transparent transparent transparent '+NAVY+';}'+
   '.hero .ribbon{margin-top:14px;font-size:11px;font-weight:700;letter-spacing:.04em;color:#cfe0f6;text-transform:uppercase;}'+
   '.hero .ribbon span{color:#7fa8e0;margin:0 9px;}'+
   '.facts{display:flex;gap:0;border-bottom:1px solid #e7ecf3;}'+
-  '.facts>div{flex:1;padding:16px 18px;border-right:1px solid #eef2f7;}'+
+  '.facts>div{flex:1;padding:12px 18px;border-right:1px solid #eef2f7;}'+
   '.facts>div:last-child{border-right:0;}'+
   '.facts .l{font-size:9px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:#9aa4b4;}'+
   '.facts .v{font-size:21px;font-weight:800;color:'+NAVY+';margin-top:3px;}'+
@@ -2594,9 +2611,16 @@ function flyerDoc(r){
   '.tv{color:'+NAVY+';font-weight:700;text-align:right;white-space:nowrap;}'+
   '.tv em{font-style:normal;font-weight:600;color:#8a93a3;font-size:11px;}'+
   '.terms-note{font-size:11px;color:#6b7480;line-height:1.5;margin-top:11px;font-style:italic;border-left:2px solid '+BLUE+';padding-left:10px;}'+
-  '.pitch{margin:16px 0.6in 0;background:'+NAVY+';color:#fff;border-radius:12px;padding:17px 22px;}'+
+  '.pitch{margin:14px 0.6in 0;background:'+NAVY+';color:#fff;border-radius:12px;padding:13px 22px;}'+
   '.pitch .q{font-size:16px;font-weight:700;line-height:1.45;}'+
   '.pitch .a{font-size:12px;color:#bcd0ee;margin-top:8px;line-height:1.5;}'+
+  '.pitch .cmp{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:11px;}'+
+  '.pitch .cmp .col{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.16);border-radius:9px;padding:10px 13px;}'+
+  '.pitch .cmp .win{border-color:rgba(126,168,224,.55);background:rgba(94,142,208,.16);}'+
+  '.pitch .cmp .ttl{font-size:9.5px;text-transform:uppercase;letter-spacing:.06em;color:#9fc0ee;font-weight:800;margin-bottom:5px;}'+
+  '.pitch .cmp .big{font-size:20px;font-weight:800;color:#fff;}'+
+  '.pitch .cmp .big small{font-size:11px;font-weight:600;color:#9fc0ee;}'+
+  '.pitch .cmp .sm{font-size:10.5px;color:#bcd0ee;margin-top:5px;line-height:1.45;}'+
   '.leg{margin-top:13px;display:grid;grid-template-columns:1fr 1fr;gap:11px 28px;}'+
   '.leg-sec.full{grid-column:1 / -1;}'+
   '.leg-h{font-size:10px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:'+BLUE+';margin-bottom:7px;border-bottom:1px solid #eef2f7;padding-bottom:4px;}'+
@@ -2636,9 +2660,9 @@ function flyerDoc(r){
   // PAGE 1
   '<div class="page">'+
     '<div class="topbar"><img src="'+CROSBY_LOGO_URL+'" alt="Crosby Development"><div class="tag">FOR LEASE<span>OFFERING SUMMARY</span></div></div>'+
-    '<div class="hero"><h1>Sanctuary Office Park</h1>'+
+    '<div class="hero"'+heroBg+'><h1>Sanctuary Office Park</h1>'+
       '<div class="sub">Class A Office Campus · #1 Sanctuary Blvd, Mandeville, LA 70471</div>'+
-      '<div class="suite">'+suiteLine+'  ·  '+(r.sf?r.sf.toLocaleString()+' SF':'SF available')+'</div>'+
+      '<div class="suiterow"><span class="suite">'+suiteLine+'  ·  '+(r.sf?r.sf.toLocaleString()+' SF':'SF available')+'</span>'+tour+'</div>'+
       '<div class="ribbon">~99% Leased<span>•</span>5-Building Class A Campus<span>•</span>Full-Service Gross<span>•</span>25 Min to New Orleans</div></div>'+
     '<div class="facts">'+
       '<div><div class="l">Available</div><div class="v">'+(r.sf?r.sf.toLocaleString()+' <small>SF</small>':'—')+'</div></div>'+
@@ -2646,7 +2670,7 @@ function flyerDoc(r){
       '<div><div class="l">Est. Monthly</div><div class="v">'+fmt(moAsk)+'</div></div>'+
       '<div><div class="l">Lease Type</div><div class="v" style="font-size:15px;">Full-Service Gross</div></div>'+
     '</div>'+
-    '<div class="pad" style="padding-top:16px;padding-bottom:6px;"><div class="cols">'+
+    '<div class="pad" style="padding-top:13px;padding-bottom:6px;"><div class="cols">'+
       '<div style="flex:1.25;"><div class="h">The Opportunity</div>'+
         '<div class="lead">A rare full-service availability on Mandeville’s premier Class A office campus. Sanctuary Office Park sits at the foot of the Lake Pontchartrain Causeway — a quick commute to Metairie and New Orleans — and runs ~99% leased, a standout in a Northshore market where the typical office sits ~142 days. Sign one number; we cover the rest.</div>'+
         '<ul class="hl">'+hi.map(function(x){ return '<li>'+escHtml(x)+'</li>'; }).join('')+'</ul></div>'+
@@ -2654,8 +2678,12 @@ function flyerDoc(r){
         terms.map(function(t){ return '<div class="trow"><span class="tk">'+t[0]+'</span><span class="tv">'+t[1]+'</span></div>'; }).join('')+
         '</div><div class="terms-note">Asking rate is a starting point — open to discussion based on lease term, tenant-improvement needs, and other factors. Let’s tailor a deal that works.</div></div>'+
     '</div></div>'+
-    '<div class="pitch"><div class="q">“Our number is your total number — no CAM, no chargebacks, no January reconciliation, janitorial included.”</div>'+
-      '<div class="a">A competing NNN building quotes ~$19 base, then bills taxes, insurance, CAM and your own cleaning — roughly $23–$31 all-in — and trues it up every year. Full-service is rare here: just three Class A buildings in the parish offer it, and Sanctuary is priced right with them.</div></div>'+
+    '<div class="pitch"><div class="q">“Our number is your total number — no CAM, no chargebacks, no year-end reconciliation, janitorial included.”</div>'+
+      '<div class="a">Full-service is rare on the Northshore — only three Class A buildings in the parish offer it, and Sanctuary is priced right alongside them. Compare what you actually pay:</div>'+
+      '<div class="cmp">'+
+        '<div class="col"><div class="ttl">Typical NNN · Class A</div><div class="big">~$23–31 <small>/SF</small></div><div class="sm">$19 base, then taxes, insurance, CAM &amp; your own janitorial added back — plus a year-end reconciliation. Variable, hard to budget.</div></div>'+
+        '<div class="col win"><div class="ttl">Sanctuary · Full-Service Gross</div><div class="big">$'+rate+' <small>/SF</small></div><div class="sm">One number — everything included, janitorial too. Fixed, with a known 3% annual step. No surprises.</div></div>'+
+      '</div></div>'+
     '<div class="p1foot"><div class="lz"><b>Leasing:</b> Ryan Crosby (985) 373-2383 &middot; Tommy Crosby (985) 789-6252 &middot; crosbydevelopment.com</div>'+
       '<div class="dz">Prepared '+new Date().toLocaleDateString("en-US",{month:"long",year:"numeric"})+' &middot; Rates &amp; availability subject to change.</div></div>'+
   '</div>'+
