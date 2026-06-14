@@ -137,6 +137,17 @@
     .dropzone.has img { width: 100%; height: 104px; object-fit: cover; display: block; }
     .dropzone .dz-x { position: absolute; top: 6px; right: 6px; width: 23px; height: 23px; border-radius: 50%; border: none; background: rgba(15,23,42,.72); color: #fff; font-size: 16px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; }
     .dropzone .dz-x:hover { background: #dc2626; }
+    .ph-dz { min-height: 76px; }
+    .ph-strip { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 10px; }
+    .ph-thumb { position: relative; width: 92px; height: 70px; border-radius: 8px; overflow: hidden; border: 1px solid #e5e7eb; background: #f1f5f9; cursor: grab; transition: box-shadow .12s ease, opacity .12s ease; }
+    .ph-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; }
+    .ph-thumb.dragging { opacity: .4; }
+    .ph-thumb.drop-into { box-shadow: 0 0 0 2px #1f5fdb; }
+    .ph-thumb .ph-num { position: absolute; left: 5px; bottom: 5px; min-width: 16px; height: 16px; padding: 0 4px; border-radius: 8px; background: rgba(15,23,42,.78); color: #fff; font-size: 10px; font-weight: 700; line-height: 16px; text-align: center; }
+    .ph-thumb .ph-x { position: absolute; top: 4px; right: 4px; width: 18px; height: 18px; border-radius: 50%; border: none; background: rgba(15,23,42,.72); color: #fff; font-size: 13px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity .12s ease; }
+    .ph-thumb:hover .ph-x { opacity: 1; }
+    .ph-thumb .ph-x:hover { background: #dc2626; }
+    .ph-hint { font-size: 10.5px; color: #9ca3af; margin-top: 7px; }
     .table-scroll::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
     .prop-expand { font-size: 11px; color: #2563eb; display: flex; align-items: center; gap: 4px; margin-top: 10px; font-weight: 500; }
     .prop-card:hover .prop-expand { color: #1d4ed8; }
@@ -2301,22 +2312,6 @@ function closeMarketInfo() {
 // study (LACDB 883-listing pull, June 2026). Shown atop Current Market Info and
 // in the Leasing area.
 var CROSBY_LOGO_URL = 'https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/branding%2FCDC_Logo.png?alt=media&token=404e42e8-66bd-4351-aadb-4e1e72767241';
-
-// Sanctuary Office Park property photography. Paste the public Firebase Storage
-// download URLs here once the photos are hosted (same URL style as the logo above:
-// .../o/branding%2Fsanctuary%2F<file>.jpg?alt=media&token=...). These are
-// PROPERTY-level shots reused on every suite's offering memorandum. The OM
-// degrades gracefully: any slot left blank simply isn't shown (no broken images),
-// and if `hero` is blank the cover falls back to the brand gradient. A suite's own
-// uploaded photo (the leasing-card hero upload) still overrides `hero` for that suite.
-var SANCTUARY_PHOTOS = {
-  hero:      '',  // wide exterior — page-1 cover background (e.g. the columned brick building)
-  entrance:  '',  // campus entrance / monument-sign shot — gallery feature image
-  interior1: '',  // private office
-  interior2: '',  // office with seating area
-  interior3: '',  // executive office / workstation
-};
-
 var MARKET_TLDR = {
   property: 'Sanctuary Office Park',
   suggested: '$27–28 / SF',
@@ -2394,6 +2389,59 @@ function handlePhotoFile(key, file){
 function dzOver(e){ e.preventDefault(); e.currentTarget.classList.add('over'); }
 function dzLeave(e){ e.currentTarget.classList.remove('over'); }
 function dzDrop(e,key,kind){ e.preventDefault(); e.currentTarget.classList.remove('over'); var f=e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]; if(f){ (kind==='floorplan'?handleFloorplanFile:handlePhotoFile)(key,f); } }
+
+// ── Suite photos: upload many, reorder by drag ────────────────────────────────
+// Photos live in an ordered array on the record (rec.photos). Each is compressed
+// in the browser to a JPEG data URL — self-contained, no upload. Legacy records
+// that carried a single rec.photo are migrated to the array on first touch.
+function suitePhotos(rec){ if(rec.photos && rec.photos.length) return rec.photos; return rec.photo ? [rec.photo] : []; }
+function ensurePhotosArray(rec){ if(!rec.photos){ rec.photos = rec.photo ? [rec.photo] : []; } if('photo' in rec){ delete rec.photo; } return rec.photos; }
+function photosDrop(e,key){ e.preventDefault(); e.currentTarget.classList.remove('over'); var fs=e.dataTransfer && e.dataTransfer.files; if(fs && fs.length){ handlePhotosFiles(key, fs); } }
+// Compress and APPEND each chosen image to rec.photos, in the order selected.
+function handlePhotosFiles(key, files){
+  var list = [].slice.call(files||[]).filter(function(f){ return f && f.type.indexOf('image/')===0; });
+  if(!list.length){ if(files && files.length) alert('Please choose image files (JPG or PNG).'); return; }
+  var i=0;
+  (function next(){
+    if(i>=list.length){ renderLeasing(); return; }
+    var f=list[i++];
+    var fr=new FileReader();
+    fr.onload=function(ev){
+      var img=new Image();
+      img.onload=function(){
+        var max=1600, w=img.width, h=img.height;
+        if(Math.max(w,h)>max){ var s=max/Math.max(w,h); w=Math.round(w*s); h=Math.round(h*s); }
+        var cv=document.createElement('canvas'); cv.width=w; cv.height=h; cv.getContext('2d').drawImage(img,0,0,w,h);
+        var url=cv.toDataURL('image/jpeg',0.82);
+        var arr=getMarketing(), rec=arr.find(function(r){ return mktKey(r)===key; }); if(!rec){ next(); return; }
+        var ph=ensurePhotosArray(rec); ph.push(url);
+        try { localStorage.setItem('marketingSuites', JSON.stringify(arr)); }
+        catch(e){ ph.pop(); alert('Browser storage is full — that photo (and any after it) couldn’t be saved. Remove a photo or use smaller images.'); renderLeasing(); return; }
+        next();
+      };
+      img.onerror=function(){ next(); };
+      img.src=ev.target.result;
+    };
+    fr.readAsDataURL(f);
+  })();
+}
+function removeSuitePhoto(key, idx){
+  var arr=getMarketing(), rec=arr.find(function(r){ return mktKey(r)===key; }); if(!rec) return;
+  var ph=ensurePhotosArray(rec); if(idx<0||idx>=ph.length) return;
+  ph.splice(idx,1); setMarketing(arr); renderLeasing();
+}
+function moveSuitePhoto(key, from, to){
+  var arr=getMarketing(), rec=arr.find(function(r){ return mktKey(r)===key; }); if(!rec) return;
+  var ph=ensurePhotosArray(rec);
+  if(from<0||from>=ph.length||to<0||to>=ph.length||from===to) return;
+  var it=ph.splice(from,1)[0]; ph.splice(to,0,it); setMarketing(arr); renderLeasing();
+}
+var __photoDragFrom=-1;
+function photoThumbDragStart(e,idx){ __photoDragFrom=idx; e.dataTransfer.effectAllowed='move'; try{ e.dataTransfer.setData('text/plain',String(idx)); }catch(_){ } e.currentTarget.classList.add('dragging'); }
+function photoThumbDragEnd(e){ __photoDragFrom=-1; e.currentTarget.classList.remove('dragging'); var p=e.currentTarget.parentNode; if(p){ [].forEach.call(p.querySelectorAll('.ph-thumb'),function(t){ t.classList.remove('drop-into'); }); } }
+function photoThumbDragOver(e){ e.preventDefault(); e.dataTransfer.dropEffect='move'; e.currentTarget.classList.add('drop-into'); }
+function photoThumbDragLeave(e){ e.currentTarget.classList.remove('drop-into'); }
+function photoThumbDrop(e,key,idx){ e.preventDefault(); e.currentTarget.classList.remove('drop-into'); var from=__photoDragFrom; if(from<0) { from=parseInt(e.dataTransfer.getData('text/plain'),10); } if(isNaN(from)||from===idx) return; moveSuitePhoto(key,from,idx); }
 // Save a media data URL onto a record field with quota handling.
 function saveMedia(key, field, url){
   var arr=getMarketing(), rec=arr.find(function(r){ return mktKey(r)===key; }); if(!rec) return;
@@ -2513,18 +2561,36 @@ function marketingSuiteCard(r){
   var mkey = escHtml(mktKey(r)).replace(/'/g,"\\'");
   var lbl = function(t){ return '<div style="font-size:11px;color:#6b7280;font-weight:600;margin-bottom:5px;">'+t+'</div>'; };
   var setBadge = function(on,t){ return on?'<span style="color:#059669;">· '+t+'</span>':''; };
+  var photos = suitePhotos(r);
+  var nPhotos = photos.length;
+  var photosDz = '<div class="dropzone ph-dz" ondragover="dzOver(event)" ondragleave="dzLeave(event)" ondrop="photosDrop(event,\''+mkey+'\')" onclick="this.querySelector(\'input\').click()">'+
+    iconSvg('image-plus',22,'#9ca3af')+'<div class="dz-t">Drag &amp; drop photos<br>or click to choose — add as many as you like</div>'+
+    '<input type="file" accept="image/*" multiple style="display:none" onchange="handlePhotosFiles(\''+mkey+'\',this.files)"></div>';
+  var strip = '';
+  if(nPhotos){
+    strip = '<div class="ph-strip">'+photos.map(function(p,idx){
+      return '<div class="ph-thumb" draggable="true" '+
+        'ondragstart="photoThumbDragStart(event,'+idx+')" ondragend="photoThumbDragEnd(event)" '+
+        'ondragover="photoThumbDragOver(event)" ondragleave="photoThumbDragLeave(event)" ondrop="photoThumbDrop(event,\''+mkey+'\','+idx+')" title="Drag to reorder">'+
+        '<img src="'+escHtml(p)+'" alt="">'+
+        '<span class="ph-num">'+(idx+1)+'</span>'+
+        '<button type="button" class="ph-x" onclick="event.stopPropagation();removeSuitePhoto(\''+mkey+'\','+idx+')" title="Remove photo">&times;</button>'+
+        '</div>';
+    }).join('')+'</div>'+
+    '<div class="ph-hint">Drag to reorder · photo 1 leads the gallery, the rest follow in this order.</div>';
+  }
   h += '<div style="margin-top:14px;padding-top:13px;border-top:1px solid #f1f5f9;">'+
-    '<div style="font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#9ca3af;font-weight:700;margin-bottom:9px;">Flyer Media '+setBadge(r.photo,'photo')+setBadge(r.floorplan,'floor plan')+setBadge(r.video,'video')+'</div>'+
-    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start;">'+
-      '<div>'+lbl('Hero photo')+mediaDz(mkey,'photo',r.photo,'image/*','Drag &amp; drop a photo<br>or click to choose')+'</div>'+
+    '<div style="font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#9ca3af;font-weight:700;margin-bottom:9px;">Flyer Media '+setBadge(nPhotos, nPhotos+(nPhotos===1?' photo':' photos'))+setBadge(r.floorplan,'floor plan')+setBadge(r.video,'video')+'</div>'+
+    '<div>'+lbl('Photos <span style="font-weight:400;color:#9ca3af;">(gallery — drag to reorder)</span>')+photosDz+strip+'</div>'+
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start;margin-top:14px;">'+
       '<div>'+lbl('Floor plan <span style="font-weight:400;color:#9ca3af;">(image or PDF)</span>')+mediaDz(mkey,'floorplan',r.floorplan,'image/*,application/pdf,.pdf','Drag &amp; drop a floor plan<br>image or PDF')+'</div>'+
+      '<div>'+lbl('Video / virtual tour')+
+        '<input type="url" value="'+escHtml(r.video||'')+'" placeholder="https://… YouTube, Matterport, Vimeo" onchange="updateMarketingField(\''+mkey+'\',\'video\',this.value)" style="width:100%;font-size:12px;padding:8px 10px;border:1px solid #e2e8f0;border-radius:7px;color:#1f2733;"></div>'+
     '</div>'+
-    '<div style="margin-top:12px;">'+lbl('Video / virtual tour')+
-      '<input type="url" value="'+escHtml(r.video||'')+'" placeholder="https://… YouTube, Matterport, Vimeo" onchange="updateMarketingField(\''+mkey+'\',\'video\',this.value)" style="width:100%;font-size:12px;padding:8px 10px;border:1px solid #e2e8f0;border-radius:7px;color:#1f2733;"></div>'+
     '</div>';
   h += '<div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;">';
   h += '<button type="button" class="flyer-btn" onclick="generateFlyer(\''+mkey+'\')">'+iconSvg('file-text',14)+' Generate flyer</button>';
-  h += '<span style="font-size:11px;color:#9ca3af;">Branded 2-page offering memorandum — opens to print or save as PDF.</span>';
+  h += '<span style="font-size:11px;color:#9ca3af;">Branded offering memorandum — opens to print or save as PDF.</span>';
   h += '</div></div>';
   return h;
 }
@@ -2650,6 +2716,40 @@ function flyerAmenityMap(){
     '<g clip-path="url(#mapclip)">'+main.tiles+hoods+schools+pois+marker+label+north+scale+attrib+'</g>'+
     insetG+insetFrame+'</svg>';
 }
+// Build the OM "Photos" gallery page(s) from a suite's uploaded photos (in order).
+// Page 1: a large lead photo that flex-grows to fill the page, with up to three more
+// beneath it. Any further photos flow onto continuation pages (a 6-up grid each).
+function flyerGalleryPages(photos){
+  if(!photos || !photos.length) return '';
+  var NAVY='#22315d';
+  var topbar = '<div class="topbar"><img src="'+CROSBY_LOGO_URL+'" alt="Crosby Development"><div class="tag">PHOTOS<span>SANCTUARY OFFICE PARK</span></div></div>';
+  var foot = '<div class="p1foot"><div class="lz"><b>Leasing:</b> Ryan Crosby (985) 373-2383 &middot; Tommy Crosby (985) 789-6252</div>'+
+    '<div class="dz">Sanctuary Office Park &middot; #1 Sanctuary Blvd, Mandeville, LA 70471</div></div>';
+  var cell = function(src){ return '<div class="gal-cell"><img src="'+escHtml(src)+'" alt="Suite photo"></div>'; };
+  var html = '';
+  // Lead page — first photo as the hero, next up-to-three in a row beneath it.
+  var first = photos.slice(0,4);
+  var lead = first[0];
+  var rest = first.slice(1);
+  var ncol = Math.max(1, Math.min(3, rest.length));
+  html += '<div class="page gal-page">'+topbar+
+    '<div class="gal-body">'+
+      '<div class="h">Photos</div>'+
+      '<div class="gal-feature"><img src="'+escHtml(lead)+'" alt="Suite photo"></div>'+
+      (rest.length ? ('<div class="gal-grid" style="grid-template-columns:repeat('+ncol+',1fr);">'+rest.map(cell).join('')+'</div>') : '')+
+    '</div>'+foot+'</div>';
+  // Continuation pages — six photos per page in a balanced grid.
+  var more = photos.slice(4);
+  for(var i=0;i<more.length;i+=6){
+    var chunk = more.slice(i,i+6);
+    html += '<div class="page gal-page gal-cont">'+topbar+
+      '<div class="gal-body">'+
+        '<div class="h">Photos <span style="color:#9aa4b4;font-weight:600;text-transform:none;letter-spacing:0;">(continued)</span></div>'+
+        '<div class="gal-grid gal-grid-cont">'+chunk.map(cell).join('')+'</div>'+
+      '</div>'+foot+'</div>';
+  }
+  return html;
+}
 function flyerDoc(r){
   var office = r.slug==='sanctuary-office-park';
   var ins = office ? SUITE_INSIGHTS[suiteSizeBand(r.sf)] : null;
@@ -2663,11 +2763,9 @@ function flyerDoc(r){
   var fmt = function(n){ return n ? '$'+n.toLocaleString() : '—'; };
   var NAVY='#22315d', BLUE='#5e8ed0';
   var avail = (!r.tenant || r.tenant==='(Vacant)') ? 'Immediate' : 'Call for timing';
-  var P = (typeof SANCTUARY_PHOTOS==='object' && SANCTUARY_PHOTOS) || {};
-  var heroSrc = r.photo || (office ? P.hero : '') || '';
-  var heroCls = heroSrc ? ' photo' : '';
-  // Scrim biased to the upper-left where the title sits, so the photo still reads on the right.
-  var heroBg = heroSrc ? (' style="background-image:linear-gradient(102deg,rgba(18,28,54,.90) 0%,rgba(24,36,70,.66) 46%,rgba(26,40,78,.34) 100%),url(&quot;'+escHtml(heroSrc)+'&quot;);background-size:cover;background-position:center;"') : '';
+  // Suite photos (uploaded + reorderable on the leasing card) drive the gallery page.
+  // Legacy single-photo records are migrated to a one-element array.
+  var photos = (r.photos && r.photos.length) ? r.photos : (r.photo ? [r.photo] : []);
   var tour = r.video ? ('<a href="'+escHtml(r.video)+'" target="_blank" rel="noopener" class="tourbtn"><span class="tri"></span>Watch Video Tour</a>') : '';
   var hi = [
     'Class A, full-service office on a 5-building, ~96,000 SF campus — currently ~99% leased.',
@@ -2688,34 +2786,9 @@ function flyerDoc(r){
   ];
   var suiteLine = escHtml(r.building)+' · Suite '+escHtml(r.suite);
 
-  // GALLERY PAGE — assembled only from the property photos actually on file, so it
-  // never renders broken images. Feature = the entrance/monument shot (falls back to
-  // the exterior cover); grid = whichever interior shots are present.
-  var galleryPage = '';
-  if (office) {
-    var feat = P.entrance || P.hero || '';
-    var cells = [
-      { src: P.interior1, cap: 'Private office' },
-      { src: P.interior2, cap: 'Office &amp; seating area' },
-      { src: P.interior3, cap: 'Executive suite' },
-    ].filter(function(c){ return c.src; });
-    if (feat || cells.length) {
-      galleryPage = '<div class="page gal-page">'+
-        '<div class="topbar"><img src="'+CROSBY_LOGO_URL+'" alt="Crosby Development"><div class="tag">THE SPACE<span>SANCTUARY OFFICE PARK</span></div></div>'+
-        '<div class="gal-body">'+
-          '<div class="h">A Closer Look</div>'+
-          '<div class="lead" style="margin-bottom:2px;">Class A finishes on a beautifully landscaped, professionally managed campus — move-in ready and built to impress your clients.</div>'+
-          (feat ? ('<div class="gal-feature"><img src="'+escHtml(feat)+'" alt="Sanctuary Office Park">'+
-            '<div class="cap">Sanctuary Office Park · #1 Sanctuary Blvd, Mandeville, LA</div></div>') : '')+
-          (cells.length ? ('<div class="gal-grid">'+cells.map(function(c){
-            return '<div class="gal-cell"><img src="'+escHtml(c.src)+'" alt="'+c.cap.replace(/&amp;/g,'and')+'"><div class="gal-cap">'+c.cap+'</div></div>';
-          }).join('')+'</div>') : '')+
-        '</div>'+
-        '<div class="p1foot"><div class="lz"><b>Leasing:</b> Ryan Crosby (985) 373-2383 &middot; Tommy Crosby (985) 789-6252</div>'+
-          '<div class="dz">Representative campus &amp; suite photography. Sanctuary Office Park, Mandeville, LA 70471</div></div>'+
-      '</div>';
-    }
-  }
+  // PHOTOS / GALLERY PAGE(S) — built from the suite's uploaded photos, in the order
+  // set on the leasing card. Empty string when no photos are on file.
+  var galleryPage = flyerGalleryPages(photos);
 
   return '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'+
   '<title>Sanctuary Office Park — '+suiteLine+' — For Lease</title>'+
@@ -2738,16 +2811,16 @@ function flyerDoc(r){
   '.hero .tourbtn .tri{width:0;height:0;border-style:solid;border-width:5px 0 5px 8px;border-color:transparent transparent transparent '+NAVY+';}'+
   '.hero .ribbon{margin-top:14px;font-size:11px;font-weight:700;letter-spacing:.04em;color:#cfe0f6;text-transform:uppercase;}'+
   '.hero .ribbon span{color:#7fa8e0;margin:0 9px;}'+
-  '.hero.photo{min-height:2.15in;display:flex;flex-direction:column;justify-content:center;}'+
   '.gal-page{display:flex;flex-direction:column;height:11in;}'+
   '.gal-body{flex:1;display:flex;flex-direction:column;padding:0.4in 0.6in 0.2in;min-height:0;}'+
+  '.gal-cont .gal-body{justify-content:center;}'+
   '.gal-feature{margin-top:13px;border-radius:11px;overflow:hidden;border:1px solid #e4ecf6;background:#eef2f7;position:relative;flex:1 1 auto;min-height:2.7in;}'+
   '.gal-feature img{width:100%;height:100%;object-fit:cover;object-position:center;display:block;}'+
-  '.gal-feature .cap{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(0deg,rgba(20,30,58,.80),rgba(20,30,58,0));color:#fff;font-size:12px;font-weight:600;letter-spacing:.01em;padding:30px 16px 12px;}'+
   '.gal-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;margin-top:13px;flex:0 0 auto;}'+
   '.gal-cell{border-radius:9px;overflow:hidden;border:1px solid #e4ecf6;background:#eef2f7;}'+
   '.gal-cell img{width:100%;height:2.15in;object-fit:cover;display:block;}'+
-  '.gal-cap{font-size:10.5px;font-weight:600;color:#5b6573;padding:7px 11px;background:#fafbfc;border-top:1px solid #eef2f7;}'+
+  '.gal-grid-cont{grid-template-columns:repeat(2,1fr);gap:15px;}'+
+  '.gal-grid-cont .gal-cell img{height:2.95in;}'+
   '.gal-page .p1foot{position:static;margin-top:13px;}'+
   '.facts{display:flex;gap:0;border-bottom:1px solid #e7ecf3;}'+
   '.facts>div{flex:1;padding:12px 18px;border-right:1px solid #eef2f7;}'+
@@ -2823,7 +2896,7 @@ function flyerDoc(r){
   // PAGE 1
   '<div class="page">'+
     '<div class="topbar"><img src="'+CROSBY_LOGO_URL+'" alt="Crosby Development"><div class="tag">FOR LEASE<span>OFFERING SUMMARY</span></div></div>'+
-    '<div class="hero'+heroCls+'"'+heroBg+'><h1>Sanctuary Office Park</h1>'+
+    '<div class="hero"><h1>Sanctuary Office Park</h1>'+
       '<div class="sub">Class A Office Campus · #1 Sanctuary Blvd, Mandeville, LA 70471</div>'+
       '<div class="suiterow"><span class="suite">'+suiteLine+'  ·  '+(r.sf?r.sf.toLocaleString()+' SF':'SF available')+'</span>'+tour+'</div>'+
       '<div class="ribbon">~99% Leased<span>•</span>5-Building Class A Campus<span>•</span>Full-Service Gross<span>•</span>25 Min to New Orleans</div></div>'+
