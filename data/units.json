@@ -1339,21 +1339,6 @@
     "unitName": "Cypress",
     "unitType": "C-R",
     "renovated": true,
-    "status": "vacant"
-  },
-  {
-    "id": "ml-b03-34",
-    "buildingId": "ml-bldg-3",
-    "propertyId": "mandeville-lake-apartments",
-    "identifier": "B03-34",
-    "floor": null,
-    "sf": 1200,
-    "type": "apartment",
-    "bedrooms": 2,
-    "bathrooms": 2,
-    "unitName": "Cypress",
-    "unitType": "C-R",
-    "renovated": true,
     "status": "occupied"
   },
   {
@@ -2107,21 +2092,6 @@
     "status": "occupied"
   },
   {
-    "id": "ml-b06-20",
-    "buildingId": "ml-bldg-6",
-    "propertyId": "mandeville-lake-apartments",
-    "identifier": "B06-20",
-    "floor": null,
-    "sf": 1482,
-    "type": "apartment",
-    "bedrooms": 3,
-    "bathrooms": 2,
-    "unitName": "Dogwood",
-    "unitType": "D-R",
-    "renovated": true,
-    "status": "vacant"
-  },
-  {
     "id": "ml-b06-21",
     "buildingId": "ml-bldg-6",
     "propertyId": "mandeville-lake-apartments",
@@ -2165,21 +2135,6 @@
     "unitType": "C-R",
     "renovated": true,
     "status": "occupied"
-  },
-  {
-    "id": "ml-b06-24",
-    "buildingId": "ml-bldg-6",
-    "propertyId": "mandeville-lake-apartments",
-    "identifier": "B06-24",
-    "floor": null,
-    "sf": 1200,
-    "type": "apartment",
-    "bedrooms": 2,
-    "bathrooms": 2,
-    "unitName": "Cypress",
-    "unitType": "C-R",
-    "renovated": true,
-    "status": "vacant"
   },
   {
     "id": "ml-b06-24",
@@ -2617,21 +2572,6 @@
     "status": "occupied"
   },
   {
-    "id": "ml-b07-30",
-    "buildingId": "ml-bldg-7",
-    "propertyId": "mandeville-lake-apartments",
-    "identifier": "B07-30",
-    "floor": null,
-    "sf": 1482,
-    "type": "apartment",
-    "bedrooms": 3,
-    "bathrooms": 2,
-    "unitName": "Dogwood",
-    "unitType": "D-R",
-    "renovated": true,
-    "status": "vacant"
-  },
-  {
     "id": "ml-b07-31",
     "buildingId": "ml-bldg-7",
     "propertyId": "mandeville-lake-apartments",
@@ -2855,21 +2795,6 @@
     "unitType": "E-R",
     "renovated": true,
     "status": "occupied"
-  },
-  {
-    "id": "ml-b08-112",
-    "buildingId": "ml-bldg-8",
-    "propertyId": "mandeville-lake-apartments",
-    "identifier": "B08-112",
-    "floor": null,
-    "sf": 880,
-    "type": "apartment",
-    "bedrooms": 1,
-    "bathrooms": 1,
-    "unitName": "Elm",
-    "unitType": "E-R",
-    "renovated": true,
-    "status": "vacant"
   },
   {
     "id": "ml-b08-200",
@@ -3125,21 +3050,6 @@
     "unitType": "A",
     "renovated": false,
     "status": "occupied"
-  },
-  {
-    "id": "ml-b08-306",
-    "buildingId": "ml-bldg-8",
-    "propertyId": "mandeville-lake-apartments",
-    "identifier": "B08-306",
-    "floor": null,
-    "sf": 840,
-    "type": "apartment",
-    "bedrooms": 1,
-    "bathrooms": 1,
-    "unitName": "Azalea",
-    "unitType": "A",
-    "renovated": false,
-    "status": "vacant"
   },
   {
     "id": "ml-b08-308",
@@ -3859,21 +3769,6 @@
     "unitName": "Bradford",
     "unitType": "B",
     "renovated": false,
-    "status": "vacant"
-  },
-  {
-    "id": "ml-b11-12",
-    "buildingId": "ml-bldg-11",
-    "propertyId": "mandeville-lake-apartments",
-    "identifier": "B11-12",
-    "floor": null,
-    "sf": 1240,
-    "type": "apartment",
-    "bedrooms": 2,
-    "bathrooms": 2,
-    "unitName": "Bradford",
-    "unitType": "B",
-    "renovated": false,
     "status": "occupied"
   },
   {
@@ -3995,21 +3890,6 @@
     "unitType": "C",
     "renovated": false,
     "status": "occupied"
-  },
-  {
-    "id": "ml-b11-25",
-    "buildingId": "ml-bldg-11",
-    "propertyId": "mandeville-lake-apartments",
-    "identifier": "B11-25",
-    "floor": null,
-    "sf": 840,
-    "type": "apartment",
-    "bedrooms": 1,
-    "bathrooms": 1,
-    "unitName": "Azalea",
-    "unitType": "A",
-    "renovated": false,
-    "status": "vacant"
   },
   {
     "id": "ml-b11-25",

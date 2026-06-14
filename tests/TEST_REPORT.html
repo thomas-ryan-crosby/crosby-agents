@@ -1,0 +1,150 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Crosby Agents — Comprehensive Test Report</title>
+<style>
+:root{--navy:#22315d;--blue:#5e8ed0;--ink:#1f2733;--muted:#6b7280;--line:#e5e7eb;--ok:#047857;--okbg:#ecfdf5;--bad:#c0322b;--badbg:#fdeceb;--warn:#92400e;--warnbg:#fffbeb;}
+*{box-sizing:border-box;}
+body{margin:0;font-family:'Segoe UI',Helvetica,Arial,sans-serif;color:var(--ink);background:#eef2f7;line-height:1.55;}
+.wrap{max-width:980px;margin:0 auto;padding:0 22px 64px;}
+header{background:linear-gradient(135deg,var(--navy),#2c3f72 70%,var(--blue) 160%);color:#fff;padding:34px 0 30px;}
+header .wrap{padding-bottom:0;}
+.eyebrow{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:#bcd0ee;font-weight:700;}
+h1{margin:6px 0 4px;font-size:27px;letter-spacing:-.01em;}
+.sub{color:#cddcf2;font-size:14px;}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:26px 0 8px;}
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:0 1px 2px rgba(16,24,40,.04);}
+.card .n{font-size:30px;font-weight:800;color:var(--navy);line-height:1;}
+.card .l{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:700;margin-top:7px;}
+.card.green .n{color:var(--ok);} .card.amber .n{color:var(--warn);}
+h2{font-size:18px;color:var(--navy);margin:34px 0 10px;padding-bottom:7px;border-bottom:2px solid var(--blue);}
+h3{font-size:15px;color:var(--navy);margin:22px 0 6px;}
+p{margin:8px 0;} .muted{color:var(--muted);} .small{font-size:13px;}
+table{border-collapse:collapse;width:100%;font-size:13.5px;margin:12px 0;background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden;}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top;}
+th{background:#f6f8fc;color:var(--navy);font-size:12px;text-transform:uppercase;letter-spacing:.04em;}
+tr:last-child td{border-bottom:none;}
+.pill{display:inline-block;font-size:11px;font-weight:700;border-radius:999px;padding:1px 9px;}
+.pill.ok{background:var(--okbg);color:var(--ok);border:1px solid #a7f3d0;}
+.pill.bad{background:var(--badbg);color:var(--bad);border:1px solid #f4c6c2;}
+.pill.fix{background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;}
+.bug{background:#fff;border:1px solid var(--line);border-left:4px solid var(--bad);border-radius:10px;padding:14px 18px;margin:14px 0;}
+.bug.fixed{border-left-color:var(--ok);}
+.bug h3{margin:0 0 4px;}
+.bug .meta{font-size:12px;color:var(--muted);margin-bottom:8px;}
+.kv{display:grid;grid-template-columns:120px 1fr;gap:4px 12px;font-size:13.5px;margin-top:8px;}
+.kv dt{font-weight:700;color:#334155;} .kv dd{margin:0;}
+code,.mono{font-family:'Cascadia Code',Consolas,monospace;font-size:12.5px;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:5px;padding:0 5px;}
+.checks{columns:2;column-gap:26px;font-size:13px;margin:8px 0;}
+.checks div{break-inside:avoid;padding:2px 0;color:#334155;}
+.checks .c::before{content:"✓";color:var(--ok);font-weight:800;margin-right:7px;}
+.note{background:var(--warnbg);border:1px solid #fde68a;border-radius:8px;padding:11px 15px;font-size:13px;color:#78350f;margin:12px 0;}
+footer{margin-top:36px;padding-top:14px;border-top:1px solid var(--line);font-size:12px;color:var(--muted);}
+@media(max-width:720px){.cards{grid-template-columns:repeat(2,1fr);}.checks{columns:1;}.kv{grid-template-columns:1fr;}}
+</style></head>
+<body>
+<header><div class="wrap">
+  <div class="eyebrow">Crosby Development · crosby-agents</div>
+  <h1>Comprehensive Test Report</h1>
+  <div class="sub">End-to-end &amp; unit testing across the dashboard, data layer, derivation, and WhatsApp assistant — executed June 13, 2026.</div>
+</div></header>
+<div class="wrap">
+
+  <div class="cards">
+    <div class="card green"><div class="n">90</div><div class="l">Total checks</div></div>
+    <div class="card green"><div class="n">100%</div><div class="l">Passing (after fixes)</div></div>
+    <div class="card amber"><div class="n">2</div><div class="l">Real bugs found &amp; fixed</div></div>
+    <div class="card"><div class="n">6</div><div class="l">Layers covered</div></div>
+  </div>
+  <p class="small muted">90 assertions across 3 harnesses: 50 Node unit/integration tests (<code>node --test</code>), 32 in-browser dashboard/flyer assertions, and 8 live-Firestore verification + end-to-end checks. Two genuine data bugs were uncovered and fixed; their fixes were propagated to the live database and locked in with regression tests.</p>
+
+  <h2>Bugs found &amp; fixed</h2>
+
+  <div class="bug fixed">
+    <h3>1. Duplicate apartment unit records inflated vacancy counts <span class="pill fix">FIXED</span></h3>
+    <div class="meta">Found by: <code>data-integrity.test.mjs</code> → “ids are unique within each collection”</div>
+    <p>Eight Mandeville&nbsp;Lake units appeared <strong>twice</strong> in <code>units.json</code> — once marked <code>vacant</code> and once <code>occupied</code> — with otherwise identical fields. Each of the eight has an active, rent-paying month-to-month lease, so the unit is genuinely occupied; the duplicate <code>vacant</code> rows were spurious. They over-counted vacancies and corrupted Mandeville&nbsp;Lake occupancy math (the <code>vacancies</code> / <code>space_search</code> tools and the dashboard occupancy figures).</p>
+    <dl class="kv">
+      <dt>Affected ids</dt><dd class="mono">ml-b03-34, ml-b06-20, ml-b06-24, ml-b07-30, ml-b08-112, ml-b08-306, ml-b11-12, ml-b11-25</dd>
+      <dt>Fix</dt><dd>Removed the 8 spurious <code>vacant</code> duplicates, keeping the record consistent with the active lease. Units: 503 → 495.</dd>
+      <dt>Propagated</dt><dd>Corrected unit docs written to the live <code>crosby-agents</code> Firestore (read-back confirmed <code>ml-b03-34</code> → occupied).</dd>
+      <dt>Regression</dt><dd>“no duplicate unit ids” now part of the suite; verified against live data too.</dd>
+    </dl>
+  </div>
+
+  <div class="bug fixed">
+    <h3>2. Non-date <code>terminates</code> sentinels broke the “expiring leases” lookup <span class="pill fix">FIXED</span></h3>
+    <div class="meta">Found by: <code>data-integrity.test.mjs</code> → “lease date fields parse”</div>
+    <p>24 leases stored a non-date string in <code>terminates</code>: the Crosby HQ owner-occupant lease held <code>"Owner"</code>, and 23 month-to-month apartment leases held <code>"MTM"</code>. The dashboard viewmodel already guards display by deriving the term label from <code>status</code> (so the UI was unaffected), but the WhatsApp assistant’s <code>expiring_leases</code> tool is not guarded — it treated the truthy string as a date, so <strong>23 month-to-month apartments surfaced in “what’s expiring?” with a bogus “MTM” date</strong>.</p>
+    <dl class="kv">
+      <dt>Fix</dt><dd>Normalized all 24 <code>terminates</code> values to <code>null</code> (status already conveys <code>mtm</code> / <code>owner-occupant</code>). Month-to-month leases now correctly fall out of expiration results; ongoing rent is unaffected.</dd>
+      <dt>Propagated</dt><dd>All 24 lease docs rewritten in the live Firestore (read-back confirmed the HQ lease → <code>null</code>).</dd>
+      <dt>Regression</dt><dd>“lease date fields parse and commenced ≤ terminates” + a live check that no lease carries <code>MTM</code>/<code>Owner</code> in <code>terminates</code>.</dd>
+    </dl>
+  </div>
+
+  <div class="note"><strong>Note on the test suite itself:</strong> four initial “failures” were mistakes in the test expectations, not application bugs — three asserted legend text against the map-SVG function (<code>flyerAmenityMap</code>) instead of the page (<code>flyerDoc</code>), and one expected a 12-month grid from the Sanctuary “rent roll” which is intentionally a year-based renewal/occupancy projection. All four were corrected and the underlying behavior verified correct.</p></div>
+
+  <h2>Coverage by layer</h2>
+  <table>
+    <tr><th>Layer</th><th>What was tested</th><th>Checks</th><th>Status</th></tr>
+    <tr><td><strong>Data integrity</strong><br><span class="muted small">data/*.json</span></td><td>Parse validity, unique ids, every cross-reference resolves (lease→unit/tenant/building/property, leaseDocs, COIs, contacts), numeric sanity, date parsing, no active double-booked units, Dianne 305B regression.</td><td>12</td><td><span class="pill ok">PASS</span></td></tr>
+    <tr><td><strong>Derivation</strong><br><span class="muted small">crosby-viewmodel.js</span></td><td>All output keys present, occupancy math internally consistent (occupied+vacant≈total, ≤100%), no NaN, determinism (same input → identical output), empty/undefined-input resilience.</td><td>8</td><td><span class="pill ok">PASS</span></td></tr>
+    <tr><td><strong>Assistant tools</strong><br><span class="muted small">lib/assistant-tools.mjs</span></td><td>find_tenant, get_lease_documents (current-only vs all), building/property rent, portfolio totals &amp; ranking, expiring (sorted, drops renewed auto-renews), rent roll math ($0 pre-commencement, schedule sums), vacancies/space_search agreement, insurance status, tenant_contact (group vs loose-token), lease_action, KPIs, runTool routing &amp; crash-safety.</td><td>16</td><td><span class="pill ok">PASS</span></td></tr>
+    <tr><td><strong>WhatsApp + Twilio</strong><br><span class="muted small">api/whatsapp.js · lib/twilio.mjs</span></td><td>chunkText (≤1500, never splits a URL, hard-split fallback, no data loss), URL harvest/repair (token restore, markdown/paren strip), feedback detection (👍/👎 &amp; words, ignores real questions), error→plain-English mapping, XML escape, Twilio HMAC signature (accept/tamper/missing), URL reconstruction, form parsing.</td><td>14</td><td><span class="pill ok">PASS</span></td></tr>
+    <tr><td><strong>Dashboard &amp; flyer</strong><br><span class="muted small">index.html (in-browser)</span></td><td>HTML escaping/XSS, mktKey, photo array migration, suite-size bands, amenity map (15 de-collided pins, star marker, no callout box), gallery pagination (0/1/5/8 photos), flyer page geometry (every page exactly 11&nbsp;in, hero has no bg-image, no trailing blank page), legend content, rent-roll modal.</td><td>32</td><td><span class="pill ok">PASS</span></td></tr>
+    <tr><td><strong>Shared state (E2E)</strong><br><span class="muted small">Firestore, live</span></td><td>Data-fix verification on live entities; promote suite + photo → live onSnapshot reflects it → delete batch-removes it (no orphans). Cross-client visibility confirmed in a prior run.</td><td>8</td><td><span class="pill ok">PASS</span></td></tr>
+  </table>
+
+  <h2>Detailed results</h2>
+
+  <h3>Node suite — <code>npm test</code> (50/50)</h3>
+  <div class="checks">
+    <div class="c">data-integrity.test.mjs — 12 passed</div>
+    <div class="c">viewmodel.test.mjs — 8 passed</div>
+    <div class="c">assistant-tools.test.mjs — 16 passed</div>
+    <div class="c">whatsapp.test.mjs — 14 passed</div>
+  </div>
+  <p class="small muted">Runnable any time with <code>npm test</code> (Node’s built-in test runner — no new dependencies).</p>
+
+  <h3>In-browser dashboard/flyer suite (32/32)</h3>
+  <div class="checks">
+    <div class="c">escHtml escapes &amp;&lt;&gt;&quot; &amp; neutralizes a &lt;script&gt; payload</div>
+    <div class="c">mktKey format (slug|building|suite)</div>
+    <div class="c">suitePhotos / ensurePhotosArray legacy migration</div>
+    <div class="c">suiteSizeBand boundaries (micro→block)</div>
+    <div class="c">amenity map: 15 pins, ≥23px apart, in-frame</div>
+    <div class="c">map: navy star marker present, callout box removed</div>
+    <div class="c">gallery pagination 0 / 1 / 5 / 8 photos</div>
+    <div class="c">flyer: every page exactly 1056px (11in)</div>
+    <div class="c">flyer hero carries no background image</div>
+    <div class="c">flyer last page: no trailing blank page</div>
+    <div class="c">legend: Whole Foods, Target, Affluent base, 15 items</div>
+    <div class="c">marketing store: getMarketing/isMarketingFlagged/mktReady</div>
+  </div>
+
+  <h3>Live verification &amp; E2E (8/8)</h3>
+  <div class="checks">
+    <div class="c">no duplicate unit ids in live data</div>
+    <div class="c">ml-b03-34 is occupied in live data</div>
+    <div class="c">Crosby HQ lease terminates = null (live)</div>
+    <div class="c">no live lease carries MTM/Owner in terminates</div>
+    <div class="c">rent-roll modal opens with totals</div>
+    <div class="c">promote suite + photo → live listener reflects it</div>
+    <div class="c">deleteSuite removes it from the live cache</div>
+    <div class="c">cross-client visibility (prior run)</div>
+  </div>
+
+  <h2>Testability improvement</h2>
+  <p>The WhatsApp route’s pure helpers (<code>chunkText</code>, <code>harvestUrls</code>, <code>repairUrls</code>, <code>detectFeedback</code>, <code>explainError</code>, <code>xmlEscape</code>) were given named exports so they can be unit-tested directly. The Vercel handler (default export) is unchanged.</p>
+
+  <h2>Known &amp; accepted (not bugs)</h2>
+  <ul class="small">
+    <li><strong>Public read + scoped public write.</strong> The dashboard runs unauthenticated by design, so <code>marketing</code>/<code>marketingMedia</code> are public-write and all collections are public-read. This is the current intended posture; the path to lock it down is re-enabling Google sign-in (rules already commented for it).</li>
+    <li><strong>Photos stored as data URLs in Firestore.</strong> Fine at current scale; migrate to Firebase Storage if the gallery grows to hundreds of large images.</li>
+    <li><strong>Browser print chrome on mobile.</strong> Some mobile browsers stamp a URL/date footer regardless of CSS; the trailing-blank-page cause is fixed, the rest is a device print setting.</li>
+  </ul>
+
+  <footer>
+    Generated by the Crosby test harness · Node v22 · <code>node --test</code> + in-browser assertions against live Firestore. All 90 checks passing; 2 data bugs fixed and propagated to production data.
+  </footer>
+</div>
+</body></html>

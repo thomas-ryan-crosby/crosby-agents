@@ -99,7 +99,7 @@ export default async function handler(req, res) {
 }
 
 // Turn a technical failure into a plain-English message the user can act on.
-function explainError(err) {
+export function explainError(err) {
   const m = String((err && err.message) || err || "").toLowerCase();
   // Check the model's own failure to build a request BEFORE rate-limit, because
   // a dead fallback may also report 429 even when the real cause was this.
@@ -119,7 +119,7 @@ function explainError(err) {
 // ── feedback detection ───────────────────────────────────────────────────────
 // Only short, unambiguous replies count as feedback (so a new question that
 // happens to start with "no…" is not mistaken for a thumbs-down).
-function detectFeedback(body) {
+export function detectFeedback(body) {
   const raw = (body || "").trim();
   if (!raw) return null;
   if (/^[\u{1F44D}\u{1F44C}✅]/u.test(raw)) return { rating: "positive", comment: raw.replace(/^[^\w]+/u, "").trim() || null };
@@ -178,11 +178,11 @@ async function runToolLoop(p, system, question, ctx) {
 // Firebase Storage links only work WITH their ?alt=media&token=... — but models
 // often drop the long query string when retyping a URL. Harvest the exact URLs
 // from tool results and put the token back on any the model truncated.
-function harvestUrls(s, map) {
+export function harvestUrls(s, map) {
   const re = /https?:\/\/[^\s"'<>]+\?alt=media&token=[A-Za-z0-9-]+/g;
   let m; while ((m = re.exec(s))) { const full = m[0]; map[full.split("?")[0]] = full; }
 }
-function repairUrls(text, map) {
+export function repairUrls(text, map) {
   let out = text;
   // 1) Put the ?alt=media&token=... back on any bare base path the model retyped.
   for (const base of Object.keys(map)) {
@@ -241,7 +241,7 @@ async function oneChatCall(p, messages, temperature) {
 // chunks on line boundaries (never inside a URL) and emit one <Message> each.
 const WA_LIMIT = 1500; // safe margin under 1600
 
-function chunkText(text) {
+export function chunkText(text) {
   const chunks = [];
   let cur = "";
   for (const rawLine of String(text).split("\n")) {
@@ -274,6 +274,6 @@ function reply(res, text, followup, statusCb) {
   res.status(200).send('<?xml version="1.0" encoding="UTF-8"?><Response>' + inner + "</Response>");
 }
 
-function xmlEscape(s) {
+export function xmlEscape(s) {
   return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 }
