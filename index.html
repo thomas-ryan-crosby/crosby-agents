@@ -2377,7 +2377,50 @@ function handlePhotoFile(key, file){
 }
 function dzOver(e){ e.preventDefault(); e.currentTarget.classList.add('over'); }
 function dzLeave(e){ e.currentTarget.classList.remove('over'); }
-function dzDrop(e,key){ e.preventDefault(); e.currentTarget.classList.remove('over'); var f=e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]; if(f) handlePhotoFile(key,f); }
+function dzDrop(e,key,kind){ e.preventDefault(); e.currentTarget.classList.remove('over'); var f=e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]; if(f){ (kind==='floorplan'?handleFloorplanFile:handlePhotoFile)(key,f); } }
+// Save a media data URL onto a record field with quota handling.
+function saveMedia(key, field, url){
+  var arr=getMarketing(), rec=arr.find(function(r){ return mktKey(r)===key; }); if(!rec) return;
+  var prev=rec[field]; rec[field]=url;
+  try { localStorage.setItem('marketingSuites', JSON.stringify(arr)); }
+  catch(e){ rec[field]=prev; alert('That file is too large to store in the browser. Please use a smaller file.'); return; }
+  renderLeasing();
+}
+// Floor plan: accepts an image OR a PDF (first page is rasterized to an image so
+// it displays inline on the flyer). Stored as a JPEG data URL on the record.
+function handleFloorplanFile(key, file){
+  if(!file) return;
+  if(file.type==='application/pdf' || /\.pdf$/i.test(file.name)){
+    var fr=new FileReader();
+    fr.onload=function(ev){ rasterizePdf(ev.target.result).then(function(url){ saveMedia(key,'floorplan',url); })
+      .catch(function(){ alert('Could not read that PDF. Try exporting the floor plan as a JPG or PNG.'); }); };
+    fr.readAsArrayBuffer(file);
+  } else if(file.type.indexOf('image/')===0){
+    var fr2=new FileReader();
+    fr2.onload=function(ev){ var img=new Image(); img.onload=function(){
+      var max=1900, w=img.width, h=img.height; if(Math.max(w,h)>max){ var s=max/Math.max(w,h); w=Math.round(w*s); h=Math.round(h*s); }
+      var cv=document.createElement('canvas'); cv.width=w; cv.height=h; cv.getContext('2d').drawImage(img,0,0,w,h);
+      saveMedia(key,'floorplan',cv.toDataURL('image/jpeg',0.85));
+    }; img.onerror=function(){ alert('That image could not be read.'); }; img.src=ev.target.result; };
+    fr2.readAsDataURL(file);
+  } else { alert('Please choose an image (JPG/PNG) or a PDF.'); }
+}
+var __pdfjs=null;
+async function rasterizePdf(arrayBuffer){
+  if(!__pdfjs){
+    __pdfjs=await import('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.min.mjs');
+    __pdfjs.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.worker.min.mjs';
+  }
+  var pdf=await __pdfjs.getDocument({data:arrayBuffer}).promise;
+  var page=await pdf.getPage(1);
+  var v0=page.getViewport({scale:1});
+  var scale=Math.min(1700/v0.width, 2200/v0.height, 3);
+  var vp=page.getViewport({scale:scale});
+  var cv=document.createElement('canvas'); cv.width=Math.round(vp.width); cv.height=Math.round(vp.height);
+  var ctx=cv.getContext('2d'); ctx.fillStyle='#fff'; ctx.fillRect(0,0,cv.width,cv.height);
+  await page.render({canvasContext:ctx,viewport:vp}).promise;
+  return cv.toDataURL('image/jpeg',0.85);
+}
 // Size bands for office suites (Sanctuary runs ~200–13,455 SF). Each band carries
 // a suggested FSG rate and a demand read distilled from the St. Tammany office
 // study (LACDB 883-listing pull): full-service band $24–28, median ~142 days on
@@ -2407,6 +2450,19 @@ var SUITE_INSIGHTS = {
     time:'Long — blocks this size routinely carry 12+ months here', tenants:'Anchor / regional-HQ tenants — a small set, often relocating from across the lake',
     tips:['Consider dividing into 2–3 sub-suites to tap the much deeper small/mid demand.','Run a direct, named-broker outreach — this size does not lease passively.'] },
 };
+// Build a drag-and-drop / click media zone for a record field (photo or floorplan).
+function mediaDz(mkey, kind, value, accept, prompt){
+  var hh = kind==='floorplan' ? 'handleFloorplanFile' : 'handlePhotoFile';
+  if(value){
+    return '<div class="dropzone has" ondragover="dzOver(event)" ondragleave="dzLeave(event)" ondrop="dzDrop(event,\''+mkey+'\',\''+kind+'\')" onclick="this.querySelector(\'input\').click()" title="Click or drop to replace">'+
+      '<img src="'+escHtml(value)+'" alt="">'+
+      '<button type="button" class="dz-x" onclick="event.stopPropagation();updateMarketingField(\''+mkey+'\',\''+kind+'\',\'\');renderLeasing();" title="Remove">&times;</button>'+
+      '<input type="file" accept="'+accept+'" style="display:none" onchange="'+hh+'(\''+mkey+'\',this.files[0])"></div>';
+  }
+  return '<div class="dropzone" ondragover="dzOver(event)" ondragleave="dzLeave(event)" ondrop="dzDrop(event,\''+mkey+'\',\''+kind+'\')" onclick="this.querySelector(\'input\').click()">'+
+    iconSvg('image-plus',22,'#9ca3af')+'<div class="dz-t">'+prompt+'</div>'+
+    '<input type="file" accept="'+accept+'" style="display:none" onchange="'+hh+'(\''+mkey+'\',this.files[0])"></div>';
+}
 function marketingSuiteCard(r){
   var office = r.slug==='sanctuary-office-park';
   var ins = office ? SUITE_INSIGHTS[suiteSizeBand(r.sf)] : null;
@@ -2439,27 +2495,17 @@ function marketingSuiteCard(r){
     h += '<div style="margin-top:12px;padding-top:12px;border-top:1px solid #f1f5f9;font-size:12px;color:#9ca3af;">'+r.sf.toLocaleString()+' SF · size-tailored pricing insight is available for Sanctuary office suites.</div>';
   }
   var mkey = escHtml(mktKey(r)).replace(/'/g,"\\'");
-  var dz;
-  if(r.photo){
-    dz = '<div class="dropzone has" ondragover="dzOver(event)" ondragleave="dzLeave(event)" ondrop="dzDrop(event,\''+mkey+'\')" onclick="this.querySelector(\'input\').click()" title="Click or drop to replace">'+
-      '<img src="'+escHtml(r.photo)+'" alt="">'+
-      '<button type="button" class="dz-x" onclick="event.stopPropagation();updateMarketingField(\''+mkey+'\',\'photo\',\'\');renderLeasing();" title="Remove photo">&times;</button>'+
-      '<input type="file" accept="image/*" style="display:none" onchange="handlePhotoFile(\''+mkey+'\',this.files[0])"></div>';
-  } else {
-    dz = '<div class="dropzone" ondragover="dzOver(event)" ondragleave="dzLeave(event)" ondrop="dzDrop(event,\''+mkey+'\')" onclick="this.querySelector(\'input\').click()">'+
-      iconSvg('image-plus',22,'#9ca3af')+'<div class="dz-t">Drag &amp; drop a photo<br>or click to choose a file</div>'+
-      '<input type="file" accept="image/*" style="display:none" onchange="handlePhotoFile(\''+mkey+'\',this.files[0])"></div>';
-  }
+  var lbl = function(t){ return '<div style="font-size:11px;color:#6b7280;font-weight:600;margin-bottom:5px;">'+t+'</div>'; };
+  var setBadge = function(on,t){ return on?'<span style="color:#059669;">· '+t+'</span>':''; };
   h += '<div style="margin-top:14px;padding-top:13px;border-top:1px solid #f1f5f9;">'+
-    '<div style="font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#9ca3af;font-weight:700;margin-bottom:9px;">Flyer Media '+(r.photo?'<span style="color:#059669;">· photo set</span>':'')+(r.video?'<span style="color:#059669;">· video set</span>':'')+'</div>'+
+    '<div style="font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#9ca3af;font-weight:700;margin-bottom:9px;">Flyer Media '+setBadge(r.photo,'photo')+setBadge(r.floorplan,'floor plan')+setBadge(r.video,'video')+'</div>'+
     '<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start;">'+
-      '<div><div style="font-size:11px;color:#6b7280;font-weight:600;margin-bottom:5px;">Hero photo</div>'+dz+'</div>'+
-      '<div><div style="font-size:11px;color:#6b7280;font-weight:600;margin-bottom:5px;">Video / virtual tour</div>'+
-        '<input type="url" value="'+escHtml(r.video||'')+'" placeholder="https://… YouTube, Matterport, Vimeo" onchange="updateMarketingField(\''+mkey+'\',\'video\',this.value)" style="width:100%;font-size:12px;padding:8px 10px;border:1px solid #e2e8f0;border-radius:7px;color:#1f2733;">'+
-        '<div style="font-size:10px;color:#9ca3af;margin-top:9px;margin-bottom:3px;">…or paste a hosted photo URL instead of uploading:</div>'+
-        '<input type="url" value="'+(r.photo && r.photo.indexOf("data:")!==0 ? escHtml(r.photo) : "")+'" placeholder="https://… .jpg" onchange="updateMarketingField(\''+mkey+'\',\'photo\',this.value)" style="width:100%;font-size:11px;padding:6px 9px;border:1px solid #eef2f7;border-radius:6px;color:#475569;">'+
-      '</div>'+
-    '</div></div>';
+      '<div>'+lbl('Hero photo')+mediaDz(mkey,'photo',r.photo,'image/*','Drag &amp; drop a photo<br>or click to choose')+'</div>'+
+      '<div>'+lbl('Floor plan <span style="font-weight:400;color:#9ca3af;">(image or PDF)</span>')+mediaDz(mkey,'floorplan',r.floorplan,'image/*,application/pdf,.pdf','Drag &amp; drop a floor plan<br>image or PDF')+'</div>'+
+    '</div>'+
+    '<div style="margin-top:12px;">'+lbl('Video / virtual tour')+
+      '<input type="url" value="'+escHtml(r.video||'')+'" placeholder="https://… YouTube, Matterport, Vimeo" onchange="updateMarketingField(\''+mkey+'\',\'video\',this.value)" style="width:100%;font-size:12px;padding:8px 10px;border:1px solid #e2e8f0;border-radius:7px;color:#1f2733;"></div>'+
+    '</div>';
   h += '<div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;">';
   h += '<button type="button" class="flyer-btn" onclick="generateFlyer(\''+mkey+'\')">'+iconSvg('file-text',14)+' Generate flyer</button>';
   h += '<span style="font-size:11px;color:#9ca3af;">Branded 2-page offering memorandum — opens to print or save as PDF.</span>';
@@ -2661,6 +2707,9 @@ function flyerDoc(r){
   '.tv{color:'+NAVY+';font-weight:700;text-align:right;white-space:nowrap;}'+
   '.tv em{font-style:normal;font-weight:600;color:#8a93a3;font-size:11px;}'+
   '.terms-note{font-size:11px;color:#6b7480;line-height:1.5;margin-top:11px;font-style:italic;border-left:2px solid '+BLUE+';padding-left:10px;}'+
+  '.fp{margin-top:14px;border:1px solid #e4ecf6;border-radius:10px;padding:16px;background:#fafbfc;display:flex;align-items:center;justify-content:center;}'+
+  '.fp img{max-width:100%;max-height:7.4in;object-fit:contain;}'+
+  '.fp-note{font-size:10.5px;color:#9aa4b4;margin-top:11px;font-style:italic;}'+
   '.pitch{margin:14px 0.6in 0;background:'+NAVY+';color:#fff;border-radius:12px;padding:13px 22px;}'+
   '.pitch .q{font-size:16px;font-weight:700;line-height:1.45;}'+
   '.pitch .a{font-size:12px;color:#bcd0ee;margin-top:8px;line-height:1.5;}'+
@@ -2738,7 +2787,20 @@ function flyerDoc(r){
       '<div class="dz">Prepared '+new Date().toLocaleDateString("en-US",{month:"long",year:"numeric"})+' &middot; Rates &amp; availability subject to change.</div></div>'+
   '</div>'+
 
-  // PAGE 2
+  // FLOOR PLAN PAGE (only when a floor plan is on file)
+  (r.floorplan ? ('<div class="page">'+
+    '<div class="topbar"><img src="'+CROSBY_LOGO_URL+'" alt="Crosby Development"><div class="tag">FLOOR PLAN<span>SANCTUARY OFFICE PARK</span></div></div>'+
+    '<div class="pad">'+
+      '<div class="h">Suite Floor Plan</div>'+
+      '<div class="lead" style="margin-bottom:4px;">'+suiteLine+(r.sf?'  ·  '+r.sf.toLocaleString()+' SF':'')+'  ·  Sanctuary Office Park, Mandeville, LA</div>'+
+      '<div class="fp"><img src="'+escHtml(r.floorplan)+'" alt="Suite floor plan"></div>'+
+      '<div class="fp-note">Floor plan is representative and not to scale; verify all dimensions on site.</div>'+
+    '</div>'+
+    '<div class="p1foot"><div class="lz"><b>Leasing:</b> Ryan Crosby (985) 373-2383 &middot; Tommy Crosby (985) 789-6252</div>'+
+      '<div class="dz">Sanctuary Office Park &middot; #1 Sanctuary Blvd, Mandeville, LA 70471</div></div>'+
+  '</div>') : '')+
+
+  // LOCATION PAGE (contact band lives here — always the last page)
   '<div class="page">'+
     '<div class="topbar"><img src="'+CROSBY_LOGO_URL+'" alt="Crosby Development"><div class="tag">LOCATION & AMENITIES<span>SANCTUARY OFFICE PARK</span></div></div>'+
     '<div class="pad" style="padding-bottom:0;">'+
