@@ -129,6 +129,14 @@
     .mkt-remove:hover { background: #fef2f2; }
     .flyer-btn { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: #fff; background: #22315d; border: none; border-radius: 8px; padding: 8px 15px; cursor: pointer; transition: background .12s ease; }
     .flyer-btn:hover { background: #2c3f72; }
+    .dropzone { position: relative; border: 2px dashed #cbd5e1; border-radius: 9px; min-height: 104px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 7px; cursor: pointer; color: #9ca3af; background: #fafbfc; text-align: center; transition: all .12s ease; overflow: hidden; }
+    .dropzone:hover { border-color: #1f5fdb; color: #1f5fdb; background: #f3f7ff; }
+    .dropzone.over { border-color: #1f5fdb; background: #eaf1ff; color: #1f5fdb; }
+    .dropzone .dz-t { font-size: 11px; font-weight: 600; line-height: 1.35; }
+    .dropzone.has { border-style: solid; border-color: #e5e7eb; padding: 0; min-height: 104px; }
+    .dropzone.has img { width: 100%; height: 104px; object-fit: cover; display: block; }
+    .dropzone .dz-x { position: absolute; top: 6px; right: 6px; width: 23px; height: 23px; border-radius: 50%; border: none; background: rgba(15,23,42,.72); color: #fff; font-size: 16px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .dropzone .dz-x:hover { background: #dc2626; }
     .table-scroll::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
     .prop-expand { font-size: 11px; color: #2563eb; display: flex; align-items: center; gap: 4px; margin-top: 10px; font-weight: 500; }
     .prop-card:hover .prop-expand { color: #1d4ed8; }
@@ -2343,6 +2351,33 @@ function updateMarketingField(key, field, value){
   var arr=getMarketing(), rec=arr.find(function(r){ return mktKey(r)===key; });
   if(rec){ rec[field]=(value||'').trim(); setMarketing(arr); }
 }
+// Drag-and-drop / file-select a hero photo: compress in the browser to a JPEG
+// data URL and store it on the record (self-contained — no upload needed).
+function handlePhotoFile(key, file){
+  if(!file || file.type.indexOf('image/')!==0){ if(file) alert('Please choose an image file (JPG or PNG).'); return; }
+  var fr=new FileReader();
+  fr.onload=function(ev){
+    var img=new Image();
+    img.onload=function(){
+      var max=1600, w=img.width, h=img.height;
+      if(Math.max(w,h)>max){ var s=max/Math.max(w,h); w=Math.round(w*s); h=Math.round(h*s); }
+      var cv=document.createElement('canvas'); cv.width=w; cv.height=h;
+      cv.getContext('2d').drawImage(img,0,0,w,h);
+      var url=cv.toDataURL('image/jpeg',0.82);
+      var arr=getMarketing(), rec=arr.find(function(r){ return mktKey(r)===key; }); if(!rec) return;
+      var prev=rec.photo; rec.photo=url;
+      try { localStorage.setItem('marketingSuites', JSON.stringify(arr)); }
+      catch(e){ rec.photo=prev; alert('This photo is too large to store in the browser. Please use a smaller image, or paste a hosted photo URL.'); return; }
+      renderLeasing();
+    };
+    img.onerror=function(){ alert('That image could not be read. Try a different file.'); };
+    img.src=ev.target.result;
+  };
+  fr.readAsDataURL(file);
+}
+function dzOver(e){ e.preventDefault(); e.currentTarget.classList.add('over'); }
+function dzLeave(e){ e.currentTarget.classList.remove('over'); }
+function dzDrop(e,key){ e.preventDefault(); e.currentTarget.classList.remove('over'); var f=e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]; if(f) handlePhotoFile(key,f); }
 // Size bands for office suites (Sanctuary runs ~200–13,455 SF). Each band carries
 // a suggested FSG rate and a demand read distilled from the St. Tammany office
 // study (LACDB 883-listing pull): full-service band $24–28, median ~142 days on
@@ -2404,12 +2439,27 @@ function marketingSuiteCard(r){
     h += '<div style="margin-top:12px;padding-top:12px;border-top:1px solid #f1f5f9;font-size:12px;color:#9ca3af;">'+r.sf.toLocaleString()+' SF · size-tailored pricing insight is available for Sanctuary office suites.</div>';
   }
   var mkey = escHtml(mktKey(r)).replace(/'/g,"\\'");
-  var inp = function(field,label,ph){ return '<label style="font-size:11px;color:#6b7280;font-weight:600;">'+label+
-    '<input type="url" value="'+escHtml(r[field]||'')+'" placeholder="'+ph+'" onchange="updateMarketingField(\''+mkey+'\',\''+field+'\',this.value)" '+
-    'style="display:block;width:100%;margin-top:4px;font-size:12px;font-weight:400;padding:7px 10px;border:1px solid #e2e8f0;border-radius:7px;color:#1f2733;"></label>'; };
+  var dz;
+  if(r.photo){
+    dz = '<div class="dropzone has" ondragover="dzOver(event)" ondragleave="dzLeave(event)" ondrop="dzDrop(event,\''+mkey+'\')" onclick="this.querySelector(\'input\').click()" title="Click or drop to replace">'+
+      '<img src="'+escHtml(r.photo)+'" alt="">'+
+      '<button type="button" class="dz-x" onclick="event.stopPropagation();updateMarketingField(\''+mkey+'\',\'photo\',\'\');renderLeasing();" title="Remove photo">&times;</button>'+
+      '<input type="file" accept="image/*" style="display:none" onchange="handlePhotoFile(\''+mkey+'\',this.files[0])"></div>';
+  } else {
+    dz = '<div class="dropzone" ondragover="dzOver(event)" ondragleave="dzLeave(event)" ondrop="dzDrop(event,\''+mkey+'\')" onclick="this.querySelector(\'input\').click()">'+
+      iconSvg('image-plus',22,'#9ca3af')+'<div class="dz-t">Drag &amp; drop a photo<br>or click to choose a file</div>'+
+      '<input type="file" accept="image/*" style="display:none" onchange="handlePhotoFile(\''+mkey+'\',this.files[0])"></div>';
+  }
   h += '<div style="margin-top:14px;padding-top:13px;border-top:1px solid #f1f5f9;">'+
     '<div style="font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#9ca3af;font-weight:700;margin-bottom:9px;">Flyer Media '+(r.photo?'<span style="color:#059669;">· photo set</span>':'')+(r.video?'<span style="color:#059669;">· video set</span>':'')+'</div>'+
-    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">'+inp('photo','Hero photo URL','https://… campus or suite .jpg')+inp('video','Video / virtual-tour URL','https://… YouTube, Matterport, Vimeo')+'</div></div>';
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start;">'+
+      '<div><div style="font-size:11px;color:#6b7280;font-weight:600;margin-bottom:5px;">Hero photo</div>'+dz+'</div>'+
+      '<div><div style="font-size:11px;color:#6b7280;font-weight:600;margin-bottom:5px;">Video / virtual tour</div>'+
+        '<input type="url" value="'+escHtml(r.video||'')+'" placeholder="https://… YouTube, Matterport, Vimeo" onchange="updateMarketingField(\''+mkey+'\',\'video\',this.value)" style="width:100%;font-size:12px;padding:8px 10px;border:1px solid #e2e8f0;border-radius:7px;color:#1f2733;">'+
+        '<div style="font-size:10px;color:#9ca3af;margin-top:9px;margin-bottom:3px;">…or paste a hosted photo URL instead of uploading:</div>'+
+        '<input type="url" value="'+(r.photo && r.photo.indexOf("data:")!==0 ? escHtml(r.photo) : "")+'" placeholder="https://… .jpg" onchange="updateMarketingField(\''+mkey+'\',\'photo\',this.value)" style="width:100%;font-size:11px;padding:6px 9px;border:1px solid #eef2f7;border-radius:6px;color:#475569;">'+
+      '</div>'+
+    '</div></div>';
   h += '<div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;">';
   h += '<button type="button" class="flyer-btn" onclick="generateFlyer(\''+mkey+'\')">'+iconSvg('file-text',14)+' Generate flyer</button>';
   h += '<span style="font-size:11px;color:#9ca3af;">Branded 2-page offering memorandum — opens to print or save as PDF.</span>';
