@@ -206,3 +206,28 @@ export async function reorderMarketingMedia(updates) {
   updates.forEach((u) => batch.update(fb.doc(fb.db, MKT_MEDIA, u.id), { order: u.order }));
   await batch.commit();
 }
+
+// ── Proposed suites (hypothetical configurations) ─────────────────────────────
+// Shared, live, multi-user — same model as marketing. A proposed suite is a
+// combination/subdivision of real suites floated for a prospective tenant.
+const PROPOSED = "proposedSuites";
+
+export async function subscribeProposed(handlers) {
+  if (DATA_MODE === "local") { handlers.onReady?.(false); return () => {}; }
+  const fb = await ensureFirebase();
+  const unsub = fb.onSnapshot(fb.collection(fb.db, PROPOSED),
+    (s) => handlers.onItems?.(s.docs.map((d) => ({ id: d.id, ...d.data() }))),
+    (e) => handlers.onError?.(e));
+  handlers.onReady?.(true);
+  return unsub;
+}
+
+export async function upsertProposedSuite(item) {
+  const fb = await ensureFirebase();
+  await fb.setDoc(fb.doc(fb.db, PROPOSED, item.id), { ...item, updatedAt: fb.serverTimestamp() }, { merge: true });
+}
+
+export async function deleteProposedSuite(id) {
+  const fb = await ensureFirebase();
+  await fb.deleteDoc(fb.doc(fb.db, PROPOSED, id));
+}

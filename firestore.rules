@@ -30,6 +30,12 @@ service cloud.firestore {
     match /marketingMedia/{doc} {
       allow read, write: if true;
     }
+    // Proposed (hypothetical) suite configurations — combinations/subdivisions of
+    // real suites a leasing agent floats for prospective tenants. Same public
+    // read+write posture as marketing so the area is multi-user / cross-device.
+    match /proposedSuites/{doc} {
+      allow read, write: if true;
+    }
 
     // ⚠ TEMPORARY: public read for the unauthenticated dashboard preview
     // (firebase-config.js AUTH_ENABLED = false). This exposes ALL tenant PII

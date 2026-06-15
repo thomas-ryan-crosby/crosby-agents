@@ -329,6 +329,7 @@
   <nav class="nav" id="mainNav">
     <button class="nav-btn active" data-view="portfolio"><i data-lucide="layout-dashboard" style="width:15px;height:15px;"></i> Portfolio</button>
     <button class="nav-btn" data-view="leasing"><i data-lucide="megaphone" style="width:15px;height:15px;"></i> Leasing <span class="nav-badge" id="leasingBadge" style="display:none;">0</span></button>
+    <button class="nav-btn" data-view="proposed"><i data-lucide="combine" style="width:15px;height:15px;"></i> Proposed Suites <span class="nav-badge" id="proposedBadge" style="display:none;">0</span></button>
     <button class="nav-btn" data-view="assistant"><i data-lucide="message-square" style="width:15px;height:15px;"></i> Assistant</button>
   </nav>
 
@@ -342,6 +343,11 @@
   <!-- ═══ LEASING / MARKETING ═══ -->
   <div class="view" id="view-leasing">
     <div id="leasingContent"></div>
+  </div>
+
+  <!-- ═══ PROPOSED SUITES ═══ -->
+  <div class="view" id="view-proposed">
+    <div id="proposedContent"></div>
   </div>
 
   <!-- ═══ ASSISTANT ACTIVITY ═══ -->
@@ -643,6 +649,7 @@ function switchView(id) {
   if(btn) btn.classList.add("active");
   if(id==="assistant") renderAssistantLog();
   if(id==="leasing") renderLeasing();
+  if(id==="proposed") renderProposed();
   lucide.createIcons();
 }
 
@@ -2625,8 +2632,10 @@ function marketingSuiteCard(r){
   var row = function(l,v){ return '<div><div style="font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#9ca3af;font-weight:700;margin-bottom:1px;">'+l+'</div><div style="font-size:12px;color:#374151;line-height:1.4;">'+v+'</div></div>'; };
   var h = '<div class="card" style="margin-bottom:14px;">';
   h += '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;">';
-  h += '<div><div style="font-size:15px;font-weight:700;color:#0f172a;">'+escHtml(r.building)+' · Suite '+escHtml(r.suite)+'</div>'+
-       '<div style="font-size:12px;color:#6b7280;margin-top:2px;">'+escHtml(office?'Sanctuary Office Park':r.slug)+' · '+(r.sf?r.sf.toLocaleString()+' SF':'SF n/a')+(r.tenant&&r.tenant!=='(Vacant)'?' · currently '+escHtml(r.tenant):' · vacant')+'</div></div>';
+  var proposedBadge = r.proposed ? ' <span class="badge" style="background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;font-size:11px;">Proposed</span>' : '';
+  var proposedSub = (r.proposed && r.components && r.components.length) ? ' · combines '+escHtml(r.components.map(function(c){ return 'Suite '+c; }).join(' + ')) : '';
+  h += '<div><div style="font-size:15px;font-weight:700;color:#0f172a;">'+escHtml(r.building)+' · Suite '+escHtml(r.suite)+proposedBadge+'</div>'+
+       '<div style="font-size:12px;color:#6b7280;margin-top:2px;">'+escHtml(office?'Sanctuary Office Park':r.slug)+' · '+(r.sf?r.sf.toLocaleString()+' SF':'SF n/a')+(r.proposed?proposedSub:(r.tenant&&r.tenant!=='(Vacant)'?' · currently '+escHtml(r.tenant):' · vacant'))+'</div></div>';
   h += '<div style="display:flex;gap:8px;align-items:center;">'+reason+'<button type="button" class="mkt-remove" onclick="unflagMarketing(\''+escHtml(mktKey(r)).replace(/'/g,"\\'")+'\')" title="Remove from marketing">'+iconSvg('x',14)+'</button></div>';
   h += '</div>';
   if(ins){
@@ -2690,6 +2699,124 @@ function renderLeasing(){
   else { arr.forEach(function(r){ html += marketingSuiteCard(r); }); }
   c.innerHTML = html;
   if(window.lucide) lucide.createIcons();
+}
+
+// ── PROPOSED SUITES (hypothetical configurations) ─────────────────────────────
+// A proposed suite combines existing suites into a configuration that doesn't yet
+// physically exist as one leasable unit — used to market combinations to future
+// tenants. Stored SHARED in Firestore (collection `proposedSuites`), maintained
+// live by the module at the end of <body> (window.__proposedCache + window.__proposed).
+function proposedReady(){ return !!(window.__proposed && window.__proposed.ready); }
+function getProposed(){ return window.__proposedCache || (window.__proposedCache = []); }
+function updateProposedBadge(){ var el=document.getElementById('proposedBadge'); if(el){ var n=getProposed().length; el.textContent=n; el.style.display=n>0?'':'none'; } }
+function sopBuildings(){ var E=window.__crosbyEntities||{}; return (E.buildings||[]).filter(function(b){ return b.propertyId==='sanctuary-office-park'; }).sort(function(a,b){ return String(a.name).localeCompare(String(b.name),undefined,{numeric:true}); }); }
+function buildingUnits(buildingId){ var E=window.__crosbyEntities||{}; return (E.units||[]).filter(function(u){ return u.buildingId===buildingId; }).sort(function(a,b){ return String(a.identifier).localeCompare(String(b.identifier),undefined,{numeric:true}); }); }
+function proposedRate(sf){ var ins = (typeof SUITE_INSIGHTS!=='undefined' && SUITE_INSIGHTS[suiteSizeBand(sf)]) || null; return ins ? ins.rate : (typeof MARKET_TLDR!=='undefined' ? MARKET_TLDR.sfRate : 27); }
+function proposedSelectedSuites(){ return [].slice.call(document.querySelectorAll('#proposedSuitePicker input[type=checkbox]:checked')).map(function(cb){ return { unitId:cb.value, suite:cb.getAttribute('data-suite'), sf:Number(cb.getAttribute('data-sf'))||0, floor:cb.getAttribute('data-floor') }; }); }
+
+function renderProposed(){
+  var c=document.getElementById('proposedContent'); if(!c) return;
+  var blds=sopBuildings();
+  var arr=getProposed().slice().sort(function(a,b){ return String(b.createdAt||'').localeCompare(String(a.createdAt||'')); });
+  var h='<div style="margin-bottom:16px;"><div class="card-title" style="margin-bottom:2px;">Proposed Suites</div>'+
+    '<div style="font-size:13px;color:#6b7280;line-height:1.5;">Compose a hypothetical suite by combining existing suites for a prospective tenant — then elevate it to Leasing to price, market and build a flyer. Shared live across the team.</div></div>';
+  h+='<div class="card" style="margin-bottom:18px;">'+
+    '<div style="font-size:13px;font-weight:700;color:#0f172a;margin-bottom:12px;">Build a proposed suite</div>'+
+    '<div style="display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;margin-bottom:12px;">'+
+      '<div><div style="font-size:11px;color:#6b7280;font-weight:600;margin-bottom:4px;">Building</div>'+
+        '<select id="proposedBuilding" onchange="renderProposedPicker()" style="font-size:13px;padding:7px 10px;border:1px solid #e2e8f0;border-radius:7px;min-width:150px;">'+
+          blds.map(function(b){ return '<option value="'+escHtml(b.id)+'">'+escHtml(b.name)+'</option>'; }).join('')+'</select></div>'+
+      '<div style="flex:1;min-width:200px;"><div style="font-size:11px;color:#6b7280;font-weight:600;margin-bottom:4px;">Name <span style="font-weight:400;color:#9ca3af;">(optional)</span></div>'+
+        '<input id="proposedName" placeholder="e.g. Suite 300 (combined)" style="width:100%;font-size:13px;padding:7px 10px;border:1px solid #e2e8f0;border-radius:7px;color:#1f2733;"></div>'+
+    '</div>'+
+    '<div style="font-size:11px;color:#6b7280;font-weight:600;margin-bottom:6px;">Select suites to combine <span style="font-weight:400;color:#9ca3af;">(2 or more)</span></div>'+
+    '<div id="proposedSuitePicker"></div>'+
+    '<div style="margin-top:11px;"><div style="font-size:11px;color:#6b7280;font-weight:600;margin-bottom:4px;">Notes <span style="font-weight:400;color:#9ca3af;">(optional)</span></div>'+
+      '<input id="proposedNotes" placeholder="e.g. demising wall removed; shared reception" style="width:100%;font-size:13px;padding:7px 10px;border:1px solid #e2e8f0;border-radius:7px;color:#1f2733;"></div>'+
+    '<div style="margin-top:13px;display:flex;align-items:center;gap:13px;flex-wrap:wrap;"><button type="button" class="flyer-btn" onclick="createProposedSuite()">'+iconSvg('combine',14)+' Create proposed suite</button>'+
+      '<span id="proposedSelSummary" style="font-size:12px;color:#6b7280;"></span></div></div>';
+  h+='<div style="font-size:13px;font-weight:700;color:#0f172a;margin-bottom:10px;">Proposed configurations — '+arr.length+'</div>';
+  if(!arr.length){ h+='<div class="card" style="color:#6b7280;font-size:13px;">No proposed suites yet. Build one above.</div>'; }
+  else { h+=arr.map(proposedCard).join(''); }
+  c.innerHTML=h;
+  renderProposedPicker();
+  if(window.lucide) lucide.createIcons();
+}
+function renderProposedPicker(){
+  var sel=document.getElementById('proposedBuilding'); if(!sel) return;
+  var units=buildingUnits(sel.value);
+  var pick=document.getElementById('proposedSuitePicker'); if(!pick) return;
+  pick.innerHTML = units.length ? ('<div style="display:flex;flex-wrap:wrap;gap:8px;">'+units.map(function(u){
+    var occ = u.status==='vacant'?'vacant':(u.status==='vacating'?'vacating':(u.status||'occupied'));
+    var oc = occ==='vacant'?'#059669':(occ==='vacating'?'#b45309':'#9ca3af');
+    return '<label style="display:inline-flex;align-items:center;gap:6px;font-size:12px;border:1px solid #e2e8f0;border-radius:8px;padding:6px 10px;cursor:pointer;background:#fafbfc;">'+
+      '<input type="checkbox" value="'+escHtml(u.id)+'" data-suite="'+escHtml(u.identifier||'')+'" data-sf="'+(u.sf||0)+'" data-floor="'+(u.floor!=null?u.floor:'')+'" onchange="updateProposedSummary()">'+
+      '<span><b>Suite '+escHtml(u.identifier||'?')+'</b> · '+(u.sf||0).toLocaleString()+' SF'+(u.floor!=null?' · Fl '+u.floor:'')+' · <span style="color:'+oc+';">'+escHtml(occ)+'</span></span></label>';
+  }).join('')+'</div>') : '<div style="font-size:12px;color:#9ca3af;">No suites found for this building.</div>';
+  updateProposedSummary();
+}
+function updateProposedSummary(){
+  var parts=proposedSelectedSuites(), sf=parts.reduce(function(s,p){ return s+p.sf; },0);
+  var el=document.getElementById('proposedSelSummary'); if(el) el.textContent = parts.length ? (parts.length+' suite'+(parts.length>1?'s':'')+' · '+sf.toLocaleString()+' SF combined · ~$'+proposedRate(sf)+'/SF FSG') : 'Select 2 or more suites.';
+}
+function createProposedSuite(){
+  var sel=document.getElementById('proposedBuilding'); if(!sel) return;
+  var bid=sel.value, parts=proposedSelectedSuites();
+  if(parts.length<2){ alert('Pick at least two suites to combine into a proposed suite.'); return; }
+  var E=window.__crosbyEntities||{}, b=(E.buildings||[]).find(function(x){ return x.id===bid; })||{};
+  var sf=parts.reduce(function(s,p){ return s+p.sf; },0);
+  var suitesLabel=parts.map(function(p){ return p.suite; }).join(' + ');
+  var floors=[].concat.apply([],parts.map(function(p){ return p.floor||p.floor===0?[p.floor]:[]; })); var uf=[...new Set(floors)];
+  var name=(document.getElementById('proposedName').value||'').trim()||suitesLabel;
+  var notes=(document.getElementById('proposedNotes').value||'').trim();
+  var id='ps-'+bid+'-'+parts.map(function(p){ return p.suite; }).join('-').replace(/[^a-z0-9-]/gi,'');
+  var item={ id:id, slug:'sanctuary-office-park', buildingId:bid, building:b.name||'', floor:(uf.length===1?uf[0]:null), name:name, suitesLabel:suitesLabel, components:parts.map(function(p){ return { suite:p.suite, sf:p.sf }; }), sf:sf, notes:notes, createdAt:new Date().toISOString() };
+  window.__proposedCache = getProposed().filter(function(x){ return x.id!==id; }); window.__proposedCache.push(item); // optimistic
+  if(proposedReady()){ window.__proposed.upsert(item).catch(function(e){ console.error(e); alert('Could not save the proposed suite: '+((e&&e.message)||e)); }); }
+  renderProposed(); updateProposedBadge();
+}
+function deleteProposedSuite(id){
+  window.__proposedCache = getProposed().filter(function(x){ return x.id!==id; });
+  if(proposedReady()){ window.__proposed.delete(id).catch(function(e){ console.error(e); }); }
+  renderProposed(); updateProposedBadge();
+}
+// Elevate a proposed suite into the Leasing area (creates a marketing record).
+function promoteProposedToLeasing(id){
+  var p=getProposed().find(function(x){ return x.id===id; }); if(!p) return;
+  var key=mktKey({ slug:p.slug, building:p.building, suite:p.name });
+  if(!isMarketingFlagged(key)){
+    var rec={ key:key, slug:p.slug, building:p.building, suite:p.name, tenant:'(Proposed)', sf:p.sf, rent:0, action:'Begin Marketing', flaggedAt:new Date().toISOString(), proposed:true, components:(p.components||[]).map(function(c){ return c.suite; }), video:'', photos:[], floorplan:'' };
+    getMarketing().push(rec); // optimistic
+    if(mktReady()){ window.__mkt.upsertSuite({ key:key, slug:rec.slug, building:rec.building, suite:rec.suite, tenant:rec.tenant, sf:rec.sf, rent:0, action:rec.action, flaggedAt:rec.flaggedAt, video:'', proposed:true, components:rec.components }).catch(function(e){ console.error(e); alert('Could not elevate to leasing: '+((e&&e.message)||e)); }); }
+    mktLocalSave();
+  }
+  p.promotedKey=key; window.__proposedCache=getProposed().slice();
+  if(proposedReady()){ window.__proposed.upsert({ id:p.id, promotedKey:key }).catch(function(){}); }
+  switchView('leasing');
+}
+function proposedCard(p){
+  var rate=proposedRate(p.sf), mo=p.sf?Math.round(p.sf*rate/12):0;
+  var promoted=p.promotedKey && isMarketingFlagged(p.promotedKey);
+  var comps=(p.components||[]).map(function(c){ return '<span style="display:inline-block;background:#eef2f7;border:1px solid #e2e8f0;border-radius:6px;padding:2px 8px;font-size:12px;color:#334155;margin:0 6px 4px 0;">Suite '+escHtml(c.suite)+' · '+(c.sf||0).toLocaleString()+' SF</span>'; }).join('');
+  var pid=escHtml(p.id).replace(/'/g,"\\'");
+  var h='<div class="card" style="margin-bottom:12px;">';
+  h+='<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;">'+
+     '<div><div style="font-size:15px;font-weight:700;color:#0f172a;">'+escHtml(p.building)+' · '+escHtml(p.name)+' <span class="badge" style="background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;font-size:11px;">Proposed</span></div>'+
+     '<div style="font-size:12px;color:#6b7280;margin-top:2px;">Combined '+(p.sf||0).toLocaleString()+' SF'+(p.floor!=null?' · Floor '+p.floor:'')+' · Sanctuary Office Park</div></div>'+
+     '<button type="button" class="mkt-remove" onclick="deleteProposedSuite(\''+pid+'\')" title="Delete proposed suite">'+iconSvg('x',14)+'</button></div>';
+  h+='<div style="margin-top:12px;">'+comps+'</div>';
+  h+='<div style="display:flex;gap:26px;flex-wrap:wrap;margin-top:8px;">'+
+     '<div><div style="font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#9ca3af;font-weight:700;">Combined SF</div><div style="font-size:18px;font-weight:700;color:#0f172a;">'+(p.sf||0).toLocaleString()+'</div></div>'+
+     '<div><div style="font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#9ca3af;font-weight:700;">Suggested rate</div><div style="font-size:18px;font-weight:700;color:#0f172a;">$'+rate+' <span style="font-size:12px;font-weight:500;color:#6b7280;">/SF FSG</span></div></div>'+
+     '<div><div style="font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#9ca3af;font-weight:700;">Est. monthly</div><div style="font-size:18px;font-weight:700;color:#0f172a;">$'+mo.toLocaleString()+'</div></div></div>';
+  if(p.notes) h+='<div style="font-size:12px;color:#475569;margin-top:10px;border-left:2px solid #5e8ed0;padding-left:10px;">'+escHtml(p.notes)+'</div>';
+  h+='<div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;">';
+  if(promoted){ h+='<span style="font-size:13px;font-weight:600;color:#047857;display:inline-flex;align-items:center;gap:6px;">'+iconSvg('check-circle',15,'#047857')+' In Leasing</span>'+
+    '<button type="button" class="link-btn" style="font-size:12px;color:#2563eb;font-weight:500;cursor:pointer;background:none;border:none;" onclick="switchView(\'leasing\')">Open Leasing →</button>'; }
+  else { h+='<button type="button" class="flyer-btn" onclick="promoteProposedToLeasing(\''+pid+'\')">'+iconSvg('megaphone',14)+' Elevate to Leasing</button>'+
+    '<span style="font-size:11px;color:#9ca3af;">Adds it to Leasing with size-tailored pricing and flyer.</span>'; }
+  h+='</div></div>';
+  return h;
 }
 
 // ── SUITE FLYER / OFFERING MEMORANDUM ─────────────────────────────────────────
@@ -4374,7 +4501,8 @@ document.addEventListener("DOMContentLoaded", init);
 
 <script type="module">
   import { DATA_MODE, startAuth, signIn, signOutUser, loadEntities, subscribeState, setDocumentStatus, loadAssistantLog,
-           subscribeMarketing, upsertMarketingSuite, deleteMarketingSuite, putMarketingMedia, deleteMarketingMedia, reorderMarketingMedia }
+           subscribeMarketing, upsertMarketingSuite, deleteMarketingSuite, putMarketingMedia, deleteMarketingMedia, reorderMarketingMedia,
+           subscribeProposed, upsertProposedSuite, deleteProposedSuite }
     from "./crosby-data.js";
   import { deriveViewModel } from "./crosby-viewmodel.js";
 
@@ -4390,6 +4518,8 @@ document.addEventListener("DOMContentLoaded", init);
     upsertSuite: upsertMarketingSuite, deleteSuite: deleteMarketingSuite,
     putMedia: putMarketingMedia, deleteMedia: deleteMarketingMedia, reorderMedia: reorderMarketingMedia,
   };
+  // Shared proposed-suite writes.
+  window.__proposed = { ready: false, mode: DATA_MODE, upsert: upsertProposedSuite, delete: deleteProposedSuite };
 
   // Merge the two live collections into the render-ready array the dashboard reads
   // (window.__marketingCache), then repaint the Leasing view + nav badge.
@@ -4485,6 +4615,17 @@ document.addEventListener("DOMContentLoaded", init);
       },
       onMedia:  (a) => { __mktMedia = a; rebuildMarketing(); },
       onError:  (e) => console.error("[crosby] marketing sync error:", e),
+    });
+
+    // Live SHARED proposed-suite configurations.
+    await subscribeProposed({
+      onReady: (ok) => { window.__proposed.ready = ok; },
+      onItems: (a) => {
+        window.__proposedCache = a.slice();
+        if (typeof renderProposed === "function" && document.getElementById("view-proposed")?.classList.contains("active")) renderProposed();
+        if (typeof updateProposedBadge === "function") updateProposedBadge();
+      },
+      onError: (e) => console.error("[crosby] proposed sync error:", e),
     });
 
     // In local fallback mode, wire the manual Refresh button to re-pull JSON.
