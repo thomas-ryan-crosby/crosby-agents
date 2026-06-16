@@ -2626,17 +2626,102 @@ function mediaDz(mkey, kind, value, accept, prompt){
     iconSvg('image-plus',22,'#9ca3af')+'<div class="dz-t">'+prompt+'</div>'+
     '<input type="file" accept="'+accept+'" style="display:none" onchange="'+hh+'(\''+mkey+'\',this.files[0])"></div>';
 }
+
+// ── Approved asking rate, approved flyer (Storage), marketing package ──────────
+// Approved rate overrides the suggested band rate in the flyer + card figures.
+function setApprovedRate(key, val){
+  var rec=getMarketing().find(function(r){ return mktKey(r)===key; }); if(!rec) return;
+  var n=parseFloat(val); if(!(n>0)) n=0;
+  rec.approvedRate=n; // optimistic
+  if(mktReady()){ window.__mkt.upsertSuite({ key:key, approvedRate:n }).catch(function(e){ console.error(e); }); }
+  mktLocalSave(); renderLeasing();
+}
+function flyerDrop(e,key){ e.preventDefault(); e.currentTarget.classList.remove('over'); var f=e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]; if(f) handleFlyerFile(key,f); }
+// Approved flyer is a real file (often >1 MB) so it goes to Firebase Storage; the
+// suite doc keeps the download URL + storage path.
+function handleFlyerFile(key, file){
+  if(!file) return;
+  var isPdf = file.type==='application/pdf' || /\.pdf$/i.test(file.name);
+  var isImg = file.type.indexOf('image/')===0;
+  if(!isPdf && !isImg){ alert('Please choose a PDF (or image) flyer.'); return; }
+  if(file.size > 15*1024*1024){ alert('That flyer is over 15 MB — please use a smaller PDF.'); return; }
+  var rec=getMarketing().find(function(r){ return mktKey(r)===key; }); if(!rec) return;
+  if(mktReady() && window.__mkt.uploadFlyer){
+    rec.__flyerUploading=true; renderLeasing();
+    window.__mkt.uploadFlyer(key, file).then(function(res){
+      rec.__flyerUploading=false; rec.flyerUrl=res.url; rec.flyerPath=res.path; rec.flyerName=res.name;
+      window.__mkt.upsertSuite({ key:key, flyerUrl:res.url, flyerPath:res.path, flyerName:res.name }).catch(function(e){ console.error(e); });
+      renderLeasing();
+    }).catch(function(e){ rec.__flyerUploading=false; console.error(e); alert('Could not upload the flyer: '+((e&&e.message)||e)); renderLeasing(); });
+  } else { // local/preview fallback: keep a data URL on the record
+    var fr=new FileReader(); fr.onload=function(ev){ rec.flyerUrl=ev.target.result; rec.flyerName=file.name; try{ localStorage.setItem('marketingSuites', JSON.stringify(getMarketing())); }catch(_){} renderLeasing(); }; fr.readAsDataURL(file);
+  }
+}
+function removeFlyer(key){
+  var rec=getMarketing().find(function(r){ return mktKey(r)===key; }); if(!rec) return;
+  var path=rec.flyerPath;
+  rec.flyerUrl=''; rec.flyerPath=''; rec.flyerName=''; // optimistic
+  if(mktReady()){
+    if(path && window.__mkt.deleteFile) window.__mkt.deleteFile(path).catch(function(e){ console.error(e); });
+    window.__mkt.upsertSuite({ key:key, flyerUrl:'', flyerPath:'', flyerName:'' }).catch(function(e){ console.error(e); });
+  } else { try{ localStorage.setItem('marketingSuites', JSON.stringify(getMarketing())); }catch(_){} }
+  renderLeasing();
+}
+var __jszipP=null;
+function ensureJSZip(){
+  if(window.JSZip) return Promise.resolve(window.JSZip);
+  if(__jszipP) return __jszipP;
+  __jszipP=new Promise(function(res,rej){ var s=document.createElement('script'); s.src='https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js'; s.onload=function(){ res(window.JSZip); }; s.onerror=function(){ rej(new Error('Could not load the zip library (check your connection).')); }; document.head.appendChild(s); });
+  return __jszipP;
+}
+function dataUrlToBlob(u){ var p=u.split(','), mime=(p[0].match(/:(.*?);/)||[,'application/octet-stream'])[1], bin=atob(p[1]), n=bin.length, a=new Uint8Array(n); while(n--) a[n]=bin.charCodeAt(n); return new Blob([a],{type:mime}); }
+function extFromMime(m){ return ({ 'image/jpeg':'jpg','image/png':'png','image/webp':'webp','application/pdf':'pdf' }[m]) || 'bin'; }
+// Bundle photos + floor plan + approved flyer into a single zip and download it.
+function downloadMarketingPackage(key){
+  var rec=getMarketing().find(function(r){ return mktKey(r)===key; }); if(!rec) return;
+  var photos=suitePhotos(rec);
+  if(!photos.length && !rec.flyerUrl && !rec.floorplan){ alert('Nothing to package yet — add photos and/or an approved flyer first.'); return; }
+  var base=((rec.building||'')+' Suite '+(rec.suite||'')).replace(/[^a-z0-9]+/gi,'_').replace(/^_+|_+$/g,'');
+  ensureJSZip().then(function(JSZip){
+    var zip=new JSZip(), folder=zip.folder(base);
+    photos.forEach(function(p,i){ try{ var b=dataUrlToBlob(p); folder.file('photo_'+('0'+(i+1)).slice(-2)+'.'+extFromMime(b.type), b); }catch(_){} });
+    if(rec.floorplan){ try{ var fpb=dataUrlToBlob(rec.floorplan); folder.file('floor_plan.'+extFromMime(fpb.type), fpb); }catch(_){} }
+    var jobs=[];
+    if(rec.flyerUrl){
+      if(rec.flyerUrl.indexOf('data:')===0){ try{ var flb=dataUrlToBlob(rec.flyerUrl); folder.file(rec.flyerName||('Offering_Memorandum.'+extFromMime(flb.type)), flb); }catch(_){} }
+      else { jobs.push(fetch(rec.flyerUrl).then(function(r){ return r.blob(); }).then(function(b){ folder.file(rec.flyerName||'Offering_Memorandum.pdf', b); }).catch(function(e){ console.error('flyer fetch failed', e); })); }
+    }
+    return Promise.all(jobs).then(function(){ return zip.generateAsync({type:'blob'}); }).then(function(blob){
+      var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=(base||'suite')+'_marketing_package.zip'; document.body.appendChild(a); a.click();
+      setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+    });
+  }).catch(function(e){ console.error(e); alert('Could not build the package: '+((e&&e.message)||e)); });
+}
+
 function marketingSuiteCard(r){
   var office = r.slug==='sanctuary-office-park';
   var ins = office ? SUITE_INSIGHTS[suiteSizeBand(r.sf)] : null;
-  var rate = ins ? ins.rate : 0;
-  var moAsk = rate ? Math.round(r.sf*rate/12) : 0;
-  var yrAsk = rate ? r.sf*rate : 0;
+  var mkey = escHtml(mktKey(r)).replace(/'/g,"\\'");
+  var suggested = ins ? ins.rate : 0;
+  var hasApproved = Number(r.approvedRate) > 0;
+  var effRate = hasApproved ? Number(r.approvedRate) : suggested;
+  var moAsk = effRate ? Math.round(r.sf*effRate/12) : 0;
+  var yrAsk = effRate ? r.sf*effRate : 0;
   var toneCol = {steady:'#059669',attention:'#b45309',urgent:'#dc2626'};
   var reasonTone = {'Begin Marketing':'#dc2626','Renew or Re-market':'#b45309','Expired — Re-market / Verify':'#dc2626'};
   var reason = r.action ? '<span class="badge" style="background:'+((reasonTone[r.action]||'#e5e7eb'))+'1a;color:'+(reasonTone[r.action]||'#6b7280')+';border:1px solid '+(reasonTone[r.action]||'#e5e7eb')+'55;font-size:11px;">'+escHtml(r.action)+'</span>' : '';
   var stat = function(l,v,s){ return '<div><div style="font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#9ca3af;font-weight:700;">'+l+'</div><div style="font-size:18px;font-weight:700;color:#0f172a;">'+v+(s?' <span style="font-size:12px;font-weight:500;color:#6b7280;">'+s+'</span>':'')+'</div></div>'; };
   var row = function(l,v){ return '<div><div style="font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#9ca3af;font-weight:700;margin-bottom:1px;">'+l+'</div><div style="font-size:12px;color:#374151;line-height:1.4;">'+v+'</div></div>'; };
+  // Editable approved asking rate (overrides the suggested band rate in the flyer).
+  var approvedField = '<div><div style="font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#1f5fdb;font-weight:700;">Approved asking</div>'+
+    '<div style="display:flex;align-items:baseline;gap:1px;margin-top:2px;"><span style="font-size:15px;font-weight:700;color:#0f172a;">$</span>'+
+    '<input type="number" min="0" step="0.25" value="'+(hasApproved?Number(r.approvedRate):'')+'" placeholder="'+(suggested||'set')+'" onchange="setApprovedRate(\''+mkey+'\',this.value)" '+
+      'style="width:60px;font-size:18px;font-weight:700;color:#0f172a;border:none;border-bottom:2px solid #93c5fd;padding:0 1px;background:none;outline:none;" title="Set the approved asking rate; updates the flyer">'+
+    '<span style="font-size:12px;font-weight:500;color:#6b7280;">/SF FSG</span></div></div>';
+  var pricingRow = '<div style="display:flex;gap:24px;flex-wrap:wrap;margin-bottom:13px;align-items:flex-start;">'+
+    stat('Suggested asking', suggested?'$'+suggested+'/SF':'—', suggested?'FSG':'')+approvedField+
+    stat(hasApproved?'Monthly · approved':'Monthly', moAsk?'$'+moAsk.toLocaleString():'—','')+
+    stat(hasApproved?'Annual · approved':'Annual', yrAsk?'$'+yrAsk.toLocaleString():'—','')+'</div>';
   var h = '<div class="card" style="margin-bottom:14px;">';
   h += '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;">';
   var proposedBadge = r.proposed ? ' <span class="badge" style="background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;font-size:11px;">Proposed</span>' : '';
@@ -2645,21 +2730,22 @@ function marketingSuiteCard(r){
        '<div style="font-size:12px;color:#6b7280;margin-top:2px;">'+escHtml(office?'Sanctuary Office Park':r.slug)+' · '+(r.sf?r.sf.toLocaleString()+' SF':'SF n/a')+(r.proposed?proposedSub:(r.tenant&&r.tenant!=='(Vacant)'?' · currently '+escHtml(r.tenant):' · vacant'))+'</div></div>';
   h += '<div style="display:flex;gap:8px;align-items:center;">'+reason+'<button type="button" class="mkt-remove" onclick="unflagMarketing(\''+escHtml(mktKey(r)).replace(/'/g,"\\'")+'\')" title="Remove from marketing">'+iconSvg('x',14)+'</button></div>';
   h += '</div>';
-  if(ins){
+  if(r.sf){
     h += '<div style="margin-top:12px;padding-top:12px;border-top:1px solid #f1f5f9;">';
-    h += '<div style="display:flex;align-items:center;gap:7px;margin-bottom:11px;">'+iconSvg('ruler',14,'#1f5fdb')+'<span style="font-size:12px;font-weight:700;color:#374151;">'+escHtml(ins.label)+'</span></div>';
-    h += '<div style="display:flex;gap:26px;flex-wrap:wrap;margin-bottom:13px;">'+stat('Suggested asking','$'+rate+'/SF','FSG')+stat('Monthly','$'+moAsk.toLocaleString(),'')+stat('Annual','$'+yrAsk.toLocaleString(),'')+'</div>';
-    h += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;">'+
-      row('Demand','<span style="color:'+toneCol[ins.tone]+';font-weight:600;">'+escHtml(ins.demand)+'</span>')+
-      row('Time to lease',escHtml(ins.time))+
-      row('Likely tenants',escHtml(ins.tenants))+'</div>';
-    h += '<ul style="margin:11px 0 0;padding-left:18px;font-size:12px;color:#374151;line-height:1.5;">'+ins.tips.map(function(t){ return '<li style="margin-bottom:3px;">'+escHtml(t)+'</li>'; }).join('')+'</ul>';
-    h += '<div style="font-size:10px;color:#9ca3af;margin-top:8px;">Size-tailored from the St. Tammany office study · full-service band $24–28.</div>';
+    if(ins) h += '<div style="display:flex;align-items:center;gap:7px;margin-bottom:11px;">'+iconSvg('ruler',14,'#1f5fdb')+'<span style="font-size:12px;font-weight:700;color:#374151;">'+escHtml(ins.label)+'</span></div>';
+    h += pricingRow;
+    if(ins){
+      h += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;">'+
+        row('Demand','<span style="color:'+toneCol[ins.tone]+';font-weight:600;">'+escHtml(ins.demand)+'</span>')+
+        row('Time to lease',escHtml(ins.time))+
+        row('Likely tenants',escHtml(ins.tenants))+'</div>';
+      h += '<ul style="margin:11px 0 0;padding-left:18px;font-size:12px;color:#374151;line-height:1.5;">'+ins.tips.map(function(t){ return '<li style="margin-bottom:3px;">'+escHtml(t)+'</li>'; }).join('')+'</ul>';
+      h += '<div style="font-size:10px;color:#9ca3af;margin-top:8px;">Size-tailored from the St. Tammany office study · full-service band $24–28. Set an approved rate to override.</div>';
+    } else {
+      h += '<div style="font-size:11px;color:#9ca3af;margin-top:2px;">Size-tailored demand insight is available for Sanctuary office suites; set an approved asking rate above.</div>';
+    }
     h += '</div>';
-  } else if(r.sf){
-    h += '<div style="margin-top:12px;padding-top:12px;border-top:1px solid #f1f5f9;font-size:12px;color:#9ca3af;">'+r.sf.toLocaleString()+' SF · size-tailored pricing insight is available for Sanctuary office suites.</div>';
   }
-  var mkey = escHtml(mktKey(r)).replace(/'/g,"\\'");
   var lbl = function(t){ return '<div style="font-size:11px;color:#6b7280;font-weight:600;margin-bottom:5px;">'+t+'</div>'; };
   var setBadge = function(on,t){ return on?'<span style="color:#059669;">· '+t+'</span>':''; };
   var photos = suitePhotos(r);
@@ -2680,18 +2766,34 @@ function marketingSuiteCard(r){
     }).join('')+'</div>'+
     '<div class="ph-hint">Drag to reorder · photo 1 leads the gallery, the rest follow in this order.</div>';
   }
+  var flyerDz;
+  if(r.__flyerUploading){
+    flyerDz = '<div class="dropzone" style="cursor:default;color:#6b7280;"><div class="dz-t">Uploading flyer…</div></div>';
+  } else if(r.flyerUrl){
+    flyerDz = '<div class="dropzone has" style="flex-direction:row;gap:10px;justify-content:flex-start;align-items:center;padding:12px;min-height:auto;text-align:left;border-color:#a7f3d0;">'+
+      iconSvg('file-check-2',22,'#047857')+
+      '<div style="flex:1;min-width:0;"><div style="font-size:12px;font-weight:600;color:#0f172a;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+escHtml(r.flyerName||'Approved flyer')+'</div>'+
+        '<div style="font-size:11px;"><a href="'+escHtml(r.flyerUrl)+'" target="_blank" rel="noopener" style="color:#2563eb;text-decoration:none;">View / download</a></div></div>'+
+      '<button type="button" class="dz-x" style="position:static;flex:none;" onclick="removeFlyer(\''+mkey+'\')" title="Remove flyer">&times;</button></div>';
+  } else {
+    flyerDz = '<div class="dropzone" ondragover="dzOver(event)" ondragleave="dzLeave(event)" ondrop="flyerDrop(event,\''+mkey+'\')" onclick="this.querySelector(\'input\').click()">'+
+      iconSvg('file-up',22,'#9ca3af')+'<div class="dz-t">Drag &amp; drop the approved flyer (PDF)<br>or click to choose</div>'+
+      '<input type="file" accept="application/pdf,.pdf,image/*" style="display:none" onchange="handleFlyerFile(\''+mkey+'\',this.files[0])"></div>';
+  }
   h += '<div style="margin-top:14px;padding-top:13px;border-top:1px solid #f1f5f9;">'+
-    '<div style="font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#9ca3af;font-weight:700;margin-bottom:9px;">Flyer Media '+setBadge(nPhotos, nPhotos+(nPhotos===1?' photo':' photos'))+setBadge(r.floorplan,'floor plan')+setBadge(r.video,'video')+'</div>'+
+    '<div style="font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#9ca3af;font-weight:700;margin-bottom:9px;">Flyer Media '+setBadge(nPhotos, nPhotos+(nPhotos===1?' photo':' photos'))+setBadge(r.floorplan,'floor plan')+setBadge(r.flyerUrl,'approved flyer')+setBadge(r.video,'video')+'</div>'+
     '<div>'+lbl('Photos <span style="font-weight:400;color:#9ca3af;">(gallery — drag to reorder)</span>')+photosDz+strip+'</div>'+
     '<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start;margin-top:14px;">'+
       '<div>'+lbl('Floor plan <span style="font-weight:400;color:#9ca3af;">(image or PDF)</span>')+mediaDz(mkey,'floorplan',r.floorplan,'image/*,application/pdf,.pdf','Drag &amp; drop a floor plan<br>image or PDF')+'</div>'+
-      '<div>'+lbl('Video / virtual tour')+
-        '<input type="url" value="'+escHtml(r.video||'')+'" placeholder="https://… YouTube, Matterport, Vimeo" onchange="updateMarketingField(\''+mkey+'\',\'video\',this.value)" style="width:100%;font-size:12px;padding:8px 10px;border:1px solid #e2e8f0;border-radius:7px;color:#1f2733;"></div>'+
+      '<div>'+lbl('Approved flyer <span style="font-weight:400;color:#9ca3af;">(PDF — stored &amp; downloadable)</span>')+flyerDz+'</div>'+
     '</div>'+
+    '<div style="margin-top:14px;">'+lbl('Video / virtual tour')+
+      '<input type="url" value="'+escHtml(r.video||'')+'" placeholder="https://… YouTube, Matterport, Vimeo" onchange="updateMarketingField(\''+mkey+'\',\'video\',this.value)" style="width:100%;font-size:12px;padding:8px 10px;border:1px solid #e2e8f0;border-radius:7px;color:#1f2733;"></div>'+
     '</div>';
   h += '<div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;">';
   h += '<button type="button" class="flyer-btn" onclick="generateFlyer(\''+mkey+'\')">'+iconSvg('file-text',14)+' Generate flyer</button>';
-  h += '<span style="font-size:11px;color:#9ca3af;">Branded offering memorandum — opens to print or save as PDF.</span>';
+  h += '<button type="button" class="flyer-btn" style="background:#0f766e;" onclick="downloadMarketingPackage(\''+mkey+'\')">'+iconSvg('package',14)+' Download marketing package</button>';
+  h += '<span style="font-size:11px;color:#9ca3af;">Generate opens the branded OM to print/save; package downloads a zip of the photos'+(r.flyerUrl?' + approved flyer':'')+'.</span>';
   h += '</div></div>';
   return h;
 }
@@ -3275,7 +3377,8 @@ function flyerGalleryPages(photos){
 function flyerDoc(r){
   var office = r.slug==='sanctuary-office-park';
   var ins = office ? SUITE_INSIGHTS[suiteSizeBand(r.sf)] : null;
-  var rate = ins ? ins.rate : MARKET_TLDR.sfRate;
+  // Approved asking rate (set on the leasing card) overrides the suggested band rate.
+  var rate = (Number(r.approvedRate) > 0) ? Number(r.approvedRate) : (ins ? ins.rate : MARKET_TLDR.sfRate);
   var moAsk = r.sf ? Math.round(r.sf*rate/12) : 0;
   var yrAsk = r.sf ? r.sf*rate : 0;
   var leasing = [
@@ -4784,7 +4887,8 @@ document.addEventListener("DOMContentLoaded", init);
 <script type="module">
   import { DATA_MODE, startAuth, signIn, signOutUser, loadEntities, subscribeState, setDocumentStatus, loadAssistantLog,
            subscribeMarketing, upsertMarketingSuite, deleteMarketingSuite, putMarketingMedia, deleteMarketingMedia, reorderMarketingMedia,
-           subscribeProposed, upsertProposedSuite, deleteProposedSuite }
+           subscribeProposed, upsertProposedSuite, deleteProposedSuite,
+           uploadMarketingFlyer, deleteMarketingFile }
     from "./crosby-data.js";
   import { deriveViewModel } from "./crosby-viewmodel.js";
 
@@ -4799,6 +4903,7 @@ document.addEventListener("DOMContentLoaded", init);
     ready: false, mode: DATA_MODE,
     upsertSuite: upsertMarketingSuite, deleteSuite: deleteMarketingSuite,
     putMedia: putMarketingMedia, deleteMedia: deleteMarketingMedia, reorderMedia: reorderMarketingMedia,
+    uploadFlyer: uploadMarketingFlyer, deleteFile: deleteMarketingFile,
   };
   // Shared proposed-suite writes.
   window.__proposed = { ready: false, mode: DATA_MODE, upsert: upsertProposedSuite, delete: deleteProposedSuite };

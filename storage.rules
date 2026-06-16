@@ -11,6 +11,15 @@ rules_version = '2';
 // public writes and expire).
 service firebase.storage {
   match /b/{bucket}/o {
+    // Marketing assets (approved flyers) for the unauthenticated Leasing area —
+    // public read + size/type-limited public write, mirroring the public
+    // marketing collections in Firestore. Everything else stays locked.
+    match /marketing/{allPaths=**} {
+      allow read: if true;
+      allow write: if request.resource == null
+                   || (request.resource.size < 15 * 1024 * 1024
+                       && request.resource.contentType.matches('application/pdf|image/.*'));
+    }
     match /{allPaths=**} {
       allow read, write: if false;
     }

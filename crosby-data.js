@@ -23,19 +23,22 @@ let _fb = null; // memoized { app, db, auth, fns... }
 
 async function ensureFirebase() {
   if (_fb) return _fb;
-  const [appMod, fsMod, authMod] = await Promise.all([
+  const [appMod, fsMod, authMod, stMod] = await Promise.all([
     import(`${SDK}/firebase-app.js`),
     import(`${SDK}/firebase-firestore.js`),
     import(`${SDK}/firebase-auth.js`),
+    import(`${SDK}/firebase-storage.js`),
   ]);
   const app = appMod.initializeApp(firebaseConfig);
   _fb = {
     db: fsMod.getFirestore(app),
     auth: authMod.getAuth(app),
+    storage: stMod.getStorage(app),
     collection: fsMod.collection, getDocs: fsMod.getDocs, onSnapshot: fsMod.onSnapshot,
     doc: fsMod.doc, updateDoc: fsMod.updateDoc, setDoc: fsMod.setDoc, deleteDoc: fsMod.deleteDoc,
     query: fsMod.query, where: fsMod.where, writeBatch: fsMod.writeBatch,
     serverTimestamp: fsMod.serverTimestamp,
+    sRef: stMod.ref, uploadBytes: stMod.uploadBytes, getDownloadURL: stMod.getDownloadURL, deleteObject: stMod.deleteObject,
     GoogleAuthProvider: authMod.GoogleAuthProvider, signInWithPopup: authMod.signInWithPopup,
     onAuthStateChanged: authMod.onAuthStateChanged, signOut: authMod.signOut,
   };
@@ -230,4 +233,26 @@ export async function upsertProposedSuite(item) {
 export async function deleteProposedSuite(id) {
   const fb = await ensureFirebase();
   await fb.deleteDoc(fb.doc(fb.db, PROPOSED, id));
+}
+
+// ── Marketing files in Storage (approved flyers — too large for a Firestore doc) ──
+// Uploads to marketing/flyers/<encodedKey>.<ext> and returns a download URL +
+// storage path (kept on the suite doc). Public read+write is scoped to marketing/
+// in storage.rules.
+export async function uploadMarketingFlyer(key, file) {
+  const fb = await ensureFirebase();
+  const ext = (file.type === "application/pdf" || /\.pdf$/i.test(file.name || "")) ? "pdf"
+            : ((file.name || "").match(/\.([a-z0-9]+)$/i) || [, "bin"])[1].toLowerCase();
+  const path = `marketing/flyers/${encodeURIComponent(key)}.${ext}`;
+  const ref = fb.sRef(fb.storage, path);
+  await fb.uploadBytes(ref, file, { contentType: file.type || "application/octet-stream" });
+  const url = await fb.getDownloadURL(ref);
+  return { url, path, name: file.name || `flyer.${ext}` };
+}
+
+export async function deleteMarketingFile(path) {
+  if (!path) return;
+  const fb = await ensureFirebase();
+  try { await fb.deleteObject(fb.sRef(fb.storage, path)); }
+  catch (e) { if (!/object-not-found/.test(String(e && e.code || e))) throw e; }
 }
