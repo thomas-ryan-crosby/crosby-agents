@@ -2878,6 +2878,57 @@ var LEASING_PLAYBOOK = {
   ],
 };
 var __pbCtx = null; // currently contextualized unit, or null for the generic playbook
+var __pbTab = 'process'; // 'process' (high-level) | 'details' (operational)
+
+// Operational detail — the "how", especially on the listing + outreach side.
+// Firm/org names are real and current as of the 2026 St. Tammany office study;
+// confirm the specific broker contact at each firm before sending.
+var PLAYBOOK_DETAILS = [
+  { key:'listing', title:'Listing channels & syndication', intro:'Post every available suite to all of these at launch — breadth is what compresses days-on-market. Each listing carries: SF, full-service-gross rate, floor plan, photos, the all-in-vs-NNN value line, and Ryan & Tommy Crosby as contacts.', items:[
+    { name:'LACDB (Catylist)', note:'Louisiana Commercial Database — the local commercial MLS run by the NOMAR Commercial Investment Division. Every Northshore broker watches it; this is the #1 local channel. List via CID membership or a co-op broker.' },
+    { name:'LoopNet', note:'The widest public marketplace (CoStar-owned) — most tenant and out-of-market broker eyeballs. Use a paid upgrade on a vacancy you need to move fast.' },
+    { name:'Crexi', note:'Free listing with built-in email-blast and tour-scheduling tools; fast-growing. Good for direct-to-tenant and broker reach.' },
+    { name:'CoStar', note:'The industry data system of record — keep the building/suite record accurate so comps and broker searches surface it.' },
+    { name:'crosbydevelopment.com + Google Business Profile', note:'Owner availabilities page and a Google listing so the suite shows on a direct local search.' },
+    { name:'Brevitas / Biproxi', note:'Secondary marketplaces — optional extra syndication.' },
+  ]},
+  { key:'brokers', title:'Broker co-op — firms to engage (Northshore office)', intro:'Offer a market co-op commission; send each the offering memorandum + a one-page full-service all-in sheet, and register their prospects same-day. Confirm the current office-leasing contact before sending.', items:[
+    { name:'Stirling Properties', note:'Headquartered in Covington — the dominant Northshore landlord/brokerage; touches the most local office tenant flow. Lead co-op partner.' },
+    { name:'Beau Box Commercial Real Estate', note:'Active Northshore office & retail with a Mandeville/Covington presence; strong local tenant rep.' },
+    { name:'NAI Latter & Blum', note:'Regional reach across New Orleans and the Northshore — good for relocations and mid-size users.' },
+    { name:'SRSA Commercial Real Estate', note:'Metairie/New Orleans desk — brings cross-lake tenants.' },
+    { name:'CBRE — New Orleans', note:'National platform for corporate / relocating tenants and larger requirements.' },
+    { name:'Corporate Realty · The McEnery Company · Property One', note:'Established New Orleans office desks worth a direct OM.' },
+    { name:'KW Commercial & local independents', note:'Many small-tenant deals move through independent local agents — keep them on the blast list.' },
+  ]},
+  { key:'networks', title:'Professional networks & deal venues', intro:'Where brokers source and pitch deals — get the listing in front of them.', items:[
+    { name:'NOMAR Commercial Investment Division (CID)', note:'Runs LACDB and holds marketing meetings where brokers pitch listings; use the CID broker email blasts.' },
+    { name:'CCIM Louisiana Chapter · SIOR Gulf Coast', note:'Designated office/industrial brokers — networking and deal-making events.' },
+    { name:'NAIOP Louisiana · BOMA New Orleans', note:'Commercial development and building-owner/manager networks.' },
+    { name:'St. Tammany Corporation', note:'Parish economic-development org — business-attraction and relocation leads; tell them about available Class A space.' },
+    { name:'St. Tammany West & East Chambers · Northshore Business Council', note:'Local business networks and member directories — referral and prospecting source.' },
+    { name:'GNO, Inc.', note:'Regional business-attraction org for cross-lake and out-of-state relocations.' },
+  ]},
+  { key:'tenants', title:'Direct tenant targeting', intro:'Northshore office demand is professional-services and medical, plus cross-lake relocations. Build a NAICS-based target list and reach out directly.', items:[
+    { name:'Medical & healthcare', note:'St. Tammany Health System, Ochsner and Lakeview Regional ecosystems drive medical-office, billing, records, therapy and specialty-practice demand.' },
+    { name:'Professional services', note:'Law, insurance agencies, financial advisors (Edward Jones, Ameriprise, Edelman), title, CPA/accounting, engineering & surveying — the bread-and-butter Sanctuary tenant.' },
+    { name:'Cross-lake relocations', note:'Jefferson/Orleans firms moving to the Northshore for commute, cost and quality of life — pitch full-service certainty + Causeway access.' },
+    { name:'How to reach them', note:'LinkedIn Sales Navigator by industry + geography; referrals from in-building tenants; chamber member directories; a targeted email campaign to that segment.' },
+  ]},
+  { key:'advertising', title:'Advertising, signage & PR', intro:'', items:[
+    { name:'New Orleans CityBusiness', note:'Real-estate deal coverage / Real Estate Weekly — submit availability and signed-lease announcements.' },
+    { name:'Biz New Orleans · The Advocate · St. Tammany Farmer', note:'Regional and local business press.' },
+    { name:'LinkedIn', note:'Crosby company page + agent posts; boost a key availability to the local professional audience.' },
+    { name:'On-site signage', note:'Lobby availability board, monument rider, and a window/yard banner with a QR code to the flyer.' },
+  ]},
+  { key:'cadence', title:'Response standards (SLAs)', intro:'', items:[
+    { name:'Inbound inquiry', note:'Respond within 24 hours; offer a same-week tour.' },
+    { name:'Broker registration', note:'Acknowledge and register the prospect the same day.' },
+    { name:'Post-tour', note:'Follow up within 24 hours with next steps or a proposal.' },
+    { name:'Ongoing', note:'Weekly availability email to the broker list; bi-weekly LinkedIn post until leased.' },
+  ]},
+];
+function setPbTab(t){ __pbTab=t; renderPlaybook(); }
 
 // All real units a campaign could target: vacant/vacating suites, suites already in
 // marketing, and proposed configurations.
@@ -2970,13 +3021,31 @@ function renderPlaybook(){
      '<div style="font-size:13.5px;line-height:1.6;color:#eaf1fb;">'+escHtml(P.positioning)+'</div>'+
      '<div style="font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:#bcd0ee;font-weight:800;margin:14px 0 6px;">Objective</div>'+
      '<div style="font-size:13.5px;line-height:1.6;color:#eaf1fb;">'+escHtml(P.goal)+'</div></div>';
-  // contextual brief (if a unit is selected)
+  // contextual brief (if a unit is selected) — relevant on both tabs
   if(__pbCtx) h+=playbookContextCard(__pbCtx);
-  // the phases
-  h+='<div style="font-size:13px;font-weight:700;color:#0f172a;margin-bottom:10px;">The Process — '+P.phases.length+' phases</div>';
-  h+=P.phases.map(phaseCardHTML).join('');
+  // tab bar
+  var tab=function(id,label){ var on=__pbTab===id; return '<button type="button" onclick="setPbTab(\''+id+'\')" style="font-size:13px;font-weight:600;padding:8px 16px;border:none;border-bottom:2px solid '+(on?'#1f5fdb':'transparent')+';background:none;color:'+(on?'#1f5fdb':'#6b7280')+';cursor:pointer;">'+label+'</button>'; };
+  h+='<div style="display:flex;gap:6px;border-bottom:1px solid #e5e7eb;margin-bottom:16px;">'+tab('process','Process')+tab('details','Details — Listing &amp; Outreach')+'</div>';
+  if(__pbTab==='details'){
+    h+='<div style="font-size:13px;color:#6b7280;margin-bottom:12px;line-height:1.5;">Operational detail behind the process — the specific channels, firms, networks and standards. The high-level flow lives in the Process tab.</div>';
+    h+=PLAYBOOK_DETAILS.map(detailSectionHTML).join('');
+  } else {
+    h+='<div style="font-size:13px;font-weight:700;color:#0f172a;margin-bottom:10px;">The Process — '+P.phases.length+' phases</div>';
+    h+=P.phases.map(phaseCardHTML).join('');
+  }
   c.innerHTML=h;
   if(window.lucide) lucide.createIcons();
+}
+function detailSectionHTML(sec){
+  return '<div class="card" style="margin-bottom:12px;">'+
+    '<div style="font-size:14px;font-weight:700;color:#22315d;margin-bottom:'+(sec.intro?'4px':'9px')+';">'+escHtml(sec.title)+'</div>'+
+    (sec.intro?'<div style="font-size:12.5px;color:#6b7280;line-height:1.5;margin-bottom:11px;">'+escHtml(sec.intro)+'</div>':'')+
+    '<div style="display:flex;flex-direction:column;gap:9px;">'+sec.items.map(function(it){
+      return '<div style="display:flex;gap:9px;align-items:baseline;">'+
+        '<span style="flex:none;width:7px;height:7px;border-radius:2px;background:#5e8ed0;margin-top:6px;"></span>'+
+        '<div><span style="font-size:13px;font-weight:700;color:#0f172a;">'+escHtml(it.name)+'</span>'+
+        '<span style="font-size:12.5px;color:#475569;line-height:1.5;"> — '+escHtml(it.note)+'</span></div></div>';
+    }).join('')+'</div></div>';
 }
 // Self-contained, print/PDF-ready playbook document (branded), generic or unit-contextualized.
 function playbookDoc(ctx){
@@ -2990,6 +3059,11 @@ function playbookDoc(ctx){
       '<div class="ct">Likely tenants: '+escHtml(ins.tenants)+'</div>'):'')+'</div>') : '';
   var phases = P.phases.map(function(ph){ return '<div class="ph"><div class="pht"><span class="pn">'+ph.n+'</span><b>'+escHtml(ph.title)+'</b><span class="pw">'+escHtml(ph.window)+'</span><span class="po">'+escHtml(ph.owner)+'</span></div>'+
     '<div class="pg">'+escHtml(ph.goal)+'</div><ul>'+ph.steps.map(function(s){ return '<li>'+escHtml(s)+'</li>'; }).join('')+'</ul></div>'; }).join('');
+  var details = (typeof PLAYBOOK_DETAILS!=='undefined' ? PLAYBOOK_DETAILS : []).map(function(sec){
+    return '<div class="ph"><div class="pht"><b>'+escHtml(sec.title)+'</b></div>'+
+      (sec.intro?'<div class="pg">'+escHtml(sec.intro)+'</div>':'')+
+      '<ul>'+sec.items.map(function(it){ return '<li><b style="color:#22315d;">'+escHtml(it.name)+'</b> — '+escHtml(it.note)+'</li>'; }).join('')+'</ul></div>';
+  }).join('');
   return '<!doctype html><html><head><meta charset="utf-8"><title>Commercial Marketing Playbook'+(ctx?' — Suite '+escHtml(ctx.suite):'')+'</title><style>'+
     '@page{size:letter;margin:0.6in;}*{box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact;}'+
     'body{font-family:Segoe UI,Helvetica,Arial,sans-serif;color:#1f2733;margin:0;line-height:1.5;}'+
@@ -3008,12 +3082,15 @@ function playbookDoc(ctx){
     '.pht .po{font-size:10.5px;color:#9aa4b4;margin-left:auto;}'+
     '.pg{font-size:12px;color:#475569;font-style:italic;margin:5px 0 6px;}'+
     '.ph ul{margin:0;padding-left:18px;font-size:12px;color:#374151;}.ph li{margin-bottom:3px;}'+
+    '.sec{font-size:13px;font-weight:800;color:'+NAVY+';text-transform:uppercase;letter-spacing:.06em;margin:18px 0 9px;padding-bottom:5px;border-bottom:2px solid '+BLUE+';}'+
     '.ft{margin-top:14px;font-size:10px;color:#9aa4b4;border-top:1px solid #eef2f7;padding-top:8px;}'+
     '</style></head><body>'+
     '<div class="hd"><div class="t">Commercial Marketing Playbook</div><div class="s">Crosby Development · Sanctuary Office Park · repeatable leasing strategy · v'+P.version+'</div></div>'+
     '<div class="pos"><b>Positioning</b>'+escHtml(P.positioning)+'</div>'+
     '<div class="pos" style="background:#2c3f72;"><b>Objective</b>'+escHtml(P.goal)+'</div>'+
-    ctxBlock+phases+
+    ctxBlock+
+    '<div class="sec">The Process</div>'+phases+
+    '<div class="sec">Operational Details — Listing &amp; Outreach</div>'+details+
     '<div class="ft">Crosby Development Company, L.L.C. · #1 Sanctuary Blvd, Mandeville, LA 70471 · Generated '+new Date().toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"})+'</div>'+
     '</body></html>';
 }
