@@ -330,6 +330,7 @@
     <button class="nav-btn active" data-view="portfolio"><i data-lucide="layout-dashboard" style="width:15px;height:15px;"></i> Portfolio</button>
     <button class="nav-btn" data-view="leasing"><i data-lucide="megaphone" style="width:15px;height:15px;"></i> Leasing <span class="nav-badge" id="leasingBadge" style="display:none;">0</span></button>
     <button class="nav-btn" data-view="proposed"><i data-lucide="combine" style="width:15px;height:15px;"></i> Proposed Suites <span class="nav-badge" id="proposedBadge" style="display:none;">0</span></button>
+    <button class="nav-btn" data-view="playbook"><i data-lucide="clipboard-list" style="width:15px;height:15px;"></i> Marketing Playbook</button>
     <button class="nav-btn" data-view="assistant"><i data-lucide="message-square" style="width:15px;height:15px;"></i> Assistant</button>
   </nav>
 
@@ -348,6 +349,11 @@
   <!-- ═══ PROPOSED SUITES ═══ -->
   <div class="view" id="view-proposed">
     <div id="proposedContent"></div>
+  </div>
+
+  <!-- ═══ MARKETING PLAYBOOK ═══ -->
+  <div class="view" id="view-playbook">
+    <div id="playbookContent"></div>
   </div>
 
   <!-- ═══ ASSISTANT ACTIVITY ═══ -->
@@ -650,6 +656,7 @@ function switchView(id) {
   if(id==="assistant") renderAssistantLog();
   if(id==="leasing") renderLeasing();
   if(id==="proposed") renderProposed();
+  if(id==="playbook") renderPlaybook();
   lucide.createIcons();
 }
 
@@ -2817,6 +2824,203 @@ function proposedCard(p){
     '<span style="font-size:11px;color:#9ca3af;">Adds it to Leasing with size-tailored pricing and flyer.</span>'; }
   h+='</div></div>';
   return h;
+}
+
+// ── MARKETING PLAYBOOK (repeatable process documentation) ─────────────────────
+// A standardized commercial-leasing marketing strategy, run the same way for every
+// suite. Lives in its own area; can be "contextualized" to a real available unit
+// (vacant suite, suite in marketing, or proposed suite) to fill in the specifics.
+var LEASING_PLAYBOOK = {
+  version: '1.0',
+  positioning: 'Win on certainty and quality. Sanctuary Office Park is Class A and full-service gross — one fixed number covers electricity, water, sewer, taxes, insurance, CAM and janitorial (only the tenant’s internet is separate), professionally managed, ~99% leased. Every campaign sells budget certainty and turnkey occupancy against the variable NNN norm on the Northshore.',
+  goal: 'Lease each available suite well inside the ~142-day Northshore office median, at or above its size-band asking rate, to a creditworthy professional tenant.',
+  phases: [
+    { n:1, title:'Ready the Suite', window:'Days 0–5', owner:'Property Ops + Leasing', goal:'Make the space tour-ready and gather everything the campaign needs.', steps:[
+      'Confirm the availability date, rentable SF, and current condition; walk the suite.',
+      'Order touch-up paint, deep clean, and make-ready repairs; verify HVAC, lighting, and signage blanks.',
+      'Capture marketing photos (wide + detail) and a current floor plan (PDF or image).',
+      'Flag the suite “Begin Marketing” in the dashboard so it appears in Leasing.' ] },
+    { n:2, title:'Price & Position', window:'Days 0–7', owner:'Leasing', goal:'Set the asking rate and the value story.', steps:[
+      'Set the asking rate from the size band (micro $28 → full-floor $25 / SF, full-service gross).',
+      'Build the all-in comparison: a “$19 base” NNN becomes ~$23–31 once utilities, taxes, insurance, CAM and janitorial are added back — Sanctuary is one fixed number.',
+      'Define the target tenant profile for this size.',
+      'Generate the branded offering memorandum (flyer) from the Leasing card.' ] },
+    { n:3, title:'List & Syndicate', window:'Days 5–10', owner:'Leasing + Marketing', goal:'Put the suite in front of every channel at once.', steps:[
+      'Post to the commercial listing services: LACDB, CoStar, Crexi, LoopNet.',
+      'Add to crosbydevelopment.com and the on-site / lobby availability signage.',
+      'Email the offering memorandum to the Northshore broker community.',
+      'Share to LinkedIn and local commercial-real-estate groups.' ] },
+    { n:4, title:'Broker & Direct Outreach', window:'Days 7–30', owner:'Leasing', goal:'Drive qualified prospects to tour.', steps:[
+      'Activate broker co-op — Stirling Properties, Beau Box, NAI Latter & Blum, SRSA, CBRE; offer a market commission.',
+      'Direct outreach to the target tenant types (law, insurance, financial, title, medical).',
+      'Ask current tenants and vendors for referrals — co-located firms grow into adjacent suites.',
+      'Run a short email / LinkedIn campaign to that tenant segment.' ] },
+    { n:5, title:'Tour & Qualify', window:'Ongoing', owner:'Leasing', goal:'Convert interest into qualified requirements.', steps:[
+      'Respond to every inquiry within 24 hours; offer same-week tours.',
+      'On tour, lead with the full-service advantage and budget certainty.',
+      'Qualify: intended use, headcount, space needs, target move-in, and credit.',
+      'Capture each prospect’s requirements and follow up within 24 hours of the tour.' ] },
+    { n:6, title:'Proposal & Negotiate', window:'Per prospect', owner:'Leasing + Ownership', goal:'Reach terms that protect the per-SF rate.', steps:[
+      'Issue a proposal / LOI: rate, term, escalation, TI allowance, and any free rent.',
+      'Hold the headline rate; flex on term length or TI before discounting the rate.',
+      'Reinforce that the full-service number is the tenant’s true all-in cost — no year-end reconciliation.',
+      'Confirm escalation and renewal / notice terms.' ] },
+    { n:7, title:'Close & Document', window:'Days 0–14 from LOI', owner:'Leasing + Admin', goal:'Execute cleanly and capture the record.', steps:[
+      'Send the lease for signature; collect the security deposit.',
+      'Collect the certificate of insurance ($1M / $1M, Crosby Development named as insured).',
+      'Countersign and distribute the executed lease.',
+      'Add the new tenant / lease / unit to the dashboard data and attach the signed PDF.' ] },
+    { n:8, title:'Onboard & Track', window:'At move-in', owner:'Property Ops', goal:'Turn a signed lease into a settled tenant.', steps:[
+      'Hand over keys / access; add the tenant to the lobby directory and suite signage.',
+      'Confirm the janitorial schedule and any move-in coordination.',
+      'Mark the suite occupied; set the renewal-notice reminder.',
+      'Log actual days-on-market vs the band benchmark to refine future pricing.' ] },
+  ],
+};
+var __pbCtx = null; // currently contextualized unit, or null for the generic playbook
+
+// All real units a campaign could target: vacant/vacating suites, suites already in
+// marketing, and proposed configurations.
+function playbookAvailableUnits(){
+  var E=window.__crosbyEntities||{};
+  // Commercial office suites available now or soon — vacant, or with a vacating
+  // lease (tenant on notice). This is the office marketing playbook.
+  var vacatingUnits={}; (E.leases||[]).forEach(function(l){ if(l.status==='vacating') vacatingUnits[l.unitId]=true; });
+  var vac=(E.units||[]).filter(function(u){
+    return u.type==='office' && (u.status==='vacant' || u.status==='vacating' || vacatingUnits[u.id]);
+  }).map(function(u){
+    var b=(E.buildings||[]).find(function(x){ return x.id===u.buildingId; })||{};
+    var st = u.status==='vacant' ? 'vacant' : (u.status==='vacating'||vacatingUnits[u.id] ? 'vacating' : (u.status||''));
+    return { type:'unit', id:u.id, building:b.name||'', suite:u.identifier||'', sf:u.sf||0, slug:u.propertyId, status:st };
+  }).sort(function(a,b){ return String(a.building+a.suite).localeCompare(String(b.building+b.suite),undefined,{numeric:true}); });
+  var mk=(typeof getMarketing==='function'?getMarketing():[]).map(function(r){ return { type:'mkt', id:mktKey(r), building:r.building, suite:r.suite, sf:r.sf||0, slug:r.slug, status:'in marketing', proposed:r.proposed }; });
+  var pr=(typeof getProposed==='function'?getProposed():[]).map(function(p){ return { type:'proposed', id:p.id, building:p.building, suite:p.name, sf:p.sf||0, slug:p.slug, status:'proposed' }; });
+  return { vacant:vac, marketing:mk, proposed:pr };
+}
+function contextualizePlaybook(val){
+  if(!val){ __pbCtx=null; renderPlaybook(); return; }
+  var g=playbookAvailableUnits(), all=g.vacant.concat(g.marketing, g.proposed);
+  __pbCtx = all.find(function(x){ return (x.type+'|'+x.id)===val; }) || null;
+  renderPlaybook();
+}
+function playbookSelector(){
+  var g=playbookAvailableUnits();
+  var opt=function(it){ var lbl=escHtml((it.building?it.building+' · ':'')+'Suite '+it.suite+' · '+(it.sf||0).toLocaleString()+' SF'); var v=escHtml(it.type+'|'+it.id); var sel=(__pbCtx&&(__pbCtx.type+'|'+__pbCtx.id)===(it.type+'|'+it.id))?' selected':''; return '<option value="'+v+'"'+sel+'>'+lbl+'</option>'; };
+  var grp=function(label,arr){ return arr.length?('<optgroup label="'+label+'">'+arr.map(opt).join('')+'</optgroup>'):''; };
+  return '<select onchange="contextualizePlaybook(this.value)" style="font-size:13px;padding:7px 10px;border:1px solid #e2e8f0;border-radius:7px;min-width:260px;background:#fff;">'+
+    '<option value=""'+(__pbCtx?'':' selected')+'>Generic playbook (no unit)</option>'+
+    grp('Vacant / vacating suites', g.vacant)+grp('In marketing', g.marketing)+grp('Proposed configurations', g.proposed)+
+    '</select>';
+}
+// The contextual brief shown atop the playbook when a unit is selected.
+function playbookContextCard(ctx){
+  var office = ctx.slug==='sanctuary-office-park';
+  var ins = office ? (SUITE_INSIGHTS[suiteSizeBand(ctx.sf)]||null) : null;
+  var rate = ins ? ins.rate : (typeof proposedRate==='function'?proposedRate(ctx.sf):27);
+  var mo = ctx.sf?Math.round(ctx.sf*rate/12):0, yr = ctx.sf?ctx.sf*rate:0;
+  var toneCol={steady:'#059669',attention:'#b45309',urgent:'#dc2626'};
+  var stat=function(l,v,s){ return '<div><div style="font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#9ca3af;font-weight:700;">'+l+'</div><div style="font-size:18px;font-weight:700;color:#0f172a;">'+v+(s?' <span style="font-size:12px;font-weight:500;color:#6b7280;">'+s+'</span>':'')+'</div></div>'; };
+  var row=function(l,v){ return '<div><div style="font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#9ca3af;font-weight:700;margin-bottom:1px;">'+l+'</div><div style="font-size:12px;color:#374151;line-height:1.4;">'+v+'</div></div>'; };
+  var h='<div class="card" style="margin-bottom:16px;border-left:4px solid #1f5fdb;">';
+  h+='<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;">'+
+     '<div><div style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:#1f5fdb;font-weight:800;margin-bottom:3px;">Contextualized for</div>'+
+     '<div style="font-size:16px;font-weight:700;color:#0f172a;">'+escHtml(ctx.building)+' · Suite '+escHtml(ctx.suite)+'</div>'+
+     '<div style="font-size:12px;color:#6b7280;margin-top:2px;">'+(office?'Sanctuary Office Park':escHtml(ctx.slug))+' · '+(ctx.sf||0).toLocaleString()+' SF · '+escHtml(ctx.status)+(ctx.proposed?' (proposed)':'')+'</div></div>'+
+     '<button type="button" class="link-btn" style="font-size:12px;color:#6b7280;font-weight:500;cursor:pointer;background:none;border:none;" onclick="contextualizePlaybook(\'\')">Clear ✕</button></div>';
+  if(ins){
+    h+='<div style="display:flex;gap:26px;flex-wrap:wrap;margin:13px 0 11px;">'+stat('Suggested asking','$'+rate+'/SF','FSG')+stat('Est. monthly','$'+mo.toLocaleString(),'')+stat('Est. annual','$'+yr.toLocaleString(),'')+'</div>';
+    h+='<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;">'+
+       row('Demand','<span style="color:'+toneCol[ins.tone]+';font-weight:600;">'+escHtml(ins.demand)+'</span>')+
+       row('Expected time to lease',escHtml(ins.time))+
+       row('Likely tenants',escHtml(ins.tenants))+'</div>';
+    h+='<div style="margin-top:11px;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#9ca3af;font-weight:700;margin-bottom:5px;">Plays for this size</div>'+
+       '<ul style="margin:0;padding-left:18px;font-size:12.5px;color:#374151;line-height:1.5;">'+ins.tips.map(function(t){ return '<li style="margin-bottom:3px;">'+escHtml(t)+'</li>'; }).join('')+'</ul>';
+  } else {
+    h+='<div style="margin-top:11px;font-size:12.5px;color:#6b7280;">'+(ctx.sf?ctx.sf.toLocaleString()+' SF · ':'')+'Size-tailored pricing/demand insight is available for Sanctuary office suites.</div>';
+  }
+  h+='<div style="margin-top:13px;display:flex;gap:10px;flex-wrap:wrap;">'+
+     '<button type="button" class="flyer-btn" onclick="printPlaybook()">'+iconSvg('printer',14)+' Print this plan</button>'+
+     (ctx.type==='mkt'?'<button type="button" class="link-btn" style="font-size:12px;color:#2563eb;font-weight:500;cursor:pointer;background:none;border:none;" onclick="switchView(\'leasing\')">Open in Leasing →</button>':'')+
+     '</div></div>';
+  return h;
+}
+function phaseCardHTML(ph){
+  return '<div class="card" style="margin-bottom:12px;">'+
+    '<div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;">'+
+      '<span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#22315d;color:#fff;font-size:12px;font-weight:800;flex:none;">'+ph.n+'</span>'+
+      '<span style="font-size:15px;font-weight:700;color:#0f172a;">'+escHtml(ph.title)+'</span>'+
+      '<span style="font-size:11px;font-weight:700;color:#1d4ed8;background:#eff6ff;border:1px solid #bfdbfe;border-radius:999px;padding:1px 9px;">'+escHtml(ph.window)+'</span>'+
+      '<span style="font-size:11px;color:#9ca3af;margin-left:auto;">Owner: '+escHtml(ph.owner)+'</span>'+
+    '</div>'+
+    '<div style="font-size:12.5px;color:#475569;margin:7px 0 9px;font-style:italic;">'+escHtml(ph.goal)+'</div>'+
+    '<ul style="margin:0;padding-left:20px;font-size:13px;color:#374151;line-height:1.55;">'+ph.steps.map(function(s){ return '<li style="margin-bottom:4px;">'+escHtml(s)+'</li>'; }).join('')+'</ul>'+
+    '</div>';
+}
+function renderPlaybook(){
+  var c=document.getElementById('playbookContent'); if(!c) return;
+  var P=LEASING_PLAYBOOK;
+  var h='<div style="display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:14px;">'+
+    '<div><div class="card-title" style="margin-bottom:2px;">Commercial Marketing Playbook</div>'+
+    '<div style="font-size:13px;color:#6b7280;">The repeatable strategy for marketing any Sanctuary office suite · v'+P.version+'</div></div>'+
+    '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;"><span style="font-size:12px;color:#6b7280;">Contextualize for a unit:</span>'+playbookSelector()+
+    '<button type="button" class="flyer-btn" onclick="printPlaybook()">'+iconSvg('printer',14)+' Print / Save PDF</button></div></div>';
+  // strategy header
+  h+='<div class="card" style="margin-bottom:16px;background:linear-gradient(135deg,#22315d,#2c3f72 70%,#5e8ed0 170%);color:#fff;">'+
+     '<div style="font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:#bcd0ee;font-weight:800;margin-bottom:6px;">Positioning</div>'+
+     '<div style="font-size:13.5px;line-height:1.6;color:#eaf1fb;">'+escHtml(P.positioning)+'</div>'+
+     '<div style="font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:#bcd0ee;font-weight:800;margin:14px 0 6px;">Objective</div>'+
+     '<div style="font-size:13.5px;line-height:1.6;color:#eaf1fb;">'+escHtml(P.goal)+'</div></div>';
+  // contextual brief (if a unit is selected)
+  if(__pbCtx) h+=playbookContextCard(__pbCtx);
+  // the phases
+  h+='<div style="font-size:13px;font-weight:700;color:#0f172a;margin-bottom:10px;">The Process — '+P.phases.length+' phases</div>';
+  h+=P.phases.map(phaseCardHTML).join('');
+  c.innerHTML=h;
+  if(window.lucide) lucide.createIcons();
+}
+// Self-contained, print/PDF-ready playbook document (branded), generic or unit-contextualized.
+function playbookDoc(ctx){
+  var P=LEASING_PLAYBOOK, NAVY='#22315d', BLUE='#5e8ed0';
+  var office = ctx && ctx.slug==='sanctuary-office-park';
+  var ins = (ctx && office) ? (SUITE_INSIGHTS[suiteSizeBand(ctx.sf)]||null) : null;
+  var rate = ins?ins.rate:(ctx?(typeof proposedRate==='function'?proposedRate(ctx.sf):27):null);
+  var mo = (ctx&&ctx.sf)?Math.round(ctx.sf*rate/12):0;
+  var ctxBlock = ctx ? ('<div class="ctx"><div class="ch">Contextualized for '+escHtml(ctx.building)+' · Suite '+escHtml(ctx.suite)+' · '+(ctx.sf||0).toLocaleString()+' SF</div>'+
+    (ins?('<div class="cgrid"><div><b>$'+rate+'/SF</b> FSG asking</div><div><b>$'+mo.toLocaleString()+'</b> est. monthly</div><div>'+escHtml(ins.demand)+'</div><div>'+escHtml(ins.time)+'</div></div>'+
+      '<div class="ct">Likely tenants: '+escHtml(ins.tenants)+'</div>'):'')+'</div>') : '';
+  var phases = P.phases.map(function(ph){ return '<div class="ph"><div class="pht"><span class="pn">'+ph.n+'</span><b>'+escHtml(ph.title)+'</b><span class="pw">'+escHtml(ph.window)+'</span><span class="po">'+escHtml(ph.owner)+'</span></div>'+
+    '<div class="pg">'+escHtml(ph.goal)+'</div><ul>'+ph.steps.map(function(s){ return '<li>'+escHtml(s)+'</li>'; }).join('')+'</ul></div>'; }).join('');
+  return '<!doctype html><html><head><meta charset="utf-8"><title>Commercial Marketing Playbook'+(ctx?' — Suite '+escHtml(ctx.suite):'')+'</title><style>'+
+    '@page{size:letter;margin:0.6in;}*{box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact;}'+
+    'body{font-family:Segoe UI,Helvetica,Arial,sans-serif;color:#1f2733;margin:0;line-height:1.5;}'+
+    '.hd{border-bottom:3px solid '+BLUE+';padding-bottom:10px;margin-bottom:16px;}'+
+    '.hd .t{font-size:21px;font-weight:800;color:'+NAVY+';}.hd .s{font-size:12px;color:#6b7280;margin-top:2px;}'+
+    '.pos{background:'+NAVY+';color:#fff;border-radius:10px;padding:13px 16px;font-size:12.5px;line-height:1.6;margin-bottom:14px;}'+
+    '.pos b{color:#bcd0ee;display:block;font-size:10px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px;}'+
+    '.ctx{border:1px solid #cfe0f6;background:#f5f9ff;border-radius:10px;padding:12px 15px;margin-bottom:14px;}'+
+    '.ctx .ch{font-size:13px;font-weight:800;color:'+NAVY+';margin-bottom:7px;}'+
+    '.ctx .cgrid{display:flex;flex-wrap:wrap;gap:6px 22px;font-size:12px;color:#374151;}.ctx .cgrid b{color:'+NAVY+';}'+
+    '.ctx .ct{font-size:11.5px;color:#6b7280;margin-top:6px;}'+
+    '.ph{border:1px solid #e4ecf6;border-radius:9px;padding:11px 14px;margin-bottom:9px;page-break-inside:avoid;}'+
+    '.pht{display:flex;align-items:center;gap:9px;flex-wrap:wrap;}'+
+    '.pht .pn{width:21px;height:21px;border-radius:50%;background:'+NAVY+';color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;}'+
+    '.pht b{font-size:14px;color:'+NAVY+';}.pht .pw{font-size:10.5px;font-weight:700;color:'+BLUE+';border:1px solid '+BLUE+';border-radius:999px;padding:0 8px;}'+
+    '.pht .po{font-size:10.5px;color:#9aa4b4;margin-left:auto;}'+
+    '.pg{font-size:12px;color:#475569;font-style:italic;margin:5px 0 6px;}'+
+    '.ph ul{margin:0;padding-left:18px;font-size:12px;color:#374151;}.ph li{margin-bottom:3px;}'+
+    '.ft{margin-top:14px;font-size:10px;color:#9aa4b4;border-top:1px solid #eef2f7;padding-top:8px;}'+
+    '</style></head><body>'+
+    '<div class="hd"><div class="t">Commercial Marketing Playbook</div><div class="s">Crosby Development · Sanctuary Office Park · repeatable leasing strategy · v'+P.version+'</div></div>'+
+    '<div class="pos"><b>Positioning</b>'+escHtml(P.positioning)+'</div>'+
+    '<div class="pos" style="background:#2c3f72;"><b>Objective</b>'+escHtml(P.goal)+'</div>'+
+    ctxBlock+phases+
+    '<div class="ft">Crosby Development Company, L.L.C. · #1 Sanctuary Blvd, Mandeville, LA 70471 · Generated '+new Date().toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"})+'</div>'+
+    '</body></html>';
+}
+function printPlaybook(){
+  var w=window.open('','_blank'); if(!w){ alert('Please allow pop-ups to open the printable playbook.'); return; }
+  w.document.open(); w.document.write(playbookDoc(__pbCtx)); w.document.close();
+  setTimeout(function(){ try{ w.focus(); w.print(); }catch(e){} }, 400);
 }
 
 // ── SUITE FLYER / OFFERING MEMORANDUM ─────────────────────────────────────────
