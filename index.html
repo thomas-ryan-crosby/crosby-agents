@@ -3011,13 +3011,14 @@ function flyerDoc(r){
   var hi = [
     'Class A, full-service office on a 5-building, ~96,000 SF campus — currently ~99% leased.',
     'Causeway-adjacent in Mandeville — a ~25-minute commute to Metairie & New Orleans across the lake.',
-    'Full-service gross: one number covers taxes, insurance, CAM and janitorial — no year-end reconciliation.',
+    'Full-service gross: one number covers electricity, water, sewer, taxes, insurance, CAM and janitorial — no year-end reconciliation. Only your phone &amp; internet are separate.',
     'Move-in ready, professionally managed, with ample surface parking on a beautifully landscaped campus.',
     'Established professional tenancy — law, insurance, financial, title and medical firms.',
   ];
   var terms = [
     ['Asking Rate', '$'+rate+' / SF <em>FSG</em>'],
     ['Lease Type', 'Full-Service Gross'],
+    ['Utilities', 'Incl. electric, water &amp; sewer'],
     ['Est. Monthly', fmt(moAsk)],
     ['Lease Term', 'Flexible · 3–7 yrs'],
     ['Escalations', 'Fixed 3% / year'],
@@ -3080,10 +3081,10 @@ function flyerDoc(r){
   '.h{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:'+BLUE+';margin:0 0 9px;}'+
   '.lead{font-size:13px;line-height:1.6;color:#36404f;}'+
   'ul.hl{margin:8px 0 0;padding-left:0;list-style:none;}'+
-  'ul.hl li{position:relative;padding-left:20px;font-size:12.5px;line-height:1.5;margin-bottom:9px;color:#2b3441;}'+
+  'ul.hl li{position:relative;padding-left:20px;font-size:12.5px;line-height:1.5;margin-bottom:6px;color:#2b3441;}'+
   'ul.hl li:before{content:"";position:absolute;left:0;top:6px;width:9px;height:9px;background:'+BLUE+';border-radius:2px;}'+
   '.terms{background:#f5f8fc;border:1px solid #e4ecf6;border-radius:10px;padding:4px 16px;}'+
-  '.trow{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:7.5px 0;border-bottom:1px solid #e8eef7;font-size:12.5px;}'+
+  '.trow{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:6px 0;border-bottom:1px solid #e8eef7;font-size:12.5px;}'+
   '.trow:last-child{border-bottom:0;}'+
   '.tk{color:#7e8794;font-weight:600;}'+
   '.tv{color:'+NAVY+';font-weight:700;text-align:right;white-space:nowrap;}'+
@@ -3095,7 +3096,7 @@ function flyerDoc(r){
   '.fp img{max-width:100%;max-height:8in;object-fit:contain;}'+
   '.fp-note{font-size:10.5px;color:#9aa4b4;margin-top:11px;font-style:italic;}'+
   '.fp-page .p1foot{position:static;margin-top:auto;}'+
-  '.pitch{margin:14px 0.6in 0;background:'+NAVY+';color:#fff;border-radius:12px;padding:13px 22px;}'+
+  '.pitch{margin:11px 0.6in 0;background:'+NAVY+';color:#fff;border-radius:12px;padding:12px 22px;}'+
   '.pitch .q{font-size:16px;font-weight:700;line-height:1.45;}'+
   '.pitch .a{font-size:12px;color:#bcd0ee;margin-top:8px;line-height:1.5;}'+
   '.pitch .cmp{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:11px;}'+
@@ -3162,11 +3163,11 @@ function flyerDoc(r){
         terms.map(function(t){ return '<div class="trow"><span class="tk">'+t[0]+'</span><span class="tv">'+t[1]+'</span></div>'; }).join('')+
         '</div><div class="terms-note">Asking rate is a starting point — open to discussion based on lease term, tenant-improvement needs, and other factors. Let’s tailor a deal that works.</div></div>'+
     '</div></div>'+
-    '<div class="pitch"><div class="q">“Our number is your total number — no CAM, no chargebacks, no year-end reconciliation, janitorial included.”</div>'+
+    '<div class="pitch"><div class="q">“Our number is your total number — electricity, water, sewer, taxes, insurance, CAM and janitorial all included; no chargebacks, no year-end reconciliation.”</div>'+
       '<div class="a">Full-service is rare on the Northshore — only three Class A buildings in the parish offer it, and Sanctuary is priced right alongside them. Compare what you actually pay:</div>'+
       '<div class="cmp">'+
-        '<div class="col"><div class="ttl">Typical NNN · Class A</div><div class="big">~$23–31 <small>/SF</small></div><div class="sm">$19 base, then taxes, insurance, CAM &amp; your own janitorial added back — plus a year-end reconciliation. Variable, hard to budget.</div></div>'+
-        '<div class="col win"><div class="ttl">Sanctuary · Full-Service Gross</div><div class="big">$'+rate+' <small>/SF</small></div><div class="sm">One number — everything included, janitorial too. Fixed, with a known 3% annual step. No surprises.</div></div>'+
+        '<div class="col"><div class="ttl">Typical NNN · Class A</div><div class="big">~$23–31 <small>/SF</small></div><div class="sm">$19 base, then utilities, taxes, insurance, CAM &amp; your own janitorial added back — plus a year-end reconciliation. Variable, hard to budget.</div></div>'+
+        '<div class="col win"><div class="ttl">Sanctuary · Full-Service Gross</div><div class="big">$'+rate+' <small>/SF</small></div><div class="sm">One number — electricity, water, sewer, taxes, insurance, CAM &amp; janitorial all in. Only your phone/internet is separate. Fixed 3% annual step.</div></div>'+
       '</div></div>'+
     '<div class="p1foot"><div class="lz"><b>Leasing:</b> Ryan Crosby (985) 373-2383 &middot; Tommy Crosby (985) 789-6252 &middot; crosbydevelopment.com</div>'+
       '<div class="dz">Prepared '+new Date().toLocaleDateString("en-US",{month:"long",year:"numeric"})+' &middot; Rates &amp; availability subject to change.</div></div>'+
