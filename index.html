@@ -1970,6 +1970,7 @@ function actionLegend(){
 function leaseTip(ld){
   var m = ld.meta || {}; var rows = [];
   rows.push('<b>'+(m.lessee||ld.tenant)+'</b> &middot; Suite '+(ld.suite||'—'));
+  if(ld.lease && ld.lease.leaseId) rows.push('<span class="k">Lease ID:</span> <span style="font-family:ui-monospace,Menlo,Consolas,monospace;font-size:10.5px;color:#475569;">'+ld.lease.leaseId+'</span>');
   rows.push('<span class="k">Type:</span> '+ld.docType+(ld.date?'  <span class="k">Dated:</span> '+ld.date:''));
   if(m.monthlyRent) rows.push('<span class="k">Rent:</span> '+m.monthlyRent);
   if(m.commencement||m.termination) rows.push('<span class="k">Term:</span> '+(m.commencement||'?')+' → '+(m.termination||'?'));
