@@ -2271,13 +2271,13 @@ function printRentRoll(){
   w.document.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>Rent Roll</title><style>'+rentRollCSS()+'</style></head><body>'+__rentRollHTML+'</body></html>');
   w.document.close(); w.focus(); setTimeout(function(){ try{ w.print(); }catch(e){} }, 250);
 }
-// ── Excel export — one worksheet (tab) per building ─────────────────────────
-function ensureXLSX(){
+// ── Excel export — one worksheet per building; suites across the top, months down, split by year ──
+function ensureExcelJS(){
   return new Promise(function(resolve,reject){
-    if(window.XLSX) return resolve(window.XLSX);
+    if(window.ExcelJS) return resolve(window.ExcelJS);
     var s=document.createElement('script');
-    s.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
-    s.onload=function(){ window.XLSX ? resolve(window.XLSX) : reject(new Error('Excel library failed to initialize.')); };
+    s.src='https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js';
+    s.onload=function(){ window.ExcelJS ? resolve(window.ExcelJS) : reject(new Error('Excel library failed to initialize.')); };
     s.onerror=function(){ reject(new Error('Could not load the Excel library (offline?).')); };
     document.head.appendChild(s);
   });
@@ -2287,53 +2287,96 @@ function downloadRentRollExcel(){
   if(!rr || !rr.bnames){ alert('Open the rent roll first, then download.'); return; }
   var btn=document.querySelector('#rentRollModal button[onclick="downloadRentRollExcel()"]'); var lbl=btn?btn.textContent:'';
   if(btn){ btn.textContent='Building…'; btn.disabled=true; }
-  ensureXLSX().then(function(XLSX){
+  ensureExcelJS().then(function(ExcelJS){
     var r2=function(n){ return Math.round((Number(n)||0)*100)/100; };
-    function statusOf(l){
-      if(l.status==='vacating') return 'Vacating'+(l.terminates?' '+l.terminates:'');
-      if(l.holdover) return 'Holdover (MTM)';
-      if(l.autoRenew===true) return l.continuesForward?'Auto-renewed':'Auto-renew (committed to '+(l.terminates||'?')+')';
-      if(l.terminates) return 'Active (exp '+l.terminates+')';
-      return 'Active';
-    }
+    var MN=rr.MN||['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     var years=rr.years||[];
-    var wb=XLSX.utils.book_new();
+    // Crosby brand palette (ARGB)
+    var NAVY='FF22315D', SUBNAVY='FF3C5488', BLUE='FF5E8ED0', LIGHT='FFEAF1FE',
+        ZEBRA='FFF6F9FD', GRID='FFE2E8F0', WHITE='FFFFFFFF', MUTE='FF64748B', PERIODBG='FFF1F5F9';
+    var MONEY='$#,##0.00';
+    var bd=function(c){ return {style:'thin',color:{argb:c||GRID}}; };
+    var box=function(c){ return {top:bd(c),left:bd(c),bottom:bd(c),right:bd(c)}; };
+    var subBox={top:bd(NAVY),bottom:bd(GRID),left:bd(GRID),right:bd(GRID)};
+    var grandBox={top:{style:'double',color:{argb:NAVY}},bottom:bd(NAVY),left:bd(NAVY),right:bd(NAVY)};
+    var fill=function(argb){ return {type:'pattern',pattern:'solid',fgColor:{argb:argb}}; };
+    var wb=new ExcelJS.Workbook(); wb.creator='Crosby Development';
     var used={};
-    (rr.bnames||[]).forEach(function(bn,bi){
+    rr.bnames.forEach(function(bn,bi){
       var leases=(rr.byB&&rr.byB[bn])||[];
-      var aoa=[];
-      aoa.push(['Rent Roll — '+bn]);
-      aoa.push([(rr.prop&&rr.prop.name?rr.prop.name:'')+'  ·  as of '+rr.asOf]);
-      aoa.push([]);
-      var months=[]; years.forEach(function(y){ for(var m=0;m<12;m++) months.push({y:y,m:m,label:(rr.MN?rr.MN[m]:('M'+(m+1)))+' '+y}); });
-      aoa.push(['Tenant','Suite','SF','Commenced','Lease End','Status','Esc %']
-        .concat(months.map(function(mm){ return mm.label; })).concat(['Total']));
-      var tSF=0, tMon=months.map(function(){ return 0; }), tGrand=0;
-      leases.forEach(function(l){
-        var sf=Number(l.sf)||0;
-        var row=[l.tenant||'—', l.suite||'—', sf||'', l.commenced||'', l.terminates||'', statusOf(l),
-          (l.pct!=null?Number(l.pct):'')];
-        var rowTot=0;
-        months.forEach(function(mm,mi){ var v=rr.monthRent(l,mm.y,mm.m)||0; row.push(r2(v)); tMon[mi]+=v; rowTot+=v; });
-        row.push(r2(rowTot)); tGrand+=rowTot;
-        aoa.push(row);
-        tSF+=sf;
+      var nm=String(bn).replace(/[\\\/\?\*\[\]:]/g,'').trim().slice(0,31)||('Building '+(bi+1));
+      if(used[nm]){ var k=used[nm]+1; used[nm]=k; nm=nm.slice(0,29)+'~'+k; } else { used[nm]=1; }
+      var nS=leases.length, lastCol=nS+2;
+      var ws=wb.addWorksheet(nm,{views:[{state:'frozen',xSplit:1,ySplit:5}]});
+      // Title + subtitle (merged)
+      ws.mergeCells(1,1,1,Math.max(lastCol,2));
+      var tc=ws.getCell(1,1); tc.value='Rent Roll — '+bn; tc.font={bold:true,size:16,color:{argb:NAVY}}; tc.alignment={vertical:'middle'};
+      ws.getRow(1).height=26;
+      ws.mergeCells(2,1,2,Math.max(lastCol,2));
+      var sc=ws.getCell(2,1); sc.value=(rr.prop&&rr.prop.name?rr.prop.name:'')+'    ·    Monthly rent, full-service gross    ·    as of '+rr.asOf;
+      sc.font={italic:true,size:10,color:{argb:MUTE}};
+      ws.getRow(2).height=16;
+      if(nS===0){
+        ws.getCell(4,1).value='No leased suites in this building.'; ws.getCell(4,1).font={italic:true,color:{argb:MUTE}};
+        ws.getColumn(1).width=40; return;
+      }
+      // Header (rows 4-5): suites across the top
+      ws.mergeCells(4,1,5,1);
+      var ph=ws.getCell(4,1); ph.value='Period'; ph.font={bold:true,color:{argb:WHITE},size:11}; ph.alignment={vertical:'middle',horizontal:'left',indent:1}; ph.fill=fill(NAVY); ph.border=box(NAVY);
+      ws.getCell(5,1).fill=fill(NAVY); ws.getCell(5,1).border=box(NAVY);
+      leases.forEach(function(l,si){
+        var c=si+2, sf=Number(l.sf)||0;
+        var h1=ws.getCell(4,c); h1.value=l.tenant||'—'; h1.font={bold:true,color:{argb:WHITE},size:11}; h1.alignment={horizontal:'center',vertical:'middle',wrapText:true}; h1.fill=fill(NAVY); h1.border=box(NAVY);
+        var h2=ws.getCell(5,c); h2.value='Ste '+(l.suite||'—')+(sf?'  ·  '+sf.toLocaleString()+' SF':''); h2.font={color:{argb:WHITE},size:9}; h2.alignment={horizontal:'center',vertical:'middle',wrapText:true}; h2.fill=fill(SUBNAVY); h2.border=box(SUBNAVY);
       });
-      var tot=['TOTAL ('+leases.length+' suite'+(leases.length===1?'':'s')+')','',tSF,'','','',''];
-      months.forEach(function(mm,mi){ tot.push(r2(tMon[mi])); });
-      tot.push(r2(tGrand));
-      aoa.push(tot);
-      var ws=XLSX.utils.aoa_to_sheet(aoa);
-      ws['!cols']=[{wch:34},{wch:9},{wch:8},{wch:12},{wch:12},{wch:24},{wch:7}]
-        .concat(months.map(function(){ return {wch:11}; })).concat([{wch:13}]);
-      var nm=String(bn).replace(/[\\\/\?\*\[\]:]/g,'').trim().slice(0,31) || ('Building '+(bi+1));
-      if(used[nm]){ var n=used[nm]+1; used[nm]=n; nm=nm.slice(0,29)+'~'+n; } else { used[nm]=1; }
-      XLSX.utils.book_append_sheet(wb,ws,nm);
+      ws.mergeCells(4,lastCol,5,lastCol);
+      var th=ws.getCell(4,lastCol); th.value='Monthly\nTotal'; th.font={bold:true,color:{argb:WHITE},size:11}; th.alignment={horizontal:'center',vertical:'middle',wrapText:true}; th.fill=fill(NAVY); th.border=box(NAVY);
+      ws.getRow(4).height=32; ws.getRow(5).height=18;
+      // Body — split by year
+      var R=6, grand=leases.map(function(){return 0;}), grandTot=0;
+      years.forEach(function(y){
+        ws.mergeCells(R,1,R,lastCol);
+        var yb=ws.getCell(R,1); yb.value=String(y); yb.font={bold:true,color:{argb:WHITE},size:12}; yb.alignment={vertical:'middle',horizontal:'left',indent:1}; yb.fill=fill(BLUE); yb.border=box(BLUE);
+        ws.getRow(R).height=20; R++;
+        var yrSuite=leases.map(function(){return 0;}), yrTot=0;
+        for(var m=0;m<12;m++){
+          var zebra=(m%2===1);
+          var pc=ws.getCell(R,1); pc.value=MN[m]+' '+y; pc.font={size:10,color:{argb:NAVY}}; pc.alignment={horizontal:'left',indent:1}; pc.fill=fill(PERIODBG); pc.border=box();
+          var mt=0;
+          leases.forEach(function(l,si){
+            var v=r2(rr.monthRent(l,y,m)||0);
+            var cc=ws.getCell(R,si+2); cc.value=v; cc.numFmt=MONEY; cc.alignment={horizontal:'right'}; cc.border=box(); if(zebra) cc.fill=fill(ZEBRA);
+            mt+=v; yrSuite[si]+=v; grand[si]+=v;
+          });
+          var mc=ws.getCell(R,lastCol); mc.value=r2(mt); mc.numFmt=MONEY; mc.font={bold:true,color:{argb:NAVY}}; mc.alignment={horizontal:'right'}; mc.fill=fill(LIGHT); mc.border=box();
+          yrTot+=mt; grandTot+=mt; R++;
+        }
+        var sp=ws.getCell(R,1); sp.value=y+' Total'; sp.font={bold:true,color:{argb:NAVY},size:10}; sp.alignment={horizontal:'left',indent:1}; sp.fill=fill(LIGHT); sp.border=subBox;
+        leases.forEach(function(l,si){
+          var cc=ws.getCell(R,si+2); cc.value=r2(yrSuite[si]); cc.numFmt=MONEY; cc.font={bold:true,color:{argb:NAVY}}; cc.alignment={horizontal:'right'}; cc.fill=fill(LIGHT); cc.border=subBox;
+        });
+        var stc=ws.getCell(R,lastCol); stc.value=r2(yrTot); stc.numFmt=MONEY; stc.font={bold:true,color:{argb:NAVY}}; stc.alignment={horizontal:'right'}; stc.fill=fill(LIGHT); stc.border=subBox; R++;
+      });
+      if(years.length>1){
+        var gp=ws.getCell(R,1); gp.value='Total — all years'; gp.font={bold:true,color:{argb:WHITE},size:11}; gp.alignment={horizontal:'left',indent:1}; gp.fill=fill(NAVY); gp.border=grandBox;
+        leases.forEach(function(l,si){
+          var cc=ws.getCell(R,si+2); cc.value=r2(grand[si]); cc.numFmt=MONEY; cc.font={bold:true,color:{argb:WHITE}}; cc.alignment={horizontal:'right'}; cc.fill=fill(NAVY); cc.border=grandBox;
+        });
+        var gtc=ws.getCell(R,lastCol); gtc.value=r2(grandTot); gtc.numFmt=MONEY; gtc.font={bold:true,color:{argb:WHITE}}; gtc.alignment={horizontal:'right'}; gtc.fill=fill(NAVY); gtc.border=grandBox; R++;
+      }
+      ws.getColumn(1).width=13;
+      for(var c2=2;c2<=nS+1;c2++) ws.getColumn(c2).width=15;
+      ws.getColumn(lastCol).width=16;
     });
     var base=(rr.prop&&rr.prop.name?rr.prop.name:'Property').replace(/[^A-Za-z0-9]+/g,'_').replace(/^_+|_+$/g,'');
     var stamp=String(rr.asOf||'').replace(/[^A-Za-z0-9]+/g,'_').replace(/^_+|_+$/g,'');
-    XLSX.writeFile(wb, base+'_Rent_Roll_'+stamp+'.xlsx');
-    if(btn){ btn.textContent=lbl; btn.disabled=false; }
+    return wb.xlsx.writeBuffer().then(function(buf){
+      var blob=new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+      var url=URL.createObjectURL(blob); var a=document.createElement('a');
+      a.href=url; a.download=base+'_Rent_Roll_'+stamp+'.xlsx'; document.body.appendChild(a); a.click();
+      setTimeout(function(){ URL.revokeObjectURL(url); a.remove(); },1500);
+      if(btn){ btn.textContent=lbl; btn.disabled=false; }
+    });
   }).catch(function(e){
     if(btn){ btn.textContent=lbl; btn.disabled=false; }
     alert((e&&e.message)||'Excel export failed.');
