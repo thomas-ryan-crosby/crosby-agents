@@ -5664,17 +5664,18 @@
     "tenantId": "tenant-st-paul",
     "propertyId": "sanctuary-office-park",
     "buildingId": "sanctuary-bldg-4",
-    "commenced": "2021-05-01",
-    "terminates": "2025-04-30",
-    "monthlyRent": 1026.46,
+    "commenced": "2026-05-01",
+    "terminates": "2027-04-30",
+    "monthlyRent": 1057.26,
     "escalationPct": 3,
+    "escalationMonth": 5,
     "autoRenew": true,
-    "noticeDays": null,
-    "noticeDeadline": null,
+    "noticeDays": 90,
+    "noticeDeadline": "2027-01-30",
     "daysToNoticeDeadline": null,
     "status": "active",
     "docFile": "LainStPaul_BLDG4_STE305_AMD3.pdf",
-    "notes": "Suite 305, Building #4. Amendment #3 (2024-02-06): $996.56/mo eff 2024-05-01, 3% esc, auto-renews 12-month terms (90-day notice). Rent reflects current escalation."
+    "notes": "Suite 305, Building #4. Auto-renewing 12-month lease (Amendment #3, 2024-02-06: $996.56/mo eff 2024-05-01, 3% annual escalation each May, 90-day non-renewal notice). Auto-renewal CONFIRMED for the active 2026-05-01 → 2027-04-30 term at $1,057.26/mo (prior $1,026.47 + 3%); next non-renewal notice deadline 2027-01-30. Tenant notified by email 2026-05-19 (SENT); May 2026 payment received at prior rate, $30.79 short — to be collected with June rent. AMD#3 is the doc of record; auto-renewal generated no new executed document."
   },
   {
     "id": "lease-bldg4-suite200-edelman",
@@ -8763,17 +8764,17 @@
     "tenantId": "tenant-jefferson-capital",
     "propertyId": "sanctuary-office-park",
     "buildingId": "sanctuary-bldg-4",
-    "commenced": "2021-04-01",
-    "terminates": "2022-03-31",
-    "monthlyRent": 427,
+    "commenced": "2026-04-01",
+    "terminates": "2027-03-31",
+    "monthlyRent": 495.01,
     "escalationPct": 3,
     "escalationMonth": 4,
     "autoRenew": true,
     "noticeDays": 90,
-    "noticeDeadline": null,
+    "noticeDeadline": "2026-12-31",
     "daysToNoticeDeadline": null,
     "status": "active",
     "docFile": "JCM2_BLDG4_STE306_Lease.pdf",
-    "notes": "Suite 306 (250 SF), Building #4. Lessee JCM II LLC (Jefferson Capital Partners). Lease (2021-02-10): $427/mo, 3% esc, auto-renews 12-month terms. Only the 2021 origination is on file; current rent shown at origination value. COI on file expired 2023-02-07 — request renewal."
+    "notes": "Suite 306 (250 SF), Building #4. Lessee JCM II LLC (Jefferson Capital Partners). Auto-renewing 12-month lease (origination 2021-02-10: $427/mo, 3% annual escalation each April, 90-day non-renewal notice). Auto-renewal CONFIRMED for the active 2026-04-01 → 2027-03-31 term at $495.01/mo ($427 × 1.03^5, five escalations) per internal memo 2026-06-16 (not sent to tenant); next non-renewal notice deadline 2026-12-31. Only the 2021 origination doc is on file. COI on file expired 2023-02-07 — request renewal."
   }
 ]
