@@ -2135,7 +2135,9 @@ function openRentRoll(slug){
   ov.innerHTML = '<div style="background:#fff;width:100%;max-width:1080px;max-height:90vh;border-radius:14px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 24px 70px rgba(0,0,0,.45);">'+
     '<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-bottom:1px solid #e5e7eb;flex:none;">'+
     '<span style="font-weight:700;font-size:14px;color:#0f172a;">Rent Roll — '+prop.name+' <span style="font-weight:400;color:#9ca3af;font-size:12px;">· as of '+asOf+'</span></span>'+
-    '<div style="display:flex;align-items:center;gap:12px;"><button onclick="printRentRoll()" style="font-size:12px;font-weight:600;color:#1d4ed8;background:#eaf1fe;border:1px solid #c7dbfb;border-radius:6px;padding:5px 12px;cursor:pointer;">Print / Save PDF</button>'+
+    '<div style="display:flex;align-items:center;gap:12px;">'+
+    '<button onclick="downloadRentRollExcel()" style="font-size:12px;font-weight:600;color:#065f46;background:#ecfdf5;border:1px solid #a7f3d0;border-radius:6px;padding:5px 12px;cursor:pointer;">Download Excel</button>'+
+    '<button onclick="printRentRoll()" style="font-size:12px;font-weight:600;color:#1d4ed8;background:#eaf1fe;border:1px solid #c7dbfb;border-radius:6px;padding:5px 12px;cursor:pointer;">Print / Save PDF</button>'+
     '<button onclick="closeRentRoll()" style="border:none;background:#f1f5f9;border-radius:6px;width:28px;height:28px;cursor:pointer;font-size:18px;line-height:1;color:#334155;">&times;</button></div></div>'+
     '<div class="rr-tabbar" style="flex:none;padding:0 18px;"><button id="rrTab-overview" class="rr-tab active" onclick="rrSetTab(\'overview\')">Overview</button><button id="rrTab-detail" class="rr-tab" onclick="rrSetTab(\'detail\')">Monthly Detail</button></div>'+
     '<div id="rrContent" style="overflow:auto;padding:18px 22px;"></div></div>';
@@ -2268,6 +2270,70 @@ function printRentRoll(){
   if(!w){ alert('Please allow pop-ups to print the rent roll.'); return; }
   w.document.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>Rent Roll</title><style>'+rentRollCSS()+'</style></head><body>'+__rentRollHTML+'</body></html>');
   w.document.close(); w.focus(); setTimeout(function(){ try{ w.print(); }catch(e){} }, 250);
+}
+// ── Excel export — one worksheet (tab) per building ─────────────────────────
+function ensureXLSX(){
+  return new Promise(function(resolve,reject){
+    if(window.XLSX) return resolve(window.XLSX);
+    var s=document.createElement('script');
+    s.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+    s.onload=function(){ window.XLSX ? resolve(window.XLSX) : reject(new Error('Excel library failed to initialize.')); };
+    s.onerror=function(){ reject(new Error('Could not load the Excel library (offline?).')); };
+    document.head.appendChild(s);
+  });
+}
+function downloadRentRollExcel(){
+  var rr=window.__rr;
+  if(!rr || !rr.bnames){ alert('Open the rent roll first, then download.'); return; }
+  var btn=document.querySelector('#rentRollModal button[onclick="downloadRentRollExcel()"]'); var lbl=btn?btn.textContent:'';
+  if(btn){ btn.textContent='Building…'; btn.disabled=true; }
+  ensureXLSX().then(function(XLSX){
+    var r2=function(n){ return Math.round((Number(n)||0)*100)/100; };
+    function statusOf(l){
+      if(l.status==='vacating') return 'Vacating'+(l.terminates?' '+l.terminates:'');
+      if(l.holdover) return 'Holdover (MTM)';
+      if(l.autoRenew===true) return l.continuesForward?'Auto-renewed':'Auto-renew (committed to '+(l.terminates||'?')+')';
+      if(l.terminates) return 'Active (exp '+l.terminates+')';
+      return 'Active';
+    }
+    var years=rr.years||[];
+    var wb=XLSX.utils.book_new();
+    var used={};
+    (rr.bnames||[]).forEach(function(bn,bi){
+      var leases=(rr.byB&&rr.byB[bn])||[];
+      var aoa=[];
+      aoa.push(['Rent Roll — '+bn]);
+      aoa.push([(rr.prop&&rr.prop.name?rr.prop.name:'')+'  ·  as of '+rr.asOf]);
+      aoa.push([]);
+      aoa.push(['Tenant','Suite','SF','Commenced','Lease End','Status','Esc %','Monthly Rent','$/SF/Yr']
+        .concat(years.map(function(y){ return y+' Annual'; })));
+      var tSF=0,tMo=0,tYr={}; years.forEach(function(y){ tYr[y]=0; });
+      leases.forEach(function(l){
+        var sf=Number(l.sf)||0, rent=Number(l.rent)||0;
+        var row=[l.tenant||'—', l.suite||'—', sf||'', l.commenced||'', l.terminates||'', statusOf(l),
+          (l.pct!=null?Number(l.pct):''), r2(rent), (sf>0&&rent>0?r2(rent*12/sf):'')];
+        years.forEach(function(y){ var a=rr.annualRent(l,y)||0; row.push(r2(a)); tYr[y]+=a; });
+        aoa.push(row);
+        tSF+=sf; tMo+=rent;
+      });
+      var tot=['TOTAL ('+leases.length+' suite'+(leases.length===1?'':'s')+')','',tSF,'','','','',r2(tMo),''];
+      years.forEach(function(y){ tot.push(r2(tYr[y])); });
+      aoa.push(tot);
+      var ws=XLSX.utils.aoa_to_sheet(aoa);
+      ws['!cols']=[{wch:34},{wch:9},{wch:8},{wch:12},{wch:12},{wch:24},{wch:7},{wch:13},{wch:10}]
+        .concat(years.map(function(){ return {wch:13}; }));
+      var nm=String(bn).replace(/[\\\/\?\*\[\]:]/g,'').trim().slice(0,31) || ('Building '+(bi+1));
+      if(used[nm]){ var n=used[nm]+1; used[nm]=n; nm=nm.slice(0,29)+'~'+n; } else { used[nm]=1; }
+      XLSX.utils.book_append_sheet(wb,ws,nm);
+    });
+    var base=(rr.prop&&rr.prop.name?rr.prop.name:'Property').replace(/[^A-Za-z0-9]+/g,'_').replace(/^_+|_+$/g,'');
+    var stamp=String(rr.asOf||'').replace(/[^A-Za-z0-9]+/g,'_').replace(/^_+|_+$/g,'');
+    XLSX.writeFile(wb, base+'_Rent_Roll_'+stamp+'.xlsx');
+    if(btn){ btn.textContent=lbl; btn.disabled=false; }
+  }).catch(function(e){
+    if(btn){ btn.textContent=lbl; btn.disabled=false; }
+    alert((e&&e.message)||'Excel export failed.');
+  });
 }
 var sopHiddenCols = [];
 try { sopHiddenCols = JSON.parse(localStorage.getItem('sopHiddenCols')||'[]'); } catch(e) {}
