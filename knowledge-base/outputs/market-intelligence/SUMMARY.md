@@ -26,6 +26,18 @@
 
 ---
 
+## 2026-04-15 — General — All Markets (Monthly Snapshot, Mid-Month Refresh)
+
+- **Sources searched:** LoopNet, Apartments.com, Rent.com, Zillow, LoopNet warehouse/industrial, CommercialSearch (Steel 12) — light refresh of April 2 source set
+- **Comps found:** No material change since April 2 run; primary update is internal — Mandeville Lake rent roll now loaded (35 active leases)
+- **Key finding:** Mandeville Lake Apartments rent roll loaded — blended $1,421/mo across 35 units. 1BR pool (n=11, avg $1,149) is ~10% below Mandeville 1BR market avg of $1,275 → clearest near-term rate-review opportunity. 2BR pool (n=19, avg $1,498) is at/slightly above market. Sanctuary Bldg 1 active set now 10 leases / 9,688 SF / $25.22/SF blended (Suite 100 Fine Southern MTM and Suite 302 Security National no longer in active set).
+- **Crosby rate position:** Sanctuary Bldg 1 above market (justified); Mandeville Lake 1BR below market (opportunity); Mandeville Lake 2BR at market; Metairie Lake/Plaza below market; Lakeside at/above market; GSCP no income rate yet
+- **Deliverables:** market-snapshot-2026-04.md ✅ (refreshed)
+- **Status:** pending_review
+- **Downstream flags:** (1) Residential Leasing Agent — Mandeville Lake 1BR rate-review, ~$16.6K/yr potential; (2) Lease Intelligence Agent — Bayou CPR / Nirvana renewal proposals (80 days to Jul 4 deadline); (3) Vacancy Marketing Agent — Suite 302 asking rate confirmation by early May; (4) Clerical Data Agent — Sanctuary Buildings 2–5 lease load remains highest portfolio intelligence gap
+
+---
+
 ## 2026-04-02 — Property-Specific — Sanctuary Office Park (Suite 302 Comps)
 
 - **Sources searched:** LoopNet, CoStar listings for Mandeville/Covington office space

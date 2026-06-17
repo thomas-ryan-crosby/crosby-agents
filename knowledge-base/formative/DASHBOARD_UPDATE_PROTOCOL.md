@@ -1,153 +1,113 @@
 # Dashboard Update Protocol
 
-**Version:** 1.0
-**Issued:** April 2, 2026
+**Version:** 2.0
+**Updated:** April 13, 2026
 
 ---
 
 ## Purpose
 
-After every agent run — whether manual, scheduled, or event-driven — the agent must update `data/dashboard-state.json` so the dashboard reflects the latest state without manual intervention. The dashboard polls this file every 30 seconds and re-renders when changes are detected.
+After every agent run, the dashboard must reflect the latest state. The dashboard polls `data/dashboard-state.json` every 30 seconds and re-renders when changes are detected.
 
 ---
 
-## File Location
+## How It Works
 
-```
-data/dashboard-state.json
-```
+**The sync script handles everything automatically.** You do NOT need to manually edit `data/dashboard-state.json`.
 
----
-
-## What to Update
-
-Every agent run must update **all four sections** that are relevant to its output:
-
-### 1. `_meta.lastUpdated`
-
-Set to the current ISO timestamp. This is how the dashboard detects changes.
-
-```json
-"_meta": {
-  "lastUpdated": "2026-04-15T08:00:00Z",
-  "updatedBy": "lease-intelligence-agent"
-}
-```
-
-### 2. `agentStatuses.[your-slug]`
-
-Update your agent's entry with the current run timestamp and last output ID.
-
-```json
-"agentStatuses": {
-  "lease-intelligence-agent": {
-    "status": "active",
-    "lastRun": "2026-04-15T08:00:00Z",
-    "lastOutput": "bldg1-lease-review-2026-04"
-  }
-}
-```
-
-**Status values:**
-- `"planned"` — agent prompt not yet written
-- `"building"` — agent prompt exists but not yet tested/deployed
-- `"active"` — agent has run at least once and is operational
-
-### 3. `scheduled.[taskId]`
-
-If this run was triggered by a scheduled task, update the matching entry:
-
-```json
-{
-  "taskId": "lease-intelligence-weekly",
-  "lastRun": "2026-04-15T08:00:00Z",
-  "lastResult": "success"
-}
-```
-
-**`lastResult` values:** `"success"` or `"error"`
-
-### 4. `documents[]`
-
-Append a new entry for each output file produced. Use this exact schema:
-
-```json
-{
-  "id": "unique-doc-id",
-  "title": "Human-readable title",
-  "category": "Agent Output",
-  "icon": "clock",
-  "color": "#dc2626",
-  "lastUpdated": "2026-04-15",
-  "status": "pending_review",
-  "agentSlug": "lease-intelligence-agent",
-  "propertySlug": "sanctuary-office-park",
-  "description": "Brief description of what this output contains and any key findings.",
-  "file": "knowledge-base/outputs/lease-intelligence/filename.md"
-}
-```
-
-**Icon and color:** Match your agent's icon and color from the AGENTS roster in the dashboard.
-
-**Do NOT duplicate:** Before appending, check if a document with the same `id` already exists. If it does, update its `lastUpdated`, `status`, and `description` fields instead of creating a duplicate.
-
-### 5. `activity[]`
-
-Prepend a new activity entry (most recent first):
-
-```json
-{
-  "id": "act-unique-id",
-  "timestamp": "2026-04-15T08:00:00Z",
-  "agent": "lease-intelligence-agent",
-  "type": "scan",
-  "title": "Weekly Lease Deadline Scan",
-  "description": "Brief summary of what happened in this run.",
-  "status": "pending_review",
-  "documentId": "bldg1-lease-review-2026-04",
-  "property": "sanctuary-office-park"
-}
-```
-
-**Activity `type` values:** `"scan"`, `"report"`, `"letter"`, `"listing"`, `"alert"`, `"import"`
-
-**Activity `id`:** Use format `act-[agent-abbr]-[YYYYMMDD]-[seq]`, e.g., `act-li-20260415-001`
+The script `scripts/sync-dashboard.py`:
+1. Scans `knowledge-base/outputs/*/` for all `.md` output files
+2. Parses their headers to extract agent name, date, title, status, property
+3. Cross-references against existing entries in `dashboard-state.json`
+4. Adds any missing document + activity entries
+5. Updates agent `lastRun` timestamps from the most recent output file
+6. Writes the updated JSON
 
 ---
 
-## How to Update
+## What Every Agent Must Do (Post-Run)
 
-### Read-Modify-Write Pattern
+### Step 1: Write your output file
 
-1. **Read** the current `data/dashboard-state.json`
-2. **Parse** it as JSON
-3. **Modify** the relevant sections (never delete existing entries from `documents[]` or `activity[]`)
-4. **Write** the updated JSON back to `data/dashboard-state.json`
+Write your output to `knowledge-base/outputs/<your-agent-folder>/` as a `.md` file.
 
-### Important Rules
+**Required header format** (first ~10 lines of the file):
 
-- **Never overwrite the entire file from scratch.** Always read first, modify, then write.
-- **Preserve all existing entries.** Other agents may have written entries you don't control.
-- **Use ISO 8601 timestamps** with timezone: `2026-04-15T08:00:00Z`
-- **Keep `activity[]` sorted** by timestamp descending (newest first).
-- **Limit `activity[]` to 50 entries.** If the array exceeds 50, trim the oldest entries.
-- **Document `id` values must be unique** across all documents. Use the same naming convention as your output filenames (without extension).
+```markdown
+# <Title of the Output>
+## <Subtitle — property name or scope>
+
+**Agent:** <Agent Display Name>
+**Scan Date:** <Month Day, Year>    (or **Generated:** or **Date:** or **Report Date:**)
+**Property:** <Property address or name>
+**Status:** Pending Review           (or ⏳ Pending Review, ✅ Approved, etc.)
+
+---
+```
+
+The sync script parses these fields to build dashboard entries. If your header is malformed, the output won't appear on the dashboard.
+
+### Step 2: Run the sync script
+
+```bash
+python3 scripts/sync-dashboard.py
+```
+
+That's it. The script will:
+- Detect your new output file
+- Add it to `dashboard-state.json` as a document and activity entry
+- Update your agent's `lastRun` timestamp
+- Set `_meta.lastUpdated` so the dashboard picks up the change on next poll
+
+### Step 3 (optional): Update your SUMMARY.md
+
+Append a line to `knowledge-base/outputs/<your-agent-folder>/SUMMARY.md` for your own index.
 
 ---
 
-## Example: Full Post-Run Update
+## Passing Scheduled Task Timestamps
 
-After the Lease Intelligence Agent completes a weekly scan:
+If you know the Cowork scheduler `lastRunAt` values, you can pass them:
 
+```bash
+# Create a temp JSON with task timestamps
+echo '[{"taskId": "lease-intelligence-weekly", "lastRunAt": "2026-04-13T13:14:44Z"}]' > /tmp/sched.json
+python3 scripts/sync-dashboard.py --scheduled-runs /tmp/sched.json
 ```
-1. Read data/dashboard-state.json
-2. Update _meta.lastUpdated and _meta.updatedBy
-3. Update agentStatuses.lease-intelligence-agent.lastRun and .lastOutput
-4. Update scheduled[taskId="lease-intelligence-weekly"].lastRun and .lastResult
-5. Append new document entry for the scan output
-6. Prepend new activity entry
-7. Write updated JSON back to data/dashboard-state.json
-```
+
+This updates the `scheduled[]` array in dashboard-state.json with real run times.
+
+---
+
+## Safety Net
+
+A daily scheduled task (`dashboard-sync-daily`) runs the sync script automatically every morning. This catches any outputs that agents forgot to sync.
+
+---
+
+## File Locations
+
+| File | Purpose |
+|------|---------|
+| `data/dashboard-state.json` | Live dashboard state — polled by the HTML dashboard every 30 seconds |
+| `scripts/sync-dashboard.py` | Sync script — scans outputs, updates the JSON |
+| `knowledge-base/outputs/*/` | Agent output directories — one folder per agent |
+
+---
+
+## Output Folder Names → Agent Slugs
+
+| Folder | Agent Slug |
+|--------|-----------|
+| `lease-intelligence` | `lease-intelligence-agent` |
+| `vacancy-marketing` | `vacancy-marketing-agent` |
+| `market-intelligence` | `market-intelligence-agent` |
+| `rent-roll-intelligence` | `rent-roll-intelligence-agent` |
+| `hoa-management` | `hoa-management-agent` |
+| `residential-leasing` | `residential-leasing-agent` |
+| `clerical-data` | `clerical-data-agent` |
+| `investor-relations` | `investor-relations-agent` |
+| `acquisitions` | `acquisitions-agent` |
 
 ---
 

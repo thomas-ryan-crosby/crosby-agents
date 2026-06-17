@@ -13,7 +13,7 @@
 import { firebaseConfig, OPERATOR_EMAIL, IS_PLACEHOLDER_CONFIG, AUTH_ENABLED } from "./firebase-config.js";
 
 const SDK = "https://www.gstatic.com/firebasejs/10.12.0";
-const ENTITY_COLLECTIONS = ["properties", "buildings", "units", "tenants", "leases", "hoaLots", "leaseDocs", "cois", "contacts"];
+const ENTITY_COLLECTIONS = ["properties", "buildings", "units", "tenants", "leases", "hoaLots", "leaseDocs", "cois", "contacts", "accessInstructions"];
 const ENTITY_LOCAL_FILE = { properties: "properties", buildings: "buildings", units: "units",
   tenants: "tenants", leases: "leases", hoaLots: "hoa-lots", leaseDocs: "lease-docs", cois: "cois", contacts: "contacts" };
 

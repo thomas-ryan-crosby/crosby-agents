@@ -176,6 +176,22 @@ export function deriveViewModel(entities) {
   const buildingsByProp = groupBy(buildings, "propertyId");
   const lotsByProp = groupBy(hoaLots, "propertyId");
 
+  // Access instructions (door/alarm/key codes). Building-scoped rows are grouped
+  // by buildingId and attached per-suite or building-wide in deriveCommercial.
+  // Property-scoped rows (Clubhouse, campus policy) are surfaced at the top.
+  const accessEnt = entities.accessInstructions || [];
+  const bySort = (a, b) => (a.sortOrder || 0) - (b.sortOrder || 0);
+  const accessByBuilding = groupBy(accessEnt.filter((a) => a.buildingId), "buildingId");
+  Object.keys(accessByBuilding).forEach((k) => accessByBuilding[k].sort(bySort));
+  const ACCESS_PROPERTY = {};
+  for (const a of accessEnt) {
+    if (a.buildingId) continue;
+    const pid = a.propertyId || "_";
+    const bucket = ACCESS_PROPERTY[pid] || (ACCESS_PROPERTY[pid] = { clubhouse: [], policy: [] });
+    (a.area === "clubhouse" ? bucket.clubhouse : bucket.policy).push(a);
+  }
+  Object.values(ACCESS_PROPERTY).forEach((b) => { b.clubhouse.sort(bySort); b.policy.sort(bySort); });
+
   const PROPERTY_PROFILES = {};
   const UNIT_ROSTER = {};
   const TENANT_ROSTER = {};
@@ -205,7 +221,7 @@ export function deriveViewModel(entities) {
     if (p.isCommercial) {
       const coiByName = {};
       for (const c of (coisByProp[p.id] || [])) (coiByName[c.tenant] = coiByName[c.tenant] || []).push(c);
-      Object.assign(base, deriveCommercial(p, pBldgs, unitsByBldg, leaseByUnit, tenantById, pLeases, coiByName));
+      Object.assign(base, deriveCommercial(p, pBldgs, unitsByBldg, leaseByUnit, tenantById, pLeases, coiByName, accessByBuilding));
       TENANT_ROSTER[p.id] = base._tenantRoster; delete base._tenantRoster;
       LEASE_TERMS[p.id] = base._leaseTerms; delete base._leaseTerms;
       if (base._terminations && base._terminations.length) TERMINATIONS[p.id] = base._terminations;
@@ -253,11 +269,11 @@ export function deriveViewModel(entities) {
     MOVED_OUT[k].sort((a, b) => String(a.suite).localeCompare(String(b.suite), undefined, { numeric: true }));
   });
 
-  return { PROPERTIES, PROPERTY_PROFILES, UNIT_ROSTER, TENANT_ROSTER, LEASE_TERMS, LEASE_DOCS, MOVED_OUT, TERMINATIONS };
+  return { PROPERTIES, PROPERTY_PROFILES, UNIT_ROSTER, TENANT_ROSTER, LEASE_TERMS, LEASE_DOCS, MOVED_OUT, TERMINATIONS, ACCESS_PROPERTY };
 }
 
 // ── Commercial (e.g. Sanctuary Office Park) ────────────────────────────────────
-function deriveCommercial(p, pBldgs, unitsByBldg, leaseByUnit, tenantById, pLeases, coiByName) {
+function deriveCommercial(p, pBldgs, unitsByBldg, leaseByUnit, tenantById, pLeases, coiByName, accessByBuilding) {
   const today = Date.now();
   const required = p.requiredInsurance || { glEachOccurrence: 1000000, additionalInsured: true };
   const buildings = [], tenantRoster = {}, leaseTerms = {}, terminations = [];
@@ -267,6 +283,18 @@ function deriveCommercial(p, pBldgs, unitsByBldg, leaseByUnit, tenantById, pLeas
     const bUnits = (unitsByBldg[b.id] || []).slice().sort(bySuite);
     let bSF = 0, bOcc = 0, bVac = 0, bMonthly = 0, bTenants = 0;
     const roster = [], terms = [];
+
+    // Access instructions for this building: index suite rows by suite, keep the
+    // rest (exterior/alarm/common/storage + unmatched suites) as building-wide.
+    const bAccess = ((accessByBuilding || {})[b.id] || []);
+    const accessBySuite = {};
+    const unitIdents = new Set(bUnits.map((u) => u.identifier));
+    for (const a of bAccess) {
+      if (a.area === "suite" && a.suite && unitIdents.has(a.suite)) {
+        (accessBySuite[a.suite] || (accessBySuite[a.suite] = [])).push(a);
+      }
+    }
+    const bAccessWide = bAccess.filter((a) => !(a.area === "suite" && a.suite && unitIdents.has(a.suite)));
 
     for (const u of bUnits) {
       const lease = leaseByUnit.get(u.id);
@@ -293,6 +321,7 @@ function deriveCommercial(p, pBldgs, unitsByBldg, leaseByUnit, tenantById, pLeas
         action: leaseAction(lease, vacant, today),
         insurance: vacant ? null : deriveInsurance((coiByName || {})[tenant && tenant.name], required, today),
         suiteNote: (lease && lease.suiteFlag) || null,
+        access: accessBySuite[u.identifier] || [],
       });
 
       // Collect tenants who have given termination/vacate notice (status "vacating"
@@ -329,7 +358,7 @@ function deriveCommercial(p, pBldgs, unitsByBldg, leaseByUnit, tenantById, pLeas
       }
     }
 
-    buildings.push({ name: b.name, sf: bSF || b.totalSF || 0, occupiedSF: bOcc, vacantSF: bVac, tenants: bTenants, monthly: bMonthly });
+    buildings.push({ name: b.name, sf: bSF || b.totalSF || 0, occupiedSF: bOcc, vacantSF: bVac, tenants: bTenants, monthly: bMonthly, access: bAccessWide });
     if (roster.length) tenantRoster[b.name] = roster;
     if (terms.length) leaseTerms[b.name] = terms;
     totalSF += bSF || b.totalSF || 0; occSF += bOcc; vacSF += bVac; monthly += bMonthly; tenantCount += bTenants;

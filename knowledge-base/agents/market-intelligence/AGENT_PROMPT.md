@@ -231,7 +231,7 @@ Your output feeds directly into:
 ## Post-Run Actions
 
 1. Write output files to `knowledge-base/outputs/market-intelligence/`
-2. **Update `data/dashboard-state.json`** — follow the protocol in `knowledge-base/formative/DASHBOARD_UPDATE_PROTOCOL.md`. Update `_meta`, `agentStatuses`, `scheduled` (if triggered by schedule), `documents[]`, and `activity[]`.
+2. **Sync the dashboard** — run `python3 scripts/sync-dashboard.py` to register your outputs on the dashboard automatically.
 3. Append run entry to `knowledge-base/outputs/market-intelligence/SUMMARY.md`
 4. If property-specific comps were run, flag downstream agents that should review: e.g., "Vacancy Marketing Agent should review Suite 302 asking rate against these comps."
 

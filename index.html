@@ -411,6 +411,7 @@ var LEASE_TERMS = {};
 var LEASE_DOCS = {};
 var MOVED_OUT = {};
 var TERMINATIONS = {};
+var ACCESS_PROPERTY = {};
 
 // ── AGENT ROSTER (static definition — statuses loaded from dashboard-state.json) ──
 const AGENTS = [
@@ -1863,7 +1864,7 @@ var detailCharts = {};
 // single toggle hides every column in that group (e.g. all Legacy / COI / Contact
 // columns at once). Tenant stays pinned and is not toggleable.
 var SOP_COL_GROUPS = [
-  ['Lease', [['suite','Suite'],['sf','Sq Ft'],['rent','Rent'],['sfyr','$/SF/Yr'],['status','Status'],['commenced','Commenced'],['expiry','Expiry'],['notice','Notice'],['escalation','Escalation'],['autorenew','Auto-Renew'],['action','Lease Action']]],
+  ['Lease', [['suite','Suite'],['sf','Sq Ft'],['rent','Rent'],['sfyr','$/SF/Yr'],['status','Status'],['commenced','Commenced'],['expiry','Expiry'],['notice','Notice'],['escalation','Escalation'],['autorenew','Auto-Renew'],['action','Lease Action'],['access','Access']]],
   ['Documents', [['lease','Lease'],['legacy','Legacy'],['coistatus','Insurance'],['coidocs','COI Docs']]],
   ['People', [['contact','Tenant Contacts'],['broker','Brokers'],['brokerdocs','Broker Docs']]],
 ];
@@ -1892,7 +1893,19 @@ function ensureLeaseStyles() {
     '.tip .dot{width:9px;height:9px;border-radius:50%;flex:none;margin-top:4px;}'+
     '.infoBtn{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border-radius:50%;border:1px solid #cbd5e1;color:#64748b;font-size:10px;font-weight:700;font-style:italic;font-family:Georgia,serif;line-height:1;cursor:pointer;user-select:none;flex:none;transition:all 120ms ease;}'+
     '.infoBtn:hover{background:#1f5fdb;border-color:#1f5fdb;color:#fff;}'+
-    '.infoBtn.open{background:#1f5fdb;border-color:#1f5fdb;color:#fff;}';
+    '.infoBtn.open{background:#1f5fdb;border-color:#1f5fdb;color:#fff;}'+
+    '.acc-cell{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:#475569;}'+
+    '.acc-tip-h{font-weight:650;color:#fff;margin-bottom:6px;font-size:11.5px;}'+
+    '.acc-item{margin:7px 0 0;padding-top:7px;border-top:1px solid rgba(255,255,255,.09);}'+
+    '.acc-item:first-of-type{border-top:none;padding-top:0;}'+
+    '.acc-lbl{font-weight:650;color:#fff;}'+
+    '.acc-meta{margin-top:3px;color:#cbd5e1;}'+
+    '.acc-method{display:inline-block;font-size:10px;font-weight:600;color:#bfdbfe;background:rgba(96,165,250,.18);border-radius:4px;padding:1px 6px;margin-right:4px;}'+
+    '.acc-code{font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:700;color:#fff;background:rgba(255,255,255,.13);border-radius:4px;padding:1px 6px;}'+
+    '.acc-alt{color:#94a3b8;font-size:10px;margin-left:4px;}'+
+    '.acc-key{margin-top:3px;color:#cbd5e1;}'+
+    '.acc-note{margin-top:3px;color:#94a3b8;font-size:10.5px;line-height:1.5;}'+
+    '.acc-sens{font-size:8.5px;font-weight:700;color:#fca5a5;background:rgba(248,113,113,.15);border-radius:4px;padding:1px 5px;margin-left:5px;text-transform:uppercase;letter-spacing:.03em;vertical-align:middle;}';
   document.head.appendChild(s);
 }
 // Click-to-reveal info popovers (replaces hover). An ".infoBtn" toggles the
@@ -1980,6 +1993,64 @@ function leaseTip(ld){
   } else if(m.escalation){ rows.push('<span class="k">Escalation:</span> '+m.escalation); }
   if(m.lessor) rows.push('<span class="k">Lessor:</span> '+m.lessor);
   return '<div class="tip" onclick="event.stopPropagation()">'+rows.join('<br>')+'</div>';
+}
+// ── Access instructions (door/alarm/key codes from the access-info PDF) ──────
+function accEsc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+var ACC_METHOD_LABEL = {'keypad':'Keypad','scan-card':'Scan card','fob + keypad':'Fob + keypad','key':'Key','alarm':'Alarm','combination':'Combination','unlocked':'Unlocked','no-access':'No access','key + keypad':'Key + keypad'};
+function accMethodLabel(m){ return ACC_METHOD_LABEL[m] || (m ? m.charAt(0).toUpperCase()+m.slice(1) : ''); }
+// One access row → formatted popover block.
+function accFmt(a){
+  var lines = ['<div class="acc-lbl">'+accEsc(a.label)+(a.sensitive?'<span class="acc-sens">sensitive</span>':'')+'</div>'];
+  var meta = '';
+  var ml = accMethodLabel(a.method);
+  if(ml) meta += '<span class="acc-method">'+ml+'</span>';
+  if(a.code) meta += '<code class="acc-code">'+accEsc(a.code)+'</code>';
+  if(a.altCode) meta += '<span class="acc-alt">or <code class="acc-code">'+accEsc(a.altCode)+'</code></span>';
+  if(meta) lines.push('<div class="acc-meta">'+meta+'</div>');
+  if(a.keyDescription) lines.push('<div class="acc-key">'+accEsc(a.keyDescription)+'</div>');
+  if(a.notes) lines.push('<div class="acc-note">'+accEsc(a.notes)+'</div>');
+  return '<div class="acc-item">'+lines.join('')+'</div>';
+}
+// Roster-cell marker: compact method label + click-to-open popover of the suite's
+// access instructions.
+function accessCell(rows){
+  if(!rows || !rows.length) return '<span style="font-size:11px;color:#d1d5db;">—</span>';
+  var hint = rows.length > 1 ? rows.length+' points' : accMethodLabel(rows[0].method) || 'Details';
+  var body = '<div class="acc-tip-h">Access instructions</div>'+rows.map(accFmt).join('');
+  return '<span class="lw acc-cell"><span>'+hint+'</span><span class="infoBtn" onclick="toggleTip(this,event)" title="Access instructions">i</span>'+
+    '<div class="tip wide" onclick="event.stopPropagation()">'+body+'</div></span>';
+}
+// Building-header marker: building-wide access (front doors, alarms, common
+// areas, storage + any suites without a roster row).
+function accessBuildingMarker(rows){
+  if(!rows || !rows.length) return '';
+  var body = '<div class="acc-tip-h">Building access ('+rows.length+')</div>'+rows.map(accFmt).join('');
+  return '<span class="lw" style="vertical-align:middle;margin-left:10px;"><span class="infoBtn" onclick="toggleTip(this,event)" title="Building access">i</span>'+
+    '<div class="tip down wide" onclick="event.stopPropagation()">'+body+'</div></span>';
+}
+// Property-level card: campus policy reminders + Clubhouse codes.
+function siteAccessHTML(p){
+  var ap = (typeof ACCESS_PROPERTY !== 'undefined' && ACCESS_PROPERTY[p.slug]) || null;
+  if(!ap || (!(ap.policy||[]).length && !(ap.clubhouse||[]).length)) return '';
+  var h = '<div class="card" style="margin-bottom:16px;border-left:4px solid #5e8ed0;">';
+  h += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><span class="card-title" style="margin-bottom:0;">Site Access</span>'+
+    '<span style="font-size:11px;color:#9ca3af;">door, alarm &amp; key instructions — building-specific details are on the ⓘ in each roster</span></div>';
+  if((ap.policy||[]).length){
+    h += '<div style="font-size:12.5px;color:#374151;line-height:1.7;margin-bottom:'+((ap.clubhouse||[]).length?'10px':'0')+';">';
+    ap.policy.forEach(function(a){ h += '<div>• <b>'+accEsc(a.label)+':</b> '+accEsc(a.notes||'')+'</div>'; });
+    h += '</div>';
+  }
+  if((ap.clubhouse||[]).length){
+    h += '<div style="font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px;">Clubhouse</div>';
+    h += '<div style="display:flex;flex-wrap:wrap;gap:8px;">';
+    ap.clubhouse.forEach(function(a){
+      var val = a.code ? '<span style="font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:700;color:#0f172a;">'+accEsc(a.code)+'</span>' : accEsc(a.keyDescription||'');
+      h += '<div style="border:1px solid #e2e8f0;border-radius:8px;padding:6px 11px;background:#f8fafc;font-size:12px;"><div style="color:#64748b;font-size:10.5px;">'+accEsc(a.label)+'</div>'+val+'</div>';
+    });
+    h += '</div>';
+  }
+  h += '</div>';
+  return h;
 }
 function leaseWidget(ld){
   var nm = ld.docType + (ld.ref ? ' <span style="font-weight:400;color:#94a3b8;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:10px;">('+ld.ref+')</span>' : '') + (ld.date ? ' <span style="font-weight:400;color:#9ca3af;">'+ld.date+'</span>' : '');
@@ -3971,12 +4042,13 @@ function renderPropertyDetail(p) {
     if(tenantData && p.buildings) {
       html += '<div style="display:flex;justify-content:flex-end;margin-bottom:12px;"><button onclick="openRentRoll(\''+p.slug+'\')" style="font-size:13px;font-weight:600;color:#fff;background:#1f5fdb;border:none;border-radius:8px;padding:8px 16px;cursor:pointer;box-shadow:0 2px 6px rgba(31,95,219,.25);">Generate Rent Roll</button></div>';
       html += sopColToggleBar();
+      html += siteAccessHTML(p);
       p.buildings.forEach(function(b) {
         var bTenants = tenantData[b.name] || [];
         var bOccPct = b.sf > 0 ? Math.round(b.occupiedSF / b.sf * 100) : 0;
         html += '<div class="card" style="margin-bottom:16px;">';
         html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">';
-        html += '<div><span class="card-title" style="margin-bottom:0;">'+b.name+'</span>';
+        html += '<div><span class="card-title" style="margin-bottom:0;">'+b.name+'</span>'+accessBuildingMarker(b.access);
         html += '<span style="font-size:12px;color:#9ca3af;margin-left:12px;">'+b.sf.toLocaleString()+' SF &middot; '+bOccPct+'% leased &middot; $'+b.monthly.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})+'/mo</span></div>';
         if(b.vacantSF > 0) {
           html += '<span class="badge badge-pending">'+b.vacantSF.toLocaleString()+' SF vacant</span>';
@@ -4028,7 +4100,7 @@ function renderPropertyDetail(p) {
         for(hi=0; hi<maxB; hi++) emptyTail += '<td class="c-broker"></td>';
         if(anyBrokerDocs) emptyTail += '<td class="c-brokerdocs"></td>';
 
-        html += '<table class="unit-table"><thead><tr><th class="c-tenant">Tenant</th><th class="c-suite">Suite</th><th class="c-sf">Square Feet</th><th class="c-rent">Monthly Rent</th><th class="c-sfyr">$/SF/Yr</th><th class="c-status">Status</th><th class="c-commenced">Commenced</th><th class="c-expiry">Expiry</th><th class="c-notice">Notice</th><th class="c-escalation">Escalation</th><th class="c-autorenew">Auto-Renew</th><th class="c-action" style="position:relative;">Lease Action '+actionLegend()+'</th><th class="c-lease">Lease</th>'+legacyHdr+'<th class="c-coistatus">Insurance Status</th>'+coiHdr+contactHdr+'</tr></thead><tbody>';
+        html += '<table class="unit-table"><thead><tr><th class="c-tenant">Tenant</th><th class="c-suite">Suite</th><th class="c-sf">Square Feet</th><th class="c-rent">Monthly Rent</th><th class="c-sfyr">$/SF/Yr</th><th class="c-status">Status</th><th class="c-commenced">Commenced</th><th class="c-expiry">Expiry</th><th class="c-notice">Notice</th><th class="c-escalation">Escalation</th><th class="c-autorenew">Auto-Renew</th><th class="c-action" style="position:relative;">Lease Action '+actionLegend()+'</th><th class="c-access">Access</th><th class="c-lease">Lease</th>'+legacyHdr+'<th class="c-coistatus">Insurance Status</th>'+coiHdr+contactHdr+'</tr></thead><tbody>';
         var bTotal = 0, bRent = 0;
         bTenants.forEach(function(t) {
           bTotal += t.sf;
@@ -4057,9 +4129,9 @@ function renderPropertyDetail(p) {
           for(ci=0; ci<maxC; ci++) contactCells += '<td class="c-contact" style="vertical-align:top;min-width:150px;">'+contactColCell(tenCs[ci])+'</td>';
           for(ci=0; ci<maxB; ci++) contactCells += '<td class="c-broker" style="vertical-align:top;min-width:150px;">'+contactColCell(brkCs[ci])+'</td>';
           if(anyBrokerDocs) contactCells += '<td class="c-brokerdocs" style="vertical-align:top;min-width:150px;">'+(t.vacant?'<span style="font-size:11px;color:#d1d5db;">—</span>':brokerDocsColCell(brokerDocsByTenant[t.tenant] || []))+'</td>';
-          html += '<tr><td class="c-tenant" style="font-weight:500;">'+t.tenant+'</td><td class="c-suite">'+t.suite+suiteNote+'</td><td class="c-sf">'+t.sf.toLocaleString()+'</td><td class="c-rent">'+(t.rent>0?'$'+t.rent.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}):'—')+'</td><td class="c-sfyr">'+sfyr+'</td><td class="c-status">'+statusBdg+'</td><td class="c-commenced" style="font-size:12px;'+(t.commenced==='—'?'color:#d1d5db;':'')+'">'+t.commenced+'</td><td class="c-expiry" style="font-size:12px;'+(t.expiry==='—'?'color:#d1d5db;':'')+'">'+t.expiry+expSub+'</td><td class="c-notice" style="font-size:12px;'+(t.notice==='—'?'color:#d1d5db;':'')+'">'+t.notice+notSub+'</td><td class="c-escalation" style="font-size:12px;'+(t.escalation==='—'?'color:#d1d5db;':'')+'">'+t.escalation+'</td><td class="c-autorenew" style="font-size:12px;">'+(t.autoRenew==null?'<span style="color:#9ca3af;">—</span>':t.autoRenew?'<span style="color:#059669;">✓ Yes</span>':'<span style="color:#dc2626;">✗ No</span>')+'</td><td class="c-action"><div style="display:flex;align-items:center;gap:6px;">'+actCell+marketBtn(p,b,t)+'</div></td>'+leaseCell+legacyCells+'<td class="c-coistatus">'+insuranceStatusCell(t.insurance)+'</td>'+coiCells+contactCells+'</tr>';
+          html += '<tr><td class="c-tenant" style="font-weight:500;">'+t.tenant+'</td><td class="c-suite">'+t.suite+suiteNote+'</td><td class="c-sf">'+t.sf.toLocaleString()+'</td><td class="c-rent">'+(t.rent>0?'$'+t.rent.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}):'—')+'</td><td class="c-sfyr">'+sfyr+'</td><td class="c-status">'+statusBdg+'</td><td class="c-commenced" style="font-size:12px;'+(t.commenced==='—'?'color:#d1d5db;':'')+'">'+t.commenced+'</td><td class="c-expiry" style="font-size:12px;'+(t.expiry==='—'?'color:#d1d5db;':'')+'">'+t.expiry+expSub+'</td><td class="c-notice" style="font-size:12px;'+(t.notice==='—'?'color:#d1d5db;':'')+'">'+t.notice+notSub+'</td><td class="c-escalation" style="font-size:12px;'+(t.escalation==='—'?'color:#d1d5db;':'')+'">'+t.escalation+'</td><td class="c-autorenew" style="font-size:12px;">'+(t.autoRenew==null?'<span style="color:#9ca3af;">—</span>':t.autoRenew?'<span style="color:#059669;">✓ Yes</span>':'<span style="color:#dc2626;">✗ No</span>')+'</td><td class="c-action"><div style="display:flex;align-items:center;gap:6px;">'+actCell+marketBtn(p,b,t)+'</div></td><td class="c-access">'+accessCell(t.access)+'</td>'+leaseCell+legacyCells+'<td class="c-coistatus">'+insuranceStatusCell(t.insurance)+'</td>'+coiCells+contactCells+'</tr>';
         });
-        html += '<tr><td class="c-tenant" style="font-weight:700;">Total ('+bTenants.length+' tenants)</td><td class="c-suite"></td><td class="c-sf">'+bTotal.toLocaleString()+'</td><td class="c-rent">$'+bRent.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})+'</td><td class="c-sfyr"></td><td class="c-status"></td><td class="c-commenced"></td><td class="c-expiry"></td><td class="c-notice"></td><td class="c-escalation"></td><td class="c-autorenew"></td><td class="c-action"></td><td class="c-lease"></td>'+emptyTail+'</tr>';
+        html += '<tr><td class="c-tenant" style="font-weight:700;">Total ('+bTenants.length+' tenants)</td><td class="c-suite"></td><td class="c-sf">'+bTotal.toLocaleString()+'</td><td class="c-rent">$'+bRent.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})+'</td><td class="c-sfyr"></td><td class="c-status"></td><td class="c-commenced"></td><td class="c-expiry"></td><td class="c-notice"></td><td class="c-escalation"></td><td class="c-autorenew"></td><td class="c-action"></td><td class="c-access"></td><td class="c-lease"></td>'+emptyTail+'</tr>';
         html += '</tbody></table>';
 
         html += '</div>';
@@ -5316,6 +5388,7 @@ document.addEventListener("DOMContentLoaded", init);
       window.LEASE_DOCS = vm.LEASE_DOCS;
       window.MOVED_OUT = vm.MOVED_OUT;
       window.TERMINATIONS = vm.TERMINATIONS;
+      window.ACCESS_PROPERTY = vm.ACCESS_PROPERTY;
       rerenderActiveViews();
     } catch(e) { console.error("Entity load / derive failed:", e); }
 
