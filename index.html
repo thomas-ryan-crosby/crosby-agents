@@ -2305,23 +2305,27 @@ function downloadRentRollExcel(){
       aoa.push(['Rent Roll — '+bn]);
       aoa.push([(rr.prop&&rr.prop.name?rr.prop.name:'')+'  ·  as of '+rr.asOf]);
       aoa.push([]);
-      aoa.push(['Tenant','Suite','SF','Commenced','Lease End','Status','Esc %','Monthly Rent','$/SF/Yr']
-        .concat(years.map(function(y){ return y+' Annual'; })));
-      var tSF=0,tMo=0,tYr={}; years.forEach(function(y){ tYr[y]=0; });
+      var months=[]; years.forEach(function(y){ for(var m=0;m<12;m++) months.push({y:y,m:m,label:(rr.MN?rr.MN[m]:('M'+(m+1)))+' '+y}); });
+      aoa.push(['Tenant','Suite','SF','Commenced','Lease End','Status','Esc %']
+        .concat(months.map(function(mm){ return mm.label; })).concat(['Total']));
+      var tSF=0, tMon=months.map(function(){ return 0; }), tGrand=0;
       leases.forEach(function(l){
-        var sf=Number(l.sf)||0, rent=Number(l.rent)||0;
+        var sf=Number(l.sf)||0;
         var row=[l.tenant||'—', l.suite||'—', sf||'', l.commenced||'', l.terminates||'', statusOf(l),
-          (l.pct!=null?Number(l.pct):''), r2(rent), (sf>0&&rent>0?r2(rent*12/sf):'')];
-        years.forEach(function(y){ var a=rr.annualRent(l,y)||0; row.push(r2(a)); tYr[y]+=a; });
+          (l.pct!=null?Number(l.pct):'')];
+        var rowTot=0;
+        months.forEach(function(mm,mi){ var v=rr.monthRent(l,mm.y,mm.m)||0; row.push(r2(v)); tMon[mi]+=v; rowTot+=v; });
+        row.push(r2(rowTot)); tGrand+=rowTot;
         aoa.push(row);
-        tSF+=sf; tMo+=rent;
+        tSF+=sf;
       });
-      var tot=['TOTAL ('+leases.length+' suite'+(leases.length===1?'':'s')+')','',tSF,'','','','',r2(tMo),''];
-      years.forEach(function(y){ tot.push(r2(tYr[y])); });
+      var tot=['TOTAL ('+leases.length+' suite'+(leases.length===1?'':'s')+')','',tSF,'','','',''];
+      months.forEach(function(mm,mi){ tot.push(r2(tMon[mi])); });
+      tot.push(r2(tGrand));
       aoa.push(tot);
       var ws=XLSX.utils.aoa_to_sheet(aoa);
-      ws['!cols']=[{wch:34},{wch:9},{wch:8},{wch:12},{wch:12},{wch:24},{wch:7},{wch:13},{wch:10}]
-        .concat(years.map(function(){ return {wch:13}; }));
+      ws['!cols']=[{wch:34},{wch:9},{wch:8},{wch:12},{wch:12},{wch:24},{wch:7}]
+        .concat(months.map(function(){ return {wch:11}; })).concat([{wch:13}]);
       var nm=String(bn).replace(/[\\\/\?\*\[\]:]/g,'').trim().slice(0,31) || ('Building '+(bi+1));
       if(used[nm]){ var n=used[nm]+1; used[nm]=n; nm=nm.slice(0,29)+'~'+n; } else { used[nm]=1; }
       XLSX.utils.book_append_sheet(wb,ws,nm);
