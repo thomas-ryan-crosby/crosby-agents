@@ -2648,9 +2648,35 @@
             "monthlyRent": "USD 996.56",
             "commencement": "2024-05-01",
             "termination": "2025-04-30",
-            "title": "Third Amendment (current) — Building #4, Suite 305 (Lain St. Paul) — $996.56/mo eff 2024-05-01, extend to 2025-04-30, 3% esc, auto-renew"
+            "title": "Third Amendment — Building #4, Suite 305 (Lain St. Paul) — $996.56/mo eff 2024-05-01, extend to 2025-04-30, 3% esc, auto-renew"
         },
         "date": "2024-02-06"
+    },
+    {
+        "id": "leasedoc-lainstpaulbldg4ste305autorenewal2026",
+        "propertyId": "sanctuary-office-park",
+        "building": "Building #4",
+        "tenant": "Lain St. Paul",
+        "suite": "305",
+        "file": "LainStPaul_BLDG4_STE305_AutoRenewal2026.pdf",
+        "docType": "Auto-Renewal",
+        "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FLainStPaul_BLDG4_STE305_AutoRenewal2026.pdf?alt=media&token=2875bf34-ae0c-4107-9077-ddab8b025682",
+        "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FLainStPaul_BLDG4_STE305_AutoRenewal2026.html?alt=media&token=e1ffdd9d-da09-4323-992a-90292f5e872f",
+        "meta": {
+            "lessor": "Crosby Development Company, LLC",
+            "lessee": "Lain St. Paul",
+            "property": "Sanctuary Office Park, Building #4, Suite 305, Mandeville, LA 70471",
+            "suite": "Suite 305",
+            "documentType": "Auto-Renewal (email notice sent to tenant 2026-05-19)",
+            "dated": "2026-05-19",
+            "monthlyRent": "USD 1057.26",
+            "commencement": "2026-05-01",
+            "termination": "2027-04-30",
+            "escalationPct": 3,
+            "escalationDate": "May 1",
+            "title": "Auto-renewal confirmed — Building #4, Suite 305 (Lain St. Paul) — $1,057.26/mo eff 2026-05-01 to 2027-04-30, 3% esc; emailed to tenant 2026-05-19; $30.79 May shortfall to collect with June rent; next non-renewal notice deadline 2027-01-30."
+        },
+        "date": "2026-05-19"
     },
     {
         "id": "leasedoc-lainstpaulbldg4ste305amd2",
@@ -2747,6 +2773,32 @@
             "title": "Lease of Commercial Property — Building #4, Suite 306 (JCM II LLC / Jefferson Capital) — $427/mo, 3% esc, auto-renew 12mo, full-service gross"
         },
         "date": "2021-02-10"
+    },
+    {
+        "id": "leasedoc-jcm2bldg4ste306autorenewal2026",
+        "propertyId": "sanctuary-office-park",
+        "building": "Building #4",
+        "tenant": "Jefferson Capital (JCM II LLC)",
+        "suite": "306",
+        "file": "JCM2_BLDG4_STE306_AutoRenewal2026.pdf",
+        "docType": "Auto-Renewal",
+        "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FJCM2_BLDG4_STE306_AutoRenewal2026.pdf?alt=media&token=5c6f0417-6139-4191-9026-e12a66ccaeb1",
+        "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FJCM2_BLDG4_STE306_AutoRenewal2026.html?alt=media&token=79ec55a6-17c1-4c69-b3c2-08c99064d48f",
+        "meta": {
+            "lessor": "Crosby Development Company, LLC",
+            "lessee": "JCM II LLC (lobby directory: Jefferson Capital Partners)",
+            "property": "Sanctuary Office Park, Building #4, Suite 306, Mandeville, LA 70471",
+            "suite": "Suite 306",
+            "documentType": "Auto-Renewal (internal memo — not sent to tenant)",
+            "dated": "2026-06-16",
+            "monthlyRent": "USD 495.01",
+            "commencement": "2026-04-01",
+            "termination": "2027-03-31",
+            "escalationPct": 3,
+            "escalationDate": "April 1",
+            "title": "Auto-renewal confirmed — Building #4, Suite 306 (JCM II LLC / Jefferson Capital) — $495.01/mo eff 2026-04-01 to 2027-03-31, 3% esc; next non-renewal notice deadline 2026-12-31. Internal memo, not sent to tenant."
+        },
+        "date": "2026-06-16"
     },
     {
         "id": "leasedoc-monsonbldg5ste101lease",
