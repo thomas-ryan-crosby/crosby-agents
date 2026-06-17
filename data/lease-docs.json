@@ -2635,7 +2635,7 @@
       "commenced": "2026-04-01",
       "terminates": "2028-08-01",
       "monthlyRent": 575,
-      "escalationPct": 3,
+      "escalationPct": 3.5,
       "escalationMonth": 4,
       "escalationMonthName": "April",
       "autoRenew": true,

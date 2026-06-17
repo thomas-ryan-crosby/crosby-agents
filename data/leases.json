@@ -197,7 +197,7 @@
     "commenced": "2026-04-01",
     "terminates": "2028-08-01",
     "monthlyRent": 575,
-    "escalationPct": 3,
+    "escalationPct": 3.5,
     "autoRenew": true,
     "noticeDays": 90,
     "noticeDeadline": "2028-05-03",
@@ -205,7 +205,7 @@
     "status": "active",
     "docFile": "Detox_BLDG1_STE307_Init.pdf",
     "suiteFlag": "Recorded as Suite 307; tenant physically occupies 303B (internal 303B/307 label flip).",
-    "notes": "New lease (CDC-L-2026-0018), commenced 2026-04-01, 28-mo term to 2028-08-01 @ $575/mo; first payment 2026-05-01; 3% annual; auto-renews 12-mo unless 90-day notice; deposit waived. Suite labeling: recorded 307 / occupies 303B (see Brandner). Tenant also leases Bldg #4 Ste 301.",
+    "notes": "New lease (CDC-L-2026-0018), commenced 2026-04-01, 28-mo term to 2028-08-01 @ $575/mo; first payment 2026-05-01; 3.5% annual; auto-renews 12-mo unless 90-day notice; deposit waived. Suite labeling: recorded 307 / occupies 303B (see Brandner). Tenant also leases Bldg #4 Ste 301.",
     "escalationMonth": 4
   },
   {
