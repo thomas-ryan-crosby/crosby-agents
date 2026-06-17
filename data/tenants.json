@@ -2865,10 +2865,10 @@
     "id": "tenant-detox-4",
     "name": "Detox Management Company, LLC",
     "type": "commercial",
-    "contactName": null,
+    "contactName": "Roy Viger",
     "email": null,
     "phone": null,
-    "notes": "Building #4, Suite 301. Same tenant also leases Building #1, Suite 307/303B. Legal name from Bldg 1 lease (Detox Management Company, LLC)."
+    "notes": "Building #4, Suite 301. Lessee Detox Management Company, LLC; signatory Roy Viger (CEO). Mailing address PO Box 53038, Lafayette, LA 70506. Same tenant also leases Building #1, Suite 307/303B. Legal name from Bldg 1 lease (Detox Management Company, LLC)."
   },
   {
     "id": "tenant-audubon",

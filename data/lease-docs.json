@@ -1734,6 +1734,32 @@
     "date": "2026-04-01"
   },
   {
+    "id": "leasedoc-detoxbldg4ste301lease",
+    "propertyId": "sanctuary-office-park",
+    "building": "Building #4",
+    "tenant": "Detox Management Company, LLC",
+    "suite": "301",
+    "file": "Detox_BLDG4_STE301_Lease.pdf",
+    "docType": "Init",
+    "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FDetox_BLDG4_STE301_Lease.pdf?alt=media&token=f0c7e02b-881f-4e2b-800f-22c728966388",
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FDetox_BLDG4_STE301_Lease.html?alt=media&token=30276c6f-4896-47e0-a57a-057836a983eb",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Detox Management Company, LLC (Roy Viger, CEO)",
+      "property": "Sanctuary Office Park, Building #4, Suite 301, Floor 3, Mandeville, LA 70471",
+      "suite": "Suite 301",
+      "documentType": "Init",
+      "dated": "2025-06-27",
+      "monthlyRent": "USD 3,000.00 (Yr1; Yr2 $3,105.00, Yr3 $3,213.67)",
+      "commencement": "2025-08-01",
+      "termination": "2028-07-31",
+      "escalationPct": 3.5,
+      "escalationDate": "August 1",
+      "title": "Lease of Commercial Property — Building #4, Suite 301 (Crosby / Detox Management Company, LLC) — 1,765 SF, full-service gross; 3-yr term 2025-08-01 to 2028-07-31; 3.5% annual esc; tenant option to renew one 2-yr term (60-day notice); deposit waived."
+    },
+    "date": "2025-06-27"
+  },
+  {
     "id": "leasedoc-assuredpartnersbldg2ste206terminationnotice",
     "propertyId": "sanctuary-office-park",
     "building": "Building #2",
