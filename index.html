@@ -3682,11 +3682,26 @@ function trackerFmtDate(iso){
   var d=String(iso).slice(0,10).split('-');
   return M[parseInt(d[1],10)-1]+' '+parseInt(d[2],10)+', '+d[0];
 }
-function trackerCountdown(days){
-  if(days==null) return '';
-  if(days===0) return 'today';
-  if(days>0) return 'in '+days+' day'+(days===1?'':'s');
-  var a=Math.abs(days); return a+' day'+(a===1?'':'s')+' ago';
+// Countdown to a date as Years/Months/Days (e.g. "in 2y 1m 14d" / "5m 12d ago"),
+// matching the roster's humanUntil format. today = real now (Date.now()).
+function trackerCountdown(iso){
+  if(!iso || !/^\d{4}-\d{2}-\d{2}/.test(iso)) return '';
+  var n=new Date();
+  var from=new Date(Date.UTC(n.getFullYear(), n.getMonth(), n.getDate()));
+  var to=new Date(String(iso).slice(0,10)+'T00:00:00Z');
+  if(to.getTime()===from.getTime()) return 'today';
+  var past=to<from, a=past?to:from, b=past?from:to;
+  var years=b.getUTCFullYear()-a.getUTCFullYear();
+  var months=b.getUTCMonth()-a.getUTCMonth();
+  var days=b.getUTCDate()-a.getUTCDate();
+  if(days<0){ months--; days+=new Date(Date.UTC(b.getUTCFullYear(), b.getUTCMonth(), 0)).getUTCDate(); }
+  if(months<0){ years--; months+=12; }
+  var parts=[];
+  if(years) parts.push(years+'y');
+  if(months) parts.push(months+'m');
+  if(days) parts.push(days+'d');
+  var s=parts.join(' ')||'0d';
+  return past ? s+' ago' : 'in '+s;
 }
 function trackerToneColor(days){
   if(days==null) return '#9ca3af';
@@ -3697,7 +3712,7 @@ function trackerToneColor(days){
 function trackerDateCell(iso, days){
   var dateStr=trackerFmtDate(iso);
   if(!dateStr) return '<span style="color:#9ca3af;">—</span>';
-  var cd=trackerCountdown(days), col=trackerToneColor(days);
+  var cd=trackerCountdown(iso), col=trackerToneColor(days);
   return '<div style="font-weight:500;">'+dateStr+'</div>'+(cd?'<div style="font-size:11px;font-weight:600;color:'+col+';">'+cd+'</div>':'');
 }
 // Recommended next-step labels, derived from the timeline.
@@ -4002,7 +4017,7 @@ function renderPropertyDetail(p) {
         html += iconSvg("alert-triangle",14,"#ea580c")+' <strong style="margin-left:4px;">Action Required:</strong> ';
         var actions = [];
         vacating.forEach(function(t){ actions.push('<strong>'+t.tenant+'</strong> (Suite '+t.suite+') vacating '+t.terminates+' — confirm replacement tenant'); });
-        urgent_notice.forEach(function(t){ actions.push('<strong>'+t.tenant+'</strong> notice deadline <strong>'+(trackerFmtDate(t.noticeDeadline)||t.noticeDeadline)+'</strong> ('+trackerCountdown(t.noticeDeadlineDays)+')'); });
+        urgent_notice.forEach(function(t){ actions.push('<strong>'+t.tenant+'</strong> notice deadline <strong>'+(trackerFmtDate(t.noticeDeadline)||t.noticeDeadline)+'</strong> ('+trackerCountdown(t.noticeDeadline)+')'); });
         if(mtmRows.length) actions.push('<strong>'+mtmRows.map(function(t){return t.tenant;}).join(', ')+'</strong> on Month-to-Month — consider formalizing term');
         html += actions.join(' &nbsp;|&nbsp; ');
         html += '</div>';
