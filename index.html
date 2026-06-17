@@ -2169,7 +2169,16 @@ function openRentRoll(slug){
     var ms=new Date(Y, m, 1);
     if(l.commenced && new Date(Y, m+1, 0) < new Date(l.commenced)) return 0; // month entirely before the lease starts
     if(l.terminates){ var td=new Date(l.terminates); if(ms>td && !l.continuesForward) return 0; }
-    if(l.pct && l.escMonth){ var c=0; for(var y=curYear; y<=Y; y++){ var ed=new Date(y, l.escMonth-1, 1); if(ed>now && ed<=ms) c++; } return l.rent*Math.pow(1+l.pct/100, c); }
+    if(l.pct && l.escMonth){
+      // l.rent is the rent in effect as of `now`. Escalations take effect on
+      // escMonth/1 each year. Step the rent by the NET number of anniversaries
+      // between `now` and this month: positive for future months, negative for
+      // earlier months of the current year that predate an escalation already
+      // taken (so Jan/Feb show the pre-escalation rent, not today's rent).
+      var lo, hi, sign; if(ms>=now){ lo=now; hi=ms; sign=1; } else { lo=ms; hi=now; sign=-1; }
+      var c=0; for(var y=lo.getFullYear(); y<=hi.getFullYear(); y++){ var ed=new Date(y, l.escMonth-1, 1); if(ed>lo && ed<=hi) c++; }
+      return l.rent*Math.pow(1+l.pct/100, sign*c);
+    }
     return l.rent;
   }
   function annualRent(l, Y){ var s=0; for(var m=0;m<12;m++) s+=monthRent(l,Y,m); return s; }
