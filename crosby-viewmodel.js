@@ -279,6 +279,11 @@ function deriveCommercial(p, pBldgs, unitsByBldg, leaseByUnit, tenantById, pLeas
       roster.push({
         tenant: tenant ? tenant.name : "(Vacant)", tenantId: tenant ? tenant.id : null, suite: u.identifier, sf: u.sf || 0,
         rent: lease ? num(lease.monthlyRent) : 0, vacant,
+        commenced: (lease && lease.commenced) || "—",
+        escalation: (lease && lease.escalationPct != null)
+          ? Number(lease.escalationPct).toFixed(1) + "%" + (lease.escalationMonth ? " (" + MONTHS[lease.escalationMonth - 1] + ")" : "")
+          : "—",
+        autoRenew: lease ? (lease.autoRenew == null ? null : !!lease.autoRenew) : null,
         expiry: leaseExpiry(lease),
         expiryIn: humanUntil(lease && lease.terminates, today),
         expiryTone: lease ? dateTone(daysBetween(lease.terminates, today)) : "neutral",

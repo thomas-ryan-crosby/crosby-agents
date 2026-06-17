@@ -121,6 +121,13 @@
     .colpill[data-on="1"]:hover { background: #1a52bd; border-color: #1a52bd; }
     .colpill[data-on="0"] { background: #fff; color: #9ca3af; border-color: #e5e7eb; }
     .colpill[data-on="0"]:hover { border-color: #cbd5e1; color: #6b7280; }
+    /* Floating column control — pinned to the viewport so it's reachable at any scroll position */
+    .colfloat { position: fixed; right: 24px; bottom: 24px; z-index: 60; }
+    .colfloat-btn { display: inline-flex; align-items: center; gap: 7px; background: #1f5fdb; color: #fff; border: none; border-radius: 999px; padding: 10px 16px; font-size: 13px; font-weight: 650; cursor: pointer; box-shadow: 0 6px 18px rgba(31,95,219,.34); transition: background .12s ease, transform .12s ease; }
+    .colfloat-btn:hover { background: #1a52bd; transform: translateY(-1px); }
+    .colfloat.open .colfloat-btn { background: #1a52bd; }
+    .colfloat-panel { display: none; position: absolute; right: 0; bottom: 54px; width: 300px; max-height: min(70vh, 520px); overflow-y: auto; background: #fff; border: 1px solid #e5e7eb; border-radius: 14px; box-shadow: 0 16px 40px rgba(15,23,42,.20); padding: 16px; }
+    .colfloat.open .colfloat-panel { display: block; }
     /* Begin-marketing button (in Lease Action cell) + Leasing area */
     .mktbtn { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 22px; border-radius: 6px; border: 1px solid #e5e7eb; background: #fff; color: #9ca3af; cursor: pointer; transition: all .12s ease; flex: 0 0 auto; }
     .mktbtn:hover { border-color: #1f5fdb; color: #1f5fdb; background: #eff4fd; }
@@ -1856,7 +1863,7 @@ var detailCharts = {};
 // single toggle hides every column in that group (e.g. all Legacy / COI / Contact
 // columns at once). Tenant stays pinned and is not toggleable.
 var SOP_COL_GROUPS = [
-  ['Lease', [['suite','Suite'],['sf','Sq Ft'],['rent','Rent'],['sfyr','$/SF/Yr'],['status','Status'],['expiry','Expiry'],['notice','Notice'],['action','Lease Action']]],
+  ['Lease', [['suite','Suite'],['sf','Sq Ft'],['rent','Rent'],['sfyr','$/SF/Yr'],['status','Status'],['commenced','Commenced'],['expiry','Expiry'],['notice','Notice'],['escalation','Escalation'],['autorenew','Auto-Renew'],['action','Lease Action']]],
   ['Documents', [['lease','Lease'],['legacy','Legacy'],['coistatus','Insurance'],['coidocs','COI Docs']]],
   ['People', [['contact','Tenant Contacts'],['broker','Brokers'],['brokerdocs','Broker Docs']]],
 ];
@@ -2293,10 +2300,24 @@ function sopColToggleBar() {
     }).join('');
     return '<div class="colgrp"><span class="colgrp-lbl">'+g[0]+'</span><div class="colgrp-pills">'+pills+'</div></div>';
   }).join('');
-  return '<div class="card colbar">'+
-    '<div class="colbar-head">'+iconSvg('sliders-horizontal',15,'#1f5fdb')+'<span>Columns</span>'+
-      '<button type="button" class="colbar-reset" onclick="resetSopCols()">Show all</button></div>'+
-    '<div class="colbar-body">'+groups+'</div></div>';
+  return '<div class="colfloat" id="colFloat">'+
+    '<div class="colfloat-panel" id="colFloatPanel">'+
+      '<div class="colbar-head">'+iconSvg('sliders-horizontal',15,'#1f5fdb')+'<span>Columns</span>'+
+        '<button type="button" class="colbar-reset" onclick="resetSopCols()">Show all</button></div>'+
+      '<div class="colbar-body">'+groups+'</div>'+
+    '</div>'+
+    '<button type="button" class="colfloat-btn" onclick="toggleColPanel(event)">'+iconSvg('sliders-horizontal',15,'#fff')+'<span>Columns</span></button>'+
+  '</div>';
+}
+// Floating column panel: pinned bottom-right so columns can be toggled at any
+// scroll position. Toggle on the button; close when clicking outside the panel.
+function toggleColPanel(e){ if(e) e.stopPropagation(); var f=document.getElementById('colFloat'); if(f) f.classList.toggle('open'); }
+if(!window.__colFloatDocBound){
+  window.__colFloatDocBound = true;
+  document.addEventListener('click', function(e){
+    var f=document.getElementById('colFloat');
+    if(f && f.classList.contains('open') && !f.contains(e.target)) f.classList.remove('open');
+  });
 }
 
 // Current Market Info modal — shows the hosted market study in an overlay iframe.
@@ -3894,7 +3915,7 @@ function renderPropertyDetail(p) {
         for(hi=0; hi<maxB; hi++) emptyTail += '<td class="c-broker"></td>';
         if(anyBrokerDocs) emptyTail += '<td class="c-brokerdocs"></td>';
 
-        html += '<table class="unit-table"><thead><tr><th class="c-tenant">Tenant</th><th class="c-suite">Suite</th><th class="c-sf">Square Feet</th><th class="c-rent">Monthly Rent</th><th class="c-sfyr">$/SF/Yr</th><th class="c-status">Status</th><th class="c-expiry">Expiry</th><th class="c-notice">Notice</th><th class="c-action" style="position:relative;">Lease Action '+actionLegend()+'</th><th class="c-lease">Lease</th>'+legacyHdr+'<th class="c-coistatus">Insurance Status</th>'+coiHdr+contactHdr+'</tr></thead><tbody>';
+        html += '<table class="unit-table"><thead><tr><th class="c-tenant">Tenant</th><th class="c-suite">Suite</th><th class="c-sf">Square Feet</th><th class="c-rent">Monthly Rent</th><th class="c-sfyr">$/SF/Yr</th><th class="c-status">Status</th><th class="c-commenced">Commenced</th><th class="c-expiry">Expiry</th><th class="c-notice">Notice</th><th class="c-escalation">Escalation</th><th class="c-autorenew">Auto-Renew</th><th class="c-action" style="position:relative;">Lease Action '+actionLegend()+'</th><th class="c-lease">Lease</th>'+legacyHdr+'<th class="c-coistatus">Insurance Status</th>'+coiHdr+contactHdr+'</tr></thead><tbody>';
         var bTotal = 0, bRent = 0;
         bTenants.forEach(function(t) {
           bTotal += t.sf;
@@ -3923,9 +3944,9 @@ function renderPropertyDetail(p) {
           for(ci=0; ci<maxC; ci++) contactCells += '<td class="c-contact" style="vertical-align:top;min-width:150px;">'+contactColCell(tenCs[ci])+'</td>';
           for(ci=0; ci<maxB; ci++) contactCells += '<td class="c-broker" style="vertical-align:top;min-width:150px;">'+contactColCell(brkCs[ci])+'</td>';
           if(anyBrokerDocs) contactCells += '<td class="c-brokerdocs" style="vertical-align:top;min-width:150px;">'+(t.vacant?'<span style="font-size:11px;color:#d1d5db;">—</span>':brokerDocsColCell(brokerDocsByTenant[t.tenant] || []))+'</td>';
-          html += '<tr><td class="c-tenant" style="font-weight:500;">'+t.tenant+'</td><td class="c-suite">'+t.suite+suiteNote+'</td><td class="c-sf">'+t.sf.toLocaleString()+'</td><td class="c-rent">'+(t.rent>0?'$'+t.rent.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}):'—')+'</td><td class="c-sfyr">'+sfyr+'</td><td class="c-status">'+statusBdg+'</td><td class="c-expiry" style="font-size:12px;'+(t.expiry==='—'?'color:#d1d5db;':'')+'">'+t.expiry+expSub+'</td><td class="c-notice" style="font-size:12px;'+(t.notice==='—'?'color:#d1d5db;':'')+'">'+t.notice+notSub+'</td><td class="c-action"><div style="display:flex;align-items:center;gap:6px;">'+actCell+marketBtn(p,b,t)+'</div></td>'+leaseCell+legacyCells+'<td class="c-coistatus">'+insuranceStatusCell(t.insurance)+'</td>'+coiCells+contactCells+'</tr>';
+          html += '<tr><td class="c-tenant" style="font-weight:500;">'+t.tenant+'</td><td class="c-suite">'+t.suite+suiteNote+'</td><td class="c-sf">'+t.sf.toLocaleString()+'</td><td class="c-rent">'+(t.rent>0?'$'+t.rent.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}):'—')+'</td><td class="c-sfyr">'+sfyr+'</td><td class="c-status">'+statusBdg+'</td><td class="c-commenced" style="font-size:12px;'+(t.commenced==='—'?'color:#d1d5db;':'')+'">'+t.commenced+'</td><td class="c-expiry" style="font-size:12px;'+(t.expiry==='—'?'color:#d1d5db;':'')+'">'+t.expiry+expSub+'</td><td class="c-notice" style="font-size:12px;'+(t.notice==='—'?'color:#d1d5db;':'')+'">'+t.notice+notSub+'</td><td class="c-escalation" style="font-size:12px;'+(t.escalation==='—'?'color:#d1d5db;':'')+'">'+t.escalation+'</td><td class="c-autorenew" style="font-size:12px;">'+(t.autoRenew==null?'<span style="color:#9ca3af;">—</span>':t.autoRenew?'<span style="color:#059669;">✓ Yes</span>':'<span style="color:#dc2626;">✗ No</span>')+'</td><td class="c-action"><div style="display:flex;align-items:center;gap:6px;">'+actCell+marketBtn(p,b,t)+'</div></td>'+leaseCell+legacyCells+'<td class="c-coistatus">'+insuranceStatusCell(t.insurance)+'</td>'+coiCells+contactCells+'</tr>';
         });
-        html += '<tr><td class="c-tenant" style="font-weight:700;">Total ('+bTenants.length+' tenants)</td><td class="c-suite"></td><td class="c-sf">'+bTotal.toLocaleString()+'</td><td class="c-rent">$'+bRent.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})+'</td><td class="c-sfyr"></td><td class="c-status"></td><td class="c-expiry"></td><td class="c-notice"></td><td class="c-action"></td><td class="c-lease"></td>'+emptyTail+'</tr>';
+        html += '<tr><td class="c-tenant" style="font-weight:700;">Total ('+bTenants.length+' tenants)</td><td class="c-suite"></td><td class="c-sf">'+bTotal.toLocaleString()+'</td><td class="c-rent">$'+bRent.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})+'</td><td class="c-sfyr"></td><td class="c-status"></td><td class="c-commenced"></td><td class="c-expiry"></td><td class="c-notice"></td><td class="c-escalation"></td><td class="c-autorenew"></td><td class="c-action"></td><td class="c-lease"></td>'+emptyTail+'</tr>';
         html += '</tbody></table>';
 
         html += '</div>';
