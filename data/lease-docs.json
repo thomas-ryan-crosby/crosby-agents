@@ -19,7 +19,20 @@
       "commencement": "2008-09-01",
       "title": "Amendment #1 to Lease — Acorn Adoption, Inc. — #1 Sanctuary, Suite 301-B"
     },
-    "date": "2008-09-01"
+    "date": "2008-09-01",
+    "lease": {
+      "leaseId": "lease-bldg1-suite301b-acorn",
+      "status": "active",
+      "commenced": "2007-08-31",
+      "terminates": "2027-02-28",
+      "monthlyRent": 437.09,
+      "escalationPct": 3,
+      "escalationMonth": 3,
+      "escalationMonthName": "March",
+      "autoRenew": true,
+      "noticeDays": 90,
+      "noticeDeadline": "2026-11-30"
+    }
   },
   {
     "id": "leasedoc-acornadoptionamd2pdf",
@@ -43,7 +56,20 @@
       "escalation": "3% over the previous year's rent",
       "title": "Amendment #2 to the Lease — Acorn Adoption Company LLC, Sanctuary Office Park, Suite 301-B"
     },
-    "date": "2024-12-03"
+    "date": "2024-12-03",
+    "lease": {
+      "leaseId": "lease-bldg1-suite301b-acorn",
+      "status": "active",
+      "commenced": "2007-08-31",
+      "terminates": "2027-02-28",
+      "monthlyRent": 437.09,
+      "escalationPct": 3,
+      "escalationMonth": 3,
+      "escalationMonthName": "March",
+      "autoRenew": true,
+      "noticeDays": 90,
+      "noticeDeadline": "2026-11-30"
+    }
   },
   {
     "id": "leasedoc-acornadoptionintitalpdf",
@@ -68,7 +94,20 @@
       "escalation": "3% annual increase commencing second full calendar year",
       "title": "Lease of Commercial Property &mdash; Crosby Development Company, LLC &amp; Acorn Adoption, Inc. (Sanctuary Office Park, Building #1, Suite 301-B)"
     },
-    "date": "2007-08-09"
+    "date": "2007-08-09",
+    "lease": {
+      "leaseId": "lease-bldg1-suite301b-acorn",
+      "status": "active",
+      "commenced": "2007-08-31",
+      "terminates": "2027-02-28",
+      "monthlyRent": 437.09,
+      "escalationPct": 3,
+      "escalationMonth": 3,
+      "escalationMonthName": "March",
+      "autoRenew": true,
+      "noticeDays": 90,
+      "noticeDeadline": "2026-11-30"
+    }
   },
   {
     "id": "leasedoc-bayoucpramd1pdf",
@@ -93,7 +132,20 @@
       "escalation": "3% annual increase beginning with the first month in 2018, applicable to all subsequent years including any renewal leases",
       "title": "Amendment #1 to Lease Agreement — Bayou CPR Training, Sanctuary Office Park Suite 301A"
     },
-    "date": "2016-12-15"
+    "date": "2016-12-15",
+    "lease": {
+      "leaseId": "lease-bldg1-suite301a-bayoucpr",
+      "status": "active",
+      "commenced": "2015-09-15",
+      "terminates": "2026-12-31",
+      "monthlyRent": 692.12,
+      "escalationPct": 3,
+      "escalationMonth": 1,
+      "escalationMonthName": "January",
+      "autoRenew": true,
+      "noticeDays": 180,
+      "noticeDeadline": "2026-07-04"
+    }
   },
   {
     "id": "leasedoc-bayoucpramd2pdf",
@@ -118,7 +170,20 @@
       "escalation": "3% over the previous year's rent, applicable to all subsequent years including any renewal leases",
       "title": "Amendment #2 to Lease Agreement — Bayou CPR, Suite 301A, Sanctuary Office Park"
     },
-    "date": "2018-08-01"
+    "date": "2018-08-01",
+    "lease": {
+      "leaseId": "lease-bldg1-suite301a-bayoucpr",
+      "status": "active",
+      "commenced": "2015-09-15",
+      "terminates": "2026-12-31",
+      "monthlyRent": 692.12,
+      "escalationPct": 3,
+      "escalationMonth": 1,
+      "escalationMonthName": "January",
+      "autoRenew": true,
+      "noticeDays": 180,
+      "noticeDeadline": "2026-07-04"
+    }
   },
   {
     "id": "leasedoc-bayoucprinitpdf",
@@ -142,7 +207,20 @@
       "escalation": "3% annual increase over prior year's rent, commencing with the first month of the second calendar year",
       "title": "Lease of Commercial Property — Sanctuary Office Park, Building #1, Suite 301-A — Crosby Development Company, LLC &amp; Bayou CPR"
     },
-    "date": "2015-09-16"
+    "date": "2015-09-16",
+    "lease": {
+      "leaseId": "lease-bldg1-suite301a-bayoucpr",
+      "status": "active",
+      "commenced": "2015-09-15",
+      "terminates": "2026-12-31",
+      "monthlyRent": 692.12,
+      "escalationPct": 3,
+      "escalationMonth": 1,
+      "escalationMonthName": "January",
+      "autoRenew": true,
+      "noticeDays": 180,
+      "noticeDeadline": "2026-07-04"
+    }
   },
   {
     "id": "leasedoc-bldg2flr3302camd1bodyremedypdf",
@@ -166,7 +244,20 @@
       "termination": "2025-08-31",
       "title": "Lease Renewal Notice — Body Remedy Physical Therapy and Wellness, Suite 302 C — Crosby Development Company"
     },
-    "date": "2024-07-01"
+    "date": "2024-07-01",
+    "lease": {
+      "leaseId": "lease-bldg1-suite303a-bodyremedy",
+      "status": "active",
+      "commenced": "2026-04-01",
+      "terminates": "2027-03-31",
+      "monthlyRent": 450,
+      "escalationPct": 3,
+      "escalationMonth": 4,
+      "escalationMonthName": "April",
+      "autoRenew": true,
+      "noticeDays": 90,
+      "noticeDeadline": "2026-12-31"
+    }
   },
   {
     "id": "leasedoc-brandnerlawfirmsignedpdf",
@@ -191,7 +282,20 @@
       "escalation": "3% annual increase commencing first month of the second calendar year of the lease term, applicable to all subsequent years including any renewal leases",
       "title": "Lease of Commercial Property — Crosby Development Company, LLC &amp; Brandner Law Firm (Suite 303)"
     },
-    "date": "2025-11-21"
+    "date": "2025-11-21",
+    "lease": {
+      "leaseId": "lease-bldg1-suite303b-brandner",
+      "status": "vacating",
+      "commenced": "2025-11-24",
+      "terminates": "2028-11-30",
+      "monthlyRent": 431,
+      "escalationPct": 3,
+      "escalationMonth": 11,
+      "escalationMonthName": "November",
+      "autoRenew": false,
+      "noticeDays": 90,
+      "noticeDeadline": "2028-09-01"
+    }
   },
   {
     "id": "leasedoc-brandnerbldg1ste303breductionnotice",
@@ -215,7 +319,20 @@
       "escalation": "3% annual (Dec); all other lease terms unchanged",
       "title": "Notice of Premises & Rent Reduction — Building #1, Suite 303B (Brandner Law Firm) — reduced to 303B (~235 SF) at $431/mo after 303A re-leased; in consideration of tenant's 2025-12-04 termination notice"
     },
-    "date": "2026-04-01"
+    "date": "2026-04-01",
+    "lease": {
+      "leaseId": "lease-bldg1-suite303b-brandner",
+      "status": "vacating",
+      "commenced": "2025-11-24",
+      "terminates": "2028-11-30",
+      "monthlyRent": 431,
+      "escalationPct": 3,
+      "escalationMonth": 11,
+      "escalationMonthName": "November",
+      "autoRenew": false,
+      "noticeDays": 90,
+      "noticeDeadline": "2028-09-01"
+    }
   },
   {
     "id": "leasedoc-fspinitpdf",
@@ -239,7 +356,20 @@
       "termination": "2021-12-31",
       "title": "Lease of Commercial Property — Sanctuary Office Park, Building #1, Suite 100 (Crosby Development Company, LLC / Fine Southern Properties)"
     },
-    "date": "2021-05-25"
+    "date": "2021-05-25",
+    "lease": {
+      "leaseId": "lease-bldg1-suite100-fsp",
+      "status": "active",
+      "commenced": "2020-03-01",
+      "terminates": "2026-12-31",
+      "monthlyRent": 1500,
+      "escalationPct": null,
+      "escalationMonth": null,
+      "escalationMonthName": null,
+      "autoRenew": false,
+      "noticeDays": null,
+      "noticeDeadline": null
+    }
   },
   {
     "id": "leasedoc-benjaminamd1pdf",
@@ -263,7 +393,20 @@
       "termination": "2028-02-28",
       "title": "Amendment #1 to Lease — Sanctuary Office Park, Building #2, Suite 100 (Crosby Development Company, LLC / Margaret Benjamin LLC)"
     },
-    "date": "2025-12-08"
+    "date": "2025-12-08",
+    "lease": {
+      "leaseId": "lease-bldg2-suite100-benjamin",
+      "status": "active",
+      "commenced": "2021-03-01",
+      "terminates": "2028-02-28",
+      "monthlyRent": 2144.65,
+      "escalationPct": 3,
+      "escalationMonth": 3,
+      "escalationMonthName": "March",
+      "autoRenew": false,
+      "noticeDays": 180,
+      "noticeDeadline": "2027-08-28"
+    }
   },
   {
     "id": "leasedoc-benjamininitpdf",
@@ -287,7 +430,20 @@
       "termination": "2026-02-28",
       "title": "Lease of Commercial Property — Sanctuary Office Park, Building #2, Suite 100 (Crosby Development Company, LLC / Margaret Benjamin LLC) — 5-yr primary term, full-service gross"
     },
-    "date": "2020-12-08"
+    "date": "2020-12-08",
+    "lease": {
+      "leaseId": "lease-bldg2-suite100-benjamin",
+      "status": "active",
+      "commenced": "2021-03-01",
+      "terminates": "2028-02-28",
+      "monthlyRent": 2144.65,
+      "escalationPct": 3,
+      "escalationMonth": 3,
+      "escalationMonthName": "March",
+      "autoRenew": false,
+      "noticeDays": 180,
+      "noticeDeadline": "2027-08-28"
+    }
   },
   {
     "id": "leasedoc-mandevilletechnologyinitpdf",
@@ -312,7 +468,20 @@
       "escalation": "3% increase to base rent commencing with the first month of the second calendar year of the lease term; applicable to all subsequent years including renewal years",
       "title": "Lease of Commercial Property — Crosby Development Company, LLC &amp; Mandeville Technology (Sanctuary Office Park, Building #1, Suite 300A)"
     },
-    "date": "2021-04-07"
+    "date": "2021-04-07",
+    "lease": {
+      "leaseId": "lease-bldg1-suite300a-mandtech",
+      "status": "active",
+      "commenced": "2021-04-01",
+      "terminates": "2027-02-28",
+      "monthlyRent": 504.76,
+      "escalationPct": 3,
+      "escalationMonth": 3,
+      "escalationMonthName": "March",
+      "autoRenew": true,
+      "noticeDays": 90,
+      "noticeDeadline": "2026-11-30"
+    }
   },
   {
     "id": "leasedoc-nirvanamassageamd1pdf",
@@ -336,7 +505,20 @@
       "escalation": "3% annual increase beginning first month of 2015 over the previous year's rent",
       "title": "Amendment #1 to Lease Agreement &mdash; Nirvana Massage Therapy, Suite 306, Sanctuary Office Park Building #1"
     },
-    "date": "2014-03-01"
+    "date": "2014-03-01",
+    "lease": {
+      "leaseId": "lease-bldg1-suite306-nirvana",
+      "status": "active",
+      "commenced": "2013-06-30",
+      "terminates": "2026-12-31",
+      "monthlyRent": 1331.65,
+      "escalationPct": 3,
+      "escalationMonth": 1,
+      "escalationMonthName": "January",
+      "autoRenew": true,
+      "noticeDays": 180,
+      "noticeDeadline": "2026-07-04"
+    }
   },
   {
     "id": "leasedoc-nirvanamassageamd2pdf",
@@ -360,7 +542,20 @@
       "escalation": "3% annual increase over previous year's rent, commencing with the first month in 2018, applicable to all subsequent years including any renewal leases",
       "title": "Amendment #2 to Lease Agreement &mdash; Nirvana Massage Therapy, Sanctuary Office Park, Building #1, Suite 306"
     },
-    "date": "2016-12-15"
+    "date": "2016-12-15",
+    "lease": {
+      "leaseId": "lease-bldg1-suite306-nirvana",
+      "status": "active",
+      "commenced": "2013-06-30",
+      "terminates": "2026-12-31",
+      "monthlyRent": 1331.65,
+      "escalationPct": 3,
+      "escalationMonth": 1,
+      "escalationMonthName": "January",
+      "autoRenew": true,
+      "noticeDays": 180,
+      "noticeDeadline": "2026-07-04"
+    }
   },
   {
     "id": "leasedoc-nirvanamassageamd3pdf",
@@ -385,7 +580,20 @@
       "escalation": "3% over the previous year's rent",
       "title": "Amendment #3 to Lease Agreement — Nirvana Massage Therapy, Sanctuary Office Park Building #1 Suite 306"
     },
-    "date": "2018-08-28"
+    "date": "2018-08-28",
+    "lease": {
+      "leaseId": "lease-bldg1-suite306-nirvana",
+      "status": "active",
+      "commenced": "2013-06-30",
+      "terminates": "2026-12-31",
+      "monthlyRent": 1331.65,
+      "escalationPct": 3,
+      "escalationMonth": 1,
+      "escalationMonthName": "January",
+      "autoRenew": true,
+      "noticeDays": 180,
+      "noticeDeadline": "2026-07-04"
+    }
   },
   {
     "id": "leasedoc-nirvanamassageinitialpdf",
@@ -410,7 +618,20 @@
       "escalation": "3% annual increase commencing with the first month of the second calendar year",
       "title": "Lease of Commercial Property — Sanctuary Office Park, Building #1, Suite 306 — Nirvana Massage"
     },
-    "date": "2013-06-14"
+    "date": "2013-06-14",
+    "lease": {
+      "leaseId": "lease-bldg1-suite306-nirvana",
+      "status": "active",
+      "commenced": "2013-06-30",
+      "terminates": "2026-12-31",
+      "monthlyRent": 1331.65,
+      "escalationPct": 3,
+      "escalationMonth": 1,
+      "escalationMonthName": "January",
+      "autoRenew": true,
+      "noticeDays": 180,
+      "noticeDeadline": "2026-07-04"
+    }
   },
   {
     "id": "leasedoc-securitynationalamd1pdf",
@@ -433,7 +654,20 @@
       "monthlyRent": "$1,264.45",
       "title": "Amendment #1 to Lease — Sanctuary Office Park, Building #1, Suite 302 — Crosby Development Company, LLC &amp; Security National Life Insurance Company"
     },
-    "date": "2015-10"
+    "date": "2015-10",
+    "lease": {
+      "leaseId": "lease-bldg1-suite302-secnational",
+      "status": "vacating",
+      "commenced": "2015-07-01",
+      "terminates": "2026-06-30",
+      "monthlyRent": 1609.96,
+      "escalationPct": 3,
+      "escalationMonth": 7,
+      "escalationMonthName": "July",
+      "autoRenew": false,
+      "noticeDays": 180,
+      "noticeDeadline": "2026-01-01"
+    }
   },
   {
     "id": "leasedoc-securitynationalamd2finalmay2019pdf",
@@ -457,7 +691,20 @@
       "escalation": "3% annually beginning 2021-02-01",
       "title": "Amendment #2 to the Lease — Sanctuary Office Park, Building #1, Suite 302 / 302A — Crosby Development Company, LLC &amp; Security National Life Insurance Company"
     },
-    "date": "2019-07-01"
+    "date": "2019-07-01",
+    "lease": {
+      "leaseId": "lease-bldg1-suite302-secnational",
+      "status": "vacating",
+      "commenced": "2015-07-01",
+      "terminates": "2026-06-30",
+      "monthlyRent": 1609.96,
+      "escalationPct": 3,
+      "escalationMonth": 7,
+      "escalationMonthName": "July",
+      "autoRenew": false,
+      "noticeDays": 180,
+      "noticeDeadline": "2026-01-01"
+    }
   },
   {
     "id": "leasedoc-securitynationalamd2march2018pdf",
@@ -482,7 +729,20 @@
       "escalation": "3% over the previous year's rent, applies to all renewals",
       "title": "Amendment #2 to the Lease — Sanctuary Office Park, Building #1, Suite 302 &amp; 302A — Crosby Development Company, LLC &amp; Security National Life Insurance Company (March 21, 2018)"
     },
-    "date": "2018-03-21"
+    "date": "2018-03-21",
+    "lease": {
+      "leaseId": "lease-bldg1-suite302-secnational",
+      "status": "vacating",
+      "commenced": "2015-07-01",
+      "terminates": "2026-06-30",
+      "monthlyRent": 1609.96,
+      "escalationPct": 3,
+      "escalationMonth": 7,
+      "escalationMonthName": "July",
+      "autoRenew": false,
+      "noticeDays": 180,
+      "noticeDeadline": "2026-01-01"
+    }
   },
   {
     "id": "leasedoc-securitynationalamd3072024pdf",
@@ -507,7 +767,20 @@
       "escalation": "3% annual increase over previous year's rent, applies to all renewals",
       "title": "Amendment #3 to the Lease — Security National Life Insurance Company / Crosby Development Company, LLC — #1 Sanctuary, Suite 302 and 302A (July 17, 2024)"
     },
-    "date": "2024-07-17"
+    "date": "2024-07-17",
+    "lease": {
+      "leaseId": "lease-bldg1-suite302-secnational",
+      "status": "vacating",
+      "commenced": "2015-07-01",
+      "terminates": "2026-06-30",
+      "monthlyRent": 1609.96,
+      "escalationPct": 3,
+      "escalationMonth": 7,
+      "escalationMonthName": "July",
+      "autoRenew": false,
+      "noticeDays": 180,
+      "noticeDeadline": "2026-01-01"
+    }
   },
   {
     "id": "leasedoc-securitynationalamd3112025pdf",
@@ -531,7 +804,20 @@
       "escalation": "Not stated",
       "title": "Amendment #3 to Lease &mdash; Sanctuary Office Park, Building #1, Suites 302 and 303 &mdash; Security National Life Insurance Company"
     },
-    "date": "2025-11-18"
+    "date": "2025-11-18",
+    "lease": {
+      "leaseId": "lease-bldg1-suite302-secnational",
+      "status": "vacating",
+      "commenced": "2015-07-01",
+      "terminates": "2026-06-30",
+      "monthlyRent": 1609.96,
+      "escalationPct": 3,
+      "escalationMonth": 7,
+      "escalationMonthName": "July",
+      "autoRenew": false,
+      "noticeDays": 180,
+      "noticeDeadline": "2026-01-01"
+    }
   },
   {
     "id": "leasedoc-securitynationalamd3spacereleasepdf",
@@ -553,7 +839,20 @@
       "monthlyRent": "Reduced by $400.51; new monthly rent $2,145.59 effective November",
       "title": "Amendment #3 to Lease (Space Release) — Security National · Suite 302/302A"
     },
-    "date": "2024-10-08"
+    "date": "2024-10-08",
+    "lease": {
+      "leaseId": "lease-bldg1-suite302-secnational",
+      "status": "vacating",
+      "commenced": "2015-07-01",
+      "terminates": "2026-06-30",
+      "monthlyRent": 1609.96,
+      "escalationPct": 3,
+      "escalationMonth": 7,
+      "escalationMonthName": "July",
+      "autoRenew": false,
+      "noticeDays": 180,
+      "noticeDeadline": "2026-01-01"
+    }
   },
   {
     "id": "leasedoc-securitynationalinitialpdf",
@@ -578,7 +877,20 @@
       "escalation": "3% increase over previous year's rent each subsequent year (commencing with second calendar year of lease term)",
       "title": "Lease of Commercial Property — Security National Life Insurance Company — Sanctuary Office Park, Building #1, Suite 302"
     },
-    "date": "2015-06-10"
+    "date": "2015-06-10",
+    "lease": {
+      "leaseId": "lease-bldg1-suite302-secnational",
+      "status": "vacating",
+      "commenced": "2015-07-01",
+      "terminates": "2026-06-30",
+      "monthlyRent": 1609.96,
+      "escalationPct": 3,
+      "escalationMonth": 7,
+      "escalationMonthName": "July",
+      "autoRenew": false,
+      "noticeDays": 180,
+      "noticeDeadline": "2026-01-01"
+    }
   },
   {
     "id": "leasedoc-bldg2flr3303amd44youreyeseyecare2020pdf",
@@ -602,7 +914,20 @@
       "escalation": "3% increase to $3,616.46 beginning 2017-11-01",
       "title": "Amendment #4 to Lease — Sanctuary Office Park, Building #2, Suite 303 — 4 Your Eyes, LLC"
     },
-    "date": "2017-07-24"
+    "date": "2017-07-24",
+    "lease": {
+      "leaseId": "lease-bldg2-suite303-4-your-eyes",
+      "status": "active",
+      "commenced": "2006-05-01",
+      "terminates": "2027-03-31",
+      "monthlyRent": 4304.39,
+      "escalationPct": 3,
+      "escalationMonth": 4,
+      "escalationMonthName": "April",
+      "autoRenew": true,
+      "noticeDays": 90,
+      "noticeDeadline": "2026-12-31"
+    }
   },
   {
     "id": "leasedoc-bldg2flr2206amd3assuredpartnerspdf",
@@ -627,7 +952,20 @@
       "escalation": "3% annual Base Rent escalation on renewal options",
       "title": "Third Amendment to Lease — Sanctuary Office Park, Building #2, Suite 206 — Crosby Development Company, LLC &amp; AssuredPartners Gulf Coast Insurance Agency, LLC"
     },
-    "date": "2025-04"
+    "date": "2025-04",
+    "lease": {
+      "leaseId": "lease-bldg2-suite206-assured-part",
+      "status": "vacating",
+      "commenced": "2025-07-01",
+      "terminates": "2026-06-30",
+      "monthlyRent": 3842.25,
+      "escalationPct": 3,
+      "escalationMonth": 7,
+      "escalationMonthName": "July",
+      "autoRenew": null,
+      "noticeDays": null,
+      "noticeDeadline": null
+    }
   },
   {
     "id": "leasedoc-bldg2flr2205initcarverdardenpdf",
@@ -652,7 +990,20 @@
       "escalation": "3% annual increase commencing with the first month of the second calendar year of the lease term",
       "title": "Lease of Commercial Property — Sanctuary Office Park Bldg #2, Suite 205 — Crosby Development Company, LLC &amp; Carver, Darden, Koretzky, Tessier, Finn, Blossman &amp; Areaux, LLC"
     },
-    "date": "2024-10-23"
+    "date": "2024-10-23",
+    "lease": {
+      "leaseId": "lease-bldg2-suite205-carver",
+      "status": "active",
+      "commenced": "2025-01-01",
+      "terminates": "2027-12-31",
+      "monthlyRent": 2171.58,
+      "escalationPct": 3,
+      "escalationMonth": 1,
+      "escalationMonthName": "January",
+      "autoRenew": null,
+      "noticeDays": null,
+      "noticeDeadline": null
+    }
   },
   {
     "id": "leasedoc-bldg2flr2204cypresskeyrealtypdf",
@@ -677,7 +1028,20 @@
       "escalation": "Three percent (3%) increase over the previous year's rent, commencing with the first month of the second calendar year of the lease term, applicable to all subsequent years including any renewal leases",
       "title": "Lease of Commercial Property — Sanctuary Office Park, Building #2, Suite 204 — Cypress Key Realty LLC"
     },
-    "date": "2024-01-06"
+    "date": "2024-01-06",
+    "lease": {
+      "leaseId": "lease-bldg2-suite204-cypress-key",
+      "status": "active",
+      "commenced": "2024-01-08",
+      "terminates": "2027-12-31",
+      "monthlyRent": 1392.43,
+      "escalationPct": 3,
+      "escalationMonth": 1,
+      "escalationMonthName": "January",
+      "autoRenew": null,
+      "noticeDays": null,
+      "noticeDeadline": null
+    }
   },
   {
     "id": "leasedoc-bldg2flr3301amd5hartfordfireinsurancepdf",
@@ -702,7 +1066,20 @@
       "escalation": "None",
       "title": "Amendment #5 to the Lease — Sanctuary Building #2, Suite 301 — Crosby Development Company, LLC &amp; Hartford Fire Insurance Company"
     },
-    "date": "2024-01-23"
+    "date": "2024-01-23",
+    "lease": {
+      "leaseId": "lease-bldg2-suite301-hartford",
+      "status": "active",
+      "commenced": "2005-10-01",
+      "terminates": "2029-09-30",
+      "monthlyRent": 4213.62,
+      "escalationPct": 2,
+      "escalationMonth": 10,
+      "escalationMonthName": "October",
+      "autoRenew": false,
+      "noticeDays": 90,
+      "noticeDeadline": "2029-06-30"
+    }
   },
   {
     "id": "leasedoc-bldg2flr2203nationwidepdf",
@@ -727,7 +1104,20 @@
       "escalation": "3% annual increase each subsequent year",
       "title": "Amendment #1 to Lease — #2 Sanctuary, Suite 203, Nationwide"
     },
-    "date": "2025-07-18"
+    "date": "2025-07-18",
+    "lease": {
+      "leaseId": "lease-bldg2-suite203-nationwide",
+      "status": "active",
+      "commenced": "2025-11-01",
+      "terminates": "2026-10-31",
+      "monthlyRent": 1867.18,
+      "escalationPct": 3,
+      "escalationMonth": 11,
+      "escalationMonthName": "November",
+      "autoRenew": null,
+      "noticeDays": 60,
+      "noticeDeadline": null
+    }
   },
   {
     "id": "leasedoc-northshorelazerllcsignedpdf",
@@ -752,7 +1142,20 @@
       "escalation": "3% annual increase commencing with the first month of the second calendar year of the lease term, applicable to all subsequent years including any renewal leases",
       "title": "Lease of Commercial Property — Crosby Development Company, LLC &amp; Northshore Laser LLC (Sanctuary Office Park, Suite 302B)"
     },
-    "date": "2024-10-14"
+    "date": "2024-10-14",
+    "lease": {
+      "leaseId": "lease-bldg2-suite302c-ns-laser",
+      "status": "active",
+      "commenced": "2024-10-15",
+      "terminates": "2026-10-14",
+      "monthlyRent": 309,
+      "escalationPct": 3,
+      "escalationMonth": 10,
+      "escalationMonthName": "October",
+      "autoRenew": null,
+      "noticeDays": null,
+      "noticeDeadline": null
+    }
   },
   {
     "id": "leasedoc-leasejudgepenzatosigned1pdf",
@@ -777,7 +1180,20 @@
       "escalation": "2% annual increase commencing with the first month of the second calendar year of the lease term",
       "title": "Lease of Commercial Property &mdash; Sanctuary Office Park, Building #2, Suite 103 (Crosby Development Company, LLC &amp; Hon. Allison H. Penzato)"
     },
-    "date": "2025-01-17"
+    "date": "2025-01-17",
+    "lease": {
+      "leaseId": "lease-bldg2-suite103-penzato",
+      "status": "active",
+      "commenced": "2025-03-01",
+      "terminates": "2031-02-28",
+      "monthlyRent": 3009,
+      "escalationPct": 2,
+      "escalationMonth": 3,
+      "escalationMonthName": "March",
+      "autoRenew": null,
+      "noticeDays": null,
+      "noticeDeadline": null
+    }
   },
   {
     "id": "leasedoc-bldg2flr3304amd11garythomascpapdf",
@@ -801,7 +1217,20 @@
       "termination": "2025-07-31",
       "title": "Lease Renewal Notice (AMD11) — Gary Thomas CPA, #2 Sanctuary, Suite 304"
     },
-    "date": "2024-07-01"
+    "date": "2024-07-01",
+    "lease": {
+      "leaseId": "lease-bldg2-suite304-thomas",
+      "status": "active",
+      "commenced": "2025-08-01",
+      "terminates": "2027-07-31",
+      "monthlyRent": 2007.32,
+      "escalationPct": 3,
+      "escalationMonth": 8,
+      "escalationMonthName": "August",
+      "autoRenew": true,
+      "noticeDays": null,
+      "noticeDeadline": null
+    }
   },
   {
     "id": "leasedoc-bldg2flr3304amd12garythomascpapdf",
@@ -826,7 +1255,20 @@
       "escalation": "3% per year, applies to all renewals",
       "title": "Amendment #12 to Lease of Commercial Property &mdash; Suite 304, #2 Sanctuary &mdash; Gary M. Thomas, CPA"
     },
-    "date": "2025-06-06"
+    "date": "2025-06-06",
+    "lease": {
+      "leaseId": "lease-bldg2-suite304-thomas",
+      "status": "active",
+      "commenced": "2025-08-01",
+      "terminates": "2027-07-31",
+      "monthlyRent": 2007.32,
+      "escalationPct": 3,
+      "escalationMonth": 8,
+      "escalationMonthName": "August",
+      "autoRenew": true,
+      "noticeDays": null,
+      "noticeDeadline": null
+    }
   },
   {
     "id": "leasedoc-bldg4flr12suite101204watchsystemspdf",
@@ -851,7 +1293,20 @@
       "escalation": "3% annual",
       "title": "Amendment #2 to the Lease — Watch Systems, #4 Sanctuary, Suite 101"
     },
-    "date": "2024-05-01"
+    "date": "2024-05-01",
+    "lease": {
+      "leaseId": "lease-bldg4-suite101-watch-systems",
+      "status": "active",
+      "commenced": "2021-07-01",
+      "terminates": "2028-06-30",
+      "monthlyRent": 20832.51,
+      "escalationPct": 3,
+      "escalationMonth": 7,
+      "escalationMonthName": "July",
+      "autoRenew": false,
+      "noticeDays": null,
+      "noticeDeadline": null
+    }
   },
   {
     "id": "leasedoc-watchsystemsbldg4ste101amd3",
@@ -876,7 +1331,20 @@
       "escalation": "3% annual",
       "title": "Amendment #3 to Lease — Building #4, Suite 101 (Watch Systems) — extend to 2028-06-30, rent $20,832.51 eff 2026-07-01, one 2-yr option (current)"
     },
-    "date": "2026-05-22"
+    "date": "2026-05-22",
+    "lease": {
+      "leaseId": "lease-bldg4-suite101-watch-systems",
+      "status": "active",
+      "commenced": "2021-07-01",
+      "terminates": "2028-06-30",
+      "monthlyRent": 20832.51,
+      "escalationPct": 3,
+      "escalationMonth": 7,
+      "escalationMonthName": "July",
+      "autoRenew": false,
+      "noticeDays": null,
+      "noticeDeadline": null
+    }
   },
   {
     "id": "leasedoc-watchsystemsamd1pdf",
@@ -899,7 +1367,20 @@
       "monthlyRent": "652.31",
       "title": "Amendment #1 to Lease — Watch Systems &amp; Crosby Development Company, LLC — Sanctuary Office Park, Building #4, Suite 101"
     },
-    "date": "2022-08-16"
+    "date": "2022-08-16",
+    "lease": {
+      "leaseId": "lease-bldg4-suite101-watch-systems",
+      "status": "active",
+      "commenced": "2021-07-01",
+      "terminates": "2028-06-30",
+      "monthlyRent": 20832.51,
+      "escalationPct": 3,
+      "escalationMonth": 7,
+      "escalationMonthName": "July",
+      "autoRenew": false,
+      "noticeDays": null,
+      "noticeDeadline": null
+    }
   },
   {
     "id": "leasedoc-watchsystemsinitpdf",
@@ -924,7 +1405,20 @@
       "escalation": "3% increase on the second calendar year of the lease term, applicable to all subsequent years including renewals",
       "title": "Lease of Commercial Property — Crosby Development Company, LLC &amp; Watch Systems (Sanctuary Office Park, Building #4, Suite 101 &amp; 201)"
     },
-    "date": "2021-04-22"
+    "date": "2021-04-22",
+    "lease": {
+      "leaseId": "lease-bldg4-suite101-watch-systems",
+      "status": "active",
+      "commenced": "2021-07-01",
+      "terminates": "2028-06-30",
+      "monthlyRent": 20832.51,
+      "escalationPct": 3,
+      "escalationMonth": 7,
+      "escalationMonthName": "July",
+      "autoRenew": false,
+      "noticeDays": null,
+      "noticeDeadline": null
+    }
   },
   {
     "id": "leasedoc-bldg5flr1103amd1mapspdf",
@@ -949,7 +1443,20 @@
       "escalation": "3% annually",
       "title": "Amendment #1 to Lease — 5 Sanctuary Blvd, Suite 103, Mandeville, LA — Crosby Development Company, LLC &amp; Mediation Arbitration Professional Systems, INC"
     },
-    "date": "2025-04-23"
+    "date": "2025-04-23",
+    "lease": {
+      "leaseId": "lease-bldg5-suite103-maps",
+      "status": "active",
+      "commenced": "2022-05-01",
+      "terminates": "2028-06-30",
+      "monthlyRent": 3279.27,
+      "escalationPct": 3,
+      "escalationMonth": 5,
+      "escalationMonthName": "May",
+      "autoRenew": null,
+      "noticeDays": null,
+      "noticeDeadline": null
+    }
   },
   {
     "id": "leasedoc-movedout-300",
@@ -1028,7 +1535,20 @@
       "escalation": "3% annual, effective each August 1",
       "title": "Lease Renewal Notice — Gary M. Thomas, CPA — Building 2, Suite 304"
     },
-    "date": "2026-06-12"
+    "date": "2026-06-12",
+    "lease": {
+      "leaseId": "lease-bldg2-suite304-thomas",
+      "status": "active",
+      "commenced": "2025-08-01",
+      "terminates": "2027-07-31",
+      "monthlyRent": 2007.32,
+      "escalationPct": 3,
+      "escalationMonth": 8,
+      "escalationMonthName": "August",
+      "autoRenew": true,
+      "noticeDays": null,
+      "noticeDeadline": null
+    }
   },
   {
     "id": "leasedoc-nationwidebldg2ste203init",
@@ -1052,7 +1572,20 @@
       "termination": "2024-10-31",
       "title": "Lease of Commercial Property — Building #2, Suite 203 (Crosby / Nationwide Mutual Insurance Company) — 12-mo term, full-service gross"
     },
-    "date": "2023-11-03"
+    "date": "2023-11-03",
+    "lease": {
+      "leaseId": "lease-bldg2-suite203-nationwide",
+      "status": "active",
+      "commenced": "2025-11-01",
+      "terminates": "2026-10-31",
+      "monthlyRent": 1867.18,
+      "escalationPct": 3,
+      "escalationMonth": 11,
+      "escalationMonthName": "November",
+      "autoRenew": null,
+      "noticeDays": 60,
+      "noticeDeadline": null
+    }
   },
   {
     "id": "leasedoc-nationwidebldg2ste203renewalnotice2024",
@@ -1076,7 +1609,20 @@
       "termination": "2025-10-31",
       "title": "Renewal Notice — Building #2, Suite 203 (Nationwide) — First Renewal Term, rent $1,812.80"
     },
-    "date": "2024-06-24"
+    "date": "2024-06-24",
+    "lease": {
+      "leaseId": "lease-bldg2-suite203-nationwide",
+      "status": "active",
+      "commenced": "2025-11-01",
+      "terminates": "2026-10-31",
+      "monthlyRent": 1867.18,
+      "escalationPct": 3,
+      "escalationMonth": 11,
+      "escalationMonthName": "November",
+      "autoRenew": null,
+      "noticeDays": 60,
+      "noticeDeadline": null
+    }
   },
   {
     "id": "leasedoc-centraltitlebldg2ste102init",
@@ -1100,7 +1646,20 @@
       "termination": "2025-08-31",
       "title": "Lease of Commercial Property — Building #2, Suite 102 (Crosby / Central Title / Callihan Law) — 24-mo term, full-service gross"
     },
-    "date": "2023-08-17"
+    "date": "2023-08-17",
+    "lease": {
+      "leaseId": "lease-bldg2-suite102-central-title",
+      "status": "active",
+      "commenced": "2023-09-01",
+      "terminates": "2027-08-31",
+      "monthlyRent": 2784.86,
+      "escalationPct": 3,
+      "escalationMonth": 9,
+      "escalationMonthName": "September",
+      "autoRenew": true,
+      "noticeDays": 90,
+      "noticeDeadline": "2027-06-02"
+    }
   },
   {
     "id": "leasedoc-centraltitlebldg2ste102amd1",
@@ -1124,7 +1683,20 @@
       "termination": "2027-08-31",
       "title": "Amendment #1 to Lease — Building #2, Suite 102 (Central Title / Callihan Law) — 2-yr extension, auto-renew"
     },
-    "date": "2025-05-23"
+    "date": "2025-05-23",
+    "lease": {
+      "leaseId": "lease-bldg2-suite102-central-title",
+      "status": "active",
+      "commenced": "2023-09-01",
+      "terminates": "2027-08-31",
+      "monthlyRent": 2784.86,
+      "escalationPct": 3,
+      "escalationMonth": 9,
+      "escalationMonthName": "September",
+      "autoRenew": true,
+      "noticeDays": 90,
+      "noticeDeadline": "2027-06-02"
+    }
   },
   {
     "id": "leasedoc-standardmortgagebldg2ste201init",
@@ -1148,7 +1720,20 @@
       "termination": "2024-02-28",
       "title": "Lease of Commercial Property — Building #2, Suite 201 (Crosby / Standard Mortgage Corporation) — current primary lease, full-service gross"
     },
-    "date": "2020-12-07"
+    "date": "2020-12-07",
+    "lease": {
+      "leaseId": "lease-bldg2-suite201-standard",
+      "status": "active",
+      "commenced": "2021-03-01",
+      "terminates": "2029-02-28",
+      "monthlyRent": 3265,
+      "escalationPct": 3,
+      "escalationMonth": 3,
+      "escalationMonthName": "March",
+      "autoRenew": false,
+      "noticeDays": null,
+      "noticeDeadline": null
+    }
   },
   {
     "id": "leasedoc-standardmortgagebldg2ste201amd1",
@@ -1172,7 +1757,20 @@
       "termination": "2026-02-28",
       "title": "Amendment #1 to Lease — Building #2, Suite 201 (Standard Mortgage) — extended to 2026-02-28, rent $3,077.83"
     },
-    "date": "2023-08-22"
+    "date": "2023-08-22",
+    "lease": {
+      "leaseId": "lease-bldg2-suite201-standard",
+      "status": "active",
+      "commenced": "2021-03-01",
+      "terminates": "2029-02-28",
+      "monthlyRent": 3265,
+      "escalationPct": 3,
+      "escalationMonth": 3,
+      "escalationMonthName": "March",
+      "autoRenew": false,
+      "noticeDays": null,
+      "noticeDeadline": null
+    }
   },
   {
     "id": "leasedoc-standardmortgagebldg2ste201amd2",
@@ -1196,7 +1794,20 @@
       "termination": "2029-02-28",
       "title": "Amendment #2 to Lease — Building #2, Suite 201 (Standard Mortgage) — extended to 2029-02-28, rent $3,265.00 (current)"
     },
-    "date": "2025-09-03"
+    "date": "2025-09-03",
+    "lease": {
+      "leaseId": "lease-bldg2-suite201-standard",
+      "status": "active",
+      "commenced": "2021-03-01",
+      "terminates": "2029-02-28",
+      "monthlyRent": 3265,
+      "escalationPct": 3,
+      "escalationMonth": 3,
+      "escalationMonthName": "March",
+      "autoRenew": false,
+      "noticeDays": null,
+      "noticeDeadline": null
+    }
   },
   {
     "id": "leasedoc-standardmortgagebldg2ste201lease2014",
@@ -1220,7 +1831,20 @@
       "termination": "2017-05-31",
       "title": "Lease of Commercial Property (2014, legacy) — Building #2, Suite 201 (Standard Mortgage Insurance Agency) — predecessor to 2021 lease"
     },
-    "date": "2014-04-30"
+    "date": "2014-04-30",
+    "lease": {
+      "leaseId": "lease-bldg2-suite201-standard",
+      "status": "active",
+      "commenced": "2021-03-01",
+      "terminates": "2029-02-28",
+      "monthlyRent": 3265,
+      "escalationPct": 3,
+      "escalationMonth": 3,
+      "escalationMonthName": "March",
+      "autoRenew": false,
+      "noticeDays": null,
+      "noticeDeadline": null
+    }
   },
   {
     "id": "leasedoc-standardmortgagebldg2ste201amd12016",
@@ -1242,7 +1866,20 @@
       "monthlyRent": "USD 3651.16",
       "title": "Amendment #1 (2016, legacy) — added Suite 204 Mar 15 2016–May 31 2017, rent $3,651.16"
     },
-    "date": "2016-03-01"
+    "date": "2016-03-01",
+    "lease": {
+      "leaseId": "lease-bldg2-suite201-standard",
+      "status": "active",
+      "commenced": "2021-03-01",
+      "terminates": "2029-02-28",
+      "monthlyRent": 3265,
+      "escalationPct": 3,
+      "escalationMonth": 3,
+      "escalationMonthName": "March",
+      "autoRenew": false,
+      "noticeDays": null,
+      "noticeDeadline": null
+    }
   },
   {
     "id": "leasedoc-standardmortgagebldg2ste201renewalnotice2016",
@@ -1263,7 +1900,20 @@
       "dated": "2016-11-29",
       "title": "Renewal Notice (2016, legacy) — Suite 201, 2-year option exercised (Standard Mortgage Insurance Agency)"
     },
-    "date": "2016-11-29"
+    "date": "2016-11-29",
+    "lease": {
+      "leaseId": "lease-bldg2-suite201-standard",
+      "status": "active",
+      "commenced": "2021-03-01",
+      "terminates": "2029-02-28",
+      "monthlyRent": 3265,
+      "escalationPct": 3,
+      "escalationMonth": 3,
+      "escalationMonthName": "March",
+      "autoRenew": false,
+      "noticeDays": null,
+      "noticeDeadline": null
+    }
   },
   {
     "id": "leasedoc-standardmortgagebldg2ste204vacatenotice2017",
@@ -1284,7 +1934,20 @@
       "dated": "2017-05-31",
       "title": "Vacate Notice (2017, legacy) — Suite 204 vacated by 2017-07-31"
     },
-    "date": "2017-05-31"
+    "date": "2017-05-31",
+    "lease": {
+      "leaseId": "lease-bldg2-suite201-standard",
+      "status": "active",
+      "commenced": "2021-03-01",
+      "terminates": "2029-02-28",
+      "monthlyRent": 3265,
+      "escalationPct": 3,
+      "escalationMonth": 3,
+      "escalationMonthName": "March",
+      "autoRenew": false,
+      "noticeDays": null,
+      "noticeDeadline": null
+    }
   },
   {
     "id": "leasedoc-standardmortgagebldg2ste201sublease2017",
@@ -1308,7 +1971,20 @@
       "termination": "2019-05-31",
       "title": "Sublease (2017, legacy) — Standard Mortgage subleased part of Suite 201 to Margaret Benjamin LLC"
     },
-    "date": "2017-09-28"
+    "date": "2017-09-28",
+    "lease": {
+      "leaseId": "lease-bldg2-suite201-standard",
+      "status": "active",
+      "commenced": "2021-03-01",
+      "terminates": "2029-02-28",
+      "monthlyRent": 3265,
+      "escalationPct": 3,
+      "escalationMonth": 3,
+      "escalationMonthName": "March",
+      "autoRenew": false,
+      "noticeDays": null,
+      "noticeDeadline": null
+    }
   },
   {
     "id": "leasedoc-pazosbldg2ste202init",
@@ -1332,7 +2008,20 @@
       "termination": "2019-06-14",
       "title": "Lease of Commercial Property — Building #2, Suite 202 (Crosby / J. Chris Pazos Insurance Agency LLC) — full-service gross"
     },
-    "date": "2017-04-09"
+    "date": "2017-04-09",
+    "lease": {
+      "leaseId": "lease-bldg2-suite202-pazos",
+      "status": "active",
+      "commenced": "2017-06-15",
+      "terminates": "2027-06-13",
+      "monthlyRent": 950.07,
+      "escalationPct": 3,
+      "escalationMonth": 6,
+      "escalationMonthName": "June",
+      "autoRenew": true,
+      "noticeDays": 90,
+      "noticeDeadline": "2027-03-15"
+    }
   },
   {
     "id": "leasedoc-pazosbldg2ste202amd1",
@@ -1356,7 +2045,20 @@
       "termination": "2020-06-14",
       "title": "Amendment #1 to Lease — Building #2, Suite 202 (Pazos) — rent $795.67, auto-renew 12-mo"
     },
-    "date": "2018-12-28"
+    "date": "2018-12-28",
+    "lease": {
+      "leaseId": "lease-bldg2-suite202-pazos",
+      "status": "active",
+      "commenced": "2017-06-15",
+      "terminates": "2027-06-13",
+      "monthlyRent": 950.07,
+      "escalationPct": 3,
+      "escalationMonth": 6,
+      "escalationMonthName": "June",
+      "autoRenew": true,
+      "noticeDays": 90,
+      "noticeDeadline": "2027-03-15"
+    }
   },
   {
     "id": "leasedoc-pazosbldg2ste202renewalnotice2025",
@@ -1380,7 +2082,20 @@
       "termination": "2026-06-13",
       "title": "Renewal Notice — Building #2, Suite 202 (Pazos) — auto-renewed to 2026-06-13, rent $922.40 (current)"
     },
-    "date": "2025-06-11"
+    "date": "2025-06-11",
+    "lease": {
+      "leaseId": "lease-bldg2-suite202-pazos",
+      "status": "active",
+      "commenced": "2017-06-15",
+      "terminates": "2027-06-13",
+      "monthlyRent": 950.07,
+      "escalationPct": 3,
+      "escalationMonth": 6,
+      "escalationMonthName": "June",
+      "autoRenew": true,
+      "noticeDays": 90,
+      "noticeDeadline": "2027-03-15"
+    }
   },
   {
     "id": "leasedoc-hartfordbldg2ste301init",
@@ -1404,7 +2119,20 @@
       "termination": "2010-09-30",
       "title": "Lease of Commercial Property — Building #2, Suite 301 (Crosby / Hartford Fire Insurance Company) — 2,350 RSF, full-service gross"
     },
-    "date": "2005-08-05"
+    "date": "2005-08-05",
+    "lease": {
+      "leaseId": "lease-bldg2-suite301-hartford",
+      "status": "active",
+      "commenced": "2005-10-01",
+      "terminates": "2029-09-30",
+      "monthlyRent": 4213.62,
+      "escalationPct": 2,
+      "escalationMonth": 10,
+      "escalationMonthName": "October",
+      "autoRenew": false,
+      "noticeDays": 90,
+      "noticeDeadline": "2029-06-30"
+    }
   },
   {
     "id": "leasedoc-hartfordbldg2ste301amd1",
@@ -1427,7 +2155,20 @@
       "termination": "2013-09-30",
       "title": "Amendment #1 to Lease — Building #2, Suite 301 (Hartford) — to 2013-09-30, $3,529.59"
     },
-    "date": "2010-08-15"
+    "date": "2010-08-15",
+    "lease": {
+      "leaseId": "lease-bldg2-suite301-hartford",
+      "status": "active",
+      "commenced": "2005-10-01",
+      "terminates": "2029-09-30",
+      "monthlyRent": 4213.62,
+      "escalationPct": 2,
+      "escalationMonth": 10,
+      "escalationMonthName": "October",
+      "autoRenew": false,
+      "noticeDays": 90,
+      "noticeDeadline": "2029-06-30"
+    }
   },
   {
     "id": "leasedoc-hartfordbldg2ste301amd2",
@@ -1450,7 +2191,20 @@
       "termination": "2016-09-30",
       "title": "Amendment #2 to Lease — Building #2, Suite 301 (Hartford) — to 2016-09-30, $3,856.88"
     },
-    "date": "2013-06-29"
+    "date": "2013-06-29",
+    "lease": {
+      "leaseId": "lease-bldg2-suite301-hartford",
+      "status": "active",
+      "commenced": "2005-10-01",
+      "terminates": "2029-09-30",
+      "monthlyRent": 4213.62,
+      "escalationPct": 2,
+      "escalationMonth": 10,
+      "escalationMonthName": "October",
+      "autoRenew": false,
+      "noticeDays": 90,
+      "noticeDeadline": "2029-06-30"
+    }
   },
   {
     "id": "leasedoc-hartfordbldg2ste301amd3",
@@ -1473,7 +2227,20 @@
       "termination": "2021-09-30",
       "title": "Amendment #3 to Lease — Building #2, Suite 301 (Hartford) — to 2021-09-30, $3,917 → $4,050"
     },
-    "date": "2016-07-11"
+    "date": "2016-07-11",
+    "lease": {
+      "leaseId": "lease-bldg2-suite301-hartford",
+      "status": "active",
+      "commenced": "2005-10-01",
+      "terminates": "2029-09-30",
+      "monthlyRent": 4213.62,
+      "escalationPct": 2,
+      "escalationMonth": 10,
+      "escalationMonthName": "October",
+      "autoRenew": false,
+      "noticeDays": 90,
+      "noticeDeadline": "2029-06-30"
+    }
   },
   {
     "id": "leasedoc-hartfordbldg2ste301amd4",
@@ -1496,7 +2263,20 @@
       "termination": "2024-09-30",
       "title": "Amendment #4 to Lease — Building #2, Suite 301 (Hartford) — to 2024-09-30, $4,131.00"
     },
-    "date": "2021-09-16"
+    "date": "2021-09-16",
+    "lease": {
+      "leaseId": "lease-bldg2-suite301-hartford",
+      "status": "active",
+      "commenced": "2005-10-01",
+      "terminates": "2029-09-30",
+      "monthlyRent": 4213.62,
+      "escalationPct": 2,
+      "escalationMonth": 10,
+      "escalationMonthName": "October",
+      "autoRenew": false,
+      "noticeDays": 90,
+      "noticeDeadline": "2029-06-30"
+    }
   },
   {
     "id": "leasedoc-hartfordbldg2ste301amd6",
@@ -1520,7 +2300,20 @@
       "termination": "2029-09-30",
       "title": "Amendment #6 to Lease — Building #2, Suite 301 (Hartford) — to 2029-09-30, $4,213.62→$4,423.87, two 5yr options (current)"
     },
-    "date": "2025-06-06"
+    "date": "2025-06-06",
+    "lease": {
+      "leaseId": "lease-bldg2-suite301-hartford",
+      "status": "active",
+      "commenced": "2005-10-01",
+      "terminates": "2029-09-30",
+      "monthlyRent": 4213.62,
+      "escalationPct": 2,
+      "escalationMonth": 10,
+      "escalationMonthName": "October",
+      "autoRenew": false,
+      "noticeDays": 90,
+      "noticeDeadline": "2029-06-30"
+    }
   },
   {
     "id": "leasedoc-4youreyesbldg2ste303init",
@@ -1544,7 +2337,20 @@
       "termination": "2008-04-30",
       "title": "Lease of Commercial Property — Building #2, Suite 303 (Crosby / 4 Your Eyes, LLC — Dr. Neil Notaroberto) — full-service gross"
     },
-    "date": "2006-04-05"
+    "date": "2006-04-05",
+    "lease": {
+      "leaseId": "lease-bldg2-suite303-4-your-eyes",
+      "status": "active",
+      "commenced": "2006-05-01",
+      "terminates": "2027-03-31",
+      "monthlyRent": 4304.39,
+      "escalationPct": 3,
+      "escalationMonth": 4,
+      "escalationMonthName": "April",
+      "autoRenew": true,
+      "noticeDays": 90,
+      "noticeDeadline": "2026-12-31"
+    }
   },
   {
     "id": "leasedoc-4youreyesbldg2ste303amd1",
@@ -1566,7 +2372,20 @@
       "monthlyRent": "USD 1464.00",
       "title": "Amendment #1 to Lease — Building #2 (4 Your Eyes) — add Suite 302-A, +$1,464/mo"
     },
-    "date": "2007-02-16"
+    "date": "2007-02-16",
+    "lease": {
+      "leaseId": "lease-bldg2-suite303-4-your-eyes",
+      "status": "active",
+      "commenced": "2006-05-01",
+      "terminates": "2027-03-31",
+      "monthlyRent": 4304.39,
+      "escalationPct": 3,
+      "escalationMonth": 4,
+      "escalationMonthName": "April",
+      "autoRenew": true,
+      "noticeDays": 90,
+      "noticeDeadline": "2026-12-31"
+    }
   },
   {
     "id": "leasedoc-4youreyesbldg2ste303amd2",
@@ -1589,7 +2408,20 @@
       "termination": "2010-04-30",
       "title": "Amendment #2 to Lease — Building #2 (4 Your Eyes) — 302-A+303, $3,511.13, to 2010-04-30"
     },
-    "date": "2008-04-24"
+    "date": "2008-04-24",
+    "lease": {
+      "leaseId": "lease-bldg2-suite303-4-your-eyes",
+      "status": "active",
+      "commenced": "2006-05-01",
+      "terminates": "2027-03-31",
+      "monthlyRent": 4304.39,
+      "escalationPct": 3,
+      "escalationMonth": 4,
+      "escalationMonthName": "April",
+      "autoRenew": true,
+      "noticeDays": 90,
+      "noticeDeadline": "2026-12-31"
+    }
   },
   {
     "id": "leasedoc-4youreyesbldg2ste303amd3",
@@ -1612,7 +2444,20 @@
       "termination": "2010-07-31",
       "title": "Amendment #3 to Lease — Building #2 (4 Your Eyes) — auto-renew 3-mo"
     },
-    "date": "2010-03-18"
+    "date": "2010-03-18",
+    "lease": {
+      "leaseId": "lease-bldg2-suite303-4-your-eyes",
+      "status": "active",
+      "commenced": "2006-05-01",
+      "terminates": "2027-03-31",
+      "monthlyRent": 4304.39,
+      "escalationPct": 3,
+      "escalationMonth": 4,
+      "escalationMonthName": "April",
+      "autoRenew": true,
+      "noticeDays": 90,
+      "noticeDeadline": "2026-12-31"
+    }
   },
   {
     "id": "leasedoc-4youreyesbldg2ste303amd5",
@@ -1636,7 +2481,20 @@
       "termination": "2027-03-31",
       "title": "Amendment #5 to Lease — Building #2 (4 Your Eyes) — $3,724.95 eff 2026-04-01, to 2027-03-31"
     },
-    "date": "2025-12-08"
+    "date": "2025-12-08",
+    "lease": {
+      "leaseId": "lease-bldg2-suite303-4-your-eyes",
+      "status": "active",
+      "commenced": "2006-05-01",
+      "terminates": "2027-03-31",
+      "monthlyRent": 4304.39,
+      "escalationPct": 3,
+      "escalationMonth": 4,
+      "escalationMonthName": "April",
+      "autoRenew": true,
+      "noticeDays": 90,
+      "noticeDeadline": "2026-12-31"
+    }
   },
   {
     "id": "leasedoc-4youreyesbldg2ste303amd6",
@@ -1660,7 +2518,20 @@
       "termination": "2027-03-31",
       "title": "Amendment #6 to Lease — Building #2 (4 Your Eyes) — add Suite 302B, $4,304.39 eff 2026-04-01, to 2027-03-31 (current)"
     },
-    "date": "2026-03-18"
+    "date": "2026-03-18",
+    "lease": {
+      "leaseId": "lease-bldg2-suite303-4-your-eyes",
+      "status": "active",
+      "commenced": "2006-05-01",
+      "terminates": "2027-03-31",
+      "monthlyRent": 4304.39,
+      "escalationPct": 3,
+      "escalationMonth": 4,
+      "escalationMonthName": "April",
+      "autoRenew": true,
+      "noticeDays": 90,
+      "noticeDeadline": "2026-12-31"
+    }
   },
   {
     "id": "leasedoc-msquaredbldg1ste300init",
@@ -1684,7 +2555,20 @@
       "termination": "2028-03-15",
       "title": "Lease of Commercial Property — Building #1, Suite 300 (Crosby / M Squared Digital) — 1,443 SF, $2,250, full-service gross (Lease ID CDC-L-2026-0014)"
     },
-    "date": "2026-02-27"
+    "date": "2026-02-27",
+    "lease": {
+      "leaseId": "lease-bldg1-suite300-msquared",
+      "status": "active",
+      "commenced": "2026-03-15",
+      "terminates": "2028-03-15",
+      "monthlyRent": 2250,
+      "escalationPct": 3,
+      "escalationMonth": 4,
+      "escalationMonthName": "April",
+      "autoRenew": true,
+      "noticeDays": 90,
+      "noticeDeadline": "2027-12-15"
+    }
   },
   {
     "id": "leasedoc-medsouthbldg4ste302amd1",
@@ -1707,7 +2591,20 @@
       "commencement": "2026-06-01",
       "title": "Amendment #1 to Lease — Building #4, Suite 302 (MedSouth Record Management LLC) — converts to 90-day auto-renew term, rent $1,416.25 eff 2026-06-01"
     },
-    "date": "2026-06-02"
+    "date": "2026-06-02",
+    "lease": {
+      "leaseId": "lease-bldg4-suite302-medsouth",
+      "status": "active",
+      "commenced": "2025-05-01",
+      "terminates": "2026-08-31",
+      "monthlyRent": 1416.25,
+      "escalationPct": 3,
+      "escalationMonth": 6,
+      "escalationMonthName": "June",
+      "autoRenew": true,
+      "noticeDays": 90,
+      "noticeDeadline": null
+    }
   },
   {
     "id": "leasedoc-detoxbldg1ste307init",
@@ -1731,7 +2628,20 @@
       "termination": "2028-08-01",
       "title": "Lease of Commercial Property — Building #1, Suite 307/303B (Crosby / Detox Management Company, LLC) — ~300 SF, $575, full-service gross (Lease ID CDC-L-2026-0018)"
     },
-    "date": "2026-04-01"
+    "date": "2026-04-01",
+    "lease": {
+      "leaseId": "lease-bldg1-suite307-detox",
+      "status": "active",
+      "commenced": "2026-04-01",
+      "terminates": "2028-08-01",
+      "monthlyRent": 575,
+      "escalationPct": 3,
+      "escalationMonth": 4,
+      "escalationMonthName": "April",
+      "autoRenew": true,
+      "noticeDays": 90,
+      "noticeDeadline": "2028-05-03"
+    }
   },
   {
     "id": "leasedoc-detoxbldg4ste301lease",
@@ -1757,7 +2667,20 @@
       "escalationDate": "August 1",
       "title": "Lease of Commercial Property — Building #4, Suite 301 (Crosby / Detox Management Company, LLC) — 1,765 SF, full-service gross; 3-yr term 2025-08-01 to 2028-07-31; 3.5% annual esc; tenant option to renew one 2-yr term (60-day notice); deposit waived."
     },
-    "date": "2025-06-27"
+    "date": "2025-06-27",
+    "lease": {
+      "leaseId": "lease-bldg4-suite301-detox",
+      "status": "active",
+      "commenced": "2025-08-01",
+      "terminates": "2028-07-31",
+      "monthlyRent": 3000,
+      "escalationPct": 3.5,
+      "escalationMonth": 8,
+      "escalationMonthName": "August",
+      "autoRenew": false,
+      "noticeDays": 60,
+      "noticeDeadline": "2028-06-01"
+    }
   },
   {
     "id": "leasedoc-assuredpartnersbldg2ste206terminationnotice",
@@ -1779,7 +2702,20 @@
       "vacateDate": "2026-06-30",
       "title": "Notice to Vacate — Building #2, Suite 206 (AssuredPartners) — vacating 2026-06-30; security deposit $3,106.50 refundable (via Arthur J. Gallagher & Co.)"
     },
-    "date": "2026-05-27"
+    "date": "2026-05-27",
+    "lease": {
+      "leaseId": "lease-bldg2-suite206-assured-part",
+      "status": "vacating",
+      "commenced": "2025-07-01",
+      "terminates": "2026-06-30",
+      "monthlyRent": 3842.25,
+      "escalationPct": 3,
+      "escalationMonth": 7,
+      "escalationMonthName": "July",
+      "autoRenew": null,
+      "noticeDays": null,
+      "noticeDeadline": null
+    }
   },
   {
     "id": "leasedoc-wellsfargobldg2ste101init",
@@ -1803,7 +2739,20 @@
       "termination": "2015-03-31",
       "title": "Lease of Commercial Property — Building #2, Suites 101 & 201 (Crosby / Wells Fargo Advisors) — full-service gross"
     },
-    "date": "2010-03-30"
+    "date": "2010-03-30",
+    "lease": {
+      "leaseId": "lease-bldg2-suite101-wells-fargo",
+      "status": "active",
+      "commenced": "2010-04-01",
+      "terminates": "2027-03-31",
+      "monthlyRent": 4641.43,
+      "escalationPct": 3,
+      "escalationMonth": 4,
+      "escalationMonthName": "April",
+      "autoRenew": false,
+      "noticeDays": 180,
+      "noticeDeadline": "2026-09-30"
+    }
   },
   {
     "id": "leasedoc-wellsfargobldg2ste101amd1",
@@ -1826,7 +2775,20 @@
       "termination": "2016-03-31",
       "title": "First Amendment — Building #2, Suite 101 (Wells Fargo) — extend to 2016-03-31, $13,388/mo"
     },
-    "date": "2014-11-07"
+    "date": "2014-11-07",
+    "lease": {
+      "leaseId": "lease-bldg2-suite101-wells-fargo",
+      "status": "active",
+      "commenced": "2010-04-01",
+      "terminates": "2027-03-31",
+      "monthlyRent": 4641.43,
+      "escalationPct": 3,
+      "escalationMonth": 4,
+      "escalationMonthName": "April",
+      "autoRenew": false,
+      "noticeDays": 180,
+      "noticeDeadline": "2026-09-30"
+    }
   },
   {
     "id": "leasedoc-wellsfargobldg2ste101amd2",
@@ -1850,7 +2812,20 @@
       "termination": "2021-03-31",
       "title": "Second Amendment — Building #2, Suite 101 (Wells Fargo) — right-size to 4,210 SF, to 2021-03-31, $7,016.67/mo"
     },
-    "date": "2015-12-17"
+    "date": "2015-12-17",
+    "lease": {
+      "leaseId": "lease-bldg2-suite101-wells-fargo",
+      "status": "active",
+      "commenced": "2010-04-01",
+      "terminates": "2027-03-31",
+      "monthlyRent": 4641.43,
+      "escalationPct": 3,
+      "escalationMonth": 4,
+      "escalationMonthName": "April",
+      "autoRenew": false,
+      "noticeDays": 180,
+      "noticeDeadline": "2026-09-30"
+    }
   },
   {
     "id": "leasedoc-wellsfargobldg2ste101amd3",
@@ -1874,7 +2849,20 @@
       "termination": "2024-03-31",
       "title": "Third Amendment — Building #2, Suite 101 (Wells Fargo) — to 2024-03-31, $6,665.83→$7,071.78/mo"
     },
-    "date": "2020-07-23"
+    "date": "2020-07-23",
+    "lease": {
+      "leaseId": "lease-bldg2-suite101-wells-fargo",
+      "status": "active",
+      "commenced": "2010-04-01",
+      "terminates": "2027-03-31",
+      "monthlyRent": 4641.43,
+      "escalationPct": 3,
+      "escalationMonth": 4,
+      "escalationMonthName": "April",
+      "autoRenew": false,
+      "noticeDays": 180,
+      "noticeDeadline": "2026-09-30"
+    }
   },
   {
     "id": "leasedoc-wellsfargobldg2ste101amd4",
@@ -1898,7 +2886,20 @@
       "termination": "2027-03-31",
       "title": "Fourth Amendment (current) — Building #2, Suite 101 (Wells Fargo) — surrender to 2,500 SF, to 2027-03-31, $4,375→$4,641.43/mo"
     },
-    "date": "2023-07-21"
+    "date": "2023-07-21",
+    "lease": {
+      "leaseId": "lease-bldg2-suite101-wells-fargo",
+      "status": "active",
+      "commenced": "2010-04-01",
+      "terminates": "2027-03-31",
+      "monthlyRent": 4641.43,
+      "escalationPct": 3,
+      "escalationMonth": 4,
+      "escalationMonthName": "April",
+      "autoRenew": false,
+      "noticeDays": 180,
+      "noticeDeadline": "2026-09-30"
+    }
   },
   {
     "id": "leasedoc-wellsfargobldg2ste101renewalrfp2026",
@@ -1920,7 +2921,20 @@
       "commencement": "2027-04-01",
       "title": "Renewal RFP (non-binding) — Building #2, Suite 101 (Wells Fargo via Stirling/Cresa) — 5-yr renewal from 2027-04-01, 2,500 SF"
     },
-    "date": "2026-03-27"
+    "date": "2026-03-27",
+    "lease": {
+      "leaseId": "lease-bldg2-suite101-wells-fargo",
+      "status": "active",
+      "commenced": "2010-04-01",
+      "terminates": "2027-03-31",
+      "monthlyRent": 4641.43,
+      "escalationPct": 3,
+      "escalationMonth": 4,
+      "escalationMonthName": "April",
+      "autoRenew": false,
+      "noticeDays": 180,
+      "noticeDeadline": "2026-09-30"
+    }
   },
   {
     "id": "leasedoc-gallowaybldg3ste301init",
@@ -1944,7 +2958,20 @@
       "termination": "2009-11-30",
       "title": "Lease of Commercial Property — Building #3, Suite 301 (Crosby / Galloway, Johnson, Tompkins, Burr & Smith) — 6,500 SF, full-service gross"
     },
-    "date": "2004-12-03"
+    "date": "2004-12-03",
+    "lease": {
+      "leaseId": "lease-bldg3-suite101-galloway",
+      "status": "active",
+      "commenced": "2004-12-01",
+      "terminates": "2029-11-30",
+      "monthlyRent": 27564.26,
+      "escalationPct": 3,
+      "escalationMonth": 12,
+      "escalationMonthName": "December",
+      "autoRenew": false,
+      "noticeDays": 180,
+      "noticeDeadline": "2029-05-31"
+    }
   },
   {
     "id": "leasedoc-gallowaybldg3ste301amd3yr2009",
@@ -1966,7 +2993,20 @@
       "monthlyRent": "USD 9340.00",
       "title": "Amendment (3-yr) — Building #3, Suite 301 (Galloway) — $9,340/mo"
     },
-    "date": "2009-10-13"
+    "date": "2009-10-13",
+    "lease": {
+      "leaseId": "lease-bldg3-suite101-galloway",
+      "status": "active",
+      "commenced": "2004-12-01",
+      "terminates": "2029-11-30",
+      "monthlyRent": 27564.26,
+      "escalationPct": 3,
+      "escalationMonth": 12,
+      "escalationMonthName": "December",
+      "autoRenew": false,
+      "noticeDays": 180,
+      "noticeDeadline": "2029-05-31"
+    }
   },
   {
     "id": "leasedoc-gallowaybldg3ste301buildout2014",
@@ -1987,7 +3027,20 @@
       "dated": "2014-10-23",
       "title": "Build-Out Proposal — Building #3, Suite 301 (Galloway) — renovation scope (no cost to Lessee)"
     },
-    "date": "2014-10-23"
+    "date": "2014-10-23",
+    "lease": {
+      "leaseId": "lease-bldg3-suite101-galloway",
+      "status": "active",
+      "commenced": "2004-12-01",
+      "terminates": "2029-11-30",
+      "monthlyRent": 27564.26,
+      "escalationPct": 3,
+      "escalationMonth": 12,
+      "escalationMonthName": "December",
+      "autoRenew": false,
+      "noticeDays": 180,
+      "noticeDeadline": "2029-05-31"
+    }
   },
   {
     "id": "leasedoc-gallowaybldg3ste301amd5yr2014",
@@ -2009,7 +3062,20 @@
       "monthlyRent": "USD 10512.25",
       "title": "Amendment (5-yr) — Building #3, Suite 301 (Galloway) — extend to 2019, $10,512.25/mo"
     },
-    "date": "2014-09-17"
+    "date": "2014-09-17",
+    "lease": {
+      "leaseId": "lease-bldg3-suite101-galloway",
+      "status": "active",
+      "commenced": "2004-12-01",
+      "terminates": "2029-11-30",
+      "monthlyRent": 27564.26,
+      "escalationPct": 3,
+      "escalationMonth": 12,
+      "escalationMonthName": "December",
+      "autoRenew": false,
+      "noticeDays": 180,
+      "noticeDeadline": "2029-05-31"
+    }
   },
   {
     "id": "leasedoc-gallowaybldg3ste301amd42019",
@@ -2032,7 +3098,20 @@
       "termination": "2024-11-30",
       "title": "Amendment #4 — Building #3 (Galloway) — add Suite 102 (3,480 SF), extend to 2024-11-30, $18,165.23/mo"
     },
-    "date": "2019-06-13"
+    "date": "2019-06-13",
+    "lease": {
+      "leaseId": "lease-bldg3-suite101-galloway",
+      "status": "active",
+      "commenced": "2004-12-01",
+      "terminates": "2029-11-30",
+      "monthlyRent": 27564.26,
+      "escalationPct": 3,
+      "escalationMonth": 12,
+      "escalationMonthName": "December",
+      "autoRenew": false,
+      "noticeDays": 180,
+      "noticeDeadline": "2029-05-31"
+    }
   },
   {
     "id": "leasedoc-gallowaybldg3ste301amd52020",
@@ -2054,7 +3133,20 @@
       "monthlyRent": "USD 18765.23",
       "title": "Amendment #5 — Building #3 (Galloway) — Suite 102 +685 SF (4,145 total), $18,765.23/mo"
     },
-    "date": "2020-02-05"
+    "date": "2020-02-05",
+    "lease": {
+      "leaseId": "lease-bldg3-suite101-galloway",
+      "status": "active",
+      "commenced": "2004-12-01",
+      "terminates": "2029-11-30",
+      "monthlyRent": 27564.26,
+      "escalationPct": 3,
+      "escalationMonth": 12,
+      "escalationMonthName": "December",
+      "autoRenew": false,
+      "noticeDays": 180,
+      "noticeDeadline": "2029-05-31"
+    }
   },
   {
     "id": "leasedoc-gallowaybldg3ste301amdaddste1012021",
@@ -2076,7 +3168,20 @@
       "monthlyRent": "USD 4449.00",
       "title": "Amendment — Building #3 (Galloway) — add Suite 101 (2,810 SF), +$4,449/mo eff 2021-06-01"
     },
-    "date": "2021-01-11"
+    "date": "2021-01-11",
+    "lease": {
+      "leaseId": "lease-bldg3-suite101-galloway",
+      "status": "active",
+      "commenced": "2004-12-01",
+      "terminates": "2029-11-30",
+      "monthlyRent": 27564.26,
+      "escalationPct": 3,
+      "escalationMonth": 12,
+      "escalationMonthName": "December",
+      "autoRenew": false,
+      "noticeDays": 180,
+      "noticeDeadline": "2029-05-31"
+    }
   },
   {
     "id": "leasedoc-gallowaybldg3ste301amd6",
@@ -2100,919 +3205,1439 @@
       "termination": "2029-11-30",
       "title": "Amendment #6 (current) — Building #3, Suites 101 & 301 (Galloway) — 13,455 SF, extend to 2029-11-30, $26,761.42/mo, $1/SF TI"
     },
-    "date": "2024-08-08"
-  },
-    {
-        "id": "leasedoc-bakerdonelsonbldg3ste201init",
-        "propertyId": "sanctuary-office-park",
-        "building": "Building #3",
-        "tenant": "Baker, Donelson, Bearman, Caldwell & Berkowitz, PC",
-        "suite": "201 & 202",
-        "file": "BakerDonelson_BLDG3_STE201_Init.pdf",
-        "docType": "Init",
-        "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FBakerDonelson_BLDG3_STE201_Init.pdf?alt=media&token=7c808aba-05fa-4c58-b1a2-910b235e550a",
-        "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FBakerDonelson_BLDG3_STE201_Init.html?alt=media&token=d7f536bf-d157-424e-a54d-28a5f3a0677f",
-        "meta": {
-            "lessor": "Crosby Development Company, LLC",
-            "lessee": "Shaw & Norton, L.L.P.",
-            "property": "Sanctuary Office Park, Building #3, Suite 201, Mandeville, LA 70471",
-            "suite": "Suite 201 & 202",
-            "documentType": "Init",
-            "dated": "2000-03-30",
-            "monthlyRent": "USD 4750.00",
-            "commencement": "2000-05-19",
-            "termination": "2005-08-31",
-            "title": "Lease of Commercial Property — Building #3, Suite 201 (Crosby / Shaw & Norton, predecessor to Baker Donelson) — $4,750→$6,300/mo, full-service gross"
-        },
-        "date": "2000-03-30"
-    },
-    {
-        "id": "leasedoc-bakerdonelsonbldg3ste201amd1",
-        "propertyId": "sanctuary-office-park",
-        "building": "Building #3",
-        "tenant": "Baker, Donelson, Bearman, Caldwell & Berkowitz, PC",
-        "suite": "201 & 202",
-        "file": "BakerDonelson_BLDG3_STE201_AMD1.pdf",
-        "docType": "Amendment",
-        "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FBakerDonelson_BLDG3_STE201_AMD1.pdf?alt=media&token=f2dc989a-bbfc-479d-a634-d51ed94d1329",
-        "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FBakerDonelson_BLDG3_STE201_AMD1.html?alt=media&token=21e93648-5195-4291-aec8-805bb162cb1b",
-        "meta": {
-            "lessor": "Crosby Development Company, LLC",
-            "lessee": "Baker, Donelson, Bearman, Caldwell & Berkowitz, PC",
-            "property": "Sanctuary Office Park, Building #3, Suites 201 & 202, Mandeville, LA 70471",
-            "suite": "Suite 201 & 202",
-            "documentType": "Amendment",
-            "dated": "2005-06-20",
-            "monthlyRent": "USD 7191.00",
-            "termination": "2010-08-31",
-            "title": "First Amendment & Assignment — Building #3 (Shaw & Norton → Baker Donelson) — 5,230 SF, $7,191/mo, to 2010-08-31"
-        },
-        "date": "2005-06-20"
-    },
-    {
-        "id": "leasedoc-bakerdonelsonbldg3ste201amd2",
-        "propertyId": "sanctuary-office-park",
-        "building": "Building #3",
-        "tenant": "Baker, Donelson, Bearman, Caldwell & Berkowitz, PC",
-        "suite": "201 & 202",
-        "file": "BakerDonelson_BLDG3_STE201_AMD2.pdf",
-        "docType": "Amendment",
-        "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FBakerDonelson_BLDG3_STE201_AMD2.pdf?alt=media&token=095cfb5c-3a7a-4ea2-99fc-4fb71f13a01a",
-        "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FBakerDonelson_BLDG3_STE201_AMD2.html?alt=media&token=ee93e712-d3d7-42c0-b5ae-3852814f3224",
-        "meta": {
-            "lessor": "Crosby Development Company, LLC",
-            "lessee": "Baker, Donelson, Bearman, Caldwell & Berkowitz, PC",
-            "property": "Sanctuary Office Park, Building #3, Suites 201–203, Mandeville, LA 70471",
-            "suite": "Suite 201 & 202",
-            "documentType": "Amendment",
-            "dated": "2005-10-31",
-            "monthlyRent": "USD 9528.50",
-            "termination": "2010-08-31",
-            "title": "Second Amendment — Building #3 (Baker Donelson) — add Suite 203 → 6,930 SF, $9,528.50/mo eff 2006-01-01, 3% esc"
-        },
-        "date": "2005-10-31"
-    },
-    {
-        "id": "leasedoc-bakerdonelsonbldg3ste201amd3",
-        "propertyId": "sanctuary-office-park",
-        "building": "Building #3",
-        "tenant": "Baker, Donelson, Bearman, Caldwell & Berkowitz, PC",
-        "suite": "201 & 202",
-        "file": "BakerDonelson_BLDG3_STE201_AMD3.pdf",
-        "docType": "Amendment",
-        "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FBakerDonelson_BLDG3_STE201_AMD3.pdf?alt=media&token=08b134b4-2ed8-41f2-8b4f-4abc4ad426de",
-        "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FBakerDonelson_BLDG3_STE201_AMD3.html?alt=media&token=b8dffe6d-0a6a-4faa-92f0-f26925449dd2",
-        "meta": {
-            "lessor": "Crosby Development Company, LLC",
-            "lessee": "Baker, Donelson, Bearman, Caldwell & Berkowitz, PC",
-            "property": "Sanctuary Office Park, Building #3, Suite 201, Mandeville, LA 70471",
-            "suite": "Suite 201 & 202",
-            "documentType": "Amendment",
-            "dated": "2010-03-23",
-            "monthlyRent": "USD 18.00/RSF",
-            "termination": "2015-08-31",
-            "title": "Third Amendment — Building #3 (Baker Donelson) — extend to 2015-08-31, $18.00/RSF, 3% esc"
-        },
-        "date": "2010-03-23"
-    },
-    {
-        "id": "leasedoc-bakerdonelsonbldg3ste201amd4",
-        "propertyId": "sanctuary-office-park",
-        "building": "Building #3",
-        "tenant": "Baker, Donelson, Bearman, Caldwell & Berkowitz, PC",
-        "suite": "201 & 202",
-        "file": "BakerDonelson_BLDG3_STE201_AMD4.pdf",
-        "docType": "Amendment",
-        "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FBakerDonelson_BLDG3_STE201_AMD4.pdf?alt=media&token=83f051da-e5f4-45f8-97da-4d0ebf6762be",
-        "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FBakerDonelson_BLDG3_STE201_AMD4.html?alt=media&token=1c169b8f-2082-4378-9751-b525bc47db2f",
-        "meta": {
-            "lessor": "Crosby Development Company, LLC",
-            "lessee": "Baker, Donelson, Bearman, Caldwell & Berkowitz, PC",
-            "property": "Sanctuary Office Park, Building #3, Suite 201, Mandeville, LA 70471",
-            "suite": "Suite 201 & 202",
-            "documentType": "Amendment",
-            "dated": "2014-12-28",
-            "monthlyRent": "USD 19.50/RSF",
-            "termination": "2020-08-31",
-            "title": "Fourth Amendment — Building #3 (Baker Donelson) — extend to 2020-08-31, $19.50/RSF, 3% esc"
-        },
-        "date": "2014-12-28"
-    },
-    {
-        "id": "leasedoc-bakerdonelsonbldg3ste201amd5",
-        "propertyId": "sanctuary-office-park",
-        "building": "Building #3",
-        "tenant": "Baker, Donelson, Bearman, Caldwell & Berkowitz, PC",
-        "suite": "201 & 202",
-        "file": "BakerDonelson_BLDG3_STE201_AMD5.pdf",
-        "docType": "Amendment",
-        "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FBakerDonelson_BLDG3_STE201_AMD5.pdf?alt=media&token=c221af40-f3f4-42b9-b314-dc7b8bcf563d",
-        "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FBakerDonelson_BLDG3_STE201_AMD5.html?alt=media&token=e951b01e-7144-470c-8006-71de7d190fe1",
-        "meta": {
-            "lessor": "Crosby Development Company, LLC",
-            "lessee": "Baker, Donelson, Bearman, Caldwell & Berkowitz, PC",
-            "property": "Sanctuary Office Park, Building #3, Suite 201, Mandeville, LA 70471",
-            "suite": "Suite 201 & 202",
-            "documentType": "Amendment",
-            "dated": "2020-05-05",
-            "monthlyRent": "USD 12676.13",
-            "termination": "2025-02-28",
-            "title": "Fifth Amendment — Building #3 (Baker Donelson) — extend to 2025-02-28, $12,676.13/mo eff 2020-09-01, 3% esc (Sep)"
-        },
-        "date": "2020-05-05"
-    },
-    {
-        "id": "leasedoc-bakerdonelsonbldg3ste201commagmtamd5",
-        "propertyId": "sanctuary-office-park",
-        "building": "Building #3",
-        "tenant": "Baker, Donelson, Bearman, Caldwell & Berkowitz, PC",
-        "suite": "201 & 202",
-        "file": "BakerDonelson_BLDG3_STE201_CommAgmt_AMD5.pdf",
-        "docType": "Commission Agreement",
-        "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FBakerDonelson_BLDG3_STE201_CommAgmt_AMD5.pdf?alt=media&token=6e101801-4c44-4f8a-af83-ef0ff9803fdf",
-        "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FBakerDonelson_BLDG3_STE201_CommAgmt_AMD5.html?alt=media&token=3e62a853-2fd5-449e-b20a-13cbadefc610",
-        "meta": {
-            "lessor": "Crosby Development Company, LLC",
-            "lessee": "Baker, Donelson, Bearman, Caldwell & Berkowitz, PC",
-            "property": "Sanctuary Office Park, Building #3, Suite 201, Mandeville, LA 70471",
-            "suite": "Suite 201 & 202",
-            "documentType": "Commission Agreement",
-            "dated": "2020-04-01",
-            "title": "Lease Commission Agreement (Amd #5) — Building #3 (Baker Donelson) — JLL, 4% of gross rents"
-        },
-        "date": "2020-04-01"
-    },
-    {
-        "id": "leasedoc-bakerdonelsonbldg3ste201proposal2024",
-        "propertyId": "sanctuary-office-park",
-        "building": "Building #3",
-        "tenant": "Baker, Donelson, Bearman, Caldwell & Berkowitz, PC",
-        "suite": "201 & 202",
-        "file": "BakerDonelson_BLDG3_STE201_Proposal2024.pdf",
-        "docType": "Proposal",
-        "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FBakerDonelson_BLDG3_STE201_Proposal2024.pdf?alt=media&token=098cafb0-2e2e-4eb0-9811-01d0c215b954",
-        "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FBakerDonelson_BLDG3_STE201_Proposal2024.html?alt=media&token=a0ac305e-c99e-47c3-a9fb-444d4a2b514b",
-        "meta": {
-            "lessor": "Crosby Development Company, LLC",
-            "lessee": "Baker, Donelson, Bearman, Caldwell & Berkowitz, PC",
-            "property": "Sanctuary Office Park, Building #3, Suite 201, Mandeville, LA 70471",
-            "suite": "Suite 201 & 202",
-            "documentType": "Proposal",
-            "dated": "2024-07-16",
-            "commencement": "2025-03-01",
-            "title": "JLL Renewal Proposal (non-binding) — Building #3 (Baker Donelson) — 6,930 RSF, 5yr3mo from 2025-03-01, ~$23/RSF, TI $105/RSF"
-        },
-        "date": "2024-07-16"
-    },
-    {
-        "id": "leasedoc-bakerdonelsonbldg3ste201commagmtamd6",
-        "propertyId": "sanctuary-office-park",
-        "building": "Building #3",
-        "tenant": "Baker, Donelson, Bearman, Caldwell & Berkowitz, PC",
-        "suite": "201 & 202",
-        "file": "BakerDonelson_BLDG3_STE201_CommAgmt_AMD6.pdf",
-        "docType": "Commission Agreement",
-        "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FBakerDonelson_BLDG3_STE201_CommAgmt_AMD6.pdf?alt=media&token=4e310606-5c02-45da-8d3f-669268cb8a3e",
-        "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FBakerDonelson_BLDG3_STE201_CommAgmt_AMD6.html?alt=media&token=d359de1d-6cfd-4820-91be-fd663b786424",
-        "meta": {
-            "lessor": "Crosby Development Company, LLC",
-            "lessee": "Baker, Donelson, Bearman, Caldwell & Berkowitz, PC",
-            "property": "Sanctuary Office Park, Building #3, Suite 201, Mandeville, LA 70471",
-            "suite": "Suite 201 & 202",
-            "documentType": "Commission Agreement",
-            "dated": "2024-08-27",
-            "title": "Lease Commission Agreement (Amd #6) — Building #3 (Baker Donelson) — JLL, 4% of gross rents"
-        },
-        "date": "2024-08-27"
-    },
-    {
-        "id": "leasedoc-bakerdonelsonbldg3ste201amd6",
-        "propertyId": "sanctuary-office-park",
-        "building": "Building #3",
-        "tenant": "Baker, Donelson, Bearman, Caldwell & Berkowitz, PC",
-        "suite": "201 & 202",
-        "file": "BakerDonelson_BLDG3_STE201_AMD6.pdf",
-        "docType": "Amendment",
-        "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FBakerDonelson_BLDG3_STE201_AMD6.pdf?alt=media&token=bca91393-262a-4de3-b2fb-56db0d0b4eae",
-        "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FBakerDonelson_BLDG3_STE201_AMD6.html?alt=media&token=00d26c0d-c694-45ec-85ee-bba0ed456e18",
-        "meta": {
-            "lessor": "Crosby Development Company, LLC",
-            "lessee": "Baker, Donelson, Bearman, Caldwell & Berkowitz, PC",
-            "property": "Sanctuary Office Park, Building #3, Suite 201, Mandeville, LA 70471",
-            "suite": "Suite 201 & 202",
-            "documentType": "Amendment",
-            "dated": "2024-09-06",
-            "monthlyRent": "USD 13282.50",
-            "commencement": "2025-03-01",
-            "termination": "2030-05-31",
-            "title": "Sixth Amendment (current) — Building #3, Suite 201 (Baker Donelson) — extend to 2030-05-31, $13,282.50/mo eff 2025-03-01, 3% esc (Mar), 2×5yr options, TI $28,245.12"
-        },
-        "date": "2024-09-06"
-    },
-    {
-        "id": "leasedoc-watchsystemsbldg4ste101amd2",
-        "propertyId": "sanctuary-office-park",
-        "building": "Building #4",
-        "tenant": "Watch Systems",
-        "suite": "101 & 201",
-        "file": "WatchSystems_BLDG4_STE101_AMD2.pdf",
-        "docType": "Amendment",
-        "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FWatchSystems_BLDG4_STE101_AMD2.pdf?alt=media&token=41547a04-6feb-4821-80a7-198ec2b65055",
-        "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FWatchSystems_BLDG4_STE101_AMD2.html?alt=media&token=48cbffb9-0497-4983-ad53-9a97d66ec1b6",
-        "meta": {
-            "lessor": "Crosby Development Company, LLC",
-            "lessee": "Watch Systems, LLC (d/b/a OffenderWatch)",
-            "property": "Sanctuary Office Park, Building #4, Suite 101, Mandeville, LA 70471",
-            "suite": "Suite 101 & 201",
-            "documentType": "Amendment",
-            "dated": "2024-05-01",
-            "monthlyRent": "USD 19636.64",
-            "commencement": "2024-07-01",
-            "termination": "2026-06-30",
-            "title": "Second Amendment — Building #4, Suite 101 (Watch Systems) — $19,636.64/mo eff 2024-07-01, extend to 2026-06-30, 3% esc (superseded by Amd #3)"
-        },
-        "date": "2024-05-01"
-    },
-    {
-        "id": "leasedoc-watchsystemsbldg4ste101commagmt",
-        "propertyId": "sanctuary-office-park",
-        "building": "Building #4",
-        "tenant": "Watch Systems",
-        "suite": "101 & 201",
-        "file": "WatchSystems_BLDG4_STE101_CommAgmt.pdf",
-        "docType": "Commission Agreement",
-        "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FWatchSystems_BLDG4_STE101_CommAgmt.pdf?alt=media&token=77733c4d-7679-453f-a5ad-dcd37d9d7cf7",
-        "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FWatchSystems_BLDG4_STE101_CommAgmt.html?alt=media&token=b3280b80-0961-4a2c-ab79-72ba11b6e967",
-        "meta": {
-            "lessor": "Crosby Development Company, LLC",
-            "lessee": "Watch Systems, LLC",
-            "property": "Sanctuary Office Park, Building #4, Suites 101 & 201, Mandeville, LA 70471",
-            "suite": "Suite 101 & 201",
-            "documentType": "Commission Agreement",
-            "dated": "2021-04-26",
-            "title": "Lease Commission Agreement — Building #4 (Watch Systems) — Latter & Blum (J. Schaff-Mutter), 4% initial term + 2% renewals"
-        },
-        "date": "2021-04-26"
-    },
-    {
-        "id": "leasedoc-watchsystemsbldg4ste101landlordwaiver",
-        "propertyId": "sanctuary-office-park",
-        "building": "Building #4",
-        "tenant": "Watch Systems",
-        "suite": "101 & 201",
-        "file": "WatchSystems_BLDG4_STE101_LandlordWaiver.pdf",
-        "docType": "Landlord Waiver",
-        "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FWatchSystems_BLDG4_STE101_LandlordWaiver.pdf?alt=media&token=85b3831b-bbcb-4cdc-8fce-f78755f2a4f7",
-        "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FWatchSystems_BLDG4_STE101_LandlordWaiver.html?alt=media&token=775958da-8f8e-430e-8a6e-dd28ac20cdc6",
-        "meta": {
-            "lessor": "Crosby Development Company, LLC",
-            "lessee": "Watch Systems, LLC (d/b/a OffenderWatch)",
-            "property": "Sanctuary Office Park, Building #4, Suites 101 & 201, Mandeville, LA 70471",
-            "suite": "Suite 101 & 201",
-            "documentType": "Landlord Waiver",
-            "dated": "2022-05-02",
-            "title": "Landlord Waiver & Consent — Building #4 (Watch Systems) — in favor of RF Investment Partners SBIC, LP (collateral agent)"
-        },
-        "date": "2022-05-02"
-    },
-    {
-        "id": "leasedoc-edelmanbldg4ste200init",
-        "propertyId": "sanctuary-office-park",
-        "building": "Building #4",
-        "tenant": "Edelman Financial Engines, LLC",
-        "suite": "200",
-        "file": "Edelman_BLDG4_STE200_Init.pdf",
-        "docType": "Init",
-        "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FEdelman_BLDG4_STE200_Init.pdf?alt=media&token=a4d905bf-6ff0-4bd5-8322-5c5b20e463f6",
-        "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FEdelman_BLDG4_STE200_Init.html?alt=media&token=576d4e4f-acd9-461c-833f-dc57aa77278c",
-        "meta": {
-            "lessor": "Crosby Development Company, LLC",
-            "lessee": "Edelman Financial Engines, LLC",
-            "property": "Sanctuary Office Park, Building #4, Suite 200, Mandeville, LA 70471",
-            "suite": "Suite 200",
-            "documentType": "Init",
-            "dated": "2022-08-30",
-            "monthlyRent": "USD 4210.41",
-            "commencement": "2022-12-01",
-            "termination": "2029-11-30",
-            "title": "Lease of Commercial Property — Building #4, Suite 200 (Edelman Financial Engines) — 2,350 SF, $4,210.41/mo, 2% esc (Jan), 2×36mo options, full-service gross"
-        },
-        "date": "2022-08-30"
-    },
-    {
-        "id": "leasedoc-medsouthbldg4ste302lease",
-        "propertyId": "sanctuary-office-park",
-        "building": "Building #4",
-        "tenant": "MedSouth Record Management LLC",
-        "suite": "302",
-        "file": "MedSouth_BLDG4_STE302_Lease.pdf",
-        "docType": "Lease",
-        "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FMedSouth_BLDG4_STE302_Lease.pdf?alt=media&token=a3d26b60-f108-4848-9b61-e58f7d933ea1",
-        "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FMedSouth_BLDG4_STE302_Lease.html?alt=media&token=05e3fdbd-22d6-4092-a6ea-3042e0b57861",
-        "meta": {
-            "lessor": "Crosby Development Company, LLC",
-            "lessee": "MedSouth Record Management LLC",
-            "property": "Sanctuary Office Park, Building #4, Suite 302, Mandeville, LA 70471",
-            "suite": "Suite 302",
-            "documentType": "Lease",
-            "dated": "2025-02-25",
-            "monthlyRent": "USD 1375.00",
-            "commencement": "2025-05-01",
-            "termination": "2026-06-30",
-            "title": "Lease — Building #4, Suite 302 (MedSouth) — 750 SF, $1,375/mo, first 3 mo abated, 3% esc; voids Bldg #5 Suite 203"
-        },
-        "date": "2025-02-25"
-    },
-    {
-        "id": "leasedoc-medsouthbldg5ste203lease",
-        "propertyId": "sanctuary-office-park",
-        "building": "Building #4",
-        "tenant": "MedSouth Record Management LLC",
-        "suite": "302",
-        "file": "MedSouth_BLDG5_STE203_Lease.pdf",
-        "docType": "Lease",
-        "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FMedSouth_BLDG5_STE203_Lease.pdf?alt=media&token=c140ec37-fcf0-48f9-bc89-384cfc3e107b",
-        "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FMedSouth_BLDG5_STE203_Lease.html?alt=media&token=b449c9a1-beec-45b5-bf4e-bb36c6f5ec9b",
-        "meta": {
-            "lessor": "Crosby Development Company, LLC",
-            "lessee": "MedSouth Record Management LLC",
-            "property": "Sanctuary Office Park, Building #5, Suite 203, Mandeville, LA 70471",
-            "suite": "Suite 302",
-            "documentType": "Lease",
-            "dated": "2022-04-19",
-            "monthlyRent": "USD 1466.00",
-            "commencement": "2022-05-15",
-            "termination": "2023-06-30",
-            "title": "Lease — Building #5, Suite 203 (MedSouth) — 1,095 SF, $1,466/mo, 3% esc; voids Bldg #5 Suite 101 (legacy)"
-        },
-        "date": "2022-04-19"
-    },
-    {
-        "id": "leasedoc-medsouthbldg5ste101amd2",
-        "propertyId": "sanctuary-office-park",
-        "building": "Building #4",
-        "tenant": "MedSouth Record Management LLC",
-        "suite": "302",
-        "file": "MedSouth_BLDG5_STE101_AMD2.pdf",
-        "docType": "Amendment",
-        "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FMedSouth_BLDG5_STE101_AMD2.pdf?alt=media&token=bd7ca32e-6738-4120-9036-f786f76e715a",
-        "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FMedSouth_BLDG5_STE101_AMD2.html?alt=media&token=238c404b-76ac-46ae-a20f-6fa6c6c506be",
-        "meta": {
-            "lessor": "Crosby Development Company, LLC",
-            "lessee": "MedSouth Record Management LLC",
-            "property": "Sanctuary Office Park, Building #5, Suite 101, Mandeville, LA 70471",
-            "suite": "Suite 302",
-            "documentType": "Amendment",
-            "dated": "2020-01-30",
-            "monthlyRent": "USD 10850.80",
-            "commencement": "2020-03-01",
-            "termination": "2021-02-28",
-            "title": "Second Amendment — Building #5, Suite 101 (MedSouth) — $10,850.80/mo eff 2020-03-01, 3% esc, auto-renew (legacy)"
-        },
-        "date": "2020-01-30"
-    },
-    {
-        "id": "leasedoc-medsouthbldg5ste101amd1",
-        "propertyId": "sanctuary-office-park",
-        "building": "Building #4",
-        "tenant": "MedSouth Record Management LLC",
-        "suite": "302",
-        "file": "MedSouth_BLDG5_STE101_AMD1.pdf",
-        "docType": "Amendment",
-        "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FMedSouth_BLDG5_STE101_AMD1.pdf?alt=media&token=b31d1fa5-eaf8-4d10-aba7-0503fd7071c5",
-        "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FMedSouth_BLDG5_STE101_AMD1.html?alt=media&token=06ea3f9f-4040-4dbe-b71a-267fc652c774",
-        "meta": {
-            "lessor": "Crosby Development Company, LLC",
-            "lessee": "MedSouth Record Management LLC",
-            "property": "Sanctuary Office Park, Building #5, Suite 101, Mandeville, LA 70471",
-            "suite": "Suite 302",
-            "documentType": "Amendment",
-            "dated": "2019-03-29",
-            "title": "First Amendment — Building #5, Suite 101 (MedSouth) — late-payment terms ($400 late fee, default trigger) (legacy)"
-        },
-        "date": "2019-03-29"
-    },
-    {
-        "id": "leasedoc-medsouthbldg5ste101lease",
-        "propertyId": "sanctuary-office-park",
-        "building": "Building #4",
-        "tenant": "MedSouth Record Management LLC",
-        "suite": "302",
-        "file": "MedSouth_BLDG5_STE101_Lease.pdf",
-        "docType": "Lease",
-        "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FMedSouth_BLDG5_STE101_Lease.pdf?alt=media&token=8a7c6bfe-bcb0-4c00-87df-f18b72a76b31",
-        "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FMedSouth_BLDG5_STE101_Lease.html?alt=media&token=01a53ba4-78b9-4ee0-b42d-2cdf169ba3ed",
-        "meta": {
-            "lessor": "Crosby Development Company, LLC",
-            "lessee": "MedSouth Record Management LLC",
-            "property": "Sanctuary Office Park, Building #5, Suite 101, Mandeville, LA 70471",
-            "suite": "Suite 302",
-            "documentType": "Lease",
-            "dated": "2014-11-19",
-            "monthlyRent": "USD 9460.00",
-            "commencement": "2015-03-01",
-            "termination": "2020-02-28",
-            "title": "Lease — Building #5, Suite 101 (MedSouth) — 5,160 SF, $9,460/mo, 3% esc, 1×3yr option (legacy)"
-        },
-        "date": "2014-11-19"
-    },
-    {
-        "id": "leasedoc-medsouthbldg4ste101relocationamd",
-        "propertyId": "sanctuary-office-park",
-        "building": "Building #4",
-        "tenant": "MedSouth Record Management LLC",
-        "suite": "302",
-        "file": "MedSouth_BLDG4_STE101_Relocation_AMD.pdf",
-        "docType": "Amendment",
-        "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FMedSouth_BLDG4_STE101_Relocation_AMD.pdf?alt=media&token=879f417b-9354-4db7-bd06-8147962bcdda",
-        "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FMedSouth_BLDG4_STE101_Relocation_AMD.html?alt=media&token=8d8ff4a3-8a08-4a3a-a14a-15240614dc3a",
-        "meta": {
-            "lessor": "Crosby Development Company, LLC",
-            "lessee": "MedSouth Record Management LLC",
-            "property": "Sanctuary Office Park, Building #4, Suite 101 → Building #5, Suite 102, Mandeville, LA 70471",
-            "suite": "Suite 302",
-            "documentType": "Amendment",
-            "dated": "2012-07-24",
-            "monthlyRent": "USD 5981.43",
-            "title": "Amendment (Relocation) — Building #4 Suite 101 → Building #5 Suite 102 (MedSouth) — $5,981.43/mo eff 2012-12-01, abate Sep–Nov, $10,675 moving (legacy)"
-        },
-        "date": "2012-07-24"
-    },
-    {
-        "id": "leasedoc-medsouthbldg4ste101lease",
-        "propertyId": "sanctuary-office-park",
-        "building": "Building #4",
-        "tenant": "MedSouth Record Management LLC",
-        "suite": "302",
-        "file": "MedSouth_BLDG4_STE101_Lease.pdf",
-        "docType": "Lease",
-        "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FMedSouth_BLDG4_STE101_Lease.pdf?alt=media&token=62ff6254-47f2-4138-a43f-fd98d97d9815",
-        "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FMedSouth_BLDG4_STE101_Lease.html?alt=media&token=003bfc5d-f72a-4704-a530-fe352431bea4",
-        "meta": {
-            "lessor": "Crosby Development Company, LLC",
-            "lessee": "MedSouth Record Management LLC",
-            "property": "Sanctuary Office Park, Building #4, Suite 101, Mandeville, LA 70471",
-            "suite": "Suite 302",
-            "documentType": "Lease",
-            "dated": "2009-01-16",
-            "monthlyRent": "USD 7083.33",
-            "commencement": "2009-03-01",
-            "termination": "2012-02-28",
-            "title": "Lease — Building #4, Suite 101 (MedSouth) — 4,250 SF, $7,083.33/mo, 3% esc; Mar-2009 addendum extends to 2015-02-28 (legacy)"
-        },
-        "date": "2009-01-16"
-    },
-    {
-        "id": "leasedoc-uswmenardbldg4ste304amd2",
-        "propertyId": "sanctuary-office-park",
-        "building": "Building #4",
-        "tenant": "USW-Menard, Inc.",
-        "suite": "304",
-        "file": "USWMenard_BLDG4_STE304_AMD2.pdf",
-        "docType": "Amendment",
-        "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FUSWMenard_BLDG4_STE304_AMD2.pdf?alt=media&token=634af5cc-b389-4f13-a436-3edc3312512e",
-        "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FUSWMenard_BLDG4_STE304_AMD2.html?alt=media&token=71dcf9c4-c3d1-4dac-820a-690580eb6ab1",
-        "meta": {
-            "lessor": "Crosby Development Company, LLC",
-            "lessee": "USW-Menard, Inc.",
-            "property": "Sanctuary Office Park, Building #4, Suite 304, Mandeville, LA 70471",
-            "suite": "Suite 304",
-            "documentType": "Amendment",
-            "dated": "2024-11-06",
-            "monthlyRent": "USD 5220.91",
-            "commencement": "2025-01-01",
-            "termination": "2028-12-31",
-            "title": "Second Amendment (current) — Building #4, Suite 304 (USW-Menard) — +860 SF, $5,220.91/mo eff 2025-04-01, extend to 2028-12-31, 3% esc"
-        },
-        "date": "2024-11-06"
-    },
-    {
-        "id": "leasedoc-uswmenardbldg4ste304amd1",
-        "propertyId": "sanctuary-office-park",
-        "building": "Building #4",
-        "tenant": "USW-Menard, Inc.",
-        "suite": "304",
-        "file": "USWMenard_BLDG4_STE304_AMD1.pdf",
-        "docType": "Amendment",
-        "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FUSWMenard_BLDG4_STE304_AMD1.pdf?alt=media&token=9df9f825-0d81-42e6-9c55-6e4dea95c8bf",
-        "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FUSWMenard_BLDG4_STE304_AMD1.html?alt=media&token=ddd968b4-9004-413d-848f-2ceb333ace81",
-        "meta": {
-            "lessor": "Crosby Development Company, LLC",
-            "lessee": "USW-Menard, Inc.",
-            "property": "Sanctuary Office Park, Building #4, Suite 304, Mandeville, LA 70471",
-            "suite": "Suite 304",
-            "documentType": "Amendment",
-            "dated": "2024-02-14",
-            "monthlyRent": "USD 3417.73",
-            "commencement": "2024-04-01",
-            "termination": "2027-10-31",
-            "title": "First Amendment — Building #4, Suite 304 (USW-Menard) — +310 SF, $3,417.73/mo eff 2024-04-01, extend to 2027-10-31, 3% esc"
-        },
-        "date": "2024-02-14"
-    },
-    {
-        "id": "leasedoc-uswmenardbldg4ste304init",
-        "propertyId": "sanctuary-office-park",
-        "building": "Building #4",
-        "tenant": "USW-Menard, Inc.",
-        "suite": "304",
-        "file": "USWMenard_BLDG4_STE304_Init.pdf",
-        "docType": "Init",
-        "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FUSWMenard_BLDG4_STE304_Init.pdf?alt=media&token=4e6851dc-88b0-4634-bc06-852e967f051a",
-        "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FUSWMenard_BLDG4_STE304_Init.html?alt=media&token=5b9c2cb1-9405-44d8-9bbd-6777e2b20c70",
-        "meta": {
-            "lessor": "Crosby Development Company, LLC",
-            "lessee": "USW-Menard, Inc.",
-            "property": "Sanctuary Office Park, Building #4, Suite 304, Mandeville, LA 70471",
-            "suite": "Suite 304",
-            "documentType": "Init",
-            "dated": "2021-10-07",
-            "monthlyRent": "USD 2572.00",
-            "commencement": "2021-11-01",
-            "termination": "2024-10-31",
-            "title": "Lease of Commercial Property — Building #4, Suite 304 (USW-Menard) — 1,470 SF, $2,572/mo, 3% esc, 2×3yr options, full-service gross"
-        },
-        "date": "2021-10-07"
-    },
-    {
-        "id": "leasedoc-lainstpaulbldg4ste305amd3",
-        "propertyId": "sanctuary-office-park",
-        "building": "Building #4",
-        "tenant": "Lain St. Paul",
-        "suite": "305",
-        "file": "LainStPaul_BLDG4_STE305_AMD3.pdf",
-        "docType": "Amendment",
-        "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FLainStPaul_BLDG4_STE305_AMD3.pdf?alt=media&token=3e2d4e1f-f507-41f2-aa0a-b4c050c2cb08",
-        "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FLainStPaul_BLDG4_STE305_AMD3.html?alt=media&token=4f26ca13-eca9-4e19-8482-40805e305e2d",
-        "meta": {
-            "lessor": "Crosby Development Company, LLC",
-            "lessee": "Lain St. Paul",
-            "property": "Sanctuary Office Park, Building #4, Suite 305, Mandeville, LA 70471",
-            "suite": "Suite 305",
-            "documentType": "Amendment",
-            "dated": "2024-02-06",
-            "monthlyRent": "USD 996.56",
-            "commencement": "2024-05-01",
-            "termination": "2025-04-30",
-            "title": "Third Amendment — Building #4, Suite 305 (Lain St. Paul) — $996.56/mo eff 2024-05-01, extend to 2025-04-30, 3% esc, auto-renew"
-        },
-        "date": "2024-02-06"
-    },
-    {
-        "id": "leasedoc-lainstpaulbldg4ste305autorenewal2026",
-        "propertyId": "sanctuary-office-park",
-        "building": "Building #4",
-        "tenant": "Lain St. Paul",
-        "suite": "305",
-        "file": "LainStPaul_BLDG4_STE305_AutoRenewal2026.pdf",
-        "docType": "Auto-Renewal",
-        "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FLainStPaul_BLDG4_STE305_AutoRenewal2026.pdf?alt=media&token=2875bf34-ae0c-4107-9077-ddab8b025682",
-        "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FLainStPaul_BLDG4_STE305_AutoRenewal2026.html?alt=media&token=e1ffdd9d-da09-4323-992a-90292f5e872f",
-        "meta": {
-            "lessor": "Crosby Development Company, LLC",
-            "lessee": "Lain St. Paul",
-            "property": "Sanctuary Office Park, Building #4, Suite 305, Mandeville, LA 70471",
-            "suite": "Suite 305",
-            "documentType": "Auto-Renewal (email notice sent to tenant 2026-05-19)",
-            "dated": "2026-05-19",
-            "monthlyRent": "USD 1057.26",
-            "commencement": "2026-05-01",
-            "termination": "2027-04-30",
-            "escalationPct": 3,
-            "escalationDate": "May 1",
-            "title": "Auto-renewal confirmed — Building #4, Suite 305 (Lain St. Paul) — $1,057.26/mo eff 2026-05-01 to 2027-04-30, 3% esc; emailed to tenant 2026-05-19; $30.79 May shortfall to collect with June rent; next non-renewal notice deadline 2027-01-30."
-        },
-        "date": "2026-05-19"
-    },
-    {
-        "id": "leasedoc-lainstpaulbldg4ste305amd2",
-        "propertyId": "sanctuary-office-park",
-        "building": "Building #4",
-        "tenant": "Lain St. Paul",
-        "suite": "305",
-        "file": "LainStPaul_BLDG4_STE305_AMD2.pdf",
-        "docType": "Amendment",
-        "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FLainStPaul_BLDG4_STE305_AMD2.pdf?alt=media&token=0ff13bb8-1629-4142-971c-4924159dece0",
-        "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FLainStPaul_BLDG4_STE305_AMD2.html?alt=media&token=a680bb46-5a95-4d66-9277-e34e71ab8951",
-        "meta": {
-            "lessor": "Crosby Development Company, LLC",
-            "lessee": "Lain St. Paul",
-            "property": "Sanctuary Office Park, Building #4, Suite 305, Mandeville, LA 70471",
-            "suite": "Suite 305",
-            "documentType": "Amendment",
-            "dated": "2023-05-01",
-            "monthlyRent": "USD 967.54",
-            "commencement": "2023-05-01",
-            "termination": "2024-04-30",
-            "title": "Second Amendment — Building #4, Suite 305 (Lain St. Paul) — $967.54/mo eff 2023-05-01, extend to 2024-04-30, auto-renew"
-        },
-        "date": "2023-05-01"
-    },
-    {
-        "id": "leasedoc-lainstpaulbldg4ste305amd1",
-        "propertyId": "sanctuary-office-park",
-        "building": "Building #4",
-        "tenant": "Lain St. Paul",
-        "suite": "305",
-        "file": "LainStPaul_BLDG4_STE305_AMD1.pdf",
-        "docType": "Amendment",
-        "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FLainStPaul_BLDG4_STE305_AMD1.pdf?alt=media&token=1d0708f9-39cb-424d-ac54-d85e52172f4a",
-        "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FLainStPaul_BLDG4_STE305_AMD1.html?alt=media&token=0ea8135b-2972-48b4-93af-3d956d8acf7c",
-        "meta": {
-            "lessor": "Crosby Development Company, LLC",
-            "lessee": "Lain St. Paul",
-            "property": "Sanctuary Office Park, Building #4, Suite 305, Mandeville, LA 70471",
-            "suite": "Suite 305",
-            "documentType": "Amendment",
-            "dated": "2022-03-11",
-            "monthlyRent": "USD 939.36",
-            "commencement": "2022-05-01",
-            "termination": "2023-04-30",
-            "title": "First Amendment — Building #4, Suite 305 (Lain St. Paul) — $939.36/mo eff 2022-05-01, extend to 2023-04-30, auto-renew"
-        },
-        "date": "2022-03-11"
-    },
-    {
-        "id": "leasedoc-lainstpaulbldg4ste305init",
-        "propertyId": "sanctuary-office-park",
-        "building": "Building #4",
-        "tenant": "Lain St. Paul",
-        "suite": "305",
-        "file": "LainStPaul_BLDG4_STE305_Init.pdf",
-        "docType": "Init",
-        "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FLainStPaul_BLDG4_STE305_Init.pdf?alt=media&token=39a2e69d-d8fe-4f56-9f84-44122a56ef8c",
-        "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FLainStPaul_BLDG4_STE305_Init.html?alt=media&token=56f8269b-301c-4bf1-90b0-cf9010b3efec",
-        "meta": {
-            "lessor": "Crosby Development Company, LLC",
-            "lessee": "Lain St. Paul",
-            "property": "Sanctuary Office Park, Building #4, Suite 305, Mandeville, LA 70471",
-            "suite": "Suite 305",
-            "documentType": "Init",
-            "dated": "2020-12-18",
-            "monthlyRent": "USD 912.00",
-            "commencement": "2021-05-01",
-            "termination": "2022-04-30",
-            "title": "Lease of Commercial Property — Building #4, Suite 305 (Lain St. Paul) — $912/mo, 3% esc, deposit $1,592, 1×1yr option"
-        },
-        "date": "2020-12-18"
-    },
-    {
-        "id": "leasedoc-jcm2bldg4ste306lease",
-        "propertyId": "sanctuary-office-park",
-        "building": "Building #4",
-        "tenant": "Jefferson Capital (JCM II LLC)",
-        "suite": "306",
-        "file": "JCM2_BLDG4_STE306_Lease.pdf",
-        "docType": "Init",
-        "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FJCM2_BLDG4_STE306_Lease.pdf?alt=media&token=359fbed3-0f79-4e45-af14-ac3d3d9c89ff",
-        "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FJCM2_BLDG4_STE306_Lease.html?alt=media&token=acaa097c-b1e8-4030-aa99-8f9f139d27ac",
-        "meta": {
-            "lessor": "Crosby Development Company, LLC",
-            "lessee": "JCM II LLC (lobby directory: Jefferson Capital Partners)",
-            "property": "Sanctuary Office Park, Building #4, Suite 306, Mandeville, LA 70471",
-            "suite": "Suite 306",
-            "documentType": "Init",
-            "dated": "2021-02-10",
-            "monthlyRent": "USD 427.00",
-            "commencement": "2021-04-01",
-            "termination": "2022-03-31",
-            "title": "Lease of Commercial Property — Building #4, Suite 306 (JCM II LLC / Jefferson Capital) — $427/mo, 3% esc, auto-renew 12mo, full-service gross"
-        },
-        "date": "2021-02-10"
-    },
-    {
-        "id": "leasedoc-jcm2bldg4ste306autorenewal2026",
-        "propertyId": "sanctuary-office-park",
-        "building": "Building #4",
-        "tenant": "Jefferson Capital (JCM II LLC)",
-        "suite": "306",
-        "file": "JCM2_BLDG4_STE306_AutoRenewal2026.pdf",
-        "docType": "Auto-Renewal",
-        "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FJCM2_BLDG4_STE306_AutoRenewal2026.pdf?alt=media&token=5c6f0417-6139-4191-9026-e12a66ccaeb1",
-        "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FJCM2_BLDG4_STE306_AutoRenewal2026.html?alt=media&token=79ec55a6-17c1-4c69-b3c2-08c99064d48f",
-        "meta": {
-            "lessor": "Crosby Development Company, LLC",
-            "lessee": "JCM II LLC (lobby directory: Jefferson Capital Partners)",
-            "property": "Sanctuary Office Park, Building #4, Suite 306, Mandeville, LA 70471",
-            "suite": "Suite 306",
-            "documentType": "Auto-Renewal (internal memo — not sent to tenant)",
-            "dated": "2026-06-16",
-            "monthlyRent": "USD 495.01",
-            "commencement": "2026-04-01",
-            "termination": "2027-03-31",
-            "escalationPct": 3,
-            "escalationDate": "April 1",
-            "title": "Auto-renewal confirmed — Building #4, Suite 306 (JCM II LLC / Jefferson Capital) — $495.01/mo eff 2026-04-01 to 2027-03-31, 3% esc; next non-renewal notice deadline 2026-12-31. Internal memo, not sent to tenant."
-        },
-        "date": "2026-06-16"
-    },
-    {
-        "id": "leasedoc-monsonbldg5ste101lease",
-        "propertyId": "sanctuary-office-park",
-        "building": "Building #5",
-        "tenant": "The Monson Law Firm, LLC",
-        "suite": "101 & 202",
-        "file": "Monson_BLDG5_STE101_Lease.pdf",
-        "docType": "Lease",
-        "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FMonson_BLDG5_STE101_Lease.pdf?alt=media&token=444491cd-1fc3-4b19-a760-69ea9eef3981",
-        "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FMonson_BLDG5_STE101_Lease.html?alt=media&token=dd9372c2-316a-44f0-881a-7da10e01ea8c",
-        "meta": {
-            "lessor": "Crosby Development Company, LLC",
-            "lessee": "The Monson Law Firm, LLC",
-            "property": "Sanctuary Office Park, Building #5, Suites 101 & 202, Mandeville, LA 70471",
-            "suite": "Suite 101 & 202",
-            "documentType": "Lease",
-            "dated": "2022-04-15",
-            "monthlyRent": "USD 12923.00",
-            "commencement": "2022-08-01",
-            "termination": "2027-07-30",
-            "title": "Lease of Commercial Property — Building #5, Suites 101 & 202 (Monson Law Firm) — 7,385 SF, $12,923/mo, 1.5% esc, 2×36mo options, full-service gross"
-        },
-        "date": "2022-04-15"
-    },
-    {
-        "id": "leasedoc-cecobldg5ste201init",
-        "propertyId": "sanctuary-office-park",
-        "building": "Building #5",
-        "tenant": "Ceco Concrete Construction LLC",
-        "suite": "201",
-        "file": "Ceco_BLDG5_STE201_Init.pdf",
-        "docType": "Init",
-        "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FCeco_BLDG5_STE201_Init.pdf?alt=media&token=de4fc451-3dea-4475-9ae9-c2dc36ee4253",
-        "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FCeco_BLDG5_STE201_Init.html?alt=media&token=15452b9f-6ec0-49cc-8ca2-380082bd6967",
-        "meta": {
-            "lessor": "Crosby Development Company, LLC",
-            "lessee": "Ceco Concrete Construction LLC",
-            "property": "Sanctuary Office Park, Building #5, Suite 201, Mandeville, LA 70471",
-            "suite": "Suite 201",
-            "documentType": "Init",
-            "dated": "2021-11-04",
-            "monthlyRent": "USD 6562.00",
-            "commencement": "2022-01-01",
-            "termination": "2024-12-31",
-            "title": "Lease of Commercial Property — Building #5, Suite 201 (Ceco Concrete Construction) — 3,750 SF, $6,562/mo, 2% esc, 2×2yr options, full-service gross"
-        },
-        "date": "2021-11-04"
-    },
-    {
-        "id": "leasedoc-cecobldg5ste201amd1",
-        "propertyId": "sanctuary-office-park",
-        "building": "Building #5",
-        "tenant": "Ceco Concrete Construction LLC",
-        "suite": "201",
-        "file": "Ceco_BLDG5_STE201_AMD1.pdf",
-        "docType": "Amendment",
-        "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FCeco_BLDG5_STE201_AMD1.pdf?alt=media&token=90b28648-c540-4cad-baab-cbefc4efc852",
-        "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FCeco_BLDG5_STE201_AMD1.html?alt=media&token=45b24c39-4f5a-441d-bfa9-5d2706b885ad",
-        "meta": {
-            "lessor": "Crosby Development Company, LLC",
-            "lessee": "Ceco Concrete Construction LLC",
-            "property": "Sanctuary Office Park, Building #5, Suite 201, Mandeville, LA 70471",
-            "suite": "Suite 201",
-            "documentType": "Amendment",
-            "dated": "2024-11-20",
-            "monthlyRent": "USD 8997.03",
-            "commencement": "2025-01-01",
-            "termination": "2027-12-31",
-            "title": "First Amendment (current) — Building #5, Suite 201 (Ceco) — $6,963.64/mo eff 2025-01-01, +1,095 SF on 2025-07-15 → $8,997.03/mo, extend to 2027-12-31, 2% esc"
-        },
-        "date": "2024-11-20"
-    },
-    {
-        "id": "leasedoc-mapsbldg5ste103init",
-        "propertyId": "sanctuary-office-park",
-        "building": "Building #5",
-        "tenant": "Mediation Arbitration Professional Systems, INC",
-        "suite": "103",
-        "file": "MAPS_BLDG5_STE103_Init.pdf",
-        "docType": "Init",
-        "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FMAPS_BLDG5_STE103_Init.pdf?alt=media&token=5809d127-5af0-4e59-95be-db0c32218762",
-        "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FMAPS_BLDG5_STE103_Init.html?alt=media&token=398afa30-ff82-4d28-b788-430f113c5f99",
-        "meta": {
-            "lessor": "Crosby Development Company, LLC",
-            "lessee": "Mediation Arbitration Professional Systems, INC",
-            "property": "Sanctuary Office Park, Building #5, Suite 103, Mandeville, LA 70471",
-            "suite": "Suite 103",
-            "documentType": "Init",
-            "dated": "2022-03-18",
-            "monthlyRent": "USD 3001.00",
-            "commencement": "2022-05-01",
-            "termination": "2025-06-30",
-            "title": "Lease of Commercial Property — Building #5, Suite 103 (MAPS) — 1,715 SF, $3,001/mo, 3% esc, 1×36mo option, full-service gross"
-        },
-        "date": "2022-03-18"
-    },
-    {
-        "id": "leasedoc-audubonbldg5ste300init",
-        "propertyId": "sanctuary-office-park",
-        "building": "Building #5",
-        "tenant": "Audubon Companies, LLC",
-        "suite": "300",
-        "file": "Audubon_BLDG5_STE300_Init.pdf",
-        "docType": "Init",
-        "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FAudubon_BLDG5_STE300_Init.pdf?alt=media&token=3f4726b9-82e3-4523-b753-5133d3cce9b1",
-        "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FAudubon_BLDG5_STE300_Init.html?alt=media&token=5f0f7986-45f9-48e0-950f-5a2355b3f329",
-        "meta": {
-            "lessor": "Crosby Development Company, LLC",
-            "lessee": "Audubon Engineering Company, LP",
-            "property": "Sanctuary Office Park, Building #5, Suite 300, Mandeville, LA 70471",
-            "suite": "Suite 300",
-            "documentType": "Init",
-            "dated": "2020-10-23",
-            "monthlyRent": "USD 9353.81",
-            "commencement": "2020-12-01",
-            "termination": "2025-11-30",
-            "title": "Lease of Commercial Property — Building #5, Suite 300 (Audubon Engineering Company, LP) — 6,507 SF, $9,353.81/mo, 3% esc, 2×2yr options, full-service gross"
-        },
-        "date": "2020-10-23"
-    },
-    {
-        "id": "leasedoc-audubonbldg5ste300amd1",
-        "propertyId": "sanctuary-office-park",
-        "building": "Building #5",
-        "tenant": "Audubon Companies, LLC",
-        "suite": "300",
-        "file": "Audubon_BLDG5_STE300_AMD1.pdf",
-        "docType": "Amendment",
-        "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FAudubon_BLDG5_STE300_AMD1.pdf?alt=media&token=fc83293b-89dc-45f7-892f-1bbb469c4535",
-        "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FAudubon_BLDG5_STE300_AMD1.html?alt=media&token=27c4993b-512b-46a5-a83e-2629ae149211",
-        "meta": {
-            "lessor": "Crosby Development Company, LLC",
-            "lessee": "Audubon Companies, LLC",
-            "property": "Sanctuary Office Park, Building #5, Suite 300, Mandeville, LA 70471",
-            "suite": "Suite 300",
-            "documentType": "Amendment",
-            "dated": "2025-09-29",
-            "monthlyRent": "USD 10834.63",
-            "commencement": "2025-12-01",
-            "termination": "2030-11-30",
-            "title": "First Amendment (current) — Building #5, Suite 300 (Audubon) — substitute lessee Audubon Engineering LP → Audubon Companies LLC, $10,834.63/mo eff 2025-12-01, extend to 2030-11-30, 3% esc"
-        },
-        "date": "2025-09-29"
-    },
-    {
-        "id": "leasedoc-audubonbldg5ste300mergernotice",
-        "propertyId": "sanctuary-office-park",
-        "building": "Building #5",
-        "tenant": "Audubon Companies, LLC",
-        "suite": "300",
-        "file": "Audubon_BLDG5_STE300_MergerNotice.pdf",
-        "docType": "Notice",
-        "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FAudubon_BLDG5_STE300_MergerNotice.pdf?alt=media&token=70fedbfe-82e5-4061-8ca6-e1fb76ac0816",
-        "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FAudubon_BLDG5_STE300_MergerNotice.html?alt=media&token=0bb35b6b-b512-4f72-a6f4-65aa2bbc0d87",
-        "meta": {
-            "lessor": "Crosby Development Company, LLC",
-            "lessee": "Audubon Companies, LLC",
-            "property": "Sanctuary Office Park, Building #5, Suite 300, Mandeville, LA 70471",
-            "suite": "Suite 300",
-            "documentType": "Notice",
-            "dated": "2026-01-09",
-            "title": "Notice of Merger — Building #5, Suite 300 (Audubon) — Audubon Engineering Company, LP merged into Audubon Companies, LLC (surviving), eff 2026-01-01, new tax ID 26-3937890"
-        },
-        "date": "2026-01-09"
-    },
-    {
-        "id": "leasedoc-diannesbldg1ste305binit",
-        "propertyId": "sanctuary-office-park",
-        "building": "Building #1",
-        "tenant": "Dianne's Esthetic and Waxing",
-        "suite": "305B",
-        "file": "Diannes_BLDG1_STE305B_Init.pdf",
-        "docType": "Init",
-        "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FDiannes_BLDG1_STE305B_Init.pdf?alt=media&token=005f3477-7568-4e65-b07e-bbdf98138640",
-        "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FDiannes_BLDG1_STE305B_Init.html?alt=media&token=d93297b9-f1a6-4172-aceb-6401da5e7e95",
-        "meta": {
-            "lessor": "Crosby Development Company, LLC",
-            "lessee": "Dianne's Esthetic and Waxing",
-            "property": "Sanctuary Office Park, Building #1, Floor 3, Suite 305B, Mandeville, LA 70471",
-            "suite": "Suite 305B",
-            "documentType": "Init",
-            "dated": "2025-11-03",
-            "monthlyRent": "USD 550.00",
-            "commencement": "2025-12-01",
-            "termination": "2026-11-30",
-            "title": "Lease of Commercial Property — Building #1, Suite 305B (Dianne's Esthetic and Waxing) — 300 SF, $550/mo, 12-mo term eff 2025-12-01, 3% esc, auto-renew, deposit $550, full-service gross"
-        },
-        "date": "2025-11-03"
+    "date": "2024-08-08",
+    "lease": {
+      "leaseId": "lease-bldg3-suite101-galloway",
+      "status": "active",
+      "commenced": "2004-12-01",
+      "terminates": "2029-11-30",
+      "monthlyRent": 27564.26,
+      "escalationPct": 3,
+      "escalationMonth": 12,
+      "escalationMonthName": "December",
+      "autoRenew": false,
+      "noticeDays": 180,
+      "noticeDeadline": "2029-05-31"
     }
+  },
+  {
+    "id": "leasedoc-bakerdonelsonbldg3ste201init",
+    "propertyId": "sanctuary-office-park",
+    "building": "Building #3",
+    "tenant": "Baker, Donelson, Bearman, Caldwell & Berkowitz, PC",
+    "suite": "201 & 202",
+    "file": "BakerDonelson_BLDG3_STE201_Init.pdf",
+    "docType": "Init",
+    "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FBakerDonelson_BLDG3_STE201_Init.pdf?alt=media&token=7c808aba-05fa-4c58-b1a2-910b235e550a",
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FBakerDonelson_BLDG3_STE201_Init.html?alt=media&token=d7f536bf-d157-424e-a54d-28a5f3a0677f",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Shaw & Norton, L.L.P.",
+      "property": "Sanctuary Office Park, Building #3, Suite 201, Mandeville, LA 70471",
+      "suite": "Suite 201 & 202",
+      "documentType": "Init",
+      "dated": "2000-03-30",
+      "monthlyRent": "USD 4750.00",
+      "commencement": "2000-05-19",
+      "termination": "2005-08-31",
+      "title": "Lease of Commercial Property — Building #3, Suite 201 (Crosby / Shaw & Norton, predecessor to Baker Donelson) — $4,750→$6,300/mo, full-service gross"
+    },
+    "date": "2000-03-30",
+    "lease": {
+      "leaseId": "lease-bldg3-suite201-baker-donelson",
+      "status": "active",
+      "commenced": "2000-05-19",
+      "terminates": "2030-05-31",
+      "monthlyRent": 13680.98,
+      "escalationPct": 3,
+      "escalationMonth": 3,
+      "escalationMonthName": "March",
+      "autoRenew": false,
+      "noticeDays": null,
+      "noticeDeadline": null
+    }
+  },
+  {
+    "id": "leasedoc-bakerdonelsonbldg3ste201amd1",
+    "propertyId": "sanctuary-office-park",
+    "building": "Building #3",
+    "tenant": "Baker, Donelson, Bearman, Caldwell & Berkowitz, PC",
+    "suite": "201 & 202",
+    "file": "BakerDonelson_BLDG3_STE201_AMD1.pdf",
+    "docType": "Amendment",
+    "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FBakerDonelson_BLDG3_STE201_AMD1.pdf?alt=media&token=f2dc989a-bbfc-479d-a634-d51ed94d1329",
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FBakerDonelson_BLDG3_STE201_AMD1.html?alt=media&token=21e93648-5195-4291-aec8-805bb162cb1b",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Baker, Donelson, Bearman, Caldwell & Berkowitz, PC",
+      "property": "Sanctuary Office Park, Building #3, Suites 201 & 202, Mandeville, LA 70471",
+      "suite": "Suite 201 & 202",
+      "documentType": "Amendment",
+      "dated": "2005-06-20",
+      "monthlyRent": "USD 7191.00",
+      "termination": "2010-08-31",
+      "title": "First Amendment & Assignment — Building #3 (Shaw & Norton → Baker Donelson) — 5,230 SF, $7,191/mo, to 2010-08-31"
+    },
+    "date": "2005-06-20",
+    "lease": {
+      "leaseId": "lease-bldg3-suite201-baker-donelson",
+      "status": "active",
+      "commenced": "2000-05-19",
+      "terminates": "2030-05-31",
+      "monthlyRent": 13680.98,
+      "escalationPct": 3,
+      "escalationMonth": 3,
+      "escalationMonthName": "March",
+      "autoRenew": false,
+      "noticeDays": null,
+      "noticeDeadline": null
+    }
+  },
+  {
+    "id": "leasedoc-bakerdonelsonbldg3ste201amd2",
+    "propertyId": "sanctuary-office-park",
+    "building": "Building #3",
+    "tenant": "Baker, Donelson, Bearman, Caldwell & Berkowitz, PC",
+    "suite": "201 & 202",
+    "file": "BakerDonelson_BLDG3_STE201_AMD2.pdf",
+    "docType": "Amendment",
+    "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FBakerDonelson_BLDG3_STE201_AMD2.pdf?alt=media&token=095cfb5c-3a7a-4ea2-99fc-4fb71f13a01a",
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FBakerDonelson_BLDG3_STE201_AMD2.html?alt=media&token=ee93e712-d3d7-42c0-b5ae-3852814f3224",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Baker, Donelson, Bearman, Caldwell & Berkowitz, PC",
+      "property": "Sanctuary Office Park, Building #3, Suites 201–203, Mandeville, LA 70471",
+      "suite": "Suite 201 & 202",
+      "documentType": "Amendment",
+      "dated": "2005-10-31",
+      "monthlyRent": "USD 9528.50",
+      "termination": "2010-08-31",
+      "title": "Second Amendment — Building #3 (Baker Donelson) — add Suite 203 → 6,930 SF, $9,528.50/mo eff 2006-01-01, 3% esc"
+    },
+    "date": "2005-10-31",
+    "lease": {
+      "leaseId": "lease-bldg3-suite201-baker-donelson",
+      "status": "active",
+      "commenced": "2000-05-19",
+      "terminates": "2030-05-31",
+      "monthlyRent": 13680.98,
+      "escalationPct": 3,
+      "escalationMonth": 3,
+      "escalationMonthName": "March",
+      "autoRenew": false,
+      "noticeDays": null,
+      "noticeDeadline": null
+    }
+  },
+  {
+    "id": "leasedoc-bakerdonelsonbldg3ste201amd3",
+    "propertyId": "sanctuary-office-park",
+    "building": "Building #3",
+    "tenant": "Baker, Donelson, Bearman, Caldwell & Berkowitz, PC",
+    "suite": "201 & 202",
+    "file": "BakerDonelson_BLDG3_STE201_AMD3.pdf",
+    "docType": "Amendment",
+    "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FBakerDonelson_BLDG3_STE201_AMD3.pdf?alt=media&token=08b134b4-2ed8-41f2-8b4f-4abc4ad426de",
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FBakerDonelson_BLDG3_STE201_AMD3.html?alt=media&token=b8dffe6d-0a6a-4faa-92f0-f26925449dd2",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Baker, Donelson, Bearman, Caldwell & Berkowitz, PC",
+      "property": "Sanctuary Office Park, Building #3, Suite 201, Mandeville, LA 70471",
+      "suite": "Suite 201 & 202",
+      "documentType": "Amendment",
+      "dated": "2010-03-23",
+      "monthlyRent": "USD 18.00/RSF",
+      "termination": "2015-08-31",
+      "title": "Third Amendment — Building #3 (Baker Donelson) — extend to 2015-08-31, $18.00/RSF, 3% esc"
+    },
+    "date": "2010-03-23",
+    "lease": {
+      "leaseId": "lease-bldg3-suite201-baker-donelson",
+      "status": "active",
+      "commenced": "2000-05-19",
+      "terminates": "2030-05-31",
+      "monthlyRent": 13680.98,
+      "escalationPct": 3,
+      "escalationMonth": 3,
+      "escalationMonthName": "March",
+      "autoRenew": false,
+      "noticeDays": null,
+      "noticeDeadline": null
+    }
+  },
+  {
+    "id": "leasedoc-bakerdonelsonbldg3ste201amd4",
+    "propertyId": "sanctuary-office-park",
+    "building": "Building #3",
+    "tenant": "Baker, Donelson, Bearman, Caldwell & Berkowitz, PC",
+    "suite": "201 & 202",
+    "file": "BakerDonelson_BLDG3_STE201_AMD4.pdf",
+    "docType": "Amendment",
+    "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FBakerDonelson_BLDG3_STE201_AMD4.pdf?alt=media&token=83f051da-e5f4-45f8-97da-4d0ebf6762be",
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FBakerDonelson_BLDG3_STE201_AMD4.html?alt=media&token=1c169b8f-2082-4378-9751-b525bc47db2f",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Baker, Donelson, Bearman, Caldwell & Berkowitz, PC",
+      "property": "Sanctuary Office Park, Building #3, Suite 201, Mandeville, LA 70471",
+      "suite": "Suite 201 & 202",
+      "documentType": "Amendment",
+      "dated": "2014-12-28",
+      "monthlyRent": "USD 19.50/RSF",
+      "termination": "2020-08-31",
+      "title": "Fourth Amendment — Building #3 (Baker Donelson) — extend to 2020-08-31, $19.50/RSF, 3% esc"
+    },
+    "date": "2014-12-28",
+    "lease": {
+      "leaseId": "lease-bldg3-suite201-baker-donelson",
+      "status": "active",
+      "commenced": "2000-05-19",
+      "terminates": "2030-05-31",
+      "monthlyRent": 13680.98,
+      "escalationPct": 3,
+      "escalationMonth": 3,
+      "escalationMonthName": "March",
+      "autoRenew": false,
+      "noticeDays": null,
+      "noticeDeadline": null
+    }
+  },
+  {
+    "id": "leasedoc-bakerdonelsonbldg3ste201amd5",
+    "propertyId": "sanctuary-office-park",
+    "building": "Building #3",
+    "tenant": "Baker, Donelson, Bearman, Caldwell & Berkowitz, PC",
+    "suite": "201 & 202",
+    "file": "BakerDonelson_BLDG3_STE201_AMD5.pdf",
+    "docType": "Amendment",
+    "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FBakerDonelson_BLDG3_STE201_AMD5.pdf?alt=media&token=c221af40-f3f4-42b9-b314-dc7b8bcf563d",
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FBakerDonelson_BLDG3_STE201_AMD5.html?alt=media&token=e951b01e-7144-470c-8006-71de7d190fe1",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Baker, Donelson, Bearman, Caldwell & Berkowitz, PC",
+      "property": "Sanctuary Office Park, Building #3, Suite 201, Mandeville, LA 70471",
+      "suite": "Suite 201 & 202",
+      "documentType": "Amendment",
+      "dated": "2020-05-05",
+      "monthlyRent": "USD 12676.13",
+      "termination": "2025-02-28",
+      "title": "Fifth Amendment — Building #3 (Baker Donelson) — extend to 2025-02-28, $12,676.13/mo eff 2020-09-01, 3% esc (Sep)"
+    },
+    "date": "2020-05-05",
+    "lease": {
+      "leaseId": "lease-bldg3-suite201-baker-donelson",
+      "status": "active",
+      "commenced": "2000-05-19",
+      "terminates": "2030-05-31",
+      "monthlyRent": 13680.98,
+      "escalationPct": 3,
+      "escalationMonth": 3,
+      "escalationMonthName": "March",
+      "autoRenew": false,
+      "noticeDays": null,
+      "noticeDeadline": null
+    }
+  },
+  {
+    "id": "leasedoc-bakerdonelsonbldg3ste201commagmtamd5",
+    "propertyId": "sanctuary-office-park",
+    "building": "Building #3",
+    "tenant": "Baker, Donelson, Bearman, Caldwell & Berkowitz, PC",
+    "suite": "201 & 202",
+    "file": "BakerDonelson_BLDG3_STE201_CommAgmt_AMD5.pdf",
+    "docType": "Commission Agreement",
+    "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FBakerDonelson_BLDG3_STE201_CommAgmt_AMD5.pdf?alt=media&token=6e101801-4c44-4f8a-af83-ef0ff9803fdf",
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FBakerDonelson_BLDG3_STE201_CommAgmt_AMD5.html?alt=media&token=3e62a853-2fd5-449e-b20a-13cbadefc610",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Baker, Donelson, Bearman, Caldwell & Berkowitz, PC",
+      "property": "Sanctuary Office Park, Building #3, Suite 201, Mandeville, LA 70471",
+      "suite": "Suite 201 & 202",
+      "documentType": "Commission Agreement",
+      "dated": "2020-04-01",
+      "title": "Lease Commission Agreement (Amd #5) — Building #3 (Baker Donelson) — JLL, 4% of gross rents"
+    },
+    "date": "2020-04-01",
+    "lease": {
+      "leaseId": "lease-bldg3-suite201-baker-donelson",
+      "status": "active",
+      "commenced": "2000-05-19",
+      "terminates": "2030-05-31",
+      "monthlyRent": 13680.98,
+      "escalationPct": 3,
+      "escalationMonth": 3,
+      "escalationMonthName": "March",
+      "autoRenew": false,
+      "noticeDays": null,
+      "noticeDeadline": null
+    }
+  },
+  {
+    "id": "leasedoc-bakerdonelsonbldg3ste201proposal2024",
+    "propertyId": "sanctuary-office-park",
+    "building": "Building #3",
+    "tenant": "Baker, Donelson, Bearman, Caldwell & Berkowitz, PC",
+    "suite": "201 & 202",
+    "file": "BakerDonelson_BLDG3_STE201_Proposal2024.pdf",
+    "docType": "Proposal",
+    "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FBakerDonelson_BLDG3_STE201_Proposal2024.pdf?alt=media&token=098cafb0-2e2e-4eb0-9811-01d0c215b954",
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FBakerDonelson_BLDG3_STE201_Proposal2024.html?alt=media&token=a0ac305e-c99e-47c3-a9fb-444d4a2b514b",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Baker, Donelson, Bearman, Caldwell & Berkowitz, PC",
+      "property": "Sanctuary Office Park, Building #3, Suite 201, Mandeville, LA 70471",
+      "suite": "Suite 201 & 202",
+      "documentType": "Proposal",
+      "dated": "2024-07-16",
+      "commencement": "2025-03-01",
+      "title": "JLL Renewal Proposal (non-binding) — Building #3 (Baker Donelson) — 6,930 RSF, 5yr3mo from 2025-03-01, ~$23/RSF, TI $105/RSF"
+    },
+    "date": "2024-07-16",
+    "lease": {
+      "leaseId": "lease-bldg3-suite201-baker-donelson",
+      "status": "active",
+      "commenced": "2000-05-19",
+      "terminates": "2030-05-31",
+      "monthlyRent": 13680.98,
+      "escalationPct": 3,
+      "escalationMonth": 3,
+      "escalationMonthName": "March",
+      "autoRenew": false,
+      "noticeDays": null,
+      "noticeDeadline": null
+    }
+  },
+  {
+    "id": "leasedoc-bakerdonelsonbldg3ste201commagmtamd6",
+    "propertyId": "sanctuary-office-park",
+    "building": "Building #3",
+    "tenant": "Baker, Donelson, Bearman, Caldwell & Berkowitz, PC",
+    "suite": "201 & 202",
+    "file": "BakerDonelson_BLDG3_STE201_CommAgmt_AMD6.pdf",
+    "docType": "Commission Agreement",
+    "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FBakerDonelson_BLDG3_STE201_CommAgmt_AMD6.pdf?alt=media&token=4e310606-5c02-45da-8d3f-669268cb8a3e",
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FBakerDonelson_BLDG3_STE201_CommAgmt_AMD6.html?alt=media&token=d359de1d-6cfd-4820-91be-fd663b786424",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Baker, Donelson, Bearman, Caldwell & Berkowitz, PC",
+      "property": "Sanctuary Office Park, Building #3, Suite 201, Mandeville, LA 70471",
+      "suite": "Suite 201 & 202",
+      "documentType": "Commission Agreement",
+      "dated": "2024-08-27",
+      "title": "Lease Commission Agreement (Amd #6) — Building #3 (Baker Donelson) — JLL, 4% of gross rents"
+    },
+    "date": "2024-08-27",
+    "lease": {
+      "leaseId": "lease-bldg3-suite201-baker-donelson",
+      "status": "active",
+      "commenced": "2000-05-19",
+      "terminates": "2030-05-31",
+      "monthlyRent": 13680.98,
+      "escalationPct": 3,
+      "escalationMonth": 3,
+      "escalationMonthName": "March",
+      "autoRenew": false,
+      "noticeDays": null,
+      "noticeDeadline": null
+    }
+  },
+  {
+    "id": "leasedoc-bakerdonelsonbldg3ste201amd6",
+    "propertyId": "sanctuary-office-park",
+    "building": "Building #3",
+    "tenant": "Baker, Donelson, Bearman, Caldwell & Berkowitz, PC",
+    "suite": "201 & 202",
+    "file": "BakerDonelson_BLDG3_STE201_AMD6.pdf",
+    "docType": "Amendment",
+    "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FBakerDonelson_BLDG3_STE201_AMD6.pdf?alt=media&token=bca91393-262a-4de3-b2fb-56db0d0b4eae",
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FBakerDonelson_BLDG3_STE201_AMD6.html?alt=media&token=00d26c0d-c694-45ec-85ee-bba0ed456e18",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Baker, Donelson, Bearman, Caldwell & Berkowitz, PC",
+      "property": "Sanctuary Office Park, Building #3, Suite 201, Mandeville, LA 70471",
+      "suite": "Suite 201 & 202",
+      "documentType": "Amendment",
+      "dated": "2024-09-06",
+      "monthlyRent": "USD 13282.50",
+      "commencement": "2025-03-01",
+      "termination": "2030-05-31",
+      "title": "Sixth Amendment (current) — Building #3, Suite 201 (Baker Donelson) — extend to 2030-05-31, $13,282.50/mo eff 2025-03-01, 3% esc (Mar), 2×5yr options, TI $28,245.12"
+    },
+    "date": "2024-09-06",
+    "lease": {
+      "leaseId": "lease-bldg3-suite201-baker-donelson",
+      "status": "active",
+      "commenced": "2000-05-19",
+      "terminates": "2030-05-31",
+      "monthlyRent": 13680.98,
+      "escalationPct": 3,
+      "escalationMonth": 3,
+      "escalationMonthName": "March",
+      "autoRenew": false,
+      "noticeDays": null,
+      "noticeDeadline": null
+    }
+  },
+  {
+    "id": "leasedoc-watchsystemsbldg4ste101amd2",
+    "propertyId": "sanctuary-office-park",
+    "building": "Building #4",
+    "tenant": "Watch Systems",
+    "suite": "101 & 201",
+    "file": "WatchSystems_BLDG4_STE101_AMD2.pdf",
+    "docType": "Amendment",
+    "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FWatchSystems_BLDG4_STE101_AMD2.pdf?alt=media&token=41547a04-6feb-4821-80a7-198ec2b65055",
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FWatchSystems_BLDG4_STE101_AMD2.html?alt=media&token=48cbffb9-0497-4983-ad53-9a97d66ec1b6",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Watch Systems, LLC (d/b/a OffenderWatch)",
+      "property": "Sanctuary Office Park, Building #4, Suite 101, Mandeville, LA 70471",
+      "suite": "Suite 101 & 201",
+      "documentType": "Amendment",
+      "dated": "2024-05-01",
+      "monthlyRent": "USD 19636.64",
+      "commencement": "2024-07-01",
+      "termination": "2026-06-30",
+      "title": "Second Amendment — Building #4, Suite 101 (Watch Systems) — $19,636.64/mo eff 2024-07-01, extend to 2026-06-30, 3% esc (superseded by Amd #3)"
+    },
+    "date": "2024-05-01",
+    "lease": {
+      "leaseId": "lease-bldg4-suite101-watch-systems",
+      "status": "active",
+      "commenced": "2021-07-01",
+      "terminates": "2028-06-30",
+      "monthlyRent": 20832.51,
+      "escalationPct": 3,
+      "escalationMonth": 7,
+      "escalationMonthName": "July",
+      "autoRenew": false,
+      "noticeDays": null,
+      "noticeDeadline": null
+    }
+  },
+  {
+    "id": "leasedoc-watchsystemsbldg4ste101commagmt",
+    "propertyId": "sanctuary-office-park",
+    "building": "Building #4",
+    "tenant": "Watch Systems",
+    "suite": "101 & 201",
+    "file": "WatchSystems_BLDG4_STE101_CommAgmt.pdf",
+    "docType": "Commission Agreement",
+    "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FWatchSystems_BLDG4_STE101_CommAgmt.pdf?alt=media&token=77733c4d-7679-453f-a5ad-dcd37d9d7cf7",
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FWatchSystems_BLDG4_STE101_CommAgmt.html?alt=media&token=b3280b80-0961-4a2c-ab79-72ba11b6e967",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Watch Systems, LLC",
+      "property": "Sanctuary Office Park, Building #4, Suites 101 & 201, Mandeville, LA 70471",
+      "suite": "Suite 101 & 201",
+      "documentType": "Commission Agreement",
+      "dated": "2021-04-26",
+      "title": "Lease Commission Agreement — Building #4 (Watch Systems) — Latter & Blum (J. Schaff-Mutter), 4% initial term + 2% renewals"
+    },
+    "date": "2021-04-26",
+    "lease": {
+      "leaseId": "lease-bldg4-suite101-watch-systems",
+      "status": "active",
+      "commenced": "2021-07-01",
+      "terminates": "2028-06-30",
+      "monthlyRent": 20832.51,
+      "escalationPct": 3,
+      "escalationMonth": 7,
+      "escalationMonthName": "July",
+      "autoRenew": false,
+      "noticeDays": null,
+      "noticeDeadline": null
+    }
+  },
+  {
+    "id": "leasedoc-watchsystemsbldg4ste101landlordwaiver",
+    "propertyId": "sanctuary-office-park",
+    "building": "Building #4",
+    "tenant": "Watch Systems",
+    "suite": "101 & 201",
+    "file": "WatchSystems_BLDG4_STE101_LandlordWaiver.pdf",
+    "docType": "Landlord Waiver",
+    "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FWatchSystems_BLDG4_STE101_LandlordWaiver.pdf?alt=media&token=85b3831b-bbcb-4cdc-8fce-f78755f2a4f7",
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FWatchSystems_BLDG4_STE101_LandlordWaiver.html?alt=media&token=775958da-8f8e-430e-8a6e-dd28ac20cdc6",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Watch Systems, LLC (d/b/a OffenderWatch)",
+      "property": "Sanctuary Office Park, Building #4, Suites 101 & 201, Mandeville, LA 70471",
+      "suite": "Suite 101 & 201",
+      "documentType": "Landlord Waiver",
+      "dated": "2022-05-02",
+      "title": "Landlord Waiver & Consent — Building #4 (Watch Systems) — in favor of RF Investment Partners SBIC, LP (collateral agent)"
+    },
+    "date": "2022-05-02",
+    "lease": {
+      "leaseId": "lease-bldg4-suite101-watch-systems",
+      "status": "active",
+      "commenced": "2021-07-01",
+      "terminates": "2028-06-30",
+      "monthlyRent": 20832.51,
+      "escalationPct": 3,
+      "escalationMonth": 7,
+      "escalationMonthName": "July",
+      "autoRenew": false,
+      "noticeDays": null,
+      "noticeDeadline": null
+    }
+  },
+  {
+    "id": "leasedoc-edelmanbldg4ste200init",
+    "propertyId": "sanctuary-office-park",
+    "building": "Building #4",
+    "tenant": "Edelman Financial Engines, LLC",
+    "suite": "200",
+    "file": "Edelman_BLDG4_STE200_Init.pdf",
+    "docType": "Init",
+    "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FEdelman_BLDG4_STE200_Init.pdf?alt=media&token=a4d905bf-6ff0-4bd5-8322-5c5b20e463f6",
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FEdelman_BLDG4_STE200_Init.html?alt=media&token=576d4e4f-acd9-461c-833f-dc57aa77278c",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Edelman Financial Engines, LLC",
+      "property": "Sanctuary Office Park, Building #4, Suite 200, Mandeville, LA 70471",
+      "suite": "Suite 200",
+      "documentType": "Init",
+      "dated": "2022-08-30",
+      "monthlyRent": "USD 4210.41",
+      "commencement": "2022-12-01",
+      "termination": "2029-11-30",
+      "title": "Lease of Commercial Property — Building #4, Suite 200 (Edelman Financial Engines) — 2,350 SF, $4,210.41/mo, 2% esc (Jan), 2×36mo options, full-service gross"
+    },
+    "date": "2022-08-30",
+    "lease": {
+      "leaseId": "lease-bldg4-suite200-edelman",
+      "status": "active",
+      "commenced": "2022-12-01",
+      "terminates": "2029-11-30",
+      "monthlyRent": 4468.12,
+      "escalationPct": 2,
+      "escalationMonth": 1,
+      "escalationMonthName": "January",
+      "autoRenew": false,
+      "noticeDays": null,
+      "noticeDeadline": null
+    }
+  },
+  {
+    "id": "leasedoc-medsouthbldg4ste302lease",
+    "propertyId": "sanctuary-office-park",
+    "building": "Building #4",
+    "tenant": "MedSouth Record Management LLC",
+    "suite": "302",
+    "file": "MedSouth_BLDG4_STE302_Lease.pdf",
+    "docType": "Lease",
+    "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FMedSouth_BLDG4_STE302_Lease.pdf?alt=media&token=a3d26b60-f108-4848-9b61-e58f7d933ea1",
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FMedSouth_BLDG4_STE302_Lease.html?alt=media&token=05e3fdbd-22d6-4092-a6ea-3042e0b57861",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "MedSouth Record Management LLC",
+      "property": "Sanctuary Office Park, Building #4, Suite 302, Mandeville, LA 70471",
+      "suite": "Suite 302",
+      "documentType": "Lease",
+      "dated": "2025-02-25",
+      "monthlyRent": "USD 1375.00",
+      "commencement": "2025-05-01",
+      "termination": "2026-06-30",
+      "title": "Lease — Building #4, Suite 302 (MedSouth) — 750 SF, $1,375/mo, first 3 mo abated, 3% esc; voids Bldg #5 Suite 203"
+    },
+    "date": "2025-02-25",
+    "lease": {
+      "leaseId": "lease-bldg4-suite302-medsouth",
+      "status": "active",
+      "commenced": "2025-05-01",
+      "terminates": "2026-08-31",
+      "monthlyRent": 1416.25,
+      "escalationPct": 3,
+      "escalationMonth": 6,
+      "escalationMonthName": "June",
+      "autoRenew": true,
+      "noticeDays": 90,
+      "noticeDeadline": null
+    }
+  },
+  {
+    "id": "leasedoc-medsouthbldg5ste203lease",
+    "propertyId": "sanctuary-office-park",
+    "building": "Building #4",
+    "tenant": "MedSouth Record Management LLC",
+    "suite": "302",
+    "file": "MedSouth_BLDG5_STE203_Lease.pdf",
+    "docType": "Lease",
+    "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FMedSouth_BLDG5_STE203_Lease.pdf?alt=media&token=c140ec37-fcf0-48f9-bc89-384cfc3e107b",
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FMedSouth_BLDG5_STE203_Lease.html?alt=media&token=b449c9a1-beec-45b5-bf4e-bb36c6f5ec9b",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "MedSouth Record Management LLC",
+      "property": "Sanctuary Office Park, Building #5, Suite 203, Mandeville, LA 70471",
+      "suite": "Suite 302",
+      "documentType": "Lease",
+      "dated": "2022-04-19",
+      "monthlyRent": "USD 1466.00",
+      "commencement": "2022-05-15",
+      "termination": "2023-06-30",
+      "title": "Lease — Building #5, Suite 203 (MedSouth) — 1,095 SF, $1,466/mo, 3% esc; voids Bldg #5 Suite 101 (legacy)"
+    },
+    "date": "2022-04-19",
+    "lease": {
+      "leaseId": "lease-bldg4-suite302-medsouth",
+      "status": "active",
+      "commenced": "2025-05-01",
+      "terminates": "2026-08-31",
+      "monthlyRent": 1416.25,
+      "escalationPct": 3,
+      "escalationMonth": 6,
+      "escalationMonthName": "June",
+      "autoRenew": true,
+      "noticeDays": 90,
+      "noticeDeadline": null
+    }
+  },
+  {
+    "id": "leasedoc-medsouthbldg5ste101amd2",
+    "propertyId": "sanctuary-office-park",
+    "building": "Building #4",
+    "tenant": "MedSouth Record Management LLC",
+    "suite": "302",
+    "file": "MedSouth_BLDG5_STE101_AMD2.pdf",
+    "docType": "Amendment",
+    "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FMedSouth_BLDG5_STE101_AMD2.pdf?alt=media&token=bd7ca32e-6738-4120-9036-f786f76e715a",
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FMedSouth_BLDG5_STE101_AMD2.html?alt=media&token=238c404b-76ac-46ae-a20f-6fa6c6c506be",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "MedSouth Record Management LLC",
+      "property": "Sanctuary Office Park, Building #5, Suite 101, Mandeville, LA 70471",
+      "suite": "Suite 302",
+      "documentType": "Amendment",
+      "dated": "2020-01-30",
+      "monthlyRent": "USD 10850.80",
+      "commencement": "2020-03-01",
+      "termination": "2021-02-28",
+      "title": "Second Amendment — Building #5, Suite 101 (MedSouth) — $10,850.80/mo eff 2020-03-01, 3% esc, auto-renew (legacy)"
+    },
+    "date": "2020-01-30",
+    "lease": {
+      "leaseId": "lease-bldg4-suite302-medsouth",
+      "status": "active",
+      "commenced": "2025-05-01",
+      "terminates": "2026-08-31",
+      "monthlyRent": 1416.25,
+      "escalationPct": 3,
+      "escalationMonth": 6,
+      "escalationMonthName": "June",
+      "autoRenew": true,
+      "noticeDays": 90,
+      "noticeDeadline": null
+    }
+  },
+  {
+    "id": "leasedoc-medsouthbldg5ste101amd1",
+    "propertyId": "sanctuary-office-park",
+    "building": "Building #4",
+    "tenant": "MedSouth Record Management LLC",
+    "suite": "302",
+    "file": "MedSouth_BLDG5_STE101_AMD1.pdf",
+    "docType": "Amendment",
+    "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FMedSouth_BLDG5_STE101_AMD1.pdf?alt=media&token=b31d1fa5-eaf8-4d10-aba7-0503fd7071c5",
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FMedSouth_BLDG5_STE101_AMD1.html?alt=media&token=06ea3f9f-4040-4dbe-b71a-267fc652c774",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "MedSouth Record Management LLC",
+      "property": "Sanctuary Office Park, Building #5, Suite 101, Mandeville, LA 70471",
+      "suite": "Suite 302",
+      "documentType": "Amendment",
+      "dated": "2019-03-29",
+      "title": "First Amendment — Building #5, Suite 101 (MedSouth) — late-payment terms ($400 late fee, default trigger) (legacy)"
+    },
+    "date": "2019-03-29",
+    "lease": {
+      "leaseId": "lease-bldg4-suite302-medsouth",
+      "status": "active",
+      "commenced": "2025-05-01",
+      "terminates": "2026-08-31",
+      "monthlyRent": 1416.25,
+      "escalationPct": 3,
+      "escalationMonth": 6,
+      "escalationMonthName": "June",
+      "autoRenew": true,
+      "noticeDays": 90,
+      "noticeDeadline": null
+    }
+  },
+  {
+    "id": "leasedoc-medsouthbldg5ste101lease",
+    "propertyId": "sanctuary-office-park",
+    "building": "Building #4",
+    "tenant": "MedSouth Record Management LLC",
+    "suite": "302",
+    "file": "MedSouth_BLDG5_STE101_Lease.pdf",
+    "docType": "Lease",
+    "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FMedSouth_BLDG5_STE101_Lease.pdf?alt=media&token=8a7c6bfe-bcb0-4c00-87df-f18b72a76b31",
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FMedSouth_BLDG5_STE101_Lease.html?alt=media&token=01a53ba4-78b9-4ee0-b42d-2cdf169ba3ed",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "MedSouth Record Management LLC",
+      "property": "Sanctuary Office Park, Building #5, Suite 101, Mandeville, LA 70471",
+      "suite": "Suite 302",
+      "documentType": "Lease",
+      "dated": "2014-11-19",
+      "monthlyRent": "USD 9460.00",
+      "commencement": "2015-03-01",
+      "termination": "2020-02-28",
+      "title": "Lease — Building #5, Suite 101 (MedSouth) — 5,160 SF, $9,460/mo, 3% esc, 1×3yr option (legacy)"
+    },
+    "date": "2014-11-19",
+    "lease": {
+      "leaseId": "lease-bldg4-suite302-medsouth",
+      "status": "active",
+      "commenced": "2025-05-01",
+      "terminates": "2026-08-31",
+      "monthlyRent": 1416.25,
+      "escalationPct": 3,
+      "escalationMonth": 6,
+      "escalationMonthName": "June",
+      "autoRenew": true,
+      "noticeDays": 90,
+      "noticeDeadline": null
+    }
+  },
+  {
+    "id": "leasedoc-medsouthbldg4ste101relocationamd",
+    "propertyId": "sanctuary-office-park",
+    "building": "Building #4",
+    "tenant": "MedSouth Record Management LLC",
+    "suite": "302",
+    "file": "MedSouth_BLDG4_STE101_Relocation_AMD.pdf",
+    "docType": "Amendment",
+    "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FMedSouth_BLDG4_STE101_Relocation_AMD.pdf?alt=media&token=879f417b-9354-4db7-bd06-8147962bcdda",
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FMedSouth_BLDG4_STE101_Relocation_AMD.html?alt=media&token=8d8ff4a3-8a08-4a3a-a14a-15240614dc3a",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "MedSouth Record Management LLC",
+      "property": "Sanctuary Office Park, Building #4, Suite 101 → Building #5, Suite 102, Mandeville, LA 70471",
+      "suite": "Suite 302",
+      "documentType": "Amendment",
+      "dated": "2012-07-24",
+      "monthlyRent": "USD 5981.43",
+      "title": "Amendment (Relocation) — Building #4 Suite 101 → Building #5 Suite 102 (MedSouth) — $5,981.43/mo eff 2012-12-01, abate Sep–Nov, $10,675 moving (legacy)"
+    },
+    "date": "2012-07-24",
+    "lease": {
+      "leaseId": "lease-bldg4-suite302-medsouth",
+      "status": "active",
+      "commenced": "2025-05-01",
+      "terminates": "2026-08-31",
+      "monthlyRent": 1416.25,
+      "escalationPct": 3,
+      "escalationMonth": 6,
+      "escalationMonthName": "June",
+      "autoRenew": true,
+      "noticeDays": 90,
+      "noticeDeadline": null
+    }
+  },
+  {
+    "id": "leasedoc-medsouthbldg4ste101lease",
+    "propertyId": "sanctuary-office-park",
+    "building": "Building #4",
+    "tenant": "MedSouth Record Management LLC",
+    "suite": "302",
+    "file": "MedSouth_BLDG4_STE101_Lease.pdf",
+    "docType": "Lease",
+    "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FMedSouth_BLDG4_STE101_Lease.pdf?alt=media&token=62ff6254-47f2-4138-a43f-fd98d97d9815",
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FMedSouth_BLDG4_STE101_Lease.html?alt=media&token=003bfc5d-f72a-4704-a530-fe352431bea4",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "MedSouth Record Management LLC",
+      "property": "Sanctuary Office Park, Building #4, Suite 101, Mandeville, LA 70471",
+      "suite": "Suite 302",
+      "documentType": "Lease",
+      "dated": "2009-01-16",
+      "monthlyRent": "USD 7083.33",
+      "commencement": "2009-03-01",
+      "termination": "2012-02-28",
+      "title": "Lease — Building #4, Suite 101 (MedSouth) — 4,250 SF, $7,083.33/mo, 3% esc; Mar-2009 addendum extends to 2015-02-28 (legacy)"
+    },
+    "date": "2009-01-16",
+    "lease": {
+      "leaseId": "lease-bldg4-suite302-medsouth",
+      "status": "active",
+      "commenced": "2025-05-01",
+      "terminates": "2026-08-31",
+      "monthlyRent": 1416.25,
+      "escalationPct": 3,
+      "escalationMonth": 6,
+      "escalationMonthName": "June",
+      "autoRenew": true,
+      "noticeDays": 90,
+      "noticeDeadline": null
+    }
+  },
+  {
+    "id": "leasedoc-uswmenardbldg4ste304amd2",
+    "propertyId": "sanctuary-office-park",
+    "building": "Building #4",
+    "tenant": "USW-Menard, Inc.",
+    "suite": "304",
+    "file": "USWMenard_BLDG4_STE304_AMD2.pdf",
+    "docType": "Amendment",
+    "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FUSWMenard_BLDG4_STE304_AMD2.pdf?alt=media&token=634af5cc-b389-4f13-a436-3edc3312512e",
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FUSWMenard_BLDG4_STE304_AMD2.html?alt=media&token=71dcf9c4-c3d1-4dac-820a-690580eb6ab1",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "USW-Menard, Inc.",
+      "property": "Sanctuary Office Park, Building #4, Suite 304, Mandeville, LA 70471",
+      "suite": "Suite 304",
+      "documentType": "Amendment",
+      "dated": "2024-11-06",
+      "monthlyRent": "USD 5220.91",
+      "commencement": "2025-01-01",
+      "termination": "2028-12-31",
+      "title": "Second Amendment (current) — Building #4, Suite 304 (USW-Menard) — +860 SF, $5,220.91/mo eff 2025-04-01, extend to 2028-12-31, 3% esc"
+    },
+    "date": "2024-11-06",
+    "lease": {
+      "leaseId": "lease-bldg4-suite304-menard",
+      "status": "active",
+      "commenced": "2021-11-01",
+      "terminates": "2028-12-31",
+      "monthlyRent": 5377.54,
+      "escalationPct": 3,
+      "escalationMonth": 11,
+      "escalationMonthName": "November",
+      "autoRenew": false,
+      "noticeDays": null,
+      "noticeDeadline": null
+    }
+  },
+  {
+    "id": "leasedoc-uswmenardbldg4ste304amd1",
+    "propertyId": "sanctuary-office-park",
+    "building": "Building #4",
+    "tenant": "USW-Menard, Inc.",
+    "suite": "304",
+    "file": "USWMenard_BLDG4_STE304_AMD1.pdf",
+    "docType": "Amendment",
+    "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FUSWMenard_BLDG4_STE304_AMD1.pdf?alt=media&token=9df9f825-0d81-42e6-9c55-6e4dea95c8bf",
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FUSWMenard_BLDG4_STE304_AMD1.html?alt=media&token=ddd968b4-9004-413d-848f-2ceb333ace81",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "USW-Menard, Inc.",
+      "property": "Sanctuary Office Park, Building #4, Suite 304, Mandeville, LA 70471",
+      "suite": "Suite 304",
+      "documentType": "Amendment",
+      "dated": "2024-02-14",
+      "monthlyRent": "USD 3417.73",
+      "commencement": "2024-04-01",
+      "termination": "2027-10-31",
+      "title": "First Amendment — Building #4, Suite 304 (USW-Menard) — +310 SF, $3,417.73/mo eff 2024-04-01, extend to 2027-10-31, 3% esc"
+    },
+    "date": "2024-02-14",
+    "lease": {
+      "leaseId": "lease-bldg4-suite304-menard",
+      "status": "active",
+      "commenced": "2021-11-01",
+      "terminates": "2028-12-31",
+      "monthlyRent": 5377.54,
+      "escalationPct": 3,
+      "escalationMonth": 11,
+      "escalationMonthName": "November",
+      "autoRenew": false,
+      "noticeDays": null,
+      "noticeDeadline": null
+    }
+  },
+  {
+    "id": "leasedoc-uswmenardbldg4ste304init",
+    "propertyId": "sanctuary-office-park",
+    "building": "Building #4",
+    "tenant": "USW-Menard, Inc.",
+    "suite": "304",
+    "file": "USWMenard_BLDG4_STE304_Init.pdf",
+    "docType": "Init",
+    "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FUSWMenard_BLDG4_STE304_Init.pdf?alt=media&token=4e6851dc-88b0-4634-bc06-852e967f051a",
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FUSWMenard_BLDG4_STE304_Init.html?alt=media&token=5b9c2cb1-9405-44d8-9bbd-6777e2b20c70",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "USW-Menard, Inc.",
+      "property": "Sanctuary Office Park, Building #4, Suite 304, Mandeville, LA 70471",
+      "suite": "Suite 304",
+      "documentType": "Init",
+      "dated": "2021-10-07",
+      "monthlyRent": "USD 2572.00",
+      "commencement": "2021-11-01",
+      "termination": "2024-10-31",
+      "title": "Lease of Commercial Property — Building #4, Suite 304 (USW-Menard) — 1,470 SF, $2,572/mo, 3% esc, 2×3yr options, full-service gross"
+    },
+    "date": "2021-10-07",
+    "lease": {
+      "leaseId": "lease-bldg4-suite304-menard",
+      "status": "active",
+      "commenced": "2021-11-01",
+      "terminates": "2028-12-31",
+      "monthlyRent": 5377.54,
+      "escalationPct": 3,
+      "escalationMonth": 11,
+      "escalationMonthName": "November",
+      "autoRenew": false,
+      "noticeDays": null,
+      "noticeDeadline": null
+    }
+  },
+  {
+    "id": "leasedoc-lainstpaulbldg4ste305amd3",
+    "propertyId": "sanctuary-office-park",
+    "building": "Building #4",
+    "tenant": "Lain St. Paul",
+    "suite": "305",
+    "file": "LainStPaul_BLDG4_STE305_AMD3.pdf",
+    "docType": "Amendment",
+    "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FLainStPaul_BLDG4_STE305_AMD3.pdf?alt=media&token=3e2d4e1f-f507-41f2-aa0a-b4c050c2cb08",
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FLainStPaul_BLDG4_STE305_AMD3.html?alt=media&token=4f26ca13-eca9-4e19-8482-40805e305e2d",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Lain St. Paul",
+      "property": "Sanctuary Office Park, Building #4, Suite 305, Mandeville, LA 70471",
+      "suite": "Suite 305",
+      "documentType": "Amendment",
+      "dated": "2024-02-06",
+      "monthlyRent": "USD 996.56",
+      "commencement": "2024-05-01",
+      "termination": "2025-04-30",
+      "title": "Third Amendment — Building #4, Suite 305 (Lain St. Paul) — $996.56/mo eff 2024-05-01, extend to 2025-04-30, 3% esc, auto-renew"
+    },
+    "date": "2024-02-06",
+    "lease": {
+      "leaseId": "lease-bldg4-suite305-st-paul",
+      "status": "active",
+      "commenced": "2026-05-01",
+      "terminates": "2027-04-30",
+      "monthlyRent": 1057.26,
+      "escalationPct": 3,
+      "escalationMonth": 5,
+      "escalationMonthName": "May",
+      "autoRenew": true,
+      "noticeDays": 90,
+      "noticeDeadline": "2027-01-30"
+    }
+  },
+  {
+    "id": "leasedoc-lainstpaulbldg4ste305autorenewal2026",
+    "propertyId": "sanctuary-office-park",
+    "building": "Building #4",
+    "tenant": "Lain St. Paul",
+    "suite": "305",
+    "file": "LainStPaul_BLDG4_STE305_AutoRenewal2026.pdf",
+    "docType": "Auto-Renewal",
+    "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FLainStPaul_BLDG4_STE305_AutoRenewal2026.pdf?alt=media&token=2875bf34-ae0c-4107-9077-ddab8b025682",
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FLainStPaul_BLDG4_STE305_AutoRenewal2026.html?alt=media&token=e1ffdd9d-da09-4323-992a-90292f5e872f",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Lain St. Paul",
+      "property": "Sanctuary Office Park, Building #4, Suite 305, Mandeville, LA 70471",
+      "suite": "Suite 305",
+      "documentType": "Auto-Renewal (email notice sent to tenant 2026-05-19)",
+      "dated": "2026-05-19",
+      "monthlyRent": "USD 1057.26",
+      "commencement": "2026-05-01",
+      "termination": "2027-04-30",
+      "escalationPct": 3,
+      "escalationDate": "May 1",
+      "title": "Auto-renewal confirmed — Building #4, Suite 305 (Lain St. Paul) — $1,057.26/mo eff 2026-05-01 to 2027-04-30, 3% esc; emailed to tenant 2026-05-19; $30.79 May shortfall to collect with June rent; next non-renewal notice deadline 2027-01-30."
+    },
+    "date": "2026-05-19",
+    "lease": {
+      "leaseId": "lease-bldg4-suite305-st-paul",
+      "status": "active",
+      "commenced": "2026-05-01",
+      "terminates": "2027-04-30",
+      "monthlyRent": 1057.26,
+      "escalationPct": 3,
+      "escalationMonth": 5,
+      "escalationMonthName": "May",
+      "autoRenew": true,
+      "noticeDays": 90,
+      "noticeDeadline": "2027-01-30"
+    }
+  },
+  {
+    "id": "leasedoc-lainstpaulbldg4ste305amd2",
+    "propertyId": "sanctuary-office-park",
+    "building": "Building #4",
+    "tenant": "Lain St. Paul",
+    "suite": "305",
+    "file": "LainStPaul_BLDG4_STE305_AMD2.pdf",
+    "docType": "Amendment",
+    "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FLainStPaul_BLDG4_STE305_AMD2.pdf?alt=media&token=0ff13bb8-1629-4142-971c-4924159dece0",
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FLainStPaul_BLDG4_STE305_AMD2.html?alt=media&token=a680bb46-5a95-4d66-9277-e34e71ab8951",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Lain St. Paul",
+      "property": "Sanctuary Office Park, Building #4, Suite 305, Mandeville, LA 70471",
+      "suite": "Suite 305",
+      "documentType": "Amendment",
+      "dated": "2023-05-01",
+      "monthlyRent": "USD 967.54",
+      "commencement": "2023-05-01",
+      "termination": "2024-04-30",
+      "title": "Second Amendment — Building #4, Suite 305 (Lain St. Paul) — $967.54/mo eff 2023-05-01, extend to 2024-04-30, auto-renew"
+    },
+    "date": "2023-05-01",
+    "lease": {
+      "leaseId": "lease-bldg4-suite305-st-paul",
+      "status": "active",
+      "commenced": "2026-05-01",
+      "terminates": "2027-04-30",
+      "monthlyRent": 1057.26,
+      "escalationPct": 3,
+      "escalationMonth": 5,
+      "escalationMonthName": "May",
+      "autoRenew": true,
+      "noticeDays": 90,
+      "noticeDeadline": "2027-01-30"
+    }
+  },
+  {
+    "id": "leasedoc-lainstpaulbldg4ste305amd1",
+    "propertyId": "sanctuary-office-park",
+    "building": "Building #4",
+    "tenant": "Lain St. Paul",
+    "suite": "305",
+    "file": "LainStPaul_BLDG4_STE305_AMD1.pdf",
+    "docType": "Amendment",
+    "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FLainStPaul_BLDG4_STE305_AMD1.pdf?alt=media&token=1d0708f9-39cb-424d-ac54-d85e52172f4a",
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FLainStPaul_BLDG4_STE305_AMD1.html?alt=media&token=0ea8135b-2972-48b4-93af-3d956d8acf7c",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Lain St. Paul",
+      "property": "Sanctuary Office Park, Building #4, Suite 305, Mandeville, LA 70471",
+      "suite": "Suite 305",
+      "documentType": "Amendment",
+      "dated": "2022-03-11",
+      "monthlyRent": "USD 939.36",
+      "commencement": "2022-05-01",
+      "termination": "2023-04-30",
+      "title": "First Amendment — Building #4, Suite 305 (Lain St. Paul) — $939.36/mo eff 2022-05-01, extend to 2023-04-30, auto-renew"
+    },
+    "date": "2022-03-11",
+    "lease": {
+      "leaseId": "lease-bldg4-suite305-st-paul",
+      "status": "active",
+      "commenced": "2026-05-01",
+      "terminates": "2027-04-30",
+      "monthlyRent": 1057.26,
+      "escalationPct": 3,
+      "escalationMonth": 5,
+      "escalationMonthName": "May",
+      "autoRenew": true,
+      "noticeDays": 90,
+      "noticeDeadline": "2027-01-30"
+    }
+  },
+  {
+    "id": "leasedoc-lainstpaulbldg4ste305init",
+    "propertyId": "sanctuary-office-park",
+    "building": "Building #4",
+    "tenant": "Lain St. Paul",
+    "suite": "305",
+    "file": "LainStPaul_BLDG4_STE305_Init.pdf",
+    "docType": "Init",
+    "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FLainStPaul_BLDG4_STE305_Init.pdf?alt=media&token=39a2e69d-d8fe-4f56-9f84-44122a56ef8c",
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FLainStPaul_BLDG4_STE305_Init.html?alt=media&token=56f8269b-301c-4bf1-90b0-cf9010b3efec",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Lain St. Paul",
+      "property": "Sanctuary Office Park, Building #4, Suite 305, Mandeville, LA 70471",
+      "suite": "Suite 305",
+      "documentType": "Init",
+      "dated": "2020-12-18",
+      "monthlyRent": "USD 912.00",
+      "commencement": "2021-05-01",
+      "termination": "2022-04-30",
+      "title": "Lease of Commercial Property — Building #4, Suite 305 (Lain St. Paul) — $912/mo, 3% esc, deposit $1,592, 1×1yr option"
+    },
+    "date": "2020-12-18",
+    "lease": {
+      "leaseId": "lease-bldg4-suite305-st-paul",
+      "status": "active",
+      "commenced": "2026-05-01",
+      "terminates": "2027-04-30",
+      "monthlyRent": 1057.26,
+      "escalationPct": 3,
+      "escalationMonth": 5,
+      "escalationMonthName": "May",
+      "autoRenew": true,
+      "noticeDays": 90,
+      "noticeDeadline": "2027-01-30"
+    }
+  },
+  {
+    "id": "leasedoc-jcm2bldg4ste306lease",
+    "propertyId": "sanctuary-office-park",
+    "building": "Building #4",
+    "tenant": "Jefferson Capital (JCM II LLC)",
+    "suite": "306",
+    "file": "JCM2_BLDG4_STE306_Lease.pdf",
+    "docType": "Init",
+    "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FJCM2_BLDG4_STE306_Lease.pdf?alt=media&token=359fbed3-0f79-4e45-af14-ac3d3d9c89ff",
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FJCM2_BLDG4_STE306_Lease.html?alt=media&token=acaa097c-b1e8-4030-aa99-8f9f139d27ac",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "JCM II LLC (lobby directory: Jefferson Capital Partners)",
+      "property": "Sanctuary Office Park, Building #4, Suite 306, Mandeville, LA 70471",
+      "suite": "Suite 306",
+      "documentType": "Init",
+      "dated": "2021-02-10",
+      "monthlyRent": "USD 427.00",
+      "commencement": "2021-04-01",
+      "termination": "2022-03-31",
+      "title": "Lease of Commercial Property — Building #4, Suite 306 (JCM II LLC / Jefferson Capital) — $427/mo, 3% esc, auto-renew 12mo, full-service gross"
+    },
+    "date": "2021-02-10",
+    "lease": {
+      "leaseId": "lease-bldg4-suite306-jefferson",
+      "status": "active",
+      "commenced": "2026-04-01",
+      "terminates": "2027-03-31",
+      "monthlyRent": 495.01,
+      "escalationPct": 3,
+      "escalationMonth": 4,
+      "escalationMonthName": "April",
+      "autoRenew": true,
+      "noticeDays": 90,
+      "noticeDeadline": "2026-12-31"
+    }
+  },
+  {
+    "id": "leasedoc-jcm2bldg4ste306autorenewal2026",
+    "propertyId": "sanctuary-office-park",
+    "building": "Building #4",
+    "tenant": "Jefferson Capital (JCM II LLC)",
+    "suite": "306",
+    "file": "JCM2_BLDG4_STE306_AutoRenewal2026.pdf",
+    "docType": "Auto-Renewal",
+    "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FJCM2_BLDG4_STE306_AutoRenewal2026.pdf?alt=media&token=5c6f0417-6139-4191-9026-e12a66ccaeb1",
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FJCM2_BLDG4_STE306_AutoRenewal2026.html?alt=media&token=79ec55a6-17c1-4c69-b3c2-08c99064d48f",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "JCM II LLC (lobby directory: Jefferson Capital Partners)",
+      "property": "Sanctuary Office Park, Building #4, Suite 306, Mandeville, LA 70471",
+      "suite": "Suite 306",
+      "documentType": "Auto-Renewal (internal memo — not sent to tenant)",
+      "dated": "2026-06-16",
+      "monthlyRent": "USD 495.01",
+      "commencement": "2026-04-01",
+      "termination": "2027-03-31",
+      "escalationPct": 3,
+      "escalationDate": "April 1",
+      "title": "Auto-renewal confirmed — Building #4, Suite 306 (JCM II LLC / Jefferson Capital) — $495.01/mo eff 2026-04-01 to 2027-03-31, 3% esc; next non-renewal notice deadline 2026-12-31. Internal memo, not sent to tenant."
+    },
+    "date": "2026-06-16",
+    "lease": {
+      "leaseId": "lease-bldg4-suite306-jefferson",
+      "status": "active",
+      "commenced": "2026-04-01",
+      "terminates": "2027-03-31",
+      "monthlyRent": 495.01,
+      "escalationPct": 3,
+      "escalationMonth": 4,
+      "escalationMonthName": "April",
+      "autoRenew": true,
+      "noticeDays": 90,
+      "noticeDeadline": "2026-12-31"
+    }
+  },
+  {
+    "id": "leasedoc-monsonbldg5ste101lease",
+    "propertyId": "sanctuary-office-park",
+    "building": "Building #5",
+    "tenant": "The Monson Law Firm, LLC",
+    "suite": "101 & 202",
+    "file": "Monson_BLDG5_STE101_Lease.pdf",
+    "docType": "Lease",
+    "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FMonson_BLDG5_STE101_Lease.pdf?alt=media&token=444491cd-1fc3-4b19-a760-69ea9eef3981",
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FMonson_BLDG5_STE101_Lease.html?alt=media&token=dd9372c2-316a-44f0-881a-7da10e01ea8c",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "The Monson Law Firm, LLC",
+      "property": "Sanctuary Office Park, Building #5, Suites 101 & 202, Mandeville, LA 70471",
+      "suite": "Suite 101 & 202",
+      "documentType": "Lease",
+      "dated": "2022-04-15",
+      "monthlyRent": "USD 12923.00",
+      "commencement": "2022-08-01",
+      "termination": "2027-07-30",
+      "title": "Lease of Commercial Property — Building #5, Suites 101 & 202 (Monson Law Firm) — 7,385 SF, $12,923/mo, 1.5% esc, 2×36mo options, full-service gross"
+    },
+    "date": "2022-04-15",
+    "lease": {
+      "leaseId": "lease-bldg5-suite101-monson",
+      "status": "active",
+      "commenced": "2022-08-01",
+      "terminates": "2027-07-30",
+      "monthlyRent": 13513.3,
+      "escalationPct": 1.5,
+      "escalationMonth": 8,
+      "escalationMonthName": "August",
+      "autoRenew": false,
+      "noticeDays": 90,
+      "noticeDeadline": "2027-05-01"
+    }
+  },
+  {
+    "id": "leasedoc-cecobldg5ste201init",
+    "propertyId": "sanctuary-office-park",
+    "building": "Building #5",
+    "tenant": "Ceco Concrete Construction LLC",
+    "suite": "201",
+    "file": "Ceco_BLDG5_STE201_Init.pdf",
+    "docType": "Init",
+    "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FCeco_BLDG5_STE201_Init.pdf?alt=media&token=de4fc451-3dea-4475-9ae9-c2dc36ee4253",
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FCeco_BLDG5_STE201_Init.html?alt=media&token=15452b9f-6ec0-49cc-8ca2-380082bd6967",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Ceco Concrete Construction LLC",
+      "property": "Sanctuary Office Park, Building #5, Suite 201, Mandeville, LA 70471",
+      "suite": "Suite 201",
+      "documentType": "Init",
+      "dated": "2021-11-04",
+      "monthlyRent": "USD 6562.00",
+      "commencement": "2022-01-01",
+      "termination": "2024-12-31",
+      "title": "Lease of Commercial Property — Building #5, Suite 201 (Ceco Concrete Construction) — 3,750 SF, $6,562/mo, 2% esc, 2×2yr options, full-service gross"
+    },
+    "date": "2021-11-04",
+    "lease": {
+      "leaseId": "lease-bldg5-suite201-ceco",
+      "status": "active",
+      "commenced": "2022-01-01",
+      "terminates": "2027-12-31",
+      "monthlyRent": 9176.97,
+      "escalationPct": 2,
+      "escalationMonth": 1,
+      "escalationMonthName": "January",
+      "autoRenew": true,
+      "noticeDays": null,
+      "noticeDeadline": null
+    }
+  },
+  {
+    "id": "leasedoc-cecobldg5ste201amd1",
+    "propertyId": "sanctuary-office-park",
+    "building": "Building #5",
+    "tenant": "Ceco Concrete Construction LLC",
+    "suite": "201",
+    "file": "Ceco_BLDG5_STE201_AMD1.pdf",
+    "docType": "Amendment",
+    "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FCeco_BLDG5_STE201_AMD1.pdf?alt=media&token=90b28648-c540-4cad-baab-cbefc4efc852",
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FCeco_BLDG5_STE201_AMD1.html?alt=media&token=45b24c39-4f5a-441d-bfa9-5d2706b885ad",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Ceco Concrete Construction LLC",
+      "property": "Sanctuary Office Park, Building #5, Suite 201, Mandeville, LA 70471",
+      "suite": "Suite 201",
+      "documentType": "Amendment",
+      "dated": "2024-11-20",
+      "monthlyRent": "USD 8997.03",
+      "commencement": "2025-01-01",
+      "termination": "2027-12-31",
+      "title": "First Amendment (current) — Building #5, Suite 201 (Ceco) — $6,963.64/mo eff 2025-01-01, +1,095 SF on 2025-07-15 → $8,997.03/mo, extend to 2027-12-31, 2% esc"
+    },
+    "date": "2024-11-20",
+    "lease": {
+      "leaseId": "lease-bldg5-suite201-ceco",
+      "status": "active",
+      "commenced": "2022-01-01",
+      "terminates": "2027-12-31",
+      "monthlyRent": 9176.97,
+      "escalationPct": 2,
+      "escalationMonth": 1,
+      "escalationMonthName": "January",
+      "autoRenew": true,
+      "noticeDays": null,
+      "noticeDeadline": null
+    }
+  },
+  {
+    "id": "leasedoc-mapsbldg5ste103init",
+    "propertyId": "sanctuary-office-park",
+    "building": "Building #5",
+    "tenant": "Mediation Arbitration Professional Systems, INC",
+    "suite": "103",
+    "file": "MAPS_BLDG5_STE103_Init.pdf",
+    "docType": "Init",
+    "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FMAPS_BLDG5_STE103_Init.pdf?alt=media&token=5809d127-5af0-4e59-95be-db0c32218762",
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FMAPS_BLDG5_STE103_Init.html?alt=media&token=398afa30-ff82-4d28-b788-430f113c5f99",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Mediation Arbitration Professional Systems, INC",
+      "property": "Sanctuary Office Park, Building #5, Suite 103, Mandeville, LA 70471",
+      "suite": "Suite 103",
+      "documentType": "Init",
+      "dated": "2022-03-18",
+      "monthlyRent": "USD 3001.00",
+      "commencement": "2022-05-01",
+      "termination": "2025-06-30",
+      "title": "Lease of Commercial Property — Building #5, Suite 103 (MAPS) — 1,715 SF, $3,001/mo, 3% esc, 1×36mo option, full-service gross"
+    },
+    "date": "2022-03-18",
+    "lease": {
+      "leaseId": "lease-bldg5-suite103-maps",
+      "status": "active",
+      "commenced": "2022-05-01",
+      "terminates": "2028-06-30",
+      "monthlyRent": 3279.27,
+      "escalationPct": 3,
+      "escalationMonth": 5,
+      "escalationMonthName": "May",
+      "autoRenew": null,
+      "noticeDays": null,
+      "noticeDeadline": null
+    }
+  },
+  {
+    "id": "leasedoc-audubonbldg5ste300init",
+    "propertyId": "sanctuary-office-park",
+    "building": "Building #5",
+    "tenant": "Audubon Companies, LLC",
+    "suite": "300",
+    "file": "Audubon_BLDG5_STE300_Init.pdf",
+    "docType": "Init",
+    "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FAudubon_BLDG5_STE300_Init.pdf?alt=media&token=3f4726b9-82e3-4523-b753-5133d3cce9b1",
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FAudubon_BLDG5_STE300_Init.html?alt=media&token=5f0f7986-45f9-48e0-950f-5a2355b3f329",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Audubon Engineering Company, LP",
+      "property": "Sanctuary Office Park, Building #5, Suite 300, Mandeville, LA 70471",
+      "suite": "Suite 300",
+      "documentType": "Init",
+      "dated": "2020-10-23",
+      "monthlyRent": "USD 9353.81",
+      "commencement": "2020-12-01",
+      "termination": "2025-11-30",
+      "title": "Lease of Commercial Property — Building #5, Suite 300 (Audubon Engineering Company, LP) — 6,507 SF, $9,353.81/mo, 3% esc, 2×2yr options, full-service gross"
+    },
+    "date": "2020-10-23",
+    "lease": {
+      "leaseId": "lease-bldg5-suite300-audubon",
+      "status": "active",
+      "commenced": "2020-12-01",
+      "terminates": "2030-11-30",
+      "monthlyRent": 10834.63,
+      "escalationPct": 3,
+      "escalationMonth": 12,
+      "escalationMonthName": "December",
+      "autoRenew": false,
+      "noticeDays": null,
+      "noticeDeadline": null
+    }
+  },
+  {
+    "id": "leasedoc-audubonbldg5ste300amd1",
+    "propertyId": "sanctuary-office-park",
+    "building": "Building #5",
+    "tenant": "Audubon Companies, LLC",
+    "suite": "300",
+    "file": "Audubon_BLDG5_STE300_AMD1.pdf",
+    "docType": "Amendment",
+    "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FAudubon_BLDG5_STE300_AMD1.pdf?alt=media&token=fc83293b-89dc-45f7-892f-1bbb469c4535",
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FAudubon_BLDG5_STE300_AMD1.html?alt=media&token=27c4993b-512b-46a5-a83e-2629ae149211",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Audubon Companies, LLC",
+      "property": "Sanctuary Office Park, Building #5, Suite 300, Mandeville, LA 70471",
+      "suite": "Suite 300",
+      "documentType": "Amendment",
+      "dated": "2025-09-29",
+      "monthlyRent": "USD 10834.63",
+      "commencement": "2025-12-01",
+      "termination": "2030-11-30",
+      "title": "First Amendment (current) — Building #5, Suite 300 (Audubon) — substitute lessee Audubon Engineering LP → Audubon Companies LLC, $10,834.63/mo eff 2025-12-01, extend to 2030-11-30, 3% esc"
+    },
+    "date": "2025-09-29",
+    "lease": {
+      "leaseId": "lease-bldg5-suite300-audubon",
+      "status": "active",
+      "commenced": "2020-12-01",
+      "terminates": "2030-11-30",
+      "monthlyRent": 10834.63,
+      "escalationPct": 3,
+      "escalationMonth": 12,
+      "escalationMonthName": "December",
+      "autoRenew": false,
+      "noticeDays": null,
+      "noticeDeadline": null
+    }
+  },
+  {
+    "id": "leasedoc-audubonbldg5ste300mergernotice",
+    "propertyId": "sanctuary-office-park",
+    "building": "Building #5",
+    "tenant": "Audubon Companies, LLC",
+    "suite": "300",
+    "file": "Audubon_BLDG5_STE300_MergerNotice.pdf",
+    "docType": "Notice",
+    "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FAudubon_BLDG5_STE300_MergerNotice.pdf?alt=media&token=70fedbfe-82e5-4061-8ca6-e1fb76ac0816",
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FAudubon_BLDG5_STE300_MergerNotice.html?alt=media&token=0bb35b6b-b512-4f72-a6f4-65aa2bbc0d87",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Audubon Companies, LLC",
+      "property": "Sanctuary Office Park, Building #5, Suite 300, Mandeville, LA 70471",
+      "suite": "Suite 300",
+      "documentType": "Notice",
+      "dated": "2026-01-09",
+      "title": "Notice of Merger — Building #5, Suite 300 (Audubon) — Audubon Engineering Company, LP merged into Audubon Companies, LLC (surviving), eff 2026-01-01, new tax ID 26-3937890"
+    },
+    "date": "2026-01-09",
+    "lease": {
+      "leaseId": "lease-bldg5-suite300-audubon",
+      "status": "active",
+      "commenced": "2020-12-01",
+      "terminates": "2030-11-30",
+      "monthlyRent": 10834.63,
+      "escalationPct": 3,
+      "escalationMonth": 12,
+      "escalationMonthName": "December",
+      "autoRenew": false,
+      "noticeDays": null,
+      "noticeDeadline": null
+    }
+  },
+  {
+    "id": "leasedoc-diannesbldg1ste305binit",
+    "propertyId": "sanctuary-office-park",
+    "building": "Building #1",
+    "tenant": "Dianne's Esthetic and Waxing",
+    "suite": "305B",
+    "file": "Diannes_BLDG1_STE305B_Init.pdf",
+    "docType": "Init",
+    "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FDiannes_BLDG1_STE305B_Init.pdf?alt=media&token=005f3477-7568-4e65-b07e-bbdf98138640",
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FDiannes_BLDG1_STE305B_Init.html?alt=media&token=d93297b9-f1a6-4172-aceb-6401da5e7e95",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Dianne's Esthetic and Waxing",
+      "property": "Sanctuary Office Park, Building #1, Floor 3, Suite 305B, Mandeville, LA 70471",
+      "suite": "Suite 305B",
+      "documentType": "Init",
+      "dated": "2025-11-03",
+      "monthlyRent": "USD 550.00",
+      "commencement": "2025-12-01",
+      "termination": "2026-11-30",
+      "title": "Lease of Commercial Property — Building #1, Suite 305B (Dianne's Esthetic and Waxing) — 300 SF, $550/mo, 12-mo term eff 2025-12-01, 3% esc, auto-renew, deposit $550, full-service gross"
+    },
+    "date": "2025-11-03",
+    "lease": {
+      "leaseId": "lease-bldg1-suite305b-diannes",
+      "status": "active",
+      "commenced": "2025-12-01",
+      "terminates": "2026-11-30",
+      "monthlyRent": 550,
+      "escalationPct": 3,
+      "escalationMonth": 12,
+      "escalationMonthName": "December",
+      "autoRenew": true,
+      "noticeDays": 90,
+      "noticeDeadline": "2026-09-01"
+    }
+  }
 ]
