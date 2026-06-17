@@ -1970,7 +1970,6 @@ function actionLegend(){
 function leaseTip(ld){
   var m = ld.meta || {}; var rows = [];
   rows.push('<b>'+(m.lessee||ld.tenant)+'</b> &middot; Suite '+(ld.suite||'—'));
-  if(ld.lease && ld.lease.leaseId) rows.push('<span class="k">Lease ID:</span> <span style="font-family:ui-monospace,Menlo,Consolas,monospace;font-size:10.5px;color:#475569;">'+ld.lease.leaseId+'</span>');
   rows.push('<span class="k">Type:</span> '+ld.docType+(ld.date?'  <span class="k">Dated:</span> '+ld.date:''));
   if(m.monthlyRent) rows.push('<span class="k">Rent:</span> '+m.monthlyRent);
   if(m.commencement||m.termination) rows.push('<span class="k">Term:</span> '+(m.commencement||'?')+' → '+(m.termination||'?'));
@@ -1983,7 +1982,7 @@ function leaseTip(ld){
   return '<div class="tip" onclick="event.stopPropagation()">'+rows.join('<br>')+'</div>';
 }
 function leaseWidget(ld){
-  var nm = ld.docType + (ld.date ? ' <span style="font-weight:400;color:#9ca3af;">'+ld.date+'</span>' : '');
+  var nm = ld.docType + (ld.ref ? ' <span style="font-weight:400;color:#94a3b8;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:10px;">('+ld.ref+')</span>' : '') + (ld.date ? ' <span style="font-weight:400;color:#9ca3af;">'+ld.date+'</span>' : '');
   return '<span class="lw"><span class="nm">'+nm+'</span>'+
     '<a class="pdf" href="'+ld.url+'" target="_blank" rel="noopener">PDF</a>'+
     (ld.htmlUrl?'<a class="html" href="'+ld.htmlUrl+'" target="_blank" rel="noopener">HTML</a>':'')+

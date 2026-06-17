@@ -229,7 +229,7 @@ export function deriveViewModel(entities) {
       ? Object.assign({}, d.meta || {}, { escalationPct: esc.pct, escalationMonth: esc.month, escalationDate: esc.date })
       : (d.meta || null);
     const docView = { tenant: d.tenant, suite: d.suite, file: d.file, docType: d.docType,
-      url: d.url, htmlUrl: d.htmlUrl || null, meta: dMeta, lease: d.lease || null, date: d.date || null };
+      url: d.url, htmlUrl: d.htmlUrl || null, meta: dMeta, lease: d.lease || null, ref: d.ref || null, date: d.date || null };
     if (d.movedOut) {
       const arr = MOVED_OUT[d.propertyId] || (MOVED_OUT[d.propertyId] = []);
       let e = arr.find((x) => x.tenant === d.tenant && x.suite === d.suite);
