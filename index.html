@@ -2712,16 +2712,25 @@ function marketingSuiteCard(r){
   var reason = r.action ? '<span class="badge" style="background:'+((reasonTone[r.action]||'#e5e7eb'))+'1a;color:'+(reasonTone[r.action]||'#6b7280')+';border:1px solid '+(reasonTone[r.action]||'#e5e7eb')+'55;font-size:11px;">'+escHtml(r.action)+'</span>' : '';
   var stat = function(l,v,s){ return '<div><div style="font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#9ca3af;font-weight:700;">'+l+'</div><div style="font-size:18px;font-weight:700;color:#0f172a;">'+v+(s?' <span style="font-size:12px;font-weight:500;color:#6b7280;">'+s+'</span>':'')+'</div></div>'; };
   var row = function(l,v){ return '<div><div style="font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#9ca3af;font-weight:700;margin-bottom:1px;">'+l+'</div><div style="font-size:12px;color:#374151;line-height:1.4;">'+v+'</div></div>'; };
-  // Editable approved asking rate (overrides the suggested band rate in the flyer).
-  var approvedField = '<div><div style="font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#1f5fdb;font-weight:700;">Approved asking</div>'+
-    '<div style="display:flex;align-items:baseline;gap:1px;margin-top:2px;"><span style="font-size:15px;font-weight:700;color:#0f172a;">$</span>'+
-    '<input type="number" min="0" step="0.25" value="'+(hasApproved?Number(r.approvedRate):'')+'" placeholder="'+(suggested||'set')+'" onchange="setApprovedRate(\''+mkey+'\',this.value)" '+
-      'style="width:60px;font-size:18px;font-weight:700;color:#0f172a;border:none;border-bottom:2px solid #93c5fd;padding:0 1px;background:none;outline:none;" title="Set the approved asking rate; updates the flyer">'+
-    '<span style="font-size:12px;font-weight:500;color:#6b7280;">/SF FSG</span></div></div>';
-  var pricingRow = '<div style="display:flex;gap:24px;flex-wrap:wrap;margin-bottom:13px;align-items:flex-start;">'+
-    stat('Suggested asking', suggested?'$'+suggested+'/SF':'—', suggested?'FSG':'')+approvedField+
-    stat(hasApproved?'Monthly · approved':'Monthly', moAsk?'$'+moAsk.toLocaleString():'—','')+
-    stat(hasApproved?'Annual · approved':'Annual', yrAsk?'$'+yrAsk.toLocaleString():'—','')+'</div>';
+  // Two stacked pricing lines — Suggested (read-only band rate) and Approved
+  // (editable, defaults to the suggested rate until edited) — each with the monthly
+  // and annual figures to the right.
+  var suggMo = suggested ? Math.round(r.sf*suggested/12) : 0, suggYr = suggested ? r.sf*suggested : 0;
+  var moneyCell = function(l,v){ return '<div style="text-align:right;min-width:78px;"><div style="font-size:9px;text-transform:uppercase;letter-spacing:.04em;color:#9ca3af;font-weight:700;">'+l+'</div><div style="font-size:16px;font-weight:700;color:#0f172a;">'+(v?'$'+v.toLocaleString():'—')+'</div></div>'; };
+  var priceLine = function(label, accent, rateHtml, mo, yr){
+    return '<div style="display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:7px 0;border-bottom:1px solid #f1f5f9;">'+
+      '<div style="display:flex;align-items:baseline;gap:9px;min-width:210px;">'+
+        '<span style="font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:'+accent+';font-weight:800;width:84px;flex:none;">'+label+'</span>'+rateHtml+'</div>'+
+      '<div style="display:flex;gap:22px;">'+moneyCell('Monthly',mo)+moneyCell('Annual',yr)+'</div></div>';
+  };
+  var suggRate = '<span style="font-size:17px;font-weight:700;color:#0f172a;">'+(suggested?'$'+suggested:'—')+'</span>'+(suggested?'<span style="font-size:11px;font-weight:500;color:#6b7280;"> /SF FSG</span>':'');
+  var apprInput = '<span style="font-size:16px;font-weight:700;color:#0f172a;">$</span>'+
+    '<input type="number" min="0" step="0.25" value="'+(hasApproved?Number(r.approvedRate):(suggested||''))+'" placeholder="'+(suggested||'set')+'" onchange="setApprovedRate(\''+mkey+'\',this.value)" '+
+      'style="width:62px;font-size:17px;font-weight:700;color:#0f172a;border:none;border-bottom:2px solid #93c5fd;padding:0 2px;background:none;outline:none;" title="Edit the approved asking rate — updates the flyer and figures">'+
+    '<span style="font-size:11px;font-weight:500;color:#6b7280;"> /SF FSG</span>'+(hasApproved?'':'<span style="font-size:10px;color:#9ca3af;margin-left:4px;">(= suggested)</span>');
+  var pricingRow = '<div style="margin-bottom:13px;">'+
+    priceLine('Suggested','#9ca3af', suggRate, suggMo, suggYr)+
+    priceLine('Approved','#1f5fdb', apprInput, moAsk, yrAsk)+'</div>';
   var h = '<div class="card" style="margin-bottom:14px;">';
   h += '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;">';
   var proposedBadge = r.proposed ? ' <span class="badge" style="background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;font-size:11px;">Proposed</span>' : '';
