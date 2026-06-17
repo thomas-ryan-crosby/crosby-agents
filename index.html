@@ -2282,7 +2282,11 @@ function rrAnnualByBuildingHTML(){
   h += '</tbody></table></div>';
   return h;
 }
-function rrOverviewHTML(){ return rrOccupancyHTML()+rrAnnualByBuildingHTML(); }
+// Governing-lease basis + data-start caveat, shown on both rent-roll tabs.
+function rrNote(){
+  return '<div class="rr-note" style="margin-bottom:14px;">Each month&rsquo;s rent is set by the <b>lease governing that period</b> and its escalation schedule. This system began tracking in <b>2026</b>, so the roll starts in 2026; figures for months that have already elapsed are reconstructed from current lease terms and may not exactly match historical billing, and financial information prior to 2026 is not available.</div>';
+}
+function rrOverviewHTML(){ return rrNote()+rrOccupancyHTML()+rrAnnualByBuildingHTML(); }
 // ── Detail: one calendar year, all buildings, month by month ──
 function rrYearGrid(bn, Y){
   var R=__rr, trs=R.byB[bn], bSF=trs.reduce(function(s,r){return s+r.sf;},0);
@@ -2332,7 +2336,7 @@ function rrDetailHTML(){
       grids += '<div class="rr-yrhd">'+Y+'</div>'+selB.map(function(bn){ return rrYearGrid(bn, Y); }).join('');
     });
   }
-  return yctl+bctl+gctl+grids+'<div class="rr-foot">Projected base rent per month (calendar year). Rent steps up in each lease&rsquo;s escalation month and is &mdash; before the lease commences or after its committed term ends (auto-renew leases are committed only through their current term until their notice date passes). Holdover/MTM tenants held at current rent. Base rent only; excludes owner-occupied units.</div>';
+  return rrNote()+yctl+bctl+gctl+grids+'<div class="rr-foot">Projected base rent per month (calendar year). Rent steps up in each lease&rsquo;s escalation month and is &mdash; before the lease commences or after its committed term ends (auto-renew leases are committed only through their current term until their notice date passes). Holdover/MTM tenants held at current rent. Base rent only; excludes owner-occupied units.</div>';
 }
 function rrPrintHTML(){
   var R=__rr;
@@ -2396,6 +2400,9 @@ function downloadRentRollExcel(){
       var sc=ws.getCell(2,1); sc.value=(rr.prop&&rr.prop.name?rr.prop.name:'')+'    ·    Monthly rent, full-service gross    ·    as of '+rr.asOf;
       sc.font={italic:true,size:10,color:{argb:MUTE}};
       ws.getRow(2).height=16;
+      ws.mergeCells(3,1,3,Math.max(lastCol,2));
+      var nc=ws.getCell(3,1); nc.value='Each month reflects the lease governing that period and its escalation schedule. Tracking began in 2026; elapsed months are reconstructed from current terms and may not match historical billing. Pre-2026 data is unavailable.';
+      nc.font={italic:true,size:8.5,color:{argb:MUTE}}; nc.alignment={wrapText:false}; ws.getRow(3).height=13;
       if(nS===0){
         ws.getCell(4,1).value='No leased suites in this building.'; ws.getCell(4,1).font={italic:true,color:{argb:MUTE}};
         ws.getColumn(1).width=40; return;
