@@ -5799,13 +5799,14 @@
     "terminates": "2027-07-30",
     "monthlyRent": 13513.3,
     "escalationPct": 1.5,
+    "escalationMonth": 8,
     "autoRenew": false,
-    "noticeDays": null,
-    "noticeDeadline": null,
+    "noticeDays": 90,
+    "noticeDeadline": "2027-05-01",
     "daysToNoticeDeadline": null,
     "status": "active",
     "docFile": "Monson_BLDG5_STE101_Lease.pdf",
-    "notes": "Suites 101 & 202 (7,385 RSF), Building #5. Lease (2022-04-15): $12,923/mo, 1.5% esc, 2×36mo options. Rent reflects current escalation. COI on file expired 2026-01-17 — request renewal."
+    "notes": "Suites 101 & 202 (7,385 RSF), Building #5. Lease (2022-04-15): $12,923/mo base, 1.5% annual escalation commencing the first month of the second lease year (each August); 5-yr term 2022-08-01 → 2027-07-30, full-service gross. Two tenant options to renew, each 36 months, 90-day written notice (not auto-renew); noticeDeadline reflects that renewal-option deadline (90 days before 2027-07-30). Security deposit waived; lease was contingent on relocating the prior 5 Sanctuary Suite 102 tenant. monthlyRent reflects current escalation. Escalation month confirmed from executed lease (transcribed HTML on file). COI on file expired 2026-01-17 — request renewal."
   },
   {
     "id": "lease-bldg5-suite103-maps",
