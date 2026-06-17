@@ -281,7 +281,7 @@ function deriveCommercial(p, pBldgs, unitsByBldg, leaseByUnit, tenantById, pLeas
         rent: lease ? num(lease.monthlyRent) : 0, vacant,
         commenced: (lease && lease.commenced) || "—",
         escalation: (lease && lease.escalationPct != null)
-          ? Number(lease.escalationPct).toFixed(1) + "%" + (lease.escalationMonth ? " (" + MONTHS[lease.escalationMonth - 1] + ")" : "")
+          ? Number(lease.escalationPct).toFixed(1) + "%" + " (" + (lease.escalationMonth ? MONTHS[lease.escalationMonth - 1] : "?") + ")"
           : "—",
         autoRenew: lease ? (lease.autoRenew == null ? null : !!lease.autoRenew) : null,
         expiry: leaseExpiry(lease),
@@ -315,7 +315,7 @@ function deriveCommercial(p, pBldgs, unitsByBldg, leaseByUnit, tenantById, pLeas
           terminates: mtm ? "Month-to-Month" : owner ? "Owner Occupant" : (lease.terminates || "—"),
           daysLeft: daysBetween(lease.terminates, today),
           escalation: lease.escalationPct != null
-            ? Number(lease.escalationPct).toFixed(1) + "%" + (lease.escalationMonth ? " (" + MONTHS[lease.escalationMonth - 1] + ")" : "")
+            ? Number(lease.escalationPct).toFixed(1) + "%" + " (" + (lease.escalationMonth ? MONTHS[lease.escalationMonth - 1] : "?") + ")"
             : "—",
           escalationMonth: lease.escalationMonth || null,
           autoRenew: lease.autoRenew == null ? null : !!lease.autoRenew,
