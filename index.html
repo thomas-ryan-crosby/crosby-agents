@@ -3643,7 +3643,106 @@ function flyerDoc(r){
   '</body></html>';
 }
 
+// ── Lease Timeline & Renewal Tracker: sort + de-prioritize state ─────────────
+// Sort mode is per-session; de-prioritized ("set aside") suites are SHARED via
+// Firestore (window.__tracker), falling back to localStorage in local/preview mode.
+var trackerSortMode = 'vacancy'; // 'vacancy' | 'notice' | 'expiration'
+function trackerKey(slug, t){ return slug + '|' + t.building + '|' + t.suite; }
+function getDeprioritized(){
+  if(window.__deprioritizedCache) return window.__deprioritizedCache;
+  try { return (window.__deprioritizedCache = JSON.parse(localStorage.getItem('trackerDeprioritized')||'[]')); }
+  catch(e){ return (window.__deprioritizedCache = []); }
+}
+function isDeprioritized(key){ return getDeprioritized().indexOf(key) !== -1; }
+function trackerReady(){ return !!(window.__tracker && window.__tracker.ready); }
+function toggleDeprioritize(key){
+  var list = getDeprioritized().slice();
+  var turnOn = list.indexOf(key) === -1;
+  if(turnOn) list.push(key); else list = list.filter(function(k){ return k !== key; });
+  window.__deprioritizedCache = list;                       // optimistic
+  if(trackerReady()){
+    var pr = turnOn ? window.__tracker.deprioritize(key) : window.__tracker.reprioritize(key);
+    if(pr && pr.catch) pr.catch(function(e){ console.error('tracker pref save failed', e); });
+  } else {
+    try { localStorage.setItem('trackerDeprioritized', JSON.stringify(list)); } catch(e){}
+  }
+  rerenderDetailIfActive();
+}
+function setTrackerSort(mode){ trackerSortMode = mode; rerenderDetailIfActive(); }
+function rerenderDetailIfActive(){
+  var v = document.getElementById('view-property-detail');
+  if(window.__currentDetailProp && v && v.classList.contains('active')){
+    renderPropertyDetail(window.__currentDetailProp);
+  }
+}
+// Date + countdown cell — shared format for lease expiration & notice deadline.
+function trackerFmtDate(iso){
+  if(!iso || !/^\d{4}-\d{2}-\d{2}/.test(iso)) return '';
+  var M=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var d=String(iso).slice(0,10).split('-');
+  return M[parseInt(d[1],10)-1]+' '+parseInt(d[2],10)+', '+d[0];
+}
+function trackerCountdown(days){
+  if(days==null) return '';
+  if(days===0) return 'today';
+  if(days>0) return 'in '+days+' day'+(days===1?'':'s');
+  var a=Math.abs(days); return a+' day'+(a===1?'':'s')+' ago';
+}
+function trackerToneColor(days){
+  if(days==null) return '#9ca3af';
+  if(days<0 || days<=90) return '#dc2626';
+  if(days<=180) return '#a16207';
+  return '#059669';
+}
+function trackerDateCell(iso, days){
+  var dateStr=trackerFmtDate(iso);
+  if(!dateStr) return '<span style="color:#9ca3af;">—</span>';
+  var cd=trackerCountdown(days), col=trackerToneColor(days);
+  return '<div style="font-weight:500;">'+dateStr+'</div>'+(cd?'<div style="font-size:11px;font-weight:600;color:'+col+';">'+cd+'</div>':'');
+}
+// Recommended next-step labels, derived from the timeline.
+function trackerLeaseAction(t){
+  if(t.ownerOccupant) return {label:'Owner-occupied', tone:'neutral'};
+  if(t.vacating) return {label:'Back-fill — begin marketing', tone:'urgent'};
+  if(t.mtm) return {label:'Formalize lease', tone:'attention'};
+  var d=t.daysLeft;
+  if(d==null) return {label:'Confirm lease terms', tone:'attention'};
+  if(d<0) return {label:'Holdover — formalize / renew', tone:'urgent'};
+  if(d<=180) return {label:'Open renewal discussion', tone:'attention'};
+  return {label:'Monitor', tone:'neutral'};
+}
+function trackerNoticeAction(t){
+  if(t.ownerOccupant) return {label:'—', tone:'neutral'};
+  if(t.mtm) return {label:'M2M — no notice', tone:'neutral'};
+  var d=t.noticeDeadlineDays;
+  if(d==null) return {label:'—', tone:'neutral'};
+  if(d<0) return {label:'Notice window passed — confirm', tone:'urgent'};
+  if(d<=90) return {label:'Send renewal / non-renewal notice', tone:'urgent'};
+  if(d<=180) return {label:'Prepare notice', tone:'attention'};
+  return {label:'Monitor', tone:'neutral'};
+}
+function trackerActionPill(a){
+  if(!a || a.label==='—') return '<span style="color:#9ca3af;font-size:11px;">—</span>';
+  if(a.label==='Monitor') return '<span style="color:#6b7280;font-size:11px;">Monitor</span>';
+  var c = a.tone==='urgent' ? ['#b91c1c','#fee2e2'] : (a.tone==='attention' ? ['#a16207','#fef9c3'] : ['#6b7280','#f3f4f6']);
+  return '<span style="font-size:11px;color:'+c[0]+';background:'+c[1]+';padding:2px 7px;border-radius:9999px;font-weight:600;display:inline-block;line-height:1.5;">'+a.label+'</span>';
+}
+function trackerDepBtn(key, isDep){
+  var k = String(key).replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+  if(isDep) return '<button onclick="toggleDeprioritize(\''+k+'\')" title="Restore to active tracker" style="font-size:11px;color:#2563eb;background:none;border:none;cursor:pointer;padding:2px 4px;white-space:nowrap;">↑ Restore</button>';
+  return '<button onclick="toggleDeprioritize(\''+k+'\')" title="Set aside — de-prioritize this suite in the tracker" style="font-size:11px;color:#9ca3af;background:none;border:none;cursor:pointer;padding:2px 4px;white-space:nowrap;">Set aside</button>';
+}
+function trackerSortRows(rows, mode, urgencyKey){
+  var nz=function(x){ return x==null?99999:x; };
+  var arr=rows.slice();
+  if(mode==='notice') arr.sort(function(a,b){ return nz(a.noticeDeadlineDays)-nz(b.noticeDeadlineDays); });
+  else if(mode==='expiration') arr.sort(function(a,b){ return nz(a.daysLeft)-nz(b.daysLeft); });
+  else arr.sort(function(a,b){ var av=a.vacating?0:1, bv=b.vacating?0:1; if(av!==bv) return av-bv; return urgencyKey(a)-urgencyKey(b); });
+  return arr;
+}
+
 function renderPropertyDetail(p) {
+  window.__currentDetailProp = p;
   document.getElementById("detailPropName").textContent = p.name;
   document.getElementById("detailPropBadge").innerHTML = p.cls;
   document.getElementById("detailPropBadge").className = "badge badge-approved";
@@ -3864,15 +3963,10 @@ function renderPropertyDetail(p) {
       allLeaseTerms[bname].forEach(function(t) { allTermsFlat.push(Object.assign({building: bname}, t)); });
     });
     if(allTermsFlat.length > 0) {
-      // Sort by urgency: notice deadline first, then termination
-      var active = allTermsFlat.filter(function(t){ return t.daysLeft !== null && !t.ownerOccupant; });
-      var mtm = allTermsFlat.filter(function(t){ return t.mtm; });
-      var owner = allTermsFlat.filter(function(t){ return t.ownerOccupant; });
-      // Sort by re-leasing urgency = the soonest actionable date. For a vacating
-      // tenant that's its vacate date (confirmed departure — back-fill now); for
-      // everyone else it's the soonest UPCOMING notice deadline or lease end.
-      // Past-due dates (auto-renew / holdover leases already past term) are not
-      // urgent, so they fall to the bottom. Ties break to confirmed departures.
+      // Re-leasing urgency = soonest actionable date. For a vacating tenant that's
+      // its vacate date (confirmed departure — back-fill now); for everyone else
+      // the soonest UPCOMING notice deadline or lease end. Past-due dates fall to
+      // the bottom. Used by the default "Vacancies first" sort.
       var urgencyKey = function(t){
         if(t.vacating) return t.daysLeft != null ? t.daysLeft : 99999;
         var c=[];
@@ -3880,61 +3974,111 @@ function renderPropertyDetail(p) {
         if(t.daysLeft != null && t.daysLeft >= 0) c.push(t.daysLeft);
         return c.length ? Math.min.apply(null, c) : 99999;
       };
-      active.sort(function(a,b){
-        var d = urgencyKey(a) - urgencyKey(b);
-        if(d !== 0) return d;
-        if(!!a.vacating !== !!b.vacating) return a.vacating ? -1 : 1;
-        return 0;
-      });
+      var depOf = function(t){ return isDeprioritized(trackerKey(p.slug, t)); };
+      // Partition: active (fixed-term), month-to-month, owner-occupied. Any suite
+      // the user has "set aside" sinks to a de-prioritized tier at the bottom.
+      var activeRows = allTermsFlat.filter(function(t){ return !t.ownerOccupant && !t.mtm && !depOf(t); });
+      var mtmRows    = allTermsFlat.filter(function(t){ return t.mtm && !depOf(t); });
+      var ownerRows  = allTermsFlat.filter(function(t){ return t.ownerOccupant && !depOf(t); });
+      var depRows    = allTermsFlat.filter(depOf);
+      activeRows = trackerSortRows(activeRows, trackerSortMode, urgencyKey);
+      mtmRows    = trackerSortRows(mtmRows, trackerSortMode, urgencyKey);
 
       html += '<div class="card" style="margin-bottom:16px;">';
-      html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">'+iconSvg("calendar-clock",18,"#2563eb")+'<span class="card-title" style="margin-bottom:0;">Lease Timeline & Renewal Tracker</span></div>';
+      html += '<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;flex-wrap:wrap;">';
+      html += '<div style="display:flex;align-items:center;gap:8px;">'+iconSvg("calendar-clock",18,"#2563eb")+'<span class="card-title" style="margin-bottom:0;">Lease Timeline & Renewal Tracker</span></div>';
+      html += '<label style="font-size:12px;color:#6b7280;display:inline-flex;align-items:center;gap:6px;">Sort: <select onchange="setTrackerSort(this.value)" style="font-size:12px;padding:4px 8px;border:1px solid #d1d5db;border-radius:6px;background:#fff;color:#111827;cursor:pointer;">'
+            + '<option value="vacancy"'+(trackerSortMode==='vacancy'?' selected':'')+'>Vacancies first</option>'
+            + '<option value="notice"'+(trackerSortMode==='notice'?' selected':'')+'>Upcoming notice deadline</option>'
+            + '<option value="expiration"'+(trackerSortMode==='expiration'?' selected':'')+'>Lease expiration</option>'
+            + '</select></label>';
+      html += '</div>';
 
-      // Summary action bar
-      var vacating = active.filter(function(t){ return t.vacating; });
-      var urgent_notice = active.filter(function(t){ return !t.vacating && t.noticeDeadlineDays !== null && t.noticeDeadlineDays <= 120; });
-      if(vacating.length || urgent_notice.length || mtm.length) {
+      // Summary action bar (excludes set-aside suites).
+      var vacating = activeRows.filter(function(t){ return t.vacating; });
+      var urgent_notice = activeRows.filter(function(t){ return !t.vacating && t.noticeDeadlineDays !== null && t.noticeDeadlineDays <= 120; });
+      if(vacating.length || urgent_notice.length || mtmRows.length) {
         html += '<div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:#c2410c;">';
         html += iconSvg("alert-triangle",14,"#ea580c")+' <strong style="margin-left:4px;">Action Required:</strong> ';
         var actions = [];
         vacating.forEach(function(t){ actions.push('<strong>'+t.tenant+'</strong> (Suite '+t.suite+') vacating '+t.terminates+' — confirm replacement tenant'); });
-        urgent_notice.forEach(function(t){ actions.push('<strong>'+t.tenant+'</strong> notice deadline <strong>'+t.noticeDeadline+'</strong> ('+t.noticeDeadlineDays+' days)'); });
-        if(mtm.length) actions.push('<strong>'+mtm.map(function(t){return t.tenant;}).join(', ')+'</strong> on Month-to-Month — consider formalizing term');
+        urgent_notice.forEach(function(t){ actions.push('<strong>'+t.tenant+'</strong> notice deadline <strong>'+(trackerFmtDate(t.noticeDeadline)||t.noticeDeadline)+'</strong> ('+trackerCountdown(t.noticeDeadlineDays)+')'); });
+        if(mtmRows.length) actions.push('<strong>'+mtmRows.map(function(t){return t.tenant;}).join(', ')+'</strong> on Month-to-Month — consider formalizing term');
         html += actions.join(' &nbsp;|&nbsp; ');
         html += '</div>';
       }
 
-      html += '<table class="unit-table"><thead><tr><th>Building</th><th>Tenant</th><th>Suite</th><th>SF</th><th>Commenced</th><th>Terminates</th><th>Days Left</th><th>Notice Deadline</th><th>Notice Days</th><th>Escalation</th><th>Auto-Renew</th></tr></thead><tbody>';
+      html += '<table class="unit-table"><thead><tr><th>Building</th><th>Tenant</th><th>Suite</th><th>SF</th><th>Commenced</th><th>Lease Expiration</th><th>Notice Deadline</th><th>Notice Days</th><th>Escalation</th><th>Auto-Renew</th><th>Lease Action</th><th>Notice Action</th><th></th></tr></thead><tbody>';
 
-      active.forEach(function(t) {
-        // Color by notice deadline urgency
+      // Full fixed-term row (also used for any set-aside fixed-term suite).
+      var renderRow = function(t, dep){
+        var key = trackerKey(p.slug, t);
         var nd = t.noticeDeadlineDays;
         var rowStyle = '';
-        var urgencyBadge = '';
-        if(t.vacating) {
-          rowStyle = 'background:#fff1f2;';
-          urgencyBadge = '<span class="badge badge-revision">Vacating</span>';
-        } else if(nd !== null && nd < 0) {
-          rowStyle = 'background:#fff1f2;';
-          urgencyBadge = '<span class="badge badge-revision">Notice Passed</span>';
-        } else if(nd !== null && nd <= 90) {
-          rowStyle = 'background:#fff7ed;';
-          urgencyBadge = '<span class="badge badge-pending">'+nd+'d to notice</span>';
-        } else if(nd !== null && nd <= 180) {
-          rowStyle = 'background:#fefce8;';
-          urgencyBadge = '<span style="font-size:11px;color:#a16207;background:#fef9c3;padding:2px 7px;border-radius:9999px;font-weight:600;">'+nd+'d to notice</span>';
-        } else {
-          urgencyBadge = '<span style="font-size:11px;color:#059669;background:#dcfce7;padding:2px 7px;border-radius:9999px;font-weight:600;">'+(nd !== null ? nd+'d' : '—')+'</span>';
-        }
-        var daysLeftStr = t.daysLeft !== null ? t.daysLeft+'d ('+t.terminates+')' : t.terminates;
-        html += '<tr style="'+rowStyle+'"><td style="font-size:12px;color:#6b7280;">'+t.building.replace('Sanctuary ','#')+'</td><td style="font-weight:600;">'+t.tenant+'</td><td>'+t.suite+'</td><td>'+t.sf.toLocaleString()+'</td><td style="font-size:12px;">'+t.commenced+'</td><td style="font-size:12px;font-weight:500;">'+t.terminates+'</td><td style="font-size:12px;">'+daysLeftStr.split('(')[0].trim()+'</td><td style="font-size:12px;">'+urgencyBadge+'</td><td style="font-size:12px;color:#6b7280;">'+(t.noticeDays ? t.noticeDays+' days' : '—')+'</td><td style="font-size:12px;">'+t.escalation+'</td><td style="font-size:12px;">'+(t.autoRenew===null?'<span style="color:#9ca3af;">? Unknown</span>':t.autoRenew?'<span style="color:#059669;">✓ Yes</span>':'<span style="color:#dc2626;">✗ No</span>')+'</td></tr>';
-      });
-      mtm.forEach(function(t) {
-        html += '<tr style="background:#f0f9ff;"><td style="font-size:12px;color:#6b7280;">'+t.building.replace('Sanctuary ','#')+'</td><td style="font-weight:600;">'+t.tenant+'</td><td>'+t.suite+'</td><td>'+t.sf.toLocaleString()+'</td><td style="font-size:12px;">'+t.commenced+'</td><td colspan="5" style="font-size:12px;font-style:italic;color:#0369a1;">Month-to-Month — no fixed expiration</td><td style="font-size:12px;color:#059669;">✓ Yes</td></tr>';
-      });
-      owner.forEach(function(t) {
-        html += '<tr style="background:#f9fafb;"><td style="font-size:12px;color:#6b7280;">'+t.building.replace('Sanctuary ','#')+'</td><td style="font-weight:600;">'+t.tenant+'</td><td>'+t.suite+'</td><td>'+t.sf.toLocaleString()+'</td><td colspan="7" style="font-size:12px;color:#9ca3af;font-style:italic;">Owner Occupant</td></tr>';
-      });
+        if(dep) rowStyle = 'background:#f9fafb;opacity:0.55;';
+        else if(t.vacating || (nd!==null && nd<0)) rowStyle = 'background:#fff1f2;';
+        else if(nd!==null && nd<=90) rowStyle = 'background:#fff7ed;';
+        else if(nd!==null && nd<=180) rowStyle = 'background:#fefce8;';
+        var autoRenewCell = t.autoRenew===null?'<span style="color:#9ca3af;">? Unknown</span>':t.autoRenew?'<span style="color:#059669;">✓ Yes</span>':'<span style="color:#dc2626;">✗ No</span>';
+        return '<tr style="'+rowStyle+'">'
+          + '<td style="font-size:12px;color:#6b7280;">'+t.building.replace('Sanctuary ','#')+'</td>'
+          + '<td style="font-weight:600;">'+t.tenant+(t.vacating?' <span class="badge badge-revision">Vacating</span>':'')+'</td>'
+          + '<td>'+t.suite+'</td>'
+          + '<td>'+t.sf.toLocaleString()+'</td>'
+          + '<td style="font-size:12px;">'+t.commenced+'</td>'
+          + '<td style="font-size:12px;">'+trackerDateCell(t.terminates, t.daysLeft)+'</td>'
+          + '<td style="font-size:12px;">'+trackerDateCell(t.noticeDeadline, t.noticeDeadlineDays)+'</td>'
+          + '<td style="font-size:12px;color:#6b7280;">'+(t.noticeDays ? t.noticeDays+' days' : '—')+'</td>'
+          + '<td style="font-size:12px;">'+t.escalation+'</td>'
+          + '<td style="font-size:12px;">'+autoRenewCell+'</td>'
+          + '<td>'+trackerActionPill(trackerLeaseAction(t))+'</td>'
+          + '<td>'+trackerActionPill(trackerNoticeAction(t))+'</td>'
+          + '<td style="text-align:right;">'+trackerDepBtn(key, dep)+'</td>'
+          + '</tr>';
+      };
+      // Month-to-Month row — shown in the main table; no fixed dates, still actionable.
+      var renderMtmRow = function(t, dep){
+        var key = trackerKey(p.slug, t);
+        return '<tr style="'+(dep?'background:#f9fafb;opacity:0.55;':'background:#f0f9ff;')+'">'
+          + '<td style="font-size:12px;color:#6b7280;">'+t.building.replace('Sanctuary ','#')+'</td>'
+          + '<td style="font-weight:600;">'+t.tenant+'</td>'
+          + '<td>'+t.suite+'</td>'
+          + '<td>'+t.sf.toLocaleString()+'</td>'
+          + '<td style="font-size:12px;">'+t.commenced+'</td>'
+          + '<td style="font-size:12px;font-style:italic;color:#0369a1;">Month-to-Month</td>'
+          + '<td style="font-size:12px;color:#9ca3af;">—</td>'
+          + '<td style="font-size:12px;color:#9ca3af;">—</td>'
+          + '<td style="font-size:12px;">'+t.escalation+'</td>'
+          + '<td style="font-size:12px;color:#059669;">✓ Yes</td>'
+          + '<td>'+trackerActionPill(trackerLeaseAction(t))+'</td>'
+          + '<td>'+trackerActionPill(trackerNoticeAction(t))+'</td>'
+          + '<td style="text-align:right;">'+trackerDepBtn(key, dep)+'</td>'
+          + '</tr>';
+      };
+      // Owner-occupied row — non-actionable, parked at the bottom.
+      var renderOwnerRow = function(t, dep){
+        var key = trackerKey(p.slug, t);
+        return '<tr style="'+(dep?'background:#f9fafb;opacity:0.55;':'background:#f9fafb;')+'">'
+          + '<td style="font-size:12px;color:#6b7280;">'+t.building.replace('Sanctuary ','#')+'</td>'
+          + '<td style="font-weight:600;">'+t.tenant+'</td>'
+          + '<td>'+t.suite+'</td>'
+          + '<td>'+t.sf.toLocaleString()+'</td>'
+          + '<td colspan="8" style="font-size:12px;color:#9ca3af;font-style:italic;">Owner Occupant</td>'
+          + '<td style="text-align:right;">'+trackerDepBtn(key, dep)+'</td>'
+          + '</tr>';
+      };
+
+      activeRows.forEach(function(t){ html += renderRow(t, false); });
+      mtmRows.forEach(function(t){ html += renderMtmRow(t, false); });
+      ownerRows.forEach(function(t){ html += renderOwnerRow(t, false); });
+
+      // De-prioritized tier — any suites the user has set aside.
+      if(depRows.length){
+        html += '<tr><td colspan="13" style="font-size:11px;font-weight:600;color:#9ca3af;text-transform:uppercase;letter-spacing:0.04em;padding-top:14px;">Set aside ('+depRows.length+')</td></tr>';
+        depRows.forEach(function(t){
+          html += t.ownerOccupant ? renderOwnerRow(t, true) : t.mtm ? renderMtmRow(t, true) : renderRow(t, true);
+        });
+      }
 
       html += '</tbody></table></div>';
     }
@@ -4927,6 +5071,7 @@ document.addEventListener("DOMContentLoaded", init);
   import { DATA_MODE, startAuth, signIn, signOutUser, loadEntities, subscribeState, setDocumentStatus, loadAssistantLog,
            subscribeMarketing, upsertMarketingSuite, deleteMarketingSuite, putMarketingMedia, deleteMarketingMedia, reorderMarketingMedia,
            subscribeProposed, upsertProposedSuite, deleteProposedSuite,
+           subscribeTrackerPrefs, deprioritizeSuite, reprioritizeSuite,
            uploadMarketingFlyer, deleteMarketingFile }
     from "./crosby-data.js";
   import { deriveViewModel } from "./crosby-viewmodel.js";
@@ -4946,6 +5091,8 @@ document.addEventListener("DOMContentLoaded", init);
   };
   // Shared proposed-suite writes.
   window.__proposed = { ready: false, mode: DATA_MODE, upsert: upsertProposedSuite, delete: deleteProposedSuite };
+  // Shared lease-timeline tracker prefs (de-prioritized / set-aside suites).
+  window.__tracker = { ready: false, mode: DATA_MODE, deprioritize: deprioritizeSuite, reprioritize: reprioritizeSuite };
 
   // Merge the two live collections into the render-ready array the dashboard reads
   // (window.__marketingCache), then repaint the Leasing view + nav badge.
@@ -5052,6 +5199,16 @@ document.addEventListener("DOMContentLoaded", init);
         if (typeof updateProposedBadge === "function") updateProposedBadge();
       },
       onError: (e) => console.error("[crosby] proposed sync error:", e),
+    });
+
+    // Live SHARED lease-timeline tracker prefs (de-prioritized suites).
+    await subscribeTrackerPrefs({
+      onReady: (ok) => { window.__tracker.ready = ok; },
+      onItems: (keys) => {
+        window.__deprioritizedCache = (keys || []).slice();
+        if (typeof rerenderDetailIfActive === "function") rerenderDetailIfActive();
+      },
+      onError: (e) => console.error("[crosby] tracker prefs sync error:", e),
     });
 
     // In local fallback mode, wire the manual Refresh button to re-pull JSON.

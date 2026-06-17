@@ -36,6 +36,12 @@ service cloud.firestore {
     match /proposedSuites/{doc} {
       allow read, write: if true;
     }
+    // Lease Timeline & Renewal Tracker prefs — one doc per suite a leasing agent
+    // has "set aside" (de-prioritized) in the tracker table. Same public
+    // read+write posture as marketing so it is multi-user / cross-device.
+    match /trackerPrefs/{doc} {
+      allow read, write: if true;
+    }
 
     // ⚠ TEMPORARY: public read for the unauthenticated dashboard preview
     // (firebase-config.js AUTH_ENABLED = false). This exposes ALL tenant PII

@@ -235,6 +235,34 @@ export async function deleteProposedSuite(id) {
   await fb.deleteDoc(fb.doc(fb.db, PROPOSED, id));
 }
 
+// ── Lease Timeline tracker prefs (de-prioritized / "set aside" suites) ─────────
+// Shared, live, multi-user — same model as marketing/proposed. One doc per
+// set-aside suite, keyed by the suite's tracker key (slug|building|suite). The
+// key is URI-encoded for the doc id (Firestore ids can't contain "/") and the
+// raw key is also stored in a field, so subscribers get the original key back.
+const TRACKER = "trackerPrefs";
+
+export async function subscribeTrackerPrefs(handlers) {
+  if (DATA_MODE === "local") { handlers.onReady?.(false); return () => {}; }
+  const fb = await ensureFirebase();
+  const unsub = fb.onSnapshot(fb.collection(fb.db, TRACKER),
+    (s) => handlers.onItems?.(s.docs.map((d) => (d.data() && d.data().key) || decodeURIComponent(d.id))),
+    (e) => handlers.onError?.(e));
+  handlers.onReady?.(true);
+  return unsub;
+}
+
+export async function deprioritizeSuite(key) {
+  const fb = await ensureFirebase();
+  await fb.setDoc(fb.doc(fb.db, TRACKER, encodeURIComponent(key)),
+    { key, deprioritized: true, updatedAt: fb.serverTimestamp() }, { merge: true });
+}
+
+export async function reprioritizeSuite(key) {
+  const fb = await ensureFirebase();
+  await fb.deleteDoc(fb.doc(fb.db, TRACKER, encodeURIComponent(key)));
+}
+
 // ── Marketing files in Storage (approved flyers — too large for a Firestore doc) ──
 // Uploads to marketing/flyers/<encodedKey>.<ext> and returns a download URL +
 // storage path (kept on the suite doc). Public read+write is scoped to marketing/
