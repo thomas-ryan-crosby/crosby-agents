@@ -2495,10 +2495,10 @@
   "tenant": "Lain St. Paul",
   "years": {
    "2026": {
-    "Jan": 0,
-    "Feb": 0,
-    "Mar": 0,
-    "Apr": 0,
+    "Jan": 1026.47,
+    "Feb": 1026.47,
+    "Mar": 1026.47,
+    "Apr": 1026.47,
     "May": 1057.26,
     "Jun": 1057.26,
     "Jul": 1057.26,
@@ -3385,9 +3385,9 @@
   "tenant": "Jefferson Capital (JCM II LLC)",
   "years": {
    "2026": {
-    "Jan": 0,
-    "Feb": 0,
-    "Mar": 0,
+    "Jan": 480.59,
+    "Feb": 480.59,
+    "Mar": 480.59,
     "Apr": 495.01,
     "May": 495.01,
     "Jun": 495.01,
