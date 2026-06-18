@@ -5409,7 +5409,11 @@
     "buildingId": "sanctuary-bldg-2",
     "commenced": "2025-08-01",
     "terminates": "2027-07-31",
-    "monthlyRent": 2007.32,
+    "monthlyRent": 1948.86,
+    "rentSchedule": [
+      { "effective": "2025-08-01", "monthlyRent": 1948.86, "note": "AMD12 term Aug 2025–Jul 2026" },
+      { "effective": "2026-08-01", "monthlyRent": 2007.32, "note": "Auto-renewal option year (+3%) Aug 2026–Jul 2027 per AMD12" }
+    ],
     "escalationPct": 3,
     "autoRenew": true,
     "noticeDays": null,
@@ -5417,7 +5421,7 @@
     "daysToNoticeDeadline": null,
     "status": "active",
     "docFile": null,
-    "notes": "Auto-renewed for an additional 12-month term per lease; 3% escalation effective 2026-08-01, new monthly rent $2,007.32. Renewal reminder sent to Gary Thomas, CPA (2026-06).",
+    "notes": "Current rent $1,948.86 (AMD12 term Aug 2025–Jul 2026). Auto-renewal option exercised: $2,007.32 effective 2026-08-01 (Aug 2026–Jul 2027), then 3% each August. terminates 2027-07-31 is the current committed term end. Renewal reminder sent to Gary Thomas, CPA (2026-06).",
     "escalationMonth": 8
   },
   {

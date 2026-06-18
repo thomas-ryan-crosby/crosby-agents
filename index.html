@@ -2169,16 +2169,26 @@ function openRentRoll(slug){
     var ms=new Date(Y, m, 1);
     if(l.commenced && new Date(Y, m+1, 0) < new Date(l.commenced)) return 0; // month entirely before the lease starts
     if(l.terminates){ var td=new Date(l.terminates); if(ms>td && !l.continuesForward) return 0; }
-    // Governing rate: if a prior rent segment (e.g. before a premises/rent
-    // reduction) governs this month, use that rate flat. Only the current
-    // (latest-effective) segment runs through the escalation logic below.
+    // Governing rate: with an explicit rentSchedule, each defined segment is the
+    // contractual rent for its period (flat). Beyond the latest segment the rent
+    // escalates from THAT segment's effective date (not "now"), so a known future
+    // step (e.g. an auto-renewal at a stated rate) isn't double-counted.
     if(l.rentSchedule && l.rentSchedule.length){
       var pd=function(s){ var p=String(s).split('-'); return new Date(+p[0], (+p[1]||1)-1, +p[2]||1); };
       var gov=null, cur=null;
       for(var si=0;si<l.rentSchedule.length;si++){ var seg=l.rentSchedule[si], ef=pd(seg.effective);
         if(!cur || ef>pd(cur.effective)) cur=seg;
         if(ef<=ms && (!gov || ef>pd(gov.effective))) gov=seg; }
-      if(gov && gov!==cur) return Number(gov.monthlyRent)||0;
+      if(gov){
+        var gbase=Number(gov.monthlyRent)||0;
+        if(gov!==cur) return gbase; // a defined prior period → flat
+        if(l.pct && l.escMonth){
+          var ce=pd(cur.effective), cc=0;
+          for(var yy=ce.getFullYear(); yy<=ms.getFullYear(); yy++){ var ee=new Date(yy, l.escMonth-1, 1); if(ee>ce && ee<=ms) cc++; }
+          return gbase*Math.pow(1+l.pct/100, cc);
+        }
+        return gbase;
+      }
     }
     if(l.pct && l.escMonth){
       // l.rent is the rent in effect as of `now`. Escalations take effect on
