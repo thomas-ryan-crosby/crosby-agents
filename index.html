@@ -2175,8 +2175,12 @@ function openRentRoll(slug){
       // between `now` and this month: positive for future months, negative for
       // earlier months of the current year that predate an escalation already
       // taken (so Jan/Feb show the pre-escalation rent, not today's rent).
+      // Escalations only begin the year AFTER commencement (a new lease's rent
+      // is its starting rent for all of its commencement year), so skip any
+      // anniversary in the commencement year or earlier.
+      var cYear = l.commenced ? parseInt(String(l.commenced).slice(0,4),10) : -Infinity;
       var lo, hi, sign; if(ms>=now){ lo=now; hi=ms; sign=1; } else { lo=ms; hi=now; sign=-1; }
-      var c=0; for(var y=lo.getFullYear(); y<=hi.getFullYear(); y++){ var ed=new Date(y, l.escMonth-1, 1); if(ed>lo && ed<=hi) c++; }
+      var c=0; for(var y=lo.getFullYear(); y<=hi.getFullYear(); y++){ if(y<=cYear) continue; var ed=new Date(y, l.escMonth-1, 1); if(ed>lo && ed<=hi) c++; }
       return l.rent*Math.pow(1+l.pct/100, sign*c);
     }
     return l.rent;

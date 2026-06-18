@@ -488,8 +488,8 @@
       "terminates": "2027-02-28",
       "monthlyRent": 504.76,
       "escalationPct": 3,
-      "escalationMonth": 3,
-      "escalationMonthName": "March",
+      "escalationMonth": 4,
+      "escalationMonthName": "April",
       "autoRenew": true,
       "noticeDays": 90,
       "noticeDeadline": "2026-11-30"
