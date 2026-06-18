@@ -13,6 +13,7 @@
 !firebase-config.js
 !crosby-data.js
 !crosby-viewmodel.js
+!crosby-rent-engine.js
 !vercel.json
 
 # Chat assistant serverless function + its helper. Reads PII from the

@@ -2137,6 +2137,15 @@ function rentRollCSS(){
 function ensureRentRollStyles(){ if(document.getElementById('rentRollStyle'))return; var s=document.createElement('style'); s.id='rentRollStyle'; s.textContent=rentRollCSS(); document.head.appendChild(s); }
 var __rr = null;
 function openRentRoll(slug){
+  // The rent roll needs the shared engine (window.RentEngine). It is loaded
+  // lazily; if it hasn't arrived yet (or failed), load it on demand and retry,
+  // rather than throwing deep inside the grid.
+  if(!(window.RentEngine && window.RentEngine.rentForMonth)){
+    import('./crosby-rent-engine.js')
+      .then(function(m){ window.RentEngine = m; openRentRoll(slug); })
+      .catch(function(e){ console.error('Rent engine failed to load:', e); alert('Could not load the rent calculation engine. Please reload the page and try again.'); });
+    return;
+  }
   var ent = window.__crosbyEntities || {};
   var prop = (window.PROPERTIES||[]).find(function(p){return p.slug===slug;}) || {name:slug, location:'', buildings:[]};
   var unitById={}, tenantById={}, bldgById={};
