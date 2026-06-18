@@ -5476,6 +5476,10 @@
     "commenced": "2006-05-01",
     "terminates": "2027-03-31",
     "monthlyRent": 4304.39,
+    "rentSchedule": [
+      { "effective": "2025-04-01", "monthlyRent": 3616.46, "note": "303 + 302A only (before AMD6); = $3,724.95 / 1.03, no 302B yet" },
+      { "effective": "2026-04-01", "monthlyRent": 4304.39, "note": "AMD6: 303+302A $3,724.95 + 302B $579.44; escalates 3% each April" }
+    ],
     "escalationPct": 3,
     "escalationMonth": 4,
     "autoRenew": true,
