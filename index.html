@@ -5418,7 +5418,10 @@ document.addEventListener("DOMContentLoaded", init);
 
     // Entity data (properties/buildings/units/tenants/leases) — loaded once and
     // exposed for the upcoming SOP data-derivation work (Phase 3).
-    try {
+    // Re-fetch entity collections from Firestore and re-derive. Called on load
+    // AND from the Refresh button, so lease/term/rent edits appear without a
+    // full page reload (entity data is one-time getDocs, not a live listener).
+    async function reloadEntities() {
       window.__crosbyEntities = await loadEntities();
       const vm = deriveViewModel(window.__crosbyEntities);
       window.PROPERTIES = vm.PROPERTIES;
@@ -5431,7 +5434,8 @@ document.addEventListener("DOMContentLoaded", init);
       window.TERMINATIONS = vm.TERMINATIONS;
       window.ACCESS_PROPERTY = vm.ACCESS_PROPERTY;
       rerenderActiveViews();
-    } catch(e) { console.error("Entity load / derive failed:", e); }
+    }
+    try { await reloadEntities(); } catch(e) { console.error("Entity load / derive failed:", e); }
 
     // Live state: each collection pushes updates into the globals + re-renders.
     await subscribeState({
@@ -5474,18 +5478,14 @@ document.addEventListener("DOMContentLoaded", init);
       onError: (e) => console.error("[crosby] tracker prefs sync error:", e),
     });
 
-    // In local fallback mode, wire the manual Refresh button to re-pull JSON.
-    if(DATA_MODE === "local") {
-      window.refreshDashboard = async () => {
-        await subscribeState({
-          onAgentStatuses: (m) => applyDashboardState({ agentStatuses: m }),
-          onScheduled:     (a) => applyDashboardState({ scheduled: a }),
-          onDocuments:     (a) => applyDashboardState({ documents: a }),
-          onActivity:      (a) => applyDashboardState({ activity: a }),
-        });
-        rerenderActiveViews();
-      };
-    }
+    // Wire the manual Refresh button to RE-FETCH entity data (leases, terms,
+    // rents, docs). In firestore mode these load via one-time getDocs (not a
+    // live listener), so without this the button only repaints stale in-memory
+    // data; in local mode it re-reads the JSON. reloadEntities() is mode-aware.
+    window.refreshDashboard = async () => {
+      try { await reloadEntities(); } catch(e) { console.error("Refresh: entity reload failed:", e); }
+      rerenderActiveViews();
+    };
   }
 
   startAuth((user) => {
