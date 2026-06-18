@@ -5416,12 +5416,12 @@
     ],
     "escalationPct": 3,
     "autoRenew": true,
-    "noticeDays": null,
-    "noticeDeadline": null,
+    "noticeDays": 91,
+    "noticeDeadline": "2027-05-01",
     "daysToNoticeDeadline": null,
     "status": "active",
     "docFile": null,
-    "notes": "Current rent $1,948.86 (AMD12 term Aug 2025–Jul 2026). Auto-renewal option exercised: $2,007.32 effective 2026-08-01 (Aug 2026–Jul 2027), then 3% each August. terminates 2027-07-31 is the current committed term end. Renewal reminder sent to Gary Thomas, CPA (2026-06).",
+    "notes": "Current rent $1,948.86 (AMD12 term Aug 2025–Jul 2026). Auto-renewal option exercised: $2,007.32 effective 2026-08-01 (Aug 2026–Jul 2027), then 3% each August. terminates 2027-07-31 is the current committed term end. Per AMD12 the renewal option auto-exercises unless either party gives written notice 'on or before May 1' preceding the Aug 1 renewal — so the next decision deadline is 2027-05-01 (to end the term 2027-07-31). Also a standing right for Lessee to terminate for any reason on 6-month notice. Renewal reminder sent to Gary Thomas, CPA (2026-06).",
     "escalationMonth": 8
   },
   {
@@ -5452,6 +5452,11 @@
     "commenced": "2005-10-01",
     "terminates": "2029-09-30",
     "monthlyRent": 4213.62,
+    "rentSchedule": [
+      { "effective": "2026-01-01", "monthlyRent": 4213.62, "note": "Current rate; held through Sep 2027 (AMD5 fixed thru Sep 2026; AMD6 keeps $4,213.62 on Oct 1 2026)" },
+      { "effective": "2027-10-01", "monthlyRent": 4318.12, "note": "AMD6 3-yr extension (stated amount)" },
+      { "effective": "2028-10-01", "monthlyRent": 4423.87, "note": "AMD6 3-yr extension (stated amount)" }
+    ],
     "escalationPct": 2,
     "escalationMonth": 10,
     "autoRenew": false,
