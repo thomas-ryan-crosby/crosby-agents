@@ -5497,17 +5497,17 @@
     "propertyId": "sanctuary-office-park",
     "buildingId": "sanctuary-bldg-2",
     "commenced": "2017-06-15",
-    "terminates": "2027-06-13",
-    "monthlyRent": 950.07,
+    "terminates": "2027-06-14",
+    "monthlyRent": 978.57,
     "escalationPct": 3,
     "escalationMonth": 6,
     "autoRenew": true,
     "noticeDays": 90,
-    "noticeDeadline": "2027-03-15",
+    "noticeDeadline": "2027-03-16",
     "daysToNoticeDeadline": null,
     "status": "active",
-    "docFile": "Pazos_BLDG2_STE202_RenewalNotice2025.pdf",
-    "notes": "Terms from Renewal Notice (2025-06-11) + Amendment #1 (2018-12-28), copier scans 20260612165818987 / 20260612165833496. Init 2017-06-15 ($750). Auto-renews 12-mo each June 14 unless 90-day notice; 3% annual (June). Documented term to 2026-06-13 @ $922.40; auto-renews 2026-06-14 to $950.07 (rent-roll value) through 2027-06-13."
+    "docFile": "Pazos_BLDG2_STE202_RenewalNotice2026.pdf",
+    "notes": "Init 2017-06-15 ($750); 3% each June, auto-renews 12-mo unless 90-day notice. Rent history: 2024-25 $922.40 → 2025-26 $950.07 → 2026-27 $978.57 (current, eff 2026-06-15 per the 2026 Renewal Notice). CLERICAL ERROR: the 2025 Renewal Notice stated $922.40 for the 2025-26 term when the correct escalated rent was $950.07 — corrected here; tenant may owe the ~$27.67/mo shortfall for that term. Current committed term to 2027-06-14."
   },
   {
     "id": "lease-bldg2-suite204-cypress-key",

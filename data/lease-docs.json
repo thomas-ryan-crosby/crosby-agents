@@ -2067,14 +2067,14 @@
       "leaseId": "lease-bldg2-suite202-pazos",
       "status": "active",
       "commenced": "2017-06-15",
-      "terminates": "2027-06-13",
-      "monthlyRent": 950.07,
+      "terminates": "2027-06-14",
+      "monthlyRent": 978.57,
       "escalationPct": 3,
       "escalationMonth": 6,
       "escalationMonthName": "June",
       "autoRenew": true,
       "noticeDays": 90,
-      "noticeDeadline": "2027-03-15"
+      "noticeDeadline": "2027-03-16"
     },
     "ref": "kel3a6l"
   },
@@ -2105,14 +2105,14 @@
       "leaseId": "lease-bldg2-suite202-pazos",
       "status": "active",
       "commenced": "2017-06-15",
-      "terminates": "2027-06-13",
-      "monthlyRent": 950.07,
+      "terminates": "2027-06-14",
+      "monthlyRent": 978.57,
       "escalationPct": 3,
       "escalationMonth": 6,
       "escalationMonthName": "June",
       "autoRenew": true,
       "noticeDays": 90,
-      "noticeDeadline": "2027-03-15"
+      "noticeDeadline": "2027-03-16"
     },
     "ref": "hqfwgw8"
   },
@@ -2143,16 +2143,54 @@
       "leaseId": "lease-bldg2-suite202-pazos",
       "status": "active",
       "commenced": "2017-06-15",
-      "terminates": "2027-06-13",
-      "monthlyRent": 950.07,
+      "terminates": "2027-06-14",
+      "monthlyRent": 978.57,
       "escalationPct": 3,
       "escalationMonth": 6,
       "escalationMonthName": "June",
       "autoRenew": true,
       "noticeDays": 90,
-      "noticeDeadline": "2027-03-15"
+      "noticeDeadline": "2027-03-16"
     },
     "ref": "75ju39r"
+  },
+  {
+    "id": "leasedoc-pazosbldg2ste202renewalnotice2026",
+    "propertyId": "sanctuary-office-park",
+    "building": "Building #2",
+    "tenant": "J. Chris Pazos Insurance Agency LLC",
+    "suite": "202",
+    "file": "Pazos_BLDG2_STE202_RenewalNotice2026.pdf",
+    "docType": "Renewal Notice",
+    "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FPazos_BLDG2_STE202_RenewalNotice2026.pdf?alt=media&token=64eb32db-8b03-4cd9-974e-10e5d23467ae",
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FPazos_BLDG2_STE202_RenewalNotice2026.html?alt=media&token=29bfe4e3-10e1-495b-9e67-438b311134a4",
+    "meta": {
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "J. Chris Pazos Insurance Agency LLC",
+      "property": "Sanctuary Office Park, Building #2, #2 Sanctuary Boulevard, Mandeville, LA 70471",
+      "suite": "Suite 202",
+      "documentType": "Renewal Notice",
+      "dated": "2026-06-15",
+      "monthlyRent": "USD 978.57",
+      "commencement": "2026-06-15",
+      "termination": "2027-06-14",
+      "title": "Renewal Notice — Building #2, Suite 202 (Pazos) — auto-renewed eff 2026-06-15, rent $978.57 (current)"
+    },
+    "date": "2026-06-15",
+    "lease": {
+      "leaseId": "lease-bldg2-suite202-pazos",
+      "status": "active",
+      "commenced": "2017-06-15",
+      "terminates": "2027-06-14",
+      "monthlyRent": 978.57,
+      "escalationPct": 3,
+      "escalationMonth": 6,
+      "escalationMonthName": "June",
+      "autoRenew": true,
+      "noticeDays": 90,
+      "noticeDeadline": "2027-03-16"
+    },
+    "ref": "lp8nwq0"
   },
   {
     "id": "leasedoc-hartfordbldg2ste301init",
