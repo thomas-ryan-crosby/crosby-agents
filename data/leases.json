@@ -217,6 +217,10 @@
     "commenced": "2025-11-24",
     "terminates": "2028-11-30",
     "monthlyRent": 431,
+    "rentSchedule": [
+      { "effective": "2025-11-24", "monthlyRent": 862, "note": "Full Suite 303 (original premises)" },
+      { "effective": "2026-04-01", "monthlyRent": 431, "note": "Reduced to Suite 303B only per Premises & Rent Reduction Notice" }
+    ],
     "escalationPct": 3,
     "escalationMonth": 11,
     "autoRenew": false,

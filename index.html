@@ -2158,7 +2158,7 @@ function openRentRoll(slug){
     var noticePassed = !!(l.noticeDeadline && new Date(l.noticeDeadline) < now);
     L.push({ tenant:t.name||u.identifier||'—', suite:u.identifier||'—', sf:Number(u.sf)||0, building:b.name||'—',
       rent:rent, pct:l.escalationPct, escMonth:l.escalationMonth, commenced:l.commenced||null, terminates:term, autoRenew:l.autoRenew,
-      noticeDeadline:l.noticeDeadline||null, noticePassed:noticePassed,
+      noticeDeadline:l.noticeDeadline||null, noticePassed:noticePassed, rentSchedule:l.rentSchedule||null,
       continuesForward:(l.autoRenew===true && noticePassed), status:l.status||'active', holdover:holdover });
   });
   // horizon: project until the last committed lease term in place (capped)
@@ -2169,6 +2169,17 @@ function openRentRoll(slug){
     var ms=new Date(Y, m, 1);
     if(l.commenced && new Date(Y, m+1, 0) < new Date(l.commenced)) return 0; // month entirely before the lease starts
     if(l.terminates){ var td=new Date(l.terminates); if(ms>td && !l.continuesForward) return 0; }
+    // Governing rate: if a prior rent segment (e.g. before a premises/rent
+    // reduction) governs this month, use that rate flat. Only the current
+    // (latest-effective) segment runs through the escalation logic below.
+    if(l.rentSchedule && l.rentSchedule.length){
+      var pd=function(s){ var p=String(s).split('-'); return new Date(+p[0], (+p[1]||1)-1, +p[2]||1); };
+      var gov=null, cur=null;
+      for(var si=0;si<l.rentSchedule.length;si++){ var seg=l.rentSchedule[si], ef=pd(seg.effective);
+        if(!cur || ef>pd(cur.effective)) cur=seg;
+        if(ef<=ms && (!gov || ef>pd(gov.effective))) gov=seg; }
+      if(gov && gov!==cur) return Number(gov.monthlyRent)||0;
+    }
     if(l.pct && l.escMonth){
       // l.rent is the rent in effect as of `now`. Escalations take effect on
       // escMonth/1 each year. Step the rent by the NET number of anniversaries
