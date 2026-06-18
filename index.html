@@ -2158,14 +2158,15 @@ function openRentRoll(slug){
     var noticePassed = !!(l.noticeDeadline && new Date(l.noticeDeadline) < now);
     L.push({ tenant:t.name||u.identifier||'—', suite:u.identifier||'—', sf:Number(u.sf)||0, building:b.name||'—',
       rent:rent, pct:l.escalationPct, escMonth:l.escalationMonth, commenced:l.commenced||null, terminates:term, autoRenew:l.autoRenew,
-      noticeDeadline:l.noticeDeadline||null, noticePassed:noticePassed, rentSchedule:l.rentSchedule||null,
+      noticeDeadline:l.noticeDeadline||null, noticePassed:noticePassed, rentSchedule:l.rentSchedule||null, abatements:l.abatements||null,
       continuesForward:(l.autoRenew===true && noticePassed), status:l.status||'active', holdover:holdover });
   });
   // horizon: project until the last committed lease term in place (capped)
   var maxYear=curYear; L.forEach(function(l){ if(l.terminates){ var y=new Date(l.terminates).getFullYear(); if(y>maxYear) maxYear=y; } });
   maxYear=Math.min(Math.max(maxYear, curYear+1), curYear+10);
   var years=[]; for(var yy=curYear; yy<=maxYear; yy++) years.push(yy);
-  function monthRent(l, Y, m){
+  // Contractual rate for a month (before abatements). monthRent() wraps this.
+  function rrRate(l, Y, m){
     var ms=new Date(Y, m, 1);
     if(l.commenced && new Date(Y, m+1, 0) < new Date(l.commenced)) return 0; // month entirely before the lease starts
     if(l.terminates){ var td=new Date(l.terminates); if(ms>td && !l.continuesForward) return 0; }
@@ -2205,6 +2206,20 @@ function openRentRoll(slug){
       return l.rent*Math.pow(1+l.pct/100, sign*c);
     }
     return l.rent;
+  }
+  // Rent abatements / free rent: a month overlapping an abatement window is
+  // reduced by its percent (default 100% = fully abated). Full-month convention.
+  function rrAbatePct(abs, ms){
+    if(!abs || !abs.length) return 0;
+    var pd=function(s){ var p=String(s).split('-'); return new Date(+p[0], (+p[1]||1)-1, +p[2]||1); };
+    var mEnd=new Date(ms.getFullYear(), ms.getMonth()+1, 0);
+    for(var i=0;i<abs.length;i++){ var a=abs[i], f=pd(a.from), t=a.to?pd(a.to):f; if(f<=mEnd && t>=ms) return a.pct!=null?Number(a.pct):100; }
+    return 0;
+  }
+  function monthRent(l, Y, m){
+    var base=rrRate(l, Y, m);
+    if(base && l.abatements && l.abatements.length){ var ab=rrAbatePct(l.abatements, new Date(Y, m, 1)); if(ab) base=base*(1-ab/100); }
+    return base;
   }
   function annualRent(l, Y){ var s=0; for(var m=0;m<12;m++) s+=monthRent(l,Y,m); return s; }
   function typeLabel(r){

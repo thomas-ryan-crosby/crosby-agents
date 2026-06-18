@@ -5672,6 +5672,11 @@
     "terminates": "2030-05-31",
     "monthlyRent": 13680.98,
     "escalationPct": 3,
+    "abatements": [
+      { "from": "2025-03-01", "to": "2025-03-31", "pct": 100, "note": "AMD6 full rent abatement" },
+      { "from": "2026-03-01", "to": "2026-03-31", "pct": 100, "note": "AMD6 full rent abatement" },
+      { "from": "2027-03-01", "to": "2027-03-31", "pct": 100, "note": "AMD6 full rent abatement" }
+    ],
     "autoRenew": false,
     "noticeDays": null,
     "noticeDeadline": null,
