@@ -412,6 +412,7 @@ var LEASE_DOCS = {};
 var MOVED_OUT = {};
 var TERMINATIONS = {};
 var ACCESS_PROPERTY = {};
+var SCHEDULED = [];  // scheduled-task list; populated by applyDashboardState() from dashboard-state. Declared here so init() never hits an undefined reference before the module bootstrap runs.
 
 // ── AGENT ROSTER (static definition — statuses loaded from dashboard-state.json) ──
 const AGENTS = [
@@ -5302,8 +5303,11 @@ document.addEventListener("DOMContentLoaded", init);
            uploadMarketingFlyer, deleteMarketingFile }
     from "./crosby-data.js";
   import { deriveViewModel } from "./crosby-viewmodel.js";
-  import * as RentEngine from "./crosby-rent-engine.js";
-  window.RentEngine = RentEngine;   // shared canonical rent engine for the rent roll + Excel export
+  // Load the shared rent engine RESILIENTLY. A static import that 404s would
+  // abort this entire module (no data, blank dashboard); a dynamic import keeps
+  // the dashboard alive — only the rent roll needs the engine, and it loads in
+  // time for the user-triggered "Generate Rent Roll".
+  import("./crosby-rent-engine.js").then((m) => { window.RentEngine = m; }).catch((e) => console.error("Rent engine failed to load:", e));
 
   // Bridge module functions to the global handlers used by the classic script.
   window.__persistDocStatus = (id, status) => setDocumentStatus(id, status, window.__operatorEmail);
