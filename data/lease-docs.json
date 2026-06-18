@@ -4261,7 +4261,7 @@
     "lease": {
       "leaseId": "lease-bldg4-suite305-st-paul",
       "status": "active",
-      "commenced": "2026-05-01",
+      "commenced": "2021-05-01",
       "terminates": "2027-04-30",
       "monthlyRent": 1057.26,
       "escalationPct": 3,
@@ -4301,7 +4301,7 @@
     "lease": {
       "leaseId": "lease-bldg4-suite305-st-paul",
       "status": "active",
-      "commenced": "2026-05-01",
+      "commenced": "2021-05-01",
       "terminates": "2027-04-30",
       "monthlyRent": 1057.26,
       "escalationPct": 3,
@@ -4339,7 +4339,7 @@
     "lease": {
       "leaseId": "lease-bldg4-suite305-st-paul",
       "status": "active",
-      "commenced": "2026-05-01",
+      "commenced": "2021-05-01",
       "terminates": "2027-04-30",
       "monthlyRent": 1057.26,
       "escalationPct": 3,
@@ -4377,7 +4377,7 @@
     "lease": {
       "leaseId": "lease-bldg4-suite305-st-paul",
       "status": "active",
-      "commenced": "2026-05-01",
+      "commenced": "2021-05-01",
       "terminates": "2027-04-30",
       "monthlyRent": 1057.26,
       "escalationPct": 3,
@@ -4415,7 +4415,7 @@
     "lease": {
       "leaseId": "lease-bldg4-suite305-st-paul",
       "status": "active",
-      "commenced": "2026-05-01",
+      "commenced": "2021-05-01",
       "terminates": "2027-04-30",
       "monthlyRent": 1057.26,
       "escalationPct": 3,
@@ -4453,7 +4453,7 @@
     "lease": {
       "leaseId": "lease-bldg4-suite306-jefferson",
       "status": "active",
-      "commenced": "2026-04-01",
+      "commenced": "2021-04-01",
       "terminates": "2027-03-31",
       "monthlyRent": 495.01,
       "escalationPct": 3,
@@ -4493,7 +4493,7 @@
     "lease": {
       "leaseId": "lease-bldg4-suite306-jefferson",
       "status": "active",
-      "commenced": "2026-04-01",
+      "commenced": "2021-04-01",
       "terminates": "2027-03-31",
       "monthlyRent": 495.01,
       "escalationPct": 3,
