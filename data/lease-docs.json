@@ -297,8 +297,8 @@
       "terminates": "2028-11-30",
       "monthlyRent": 431,
       "escalationPct": 3,
-      "escalationMonth": 1,
-      "escalationMonthName": "January",
+      "escalationMonth": 11,
+      "escalationMonthName": "November",
       "autoRenew": false,
       "noticeDays": 90,
       "noticeDeadline": "2028-09-01"
@@ -335,8 +335,8 @@
       "terminates": "2028-11-30",
       "monthlyRent": 431,
       "escalationPct": 3,
-      "escalationMonth": 1,
-      "escalationMonthName": "January",
+      "escalationMonth": 11,
+      "escalationMonthName": "November",
       "autoRenew": false,
       "noticeDays": 90,
       "noticeDeadline": "2028-09-01"

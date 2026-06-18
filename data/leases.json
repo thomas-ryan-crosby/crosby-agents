@@ -222,7 +222,7 @@
       { "effective": "2026-04-01", "monthlyRent": 431, "note": "Reduced to Suite 303B only per Premises & Rent Reduction Notice" }
     ],
     "escalationPct": 3,
-    "escalationMonth": 1,
+    "escalationMonth": 11,
     "autoRenew": false,
     "noticeDays": 90,
     "noticeDeadline": "2028-09-01",
@@ -230,7 +230,7 @@
     "status": "vacating",
     "docFile": "Brandner_BLDG1_STE303B_ReductionNotice.pdf",
     "suiteFlag": "Recorded as Suite 303B; internal 303B/307 label flip with Detox Management Company, LLC (recorded under 307).",
-    "notes": "GOVERNING: Premises & Rent Reduction Notice (eff 2026-04-01). Originally leased full Suite 303 @ $862 (lease 2025-11-21, commenced 2025-11-24); tenant gave email termination notice 2025-12-04. Suite 303A re-leased; Brandner reduced to Suite 303B only (~235 SF) at $431/mo (half) eff 2026-04-01. Wind-down — Lessor actively marketing to fully relieve tenant of remaining space. Escalation per lease: 3% \"commencing with the first month of the second calendar year of the lease term\" = each January 1. The $431 rate holds through 2026 and would step to $443.93 in January 2027 if it continues. All other lease terms unchanged."
+    "notes": "GOVERNING: Premises & Rent Reduction Notice (eff 2026-04-01). Originally leased full Suite 303 @ $862 (lease 2025-11-21, commenced 2025-11-24); tenant gave email termination notice 2025-12-04. Suite 303A re-leased; Brandner reduced to Suite 303B only (~235 SF) at $431/mo (half) eff 2026-04-01. Wind-down — Lessor actively marketing to fully relieve tenant of remaining space. Escalation per lease: 3% on the first month one year past commencement (\"first month of the second calendar year of the lease term\") — commenced Nov 2025, so it escalates each November. The $431 rate holds through Oct 2026 and steps to $443.93 in November 2026 if it continues. All other lease terms unchanged."
   },
   {
     "id": "lease-bldg1-suite303a-bodyremedy",
