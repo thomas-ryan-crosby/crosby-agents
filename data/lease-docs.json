@@ -485,14 +485,14 @@
       "leaseId": "lease-bldg1-suite300a-mandtech",
       "status": "active",
       "commenced": "2021-04-01",
-      "terminates": "2027-02-28",
+      "terminates": "2027-03-31",
       "monthlyRent": 504.76,
       "escalationPct": 3,
       "escalationMonth": 4,
       "escalationMonthName": "April",
       "autoRenew": true,
       "noticeDays": 90,
-      "noticeDeadline": "2026-11-30"
+      "noticeDeadline": "2026-12-31"
     },
     "ref": "scyq8fi"
   },
