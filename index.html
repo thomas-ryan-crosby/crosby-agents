@@ -2159,68 +2159,18 @@ function openRentRoll(slug){
     L.push({ tenant:t.name||u.identifier||'—', suite:u.identifier||'—', sf:Number(u.sf)||0, building:b.name||'—',
       rent:rent, pct:l.escalationPct, escMonth:l.escalationMonth, commenced:l.commenced||null, terminates:term, autoRenew:l.autoRenew,
       noticeDeadline:l.noticeDeadline||null, noticePassed:noticePassed, rentSchedule:l.rentSchedule||null, abatements:l.abatements||null,
-      continuesForward:(l.autoRenew===true && noticePassed), status:l.status||'active', holdover:holdover });
+      continuesForward:(l.autoRenew===true && noticePassed), status:l.status||'active', holdover:holdover, _lease:l });
   });
   // horizon: project until the last committed lease term in place (capped)
   var maxYear=curYear; L.forEach(function(l){ if(l.terminates){ var y=new Date(l.terminates).getFullYear(); if(y>maxYear) maxYear=y; } });
   maxYear=Math.min(Math.max(maxYear, curYear+1), curYear+10);
   var years=[]; for(var yy=curYear; yy<=maxYear; yy++) years.push(yy);
-  // Contractual rate for a month (before abatements). monthRent() wraps this.
-  function rrRate(l, Y, m){
-    var ms=new Date(Y, m, 1);
-    if(l.commenced && new Date(Y, m+1, 0) < new Date(l.commenced)) return 0; // month entirely before the lease starts
-    if(l.terminates){ var td=new Date(l.terminates); if(ms>td && !l.continuesForward) return 0; }
-    // Governing rate: with an explicit rentSchedule, each defined segment is the
-    // contractual rent for its period (flat). Beyond the latest segment the rent
-    // escalates from THAT segment's effective date (not "now"), so a known future
-    // step (e.g. an auto-renewal at a stated rate) isn't double-counted.
-    if(l.rentSchedule && l.rentSchedule.length){
-      var pd=function(s){ var p=String(s).split('-'); return new Date(+p[0], (+p[1]||1)-1, +p[2]||1); };
-      var gov=null, cur=null;
-      for(var si=0;si<l.rentSchedule.length;si++){ var seg=l.rentSchedule[si], ef=pd(seg.effective);
-        if(!cur || ef>pd(cur.effective)) cur=seg;
-        if(ef<=ms && (!gov || ef>pd(gov.effective))) gov=seg; }
-      if(gov){
-        var gbase=Number(gov.monthlyRent)||0;
-        if(gov!==cur) return gbase; // a defined prior period → flat
-        if(l.pct && l.escMonth){
-          var ce=pd(cur.effective), cc=0;
-          for(var yy=ce.getFullYear(); yy<=ms.getFullYear(); yy++){ var ee=new Date(yy, l.escMonth-1, 1); if(ee>ce && ee<=ms) cc++; }
-          return gbase*Math.pow(1+l.pct/100, cc);
-        }
-        return gbase;
-      }
-    }
-    if(l.pct && l.escMonth){
-      // l.rent is the rent in effect as of `now`. Escalations take effect on
-      // escMonth/1 each year. Step the rent by the NET number of anniversaries
-      // between `now` and this month: positive for future months, negative for
-      // earlier months of the current year that predate an escalation already
-      // taken (so Jan/Feb show the pre-escalation rent, not today's rent).
-      // Escalations only begin the year AFTER commencement (a new lease's rent
-      // is its starting rent for all of its commencement year), so skip any
-      // anniversary in the commencement year or earlier.
-      var cYear = l.commenced ? parseInt(String(l.commenced).slice(0,4),10) : -Infinity;
-      var lo, hi, sign; if(ms>=now){ lo=now; hi=ms; sign=1; } else { lo=ms; hi=now; sign=-1; }
-      var c=0; for(var y=lo.getFullYear(); y<=hi.getFullYear(); y++){ if(y<=cYear) continue; var ed=new Date(y, l.escMonth-1, 1); if(ed>lo && ed<=hi) c++; }
-      return l.rent*Math.pow(1+l.pct/100, sign*c);
-    }
-    return l.rent;
-  }
-  // Rent abatements / free rent: a month overlapping an abatement window is
-  // reduced by its percent (default 100% = fully abated). Full-month convention.
-  function rrAbatePct(abs, ms){
-    if(!abs || !abs.length) return 0;
-    var pd=function(s){ var p=String(s).split('-'); return new Date(+p[0], (+p[1]||1)-1, +p[2]||1); };
-    var mEnd=new Date(ms.getFullYear(), ms.getMonth()+1, 0);
-    for(var i=0;i<abs.length;i++){ var a=abs[i], f=pd(a.from), t=a.to?pd(a.to):f; if(f<=mEnd && t>=ms) return a.pct!=null?Number(a.pct):100; }
-    return 0;
-  }
-  function monthRent(l, Y, m){
-    var base=rrRate(l, Y, m);
-    if(base && l.abatements && l.abatements.length){ var ab=rrAbatePct(l.abatements, new Date(Y, m, 1)); if(ab) base=base*(1-ab/100); }
-    return base;
-  }
+  // Rent figures come from the shared canonical engine (crosby-rent-engine.js,
+  // exposed as window.RentEngine), computed from each row's underlying lease
+  // record (l._lease). monthRent()/annualRent() keep their signatures so the
+  // modal grid and the Excel export are unchanged. `m` is 0-based.
+  function monthRent(l, Y, m){ return window.RentEngine.rentForMonth(l._lease, Y, m, now); }
+  function monthRentInfo(l, Y, m){ return window.RentEngine.rentForMonthDetailed(l._lease, Y, m, now); }
   function annualRent(l, Y){ var s=0; for(var m=0;m<12;m++) s+=monthRent(l,Y,m); return s; }
   function typeLabel(r){
     var esc = r.pct!=null ? ((Number(r.pct)%1?Number(r.pct).toFixed(1):r.pct)+'%') : null;
@@ -2249,7 +2199,7 @@ function openRentRoll(slug){
   var bYear={}; bnames.forEach(function(bn){ bYear[bn]={}; years.forEach(function(Y){ var s=byB[bn].reduce(function(a,l){return a+annualRent(l,Y);},0); bYear[bn][Y]=s; complexYear[Y]+=s; }); });
   __rr={ prop:prop, asOf:asOf, curYear:curYear, maxYear:maxYear, years:years, MN:MN, num2:num2,
     occByB:occByB, totRent:totRent, totOcc:totOcc, occRows:occRows, thresh:thresh, bnames:bnames, byB:byB, bYear:bYear, complexYear:complexYear,
-    monthRent:monthRent, annualRent:annualRent, typeLabel:typeLabel, tab:'overview', years_sel:[curYear], bldgs_sel:bnames.slice(), groupBy:'year' };
+    monthRent:monthRent, monthRentInfo:monthRentInfo, annualRent:annualRent, typeLabel:typeLabel, tab:'overview', years_sel:[curYear], bldgs_sel:bnames.slice(), groupBy:'year' };
   var ov=document.getElementById('rentRollModal');
   if(!ov){ ov=document.createElement('div'); ov.id='rentRollModal'; ov.style.cssText='position:fixed;inset:0;z-index:200;background:rgba(15,23,42,.55);display:flex;align-items:center;justify-content:center;padding:24px;'; ov.addEventListener('click',function(e){ if(e.target===ov) closeRentRoll(); }); document.body.appendChild(ov); }
   ov.innerHTML = '<div style="background:#fff;width:100%;max-width:1080px;max-height:90vh;border-radius:14px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 24px 70px rgba(0,0,0,.45);">'+
@@ -2341,7 +2291,7 @@ function rrGridTable(bn, Y){
   h += '</thead><tbody>';
   for(var mm=0; mm<12; mm++){
     var rt=0;
-    h += '<tr><th class="rr-mh rr-mlbl">'+R.MN[mm]+'</th>'+trs.map(function(r){ var v=R.monthRent(r,Y,mm); rt+=v; return '<td>'+(v>0?R.num2(v):'<span class="rr-zero">—</span>')+'</td>'; }).join('')+'<td class="rr-totcol">'+(rt>0?R.num2(rt):'<span class="rr-zero">—</span>')+'</td></tr>';
+    h += '<tr><th class="rr-mh rr-mlbl">'+R.MN[mm]+'</th>'+trs.map(function(r){ var info=R.monthRentInfo(r,Y,mm); var v=info.rent; rt+=v; var prov=(info.source||'')+(info.note?' · '+info.note:''); var tt=prov?' title="'+R.MN[mm]+' '+Y+' — '+prov.replace(/"/g,'&quot;')+'"':''; return '<td'+tt+'>'+(v>0?R.num2(v):'<span class="rr-zero">—</span>')+'</td>'; }).join('')+'<td class="rr-totcol">'+(rt>0?R.num2(rt):'<span class="rr-zero">—</span>')+'</td></tr>';
   }
   var at=0;
   h += '<tr class="rr-annual"><th class="rr-mh">'+Y+' Total</th>'+trs.map(function(r){ var a=R.annualRent(r,Y); at+=a; return '<td>'+rrMoney(a)+'</td>'; }).join('')+'<td class="rr-totcol">'+rrMoney(at)+'</td></tr>';
@@ -5352,6 +5302,8 @@ document.addEventListener("DOMContentLoaded", init);
            uploadMarketingFlyer, deleteMarketingFile }
     from "./crosby-data.js";
   import { deriveViewModel } from "./crosby-viewmodel.js";
+  import * as RentEngine from "./crosby-rent-engine.js";
+  window.RentEngine = RentEngine;   // shared canonical rent engine for the rent roll + Excel export
 
   // Bridge module functions to the global handlers used by the classic script.
   window.__persistDocStatus = (id, status) => setDocumentStatus(id, status, window.__operatorEmail);
