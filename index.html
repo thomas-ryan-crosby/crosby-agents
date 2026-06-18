@@ -2159,6 +2159,10 @@ function openRentRoll(slug){
   // ── enrich leases. A lease's rent only projects past its current term end once it
   //    is contractually committed forward: auto-renew leases count as committed only
   //    after their notice date has passed; until then they end at their current term. ──
+  // Governing lease document per lease (the latest-dated doc), so the rent-roll
+  // hover can cite where the figure comes from (e.g. "AMD6 (k8kdisy)").
+  var docByLease={};
+  (ent.leaseDocs||[]).forEach(function(d){ var k=d.lease&&d.lease.leaseId; if(!k) return; if(!docByLease[k] || String(d.date||'')>String(docByLease[k].date||'')) docByLease[k]={ref:d.ref||null, docType:d.docType||'', date:d.date||''}; });
   var L=[];
   (ent.leases||[]).filter(function(l){return l.propertyId===slug && l.status!=='owner-occupant';}).forEach(function(l){
     var u=unitById[l.unitId]||{}, t=tenantById[l.tenantId]||{}, b=bldgById[u.buildingId]||{};
@@ -2169,7 +2173,7 @@ function openRentRoll(slug){
     L.push({ tenant:t.name||u.identifier||'—', suite:u.identifier||'—', sf:Number(u.sf)||0, building:b.name||'—',
       rent:rent, pct:l.escalationPct, escMonth:l.escalationMonth, commenced:l.commenced||null, terminates:term, autoRenew:l.autoRenew,
       noticeDeadline:l.noticeDeadline||null, noticePassed:noticePassed, rentSchedule:l.rentSchedule||null, abatements:l.abatements||null,
-      continuesForward:(l.autoRenew===true && noticePassed), status:l.status||'active', holdover:holdover, _lease:l });
+      continuesForward:(l.autoRenew===true && noticePassed), status:l.status||'active', holdover:holdover, _lease:l, _govDoc:docByLease[l.id]||null });
   });
   // horizon: project until the last committed lease term in place (capped)
   var maxYear=curYear; L.forEach(function(l){ if(l.terminates){ var y=new Date(l.terminates).getFullYear(); if(y>maxYear) maxYear=y; } });
@@ -2301,7 +2305,7 @@ function rrGridTable(bn, Y){
   h += '</thead><tbody>';
   for(var mm=0; mm<12; mm++){
     var rt=0;
-    h += '<tr><th class="rr-mh rr-mlbl">'+R.MN[mm]+'</th>'+trs.map(function(r){ var info=R.monthRentInfo(r,Y,mm); var v=info.rent; rt+=v; var esc=function(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');}; var lz=r._lease||{}; var who=esc(r.tenant||'')+(r.suite?' · Suite '+esc(r.suite):'')+(lz.id?'&#10;'+esc(lz.id):''); var prov=(info.source||'')+(info.note?' · '+info.note:''); var tt=' title="'+who+'&#10;'+esc(R.MN[mm]+' '+Y+(prov?' — '+prov:''))+'"'; return '<td'+tt+'>'+(v>0?R.num2(v):'<span class="rr-zero">—</span>')+'</td>'; }).join('')+'<td class="rr-totcol">'+(rt>0?R.num2(rt):'<span class="rr-zero">—</span>')+'</td></tr>';
+    h += '<tr><th class="rr-mh rr-mlbl">'+R.MN[mm]+'</th>'+trs.map(function(r){ var info=R.monthRentInfo(r,Y,mm); var v=info.rent; rt+=v; var esc=function(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');}; var lz=r._lease||{}; var doc=r._govDoc; var prov=(info.source||'')+(info.note?' · '+info.note:''); var parts=[esc(r.tenant||'')+(r.suite?' · Suite '+esc(r.suite):'')]; if(lz.id) parts.push(esc(lz.id)); if(doc) parts.push('Doc: '+esc((doc.docType||'')+(doc.ref?' ('+doc.ref+')':''))); parts.push(esc(R.MN[mm]+' '+Y+(prov?' — '+prov:''))); var tt=' title="'+parts.join('&#10;')+'"'; return '<td'+tt+'>'+(v>0?R.num2(v):'<span class="rr-zero">—</span>')+'</td>'; }).join('')+'<td class="rr-totcol">'+(rt>0?R.num2(rt):'<span class="rr-zero">—</span>')+'</td></tr>';
   }
   var at=0;
   h += '<tr class="rr-annual"><th class="rr-mh">'+Y+' Total</th>'+trs.map(function(r){ var a=R.annualRent(r,Y); at+=a; return '<td>'+rrMoney(a)+'</td>'; }).join('')+'<td class="rr-totcol">'+rrMoney(at)+'</td></tr>';
