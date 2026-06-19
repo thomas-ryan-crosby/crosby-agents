@@ -317,6 +317,71 @@
       .container { padding: 18px; }
       .header-inner { padding: 12px 18px; }
     }
+
+    /* ── The Nerdy Stuff — docs layout ─────────────────────────────────── */
+    .nd-shell { display: flex; gap: 30px; align-items: flex-start; }
+    .nd-side { flex: 0 0 240px; position: sticky; top: 20px; max-height: calc(100vh - 60px); overflow-y: auto; padding-right: 6px; }
+    .nd-side-head { display: flex; align-items: center; gap: 7px; font-family: 'Fraunces', Georgia, serif; font-size: 18px; font-weight: 600; color: var(--ink); }
+    .nd-side-tag { font-size: 12px; color: var(--ink-3); margin: 2px 0 18px; }
+    .nd-grp { margin-bottom: 16px; }
+    .nd-doc { display: block; font-size: 13.5px; font-weight: 650; color: var(--ink); text-decoration: none; cursor: pointer; }
+    .nd-doc:hover { color: #22315d; }
+    .nd-grp.active .nd-doc { color: #22315d; }
+    .nd-doc-sub { font-size: 11.5px; color: var(--ink-3); margin: 1px 0 8px; }
+    .nd-secs { display: flex; flex-direction: column; border-left: 2px solid var(--line, #e5e7eb); }
+    .nd-grp.active .nd-secs { border-left-color: #c7dbf2; }
+    .nd-sec { font-size: 12.5px; line-height: 1.35; color: #64748b; text-decoration: none; padding: 5px 0 5px 13px; margin-left: -2px; border-left: 2px solid transparent; cursor: pointer; }
+    .nd-sec:hover { color: #22315d; }
+    .nd-sec.active { color: #22315d; font-weight: 600; border-left-color: #22315d; }
+    .nd-main { flex: 1 1 auto; min-width: 0; }
+    .nd-loading, .nd-error { color: #9ca3af; font-size: 13px; padding: 24px 4px; }
+    .nd-error a { color: #2563eb; }
+
+    /* Scoped rendering of the fetched doc bodies (mirrors the docs/*.html CSS). */
+    .nd { font-size: 14px; color: #1f2937; line-height: 1.55; max-width: 840px; }
+    .nd header.doc { border-bottom: 3px solid #22315d; padding-bottom: 14px; margin-bottom: 8px; }
+    .nd .eyebrow { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #5e8ed0; }
+    .nd h1 { font-size: 25px; color: #22315d; margin: 4px 0 4px; }
+    .nd .byline { color: #64748b; font-size: 13px; }
+    .nd h2 { font-size: 18px; color: #22315d; margin: 32px 0 8px; padding-bottom: 6px; border-bottom: 2px solid #5e8ed0; scroll-margin-top: 16px; }
+    .nd h3 { font-size: 14.5px; color: #3c5488; margin: 18px 0 6px; }
+    .nd p { margin: 9px 0; font-size: 14px; }
+    .nd .lead { font-size: 15px; color: #334155; }
+    .nd code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12.5px; background: #eef2f7; border: 1px solid #e1e7ef; border-radius: 4px; padding: 1px 5px; color: #0f172a; }
+    .nd .callout { background: #eef4fb; border: 1px solid #d6e3f4; border-left: 4px solid #5e8ed0; border-radius: 10px; padding: 14px 16px; margin: 16px 0; }
+    .nd .callout.warn { background: #fffbeb; border-color: #fde68a; border-left-color: #b45309; }
+    .nd .callout.good { background: #ecfdf5; border-color: #a7f3d0; border-left-color: #0f766e; }
+    .nd .callout h3 { margin-top: 0; }
+    .nd figure { margin: 22px 0; text-align: center; }
+    .nd figure svg { max-width: 100%; height: auto; background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 1px 3px rgba(15,23,42,.05); }
+    .nd figcaption { font-size: 11.5px; color: #64748b; margin-top: 7px; }
+    .nd table.modes { border-collapse: collapse; width: 100%; font-size: 13px; margin: 14px 0; }
+    .nd table.modes th { background: #22315d; color: #fff; text-align: left; padding: 8px 11px; font-size: 11.5px; letter-spacing: .02em; }
+    .nd table.modes td { border-bottom: 1px solid #e2e8f0; padding: 9px 11px; vertical-align: top; }
+    .nd table.modes tr:nth-child(even) td { background: #fafcff; }
+    .nd table.modes .who { font-weight: 700; color: #22315d; white-space: nowrap; }
+    .nd .pill { display: inline-block; font-size: 10px; font-weight: 700; border-radius: 5px; padding: 1px 7px; }
+    .nd .pill.solid, .nd .pill.fixed { color: #0f766e; background: #d1fae5; }
+    .nd .pill.watch { color: #b45309; background: #fef3c7; }
+    .nd ol.phases { counter-reset: p; list-style: none; padding: 0; margin: 14px 0; }
+    .nd ol.phases li { position: relative; padding: 12px 14px 12px 54px; border: 1px solid #e2e8f0; border-radius: 10px; background: #fff; margin-bottom: 10px; font-size: 14px; }
+    .nd ol.phases li::before { counter-increment: p; content: counter(p); position: absolute; left: 14px; top: 13px; width: 26px; height: 26px; border-radius: 50%; background: #22315d; color: #fff; font-weight: 700; font-size: 13px; display: flex; align-items: center; justify-content: center; }
+    .nd ol.phases b { color: #22315d; }
+    .nd .effort { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: #64748b; }
+    .nd ul.tight { margin: 8px 0; padding-left: 20px; font-size: 14px; }
+    .nd ul.tight li { margin: 5px 0; }
+    .nd .kpi { display: flex; gap: 12px; flex-wrap: wrap; margin: 16px 0; }
+    .nd .kpi .box { flex: 1 1 150px; border: 1px solid #e2e8f0; border-radius: 11px; background: #fff; padding: 13px 15px; }
+    .nd .kpi .n { font-size: 23px; font-weight: 700; color: #22315d; line-height: 1; }
+    .nd .kpi .l { font-size: 11.5px; color: #64748b; margin-top: 5px; }
+    .nd .schema { background: #0d1726; color: #dce3ee; border-radius: 11px; padding: 16px 18px; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12.5px; line-height: 1.7; overflow-x: auto; margin: 14px 0; }
+    .nd .schema .k { color: #93c5fd; } .nd .schema .s { color: #86efac; } .nd .schema .c { color: #64748b; }
+    .nd footer { margin-top: 30px; border-top: 1px solid #e2e8f0; padding-top: 14px; color: #64748b; font-size: 11.5px; text-align: center; }
+
+    @media (max-width: 820px) {
+      .nd-shell { flex-direction: column; gap: 16px; }
+      .nd-side { position: static; max-height: none; flex: 0 0 auto; width: 100%; border-bottom: 1px solid var(--line, #e5e7eb); padding-bottom: 14px; }
+    }
   </style>
 </head>
 <body>
@@ -685,158 +750,122 @@ function switchView(id) {
 }
 
 // ── THE NERDY STUFF (tech docs) ─────────────────────────────────────────────
-// A small in-app library of "how the system works" write-ups. Each doc is a
-// self-contained HTML file under /docs (no PII — design + architecture only),
-// embedded in an auto-sized iframe so its own styling/diagrams render intact.
+// A small in-app docs site: a left sidebar of documents + their sections, and a
+// main panel that renders the selected doc inline. Each doc lives as a
+// self-contained HTML file under /docs (no PII — design + architecture only);
+// we fetch it same-origin (no iframe, so no X-Frame-Options issues) and inject
+// the body into a scoped ".nd" container that the dashboard stylesheet themes.
 var NERDY_DOCS = [
   {
     id: "system-architecture",
-    title: "System Architecture — How the Dashboard Works",
-    blurb: "The whole stack in plain terms — frontend, Firestore, Storage, serverless, and the data pipeline — plus an honest scale-vs-robustness diagnosis and a no-rewrite recommendation.",
+    title: "System Architecture",
+    subtitle: "How the dashboard works",
     file: "docs/system-architecture.html",
-    updated: "Jun 2026",
-    figures: 3,
     sections: ["The stack at a glance", "How data flows in", "Scale vs robustness", "Recommendation", "Bottom line"]
   },
   {
     id: "rent-roll-engine",
-    title: "Rent Roll Engine — Technology Overview",
-    blurb: "How every monthly rent figure is computed — the schedule-first model, the as-of-date engine, abatements & holdovers, and exactly where Claude is (and isn't) in the loop.",
+    title: "Rent Roll Engine",
+    subtitle: "How rent is computed",
     file: "docs/rent-roll-engine.html",
-    updated: "Jun 2026",
-    figures: 4,
     sections: ["How it works today", "Why it kept needing correction", "The asset we now have", "Recommended architecture", "Is Claude in the loop?", "Phased rollout"]
   }
 ];
+var _nerdyCache = {};       // doc id → fetched inner HTML
+var _nerdyCurrent = null;   // currently shown doc id
 
-// The data pipeline, as small chips with an arrow between each stage.
-var NERDY_PIPELINE = [
-  { icon: "printer",        label: "Office copier",  sub: "scans a lease" },
-  { icon: "mail",           label: "Gmail",          sub: "Apps Script trigger" },
-  { icon: "hard-drive",     label: "Google Drive",   sub: "synced to G:\\" },
-  { icon: "scan-text",      label: "Codex OCR",      sub: "PDF → clean HTML" },
-  { icon: "database",       label: "Firestore",      sub: "structured records" },
-  { icon: "layout-dashboard", label: "Dashboard + WhatsApp", sub: "read live" }
-];
+function _nerdyEsc(t){ return String(t==null?"":t).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
 
 function renderNerdy() {
   var c = document.getElementById("nerdyContent");
   if(!c) return;
   if(c.getAttribute("data-rendered") === "1"){ lucide.createIcons(); return; }
-  var esc = function(t){ return String(t==null?"":t).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); };
 
-  var html = "";
-
-  // Hero
-  html += '<div style="margin-bottom:26px;">'
-    + '<div style="font-size:11px;font-weight:650;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);margin-bottom:6px;">Under the hood</div>'
-    + '<h2 style="font-family:\'Fraunces\',Georgia,serif;font-size:30px;font-weight:600;letter-spacing:-0.015em;line-height:1.05;margin:0 0 8px;color:var(--ink);">The Nerdy Stuff</h2>'
-    + '<div style="font-size:14.5px;color:#475569;max-width:760px;line-height:1.55;">A living reference for how this dashboard actually works — the data pipeline, the rent-roll engine, key diagrams, and the design decisions behind them. Think of it as the engineering wiki for Sanctuary Office Park.</div>'
-    + '</div>';
-
-  // System at a glance — data pipeline
-  var chips = NERDY_PIPELINE.map(function(s, i){
-    var arrow = i < NERDY_PIPELINE.length - 1
-      ? '<div style="display:flex;align-items:center;color:#cbd5e1;flex:0 0 auto;"><i data-lucide="chevron-right" style="width:18px;height:18px;"></i></div>'
-      : '';
-    return '<div style="display:flex;flex-direction:column;align-items:center;gap:5px;flex:0 0 auto;width:104px;text-align:center;">'
-        + '<div style="width:42px;height:42px;border-radius:11px;background:#eef4fb;border:1px solid #d6e3f4;display:flex;align-items:center;justify-content:center;color:#22315d;"><i data-lucide="'+s.icon+'" style="width:20px;height:20px;"></i></div>'
-        + '<div style="font-size:12px;font-weight:650;color:var(--ink);line-height:1.2;">'+esc(s.label)+'</div>'
-        + '<div style="font-size:10.5px;color:var(--ink-3);line-height:1.25;">'+esc(s.sub)+'</div>'
-        + '</div>' + arrow;
+  var side = NERDY_DOCS.map(function(d){
+    var secs = d.sections.map(function(s, i){
+      return '<a class="nd-sec" data-doc="'+_nerdyEsc(d.id)+'" data-sec="'+i+'" href="javascript:void(0)" '
+           + 'onclick="gotoNerdy(\''+_nerdyEsc(d.id)+'\','+i+')">'+_nerdyEsc(s)+'</a>';
+    }).join("");
+    return '<div class="nd-grp" data-doc="'+_nerdyEsc(d.id)+'">'
+      + '<a class="nd-doc" href="javascript:void(0)" onclick="gotoNerdy(\''+_nerdyEsc(d.id)+'\',null)">'+_nerdyEsc(d.title)+'</a>'
+      + '<div class="nd-doc-sub">'+_nerdyEsc(d.subtitle||"")+'</div>'
+      + '<div class="nd-secs">'+secs+'</div>'
+      + '</div>';
   }).join("");
-  html += '<div class="card" style="margin-bottom:22px;">'
-    + '<div class="card-title" style="margin-bottom:14px;">System at a glance</div>'
-    + '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:4px;flex-wrap:wrap;row-gap:14px;">'+chips+'</div>'
-    + '<div style="margin-top:14px;font-size:12px;color:var(--ink-3);border-top:1px solid var(--line,#e5e7eb);padding-top:12px;line-height:1.5;">'
-    + 'A shared, tested <code style="background:#eef2f7;border:1px solid #e1e7ef;border-radius:4px;padding:1px 5px;font-size:11.5px;">crosby-rent-engine.js</code> module computes every rent figure once — the dashboard rent roll and the WhatsApp assistant both call it, so they can never disagree.'
-    + '</div>'
+
+  c.innerHTML =
+      '<div class="nd-shell">'
+    +   '<aside class="nd-side">'
+    +     '<div class="nd-side-head"><i data-lucide="glasses" style="width:16px;height:16px;"></i> The Nerdy Stuff</div>'
+    +     '<div class="nd-side-tag">How the system works</div>'
+    +     side
+    +   '</aside>'
+    +   '<main class="nd-main"><div class="nd" id="nerdyDoc"><div class="nd-loading">Loading…</div></div></main>'
     + '</div>';
-
-  // Document library
-  html += '<div class="card-title" style="margin:0 0 12px;">Documentation</div>';
-  html += '<div class="grid-2" id="nerdyDocList" style="margin-bottom:24px;">';
-  NERDY_DOCS.forEach(function(d){
-    html += '<div class="nerdy-doc-card" data-doc="'+esc(d.id)+'" onclick="loadNerdyDoc(\''+esc(d.id)+'\')" '
-      + 'style="cursor:pointer;border:1px solid var(--line,#e5e7eb);border-radius:12px;padding:16px 18px;background:#fff;transition:all 150ms;">'
-      + '<div style="display:flex;align-items:flex-start;gap:12px;">'
-      + '<div style="width:38px;height:38px;border-radius:10px;background:#22315d;color:#fff;display:flex;align-items:center;justify-content:center;flex:0 0 auto;"><i data-lucide="file-text" style="width:19px;height:19px;"></i></div>'
-      + '<div style="min-width:0;">'
-      + '<div style="font-size:15px;font-weight:650;color:var(--ink);line-height:1.2;margin-bottom:3px;">'+esc(d.title)+'</div>'
-      + '<div style="font-size:12.5px;color:#475569;line-height:1.5;margin-bottom:9px;">'+esc(d.blurb)+'</div>'
-      + '<div style="display:flex;gap:6px;flex-wrap:wrap;">'
-      + '<span class="badge badge-idle" style="font-size:10.5px;">'+esc(d.sections.length)+' sections</span>'
-      + '<span class="badge badge-idle" style="font-size:10.5px;">'+esc(d.figures)+' diagrams</span>'
-      + '<span class="badge badge-idle" style="font-size:10.5px;">Updated '+esc(d.updated)+'</span>'
-      + '</div></div></div></div>';
-  });
-  html += '</div>';
-
-  // Embedded viewer
-  html += '<div class="card" style="padding:0;overflow:hidden;">'
-    + '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line,#e5e7eb);background:#fafbfc;">'
-    + '<div id="nerdyViewerTitle" style="font-size:13px;font-weight:650;color:var(--ink);">—</div>'
-    + '<a id="nerdyOpenNew" href="#" target="_blank" rel="noopener" style="font-size:12px;color:#2563eb;text-decoration:none;display:inline-flex;align-items:center;gap:4px;white-space:nowrap;"><i data-lucide="external-link" style="width:13px;height:13px;"></i> Open in new tab</a>'
-    + '</div>'
-    + '<iframe id="nerdyFrame" title="Tech document" style="width:100%;border:0;display:block;height:620px;background:#f6f8fb;"></iframe>'
-    + '</div>';
-
-  c.innerHTML = html;
   c.setAttribute("data-rendered", "1");
-  if(NERDY_DOCS.length) loadNerdyDoc(NERDY_DOCS[0].id);
+  loadNerdyDoc(NERDY_DOCS[0].id, null);
   lucide.createIcons();
 }
 
-function loadNerdyDoc(id) {
+// Sidebar click: load the doc (if needed) and jump to a section.
+function gotoNerdy(id, sec){
+  if(_nerdyCurrent === id){ scrollNerdySection(id, sec); markNerdySec(id, sec); }
+  else { loadNerdyDoc(id, sec); }
+}
+
+function loadNerdyDoc(id, sec){
   var d = NERDY_DOCS.filter(function(x){ return x.id === id; })[0];
   if(!d) return;
-  document.querySelectorAll(".nerdy-doc-card").forEach(function(el){
-    var on = el.getAttribute("data-doc") === id;
-    el.style.borderColor = on ? "#22315d" : "var(--line,#e5e7eb)";
-    el.style.boxShadow = on ? "0 0 0 1px #22315d" : "none";
-    el.style.background = on ? "#fbfcfe" : "#fff";
+  var host = document.getElementById("nerdyDoc");
+  if(!host) return;
+
+  // highlight the active doc group in the sidebar
+  document.querySelectorAll(".nd-grp").forEach(function(g){
+    g.classList.toggle("active", g.getAttribute("data-doc") === id);
   });
-  var t = document.getElementById("nerdyViewerTitle");
-  if(t) t.textContent = d.title;
-  var link = document.getElementById("nerdyOpenNew");
-  if(link) link.href = d.file;
-  var fr = document.getElementById("nerdyFrame");
-  if(fr){
-    fr.style.height = "620px";
-    fr.onload = function(){ sizeNerdyFrame(fr); };
-    fr.src = d.file;
-  }
+
+  var done = function(){
+    _nerdyCurrent = id;
+    // give each <h2> a stable anchor id, in document order, matching d.sections
+    var h2s = host.querySelectorAll("h2");
+    for(var i=0;i<h2s.length;i++){ h2s[i].id = id + "-sec-" + i; }
+    if(typeof lucide !== "undefined" && lucide.createIcons) lucide.createIcons();
+    scrollNerdySection(id, sec);
+    markNerdySec(id, sec);
+  };
+
+  if(_nerdyCache[id]){ host.innerHTML = _nerdyCache[id]; done(); return; }
+
+  host.innerHTML = '<div class="nd-loading">Loading…</div>';
+  fetch(d.file)
+    .then(function(r){ if(!r.ok) throw new Error("HTTP "+r.status); return r.text(); })
+    .then(function(txt){
+      var parsed = new DOMParser().parseFromString(txt, "text/html");
+      var wrap = parsed.querySelector(".wrap") || parsed.body;
+      var inner = wrap ? wrap.innerHTML : "";
+      _nerdyCache[id] = inner;
+      host.innerHTML = inner;
+      done();
+    })
+    .catch(function(e){
+      host.innerHTML = '<div class="nd-error">Couldn’t load this document ('
+        + _nerdyEsc(String(e && e.message || e)) + '). '
+        + '<a href="'+_nerdyEsc(d.file)+'" target="_blank" rel="noopener">Open it directly →</a></div>';
+    });
 }
 
-// Grow the iframe to its content so the doc flows inline (no nested scrollbar).
-// Guard on width: if the frame isn't laid out yet (e.g. measured while its view
-// is hidden / zero-width), text wraps into a huge column — so only size when the
-// frame is genuinely wide, otherwise keep the scrollable fallback height.
-function sizeNerdyFrame(fr){
-  if(!fr) return;
-  try {
-    if(fr.clientWidth < 300) return;
-    var b = fr.contentDocument && fr.contentDocument.body;
-    var h = b ? b.scrollHeight : 0;
-    if(h > 240) fr.style.height = (h + 32) + "px";
-  } catch(e) { /* cross-origin fallback: keep fixed height */ }
+function scrollNerdySection(id, sec){
+  if(typeof sec !== "number"){ window.scrollTo({ top: 0, behavior: "smooth" }); return; }
+  var el = document.getElementById(id + "-sec-" + sec);
+  if(el) el.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
-// Re-measure on resize so the embedded doc tracks the viewport width.
-(function(){
-  var t;
-  window.addEventListener("resize", function(){
-    clearTimeout(t);
-    t = setTimeout(function(){
-      var fr = document.getElementById("nerdyFrame");
-      if(fr && document.getElementById("view-nerdy") &&
-         document.getElementById("view-nerdy").classList.contains("active")){
-        fr.style.height = "620px";
-        sizeNerdyFrame(fr);
-      }
-    }, 180);
+function markNerdySec(id, sec){
+  document.querySelectorAll(".nd-sec").forEach(function(a){
+    a.classList.toggle("active",
+      a.getAttribute("data-doc") === id && String(sec) === a.getAttribute("data-sec"));
   });
-})();
+}
 
 // ── ASSISTANT ACTIVITY ──────────────────────────────────────────────────────
 function renderAssistantLog() {
