@@ -690,6 +690,15 @@ function switchView(id) {
 // embedded in an auto-sized iframe so its own styling/diagrams render intact.
 var NERDY_DOCS = [
   {
+    id: "system-architecture",
+    title: "System Architecture — How the Dashboard Works",
+    blurb: "The whole stack in plain terms — frontend, Firestore, Storage, serverless, and the data pipeline — plus an honest scale-vs-robustness diagnosis and a no-rewrite recommendation.",
+    file: "docs/system-architecture.html",
+    updated: "Jun 2026",
+    figures: 3,
+    sections: ["The stack at a glance", "How data flows in", "Scale vs robustness", "Recommendation", "Bottom line"]
+  },
+  {
     id: "rent-roll-engine",
     title: "Rent Roll Engine — Technology Overview",
     blurb: "How every monthly rent figure is computed — the schedule-first model, the as-of-date engine, abatements & holdovers, and exactly where Claude is (and isn't) in the loop.",

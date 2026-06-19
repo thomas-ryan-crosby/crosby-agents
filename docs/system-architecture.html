@@ -1,0 +1,222 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sanctuary Dashboard — System Architecture</title>
+<style>
+  :root{--navy:#22315d;--navy2:#3c5488;--blue:#5e8ed0;--ink:#1f2937;--mute:#64748b;--line:#e2e8f0;--bg:#f6f8fb;--good:#0f766e;--warn:#b45309;--bad:#b91c1c;}
+  *{box-sizing:border-box;}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Arial,sans-serif;color:var(--ink);margin:0;background:var(--bg);line-height:1.55;}
+  .wrap{max-width:920px;margin:0 auto;padding:30px 26px 70px;}
+  header.doc{border-bottom:3px solid var(--navy);padding-bottom:16px;margin-bottom:8px;}
+  .eyebrow{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--blue);}
+  h1{font-size:27px;color:var(--navy);margin:4px 0 4px;}
+  .byline{color:var(--mute);font-size:13px;}
+  h2{font-size:19px;color:var(--navy);margin:34px 0 8px;padding-bottom:6px;border-bottom:2px solid var(--blue);}
+  h3{font-size:14.5px;color:var(--navy2);margin:20px 0 6px;}
+  p{margin:9px 0;font-size:14px;}
+  .lead{font-size:15px;color:#334155;}
+  code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;background:#eef2f7;border:1px solid #e1e7ef;border-radius:4px;padding:1px 5px;color:#0f172a;}
+  .callout{background:#eef4fb;border:1px solid #d6e3f4;border-left:4px solid var(--blue);border-radius:10px;padding:14px 16px;margin:16px 0;}
+  .callout.warn{background:#fffbeb;border-color:#fde68a;border-left-color:var(--warn);}
+  .callout.good{background:#ecfdf5;border-color:#a7f3d0;border-left-color:var(--good);}
+  .callout h3{margin-top:0;}
+  figure{margin:22px 0;text-align:center;}
+  figure svg{max-width:100%;height:auto;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 1px 3px rgba(15,23,42,.05);}
+  figcaption{font-size:11.5px;color:var(--mute);margin-top:7px;}
+  table.modes{border-collapse:collapse;width:100%;font-size:13px;margin:14px 0;}
+  table.modes th{background:var(--navy);color:#fff;text-align:left;padding:8px 11px;font-size:11.5px;letter-spacing:.02em;}
+  table.modes td{border-bottom:1px solid var(--line);padding:9px 11px;vertical-align:top;}
+  table.modes tr:nth-child(even) td{background:#fafcff;}
+  table.modes .who{font-weight:700;color:var(--navy);white-space:nowrap;}
+  .pill{display:inline-block;font-size:10px;font-weight:700;border-radius:5px;padding:1px 7px;}
+  .pill.solid{color:var(--good);background:#d1fae5;}
+  .pill.watch{color:var(--warn);background:#fef3c7;}
+  ol.phases{counter-reset:p;list-style:none;padding:0;margin:14px 0;}
+  ol.phases li{position:relative;padding:12px 14px 12px 54px;border:1px solid var(--line);border-radius:10px;background:#fff;margin-bottom:10px;}
+  ol.phases li::before{counter-increment:p;content:counter(p);position:absolute;left:14px;top:13px;width:26px;height:26px;border-radius:50%;background:var(--navy);color:#fff;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;}
+  ol.phases b{color:var(--navy);}
+  .effort{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--mute);}
+  ul.tight{margin:8px 0;padding-left:20px;font-size:14px;}ul.tight li{margin:5px 0;}
+  .kpi{display:flex;gap:12px;flex-wrap:wrap;margin:16px 0;}
+  .kpi .box{flex:1 1 150px;border:1px solid var(--line);border-radius:11px;background:#fff;padding:13px 15px;}
+  .kpi .n{font-size:23px;font-weight:700;color:var(--navy);line-height:1;}
+  .kpi .l{font-size:11.5px;color:var(--mute);margin-top:5px;}
+  footer{margin-top:34px;border-top:1px solid var(--line);padding-top:14px;color:var(--mute);font-size:11.5px;text-align:center;}
+</style></head>
+<body><div class="wrap">
+
+<header class="doc">
+  <div class="eyebrow">Sanctuary Office Park &middot; Engineering Reference</div>
+  <h1>System Architecture — How the Dashboard Works</h1>
+  <div class="byline">Crosby Development &middot; the stack, the data flow, and an honest read on what to change (and what to leave alone).</div>
+</header>
+
+<p class="lead">This dashboard has no traditional server. It is a static web page that talks directly to Google&rsquo;s Firebase cloud, hosted on Vercel. The sections below lay out exactly how it operates today, then give a candid diagnosis: where it is genuinely solid, where it feels fragile, and the lowest-risk path forward.</p>
+
+<div class="kpi">
+  <div class="box"><div class="n">5</div><div class="l">layers, one of them a single 5,600-line file</div></div>
+  <div class="box"><div class="n">2</div><div class="l">serverless functions (WhatsApp assistant only)</div></div>
+  <div class="box"><div class="n">0</div><div class="l">build steps &mdash; the browser runs the source as-is</div></div>
+  <div class="box"><div class="n">2,858</div><div class="l">automated tests on the rent engine</div></div>
+</div>
+
+<h2>1 &middot; The stack at a glance</h2>
+<p>Six pieces, each doing one job. Notice that most of the work happens <em>in the browser</em> &mdash; the &ldquo;backend&rdquo; is just Google&rsquo;s managed cloud plus two small functions.</p>
+
+<table class="modes">
+  <thead><tr><th style="width:150px;">Layer</th><th>What it is</th><th style="width:96px;">Verdict</th></tr></thead>
+  <tbody>
+    <tr><td class="who">Frontend</td><td>One <code>index.html</code> &mdash; ~5,600 lines of plain JavaScript, no framework, no build step. This is the whole user interface.</td><td><span class="pill watch">Watch</span></td></tr>
+    <tr><td class="who">Data modules</td><td><code>crosby-data.js</code> (loads from the cloud), <code>crosby-viewmodel.js</code> (derives occupancy, insurance status, &hellip;), <code>crosby-rent-engine.js</code> (all rent math, fully tested).</td><td><span class="pill solid">Solid</span></td></tr>
+    <tr><td class="who">Database</td><td>Firebase <b>Firestore</b> &mdash; your tenants, leases, COIs, contacts and access instructions stored as structured records.</td><td><span class="pill solid">Solid</span></td></tr>
+    <tr><td class="who">File store</td><td>Firebase <b>Storage</b> &mdash; the lease &amp; COI PDFs and their readable HTML transcriptions.</td><td><span class="pill solid">Solid</span></td></tr>
+    <tr><td class="who">Hosting + API</td><td><b>Vercel</b> serves the page worldwide and runs 2 serverless functions that power the WhatsApp assistant. Deploy = <code>git push</code>.</td><td><span class="pill solid">Solid</span></td></tr>
+    <tr><td class="who">Ingestion</td><td>Office copier &rarr; Gmail &rarr; Google Drive &rarr; Codex OCR &rarr; structured records. Reliable, but semi-manual.</td><td><span class="pill watch">Watch</span></td></tr>
+  </tbody>
+</table>
+
+<figure>
+<svg viewBox="0 0 860 430" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,Segoe UI,Arial,sans-serif">
+  <defs>
+    <marker id="ah" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#94a3b8"/></marker>
+  </defs>
+  <!-- Browser layer -->
+  <rect x="40" y="26" width="780" height="118" rx="14" fill="#eef4fb" stroke="#c7dbf2"/>
+  <text x="60" y="50" font-size="12" font-weight="700" fill="#22315d" letter-spacing="1">USER&#8217;S BROWSER</text>
+  <text x="60" y="70" font-size="13" fill="#334155">index.html &mdash; single-page app (the entire UI runs here)</text>
+  <g font-size="11.5" font-weight="600">
+    <rect x="60" y="88" width="220" height="40" rx="8" fill="#fff" stroke="#c7dbf2"/><text x="170" y="112" text-anchor="middle" fill="#22315d">crosby-data.js</text>
+    <rect x="320" y="88" width="220" height="40" rx="8" fill="#fff" stroke="#c7dbf2"/><text x="430" y="112" text-anchor="middle" fill="#22315d">crosby-viewmodel.js</text>
+    <rect x="580" y="88" width="220" height="40" rx="8" fill="#fff" stroke="#c7dbf2"/><text x="690" y="112" text-anchor="middle" fill="#22315d">crosby-rent-engine.js</text>
+  </g>
+  <!-- Cloud layer -->
+  <rect x="40" y="250" width="220" height="120" rx="14" fill="#fff" stroke="#cbd5e1"/>
+  <text x="150" y="278" text-anchor="middle" font-size="13" font-weight="700" fill="#22315d">Vercel</text>
+  <text x="150" y="300" text-anchor="middle" font-size="11.5" fill="#475569">Static hosting (global)</text>
+  <text x="150" y="320" text-anchor="middle" font-size="11.5" fill="#475569">+ 2 serverless functions</text>
+  <text x="150" y="338" text-anchor="middle" font-size="11" fill="#94a3b8">api/ &mdash; WhatsApp assistant</text>
+
+  <rect x="320" y="250" width="220" height="120" rx="14" fill="#fff" stroke="#cbd5e1"/>
+  <text x="430" y="278" text-anchor="middle" font-size="13" font-weight="700" fill="#22315d">Firestore</text>
+  <text x="430" y="300" text-anchor="middle" font-size="11.5" fill="#475569">structured records:</text>
+  <text x="430" y="318" text-anchor="middle" font-size="11.5" fill="#475569">leases, tenants, COIs,</text>
+  <text x="430" y="336" text-anchor="middle" font-size="11.5" fill="#475569">contacts, access&hellip;</text>
+
+  <rect x="600" y="250" width="220" height="120" rx="14" fill="#fff" stroke="#cbd5e1"/>
+  <text x="710" y="278" text-anchor="middle" font-size="13" font-weight="700" fill="#22315d">Firebase Storage</text>
+  <text x="710" y="300" text-anchor="middle" font-size="11.5" fill="#475569">lease &amp; COI files:</text>
+  <text x="710" y="318" text-anchor="middle" font-size="11.5" fill="#475569">PDFs + HTML</text>
+  <text x="710" y="336" text-anchor="middle" font-size="11.5" fill="#475569">transcriptions</text>
+
+  <!-- arrows -->
+  <line x1="150" y1="250" x2="150" y2="146" stroke="#94a3b8" stroke-width="1.4" marker-end="url(#ah)"/>
+  <text x="158" y="200" font-size="10.5" fill="#64748b">serves page</text>
+  <line x1="430" y1="146" x2="430" y2="248" stroke="#94a3b8" stroke-width="1.4" marker-end="url(#ah)"/>
+  <line x1="450" y1="248" x2="450" y2="146" stroke="#94a3b8" stroke-width="1.4" marker-end="url(#ah)"/>
+  <text x="462" y="200" font-size="10.5" fill="#64748b">live read / write</text>
+  <line x1="700" y1="146" x2="700" y2="248" stroke="#94a3b8" stroke-width="1.4" marker-end="url(#ah)"/>
+  <text x="708" y="200" font-size="10.5" fill="#64748b">document links</text>
+  <line x1="260" y1="300" x2="318" y2="300" stroke="#94a3b8" stroke-width="1.4" marker-end="url(#ah)"/>
+  <text x="266" y="293" font-size="10" fill="#94a3b8">reads</text>
+</svg>
+<figcaption>The architecture is &ldquo;client-heavy&rdquo;: the browser holds the logic and talks straight to Firebase. Vercel hosts the page and runs the only custom server code (the WhatsApp assistant).</figcaption>
+</figure>
+
+<h2>2 &middot; How data flows in</h2>
+<p>A new lease becomes a dashboard row through a short pipeline. Most of it is automated; the steps in amber still involve a person (or Claude) in the loop.</p>
+
+<figure>
+<svg viewBox="0 0 860 150" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,Segoe UI,Arial,sans-serif">
+  <defs>
+    <marker id="ah2" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#b4c2d6"/></marker>
+  </defs>
+  <g font-size="11" font-weight="600" text-anchor="middle">
+    <rect x="14"  y="50" width="118" height="50" rx="10" fill="#fff" stroke="#cbd5e1"/><text x="73"  y="72" fill="#22315d">Office copier</text><text x="73" y="88" font-size="9.5" font-weight="400" fill="#64748b">scans a lease</text>
+    <rect x="160" y="50" width="100" height="50" rx="10" fill="#fff" stroke="#cbd5e1"/><text x="210" y="72" fill="#22315d">Gmail</text><text x="210" y="88" font-size="9.5" font-weight="400" fill="#64748b">auto-trigger</text>
+    <rect x="288" y="50" width="110" height="50" rx="10" fill="#fff" stroke="#cbd5e1"/><text x="343" y="72" fill="#22315d">Google Drive</text><text x="343" y="88" font-size="9.5" font-weight="400" fill="#64748b">synced to G:\</text>
+    <rect x="426" y="50" width="118" height="50" rx="10" fill="#fef9ec" stroke="#fcd34d"/><text x="485" y="72" fill="#92400e">Codex OCR</text><text x="485" y="88" font-size="9.5" font-weight="400" fill="#b45309">PDF &rarr; clean HTML</text>
+    <rect x="572" y="50" width="118" height="50" rx="10" fill="#fef9ec" stroke="#fcd34d"/><text x="631" y="72" fill="#92400e">seed script</text><text x="631" y="88" font-size="9.5" font-weight="400" fill="#b45309">wire + push</text>
+    <rect x="718" y="50" width="128" height="50" rx="10" fill="#e0ecfb" stroke="#9bbde8"/><text x="782" y="72" fill="#22315d">Firestore</text><text x="782" y="88" font-size="9.5" font-weight="400" fill="#64748b">dashboard + WhatsApp</text>
+  </g>
+  <g stroke="#b4c2d6" stroke-width="1.4">
+    <line x1="132" y1="75" x2="158" y2="75" marker-end="url(#ah2)"/>
+    <line x1="260" y1="75" x2="286" y2="75" marker-end="url(#ah2)"/>
+    <line x1="398" y1="75" x2="424" y2="75" marker-end="url(#ah2)"/>
+    <line x1="544" y1="75" x2="570" y2="75" marker-end="url(#ah2)"/>
+    <line x1="690" y1="75" x2="716" y2="75" marker-end="url(#ah2)"/>
+  </g>
+  <text x="14" y="128" font-size="10.5" fill="#64748b">Automated &mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&rsaquo;</text>
+  <rect x="426" y="120" width="12" height="9" rx="2" fill="#fef9ec" stroke="#fcd34d"/><text x="446" y="128" font-size="10.5" fill="#64748b">person / Claude in the loop</text>
+</svg>
+<figcaption>Once a record is in Firestore, the dashboard and the WhatsApp assistant both read it live &mdash; and both compute rent through the same shared engine, so they can never disagree.</figcaption>
+</figure>
+
+<h2>3 &middot; Scale vs. robustness &mdash; the honest diagnosis</h2>
+<p>When something &ldquo;feels funky,&rdquo; the instinct is to ask whether it needs to be rebuilt on something bigger. The useful distinction here is between two very different questions:</p>
+<ul class="tight">
+  <li><b>Will it scale?</b> &mdash; can it handle more data, more users, more traffic?</li>
+  <li><b>Is it robust?</b> &mdash; is it easy to change safely without quietly breaking something?</li>
+</ul>
+
+<div class="callout good">
+  <h3>Scale is not the problem.</h3>
+  <p style="margin:0">Firestore and Vercel are the same tools that run apps orders of magnitude larger than one office park. Adding more leases, a second property, or more viewers will not strain anything. <b>You do not have a scaling problem.</b></p>
+</div>
+
+<div class="callout warn">
+  <h3>Robustness is the real friction &mdash; and it lives in one place.</h3>
+  <p style="margin:0">Nearly all of the &ldquo;funky&rdquo; feeling traces back to the single <b>5,600-line <code>index.html</code></b>: it holds all the UI, state, and rendering in one file, with no build step to catch mistakes. That&rsquo;s what produces the &ldquo;works locally, breaks only in production&rdquo; surprises.</p>
+</div>
+
+<figure>
+<svg viewBox="0 0 860 330" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,Segoe UI,Arial,sans-serif">
+  <g font-size="12.5">
+    <!-- rows -->
+    <rect x="40" y="24"  width="600" height="40" rx="9" fill="#fffbeb" stroke="#fcd34d"/><text x="58" y="49" font-weight="700" fill="#92400e">Frontend &mdash; index.html (one 5,600-line file)</text>
+    <rect x="660" y="24" width="160" height="40" rx="9" fill="#fef3c7" stroke="#fcd34d"/><text x="740" y="49" text-anchor="middle" font-size="11" font-weight="700" fill="#b45309">WATCH &mdash; robustness</text>
+
+    <rect x="40" y="72"  width="600" height="40" rx="9" fill="#ecfdf5" stroke="#a7f3d0"/><text x="58" y="97" font-weight="700" fill="#065f46">Data modules (data &middot; viewmodel &middot; rent engine)</text>
+    <rect x="660" y="72" width="160" height="40" rx="9" fill="#d1fae5" stroke="#a7f3d0"/><text x="740" y="97" text-anchor="middle" font-size="11" font-weight="700" fill="#0f766e">SOLID &middot; tested</text>
+
+    <rect x="40" y="120" width="600" height="40" rx="9" fill="#ecfdf5" stroke="#a7f3d0"/><text x="58" y="145" font-weight="700" fill="#065f46">Firestore database</text>
+    <rect x="660" y="120" width="160" height="40" rx="9" fill="#d1fae5" stroke="#a7f3d0"/><text x="740" y="145" text-anchor="middle" font-size="11" font-weight="700" fill="#0f766e">SOLID &middot; scales</text>
+
+    <rect x="40" y="168" width="600" height="40" rx="9" fill="#ecfdf5" stroke="#a7f3d0"/><text x="58" y="193" font-weight="700" fill="#065f46">Firebase Storage (documents)</text>
+    <rect x="660" y="168" width="160" height="40" rx="9" fill="#d1fae5" stroke="#a7f3d0"/><text x="740" y="193" text-anchor="middle" font-size="11" font-weight="700" fill="#0f766e">SOLID</text>
+
+    <rect x="40" y="216" width="600" height="40" rx="9" fill="#ecfdf5" stroke="#a7f3d0"/><text x="58" y="241" font-weight="700" fill="#065f46">Vercel hosting + serverless</text>
+    <rect x="660" y="216" width="160" height="40" rx="9" fill="#d1fae5" stroke="#a7f3d0"/><text x="740" y="241" text-anchor="middle" font-size="11" font-weight="700" fill="#0f766e">SOLID &middot; scales</text>
+
+    <rect x="40" y="264" width="600" height="40" rx="9" fill="#fffbeb" stroke="#fcd34d"/><text x="58" y="289" font-weight="700" fill="#92400e">Data ingestion (semi-manual)</text>
+    <rect x="660" y="264" width="160" height="40" rx="9" fill="#fef3c7" stroke="#fcd34d"/><text x="740" y="289" text-anchor="middle" font-size="11" font-weight="700" fill="#b45309">WATCH &mdash; labor</text>
+  </g>
+</svg>
+<figcaption>Layer-by-layer health. Four of six layers are solid and already scalable; only the frontend monolith and the manual ingestion deserve attention &mdash; and neither is a scale issue.</figcaption>
+</figure>
+
+<h3>What specifically feels fragile</h3>
+<ul class="tight">
+  <li><b>One giant file.</b> All UI lives in <code>index.html</code>, so a change in one corner can ripple somewhere unrelated.</li>
+  <li><b>No build step / no framework.</b> Nothing checks the code before it ships, which allows production-only traps. Two recent examples: the <code>.vercelignore</code> allowlist silently dropping a needed file, and an <code>X-Frame-Options</code> header that blocked an embedded doc &mdash; both invisible until live.</li>
+  <li><b>No tests on the interface.</b> The rent <em>engine</em> is well-covered (2,858 tests); the screens themselves are verified by eye.</li>
+  <li><b>Manual ingestion.</b> Dependable, but each new lease is hand-wired rather than dropping in automatically.</li>
+</ul>
+
+<h2>4 &middot; Recommendation: harden, don&rsquo;t rewrite</h2>
+<p>A full migration to a framework like React/Next.js would be weeks of work and real risk &mdash; to solve a scaling problem you don&rsquo;t have. For a single-property internal tool, that trade is not worth it today. The better path is to harden the one part that&rsquo;s actually brittle, incrementally and at low risk.</p>
+
+<ol class="phases">
+  <li><span class="effort">Now &middot; lowest effort</span><br><b>Add two guardrails.</b> A check that every file the app references survives the <code>.vercelignore</code> allowlist, and a smoke test that loads each tab. These alone would have caught both recent production-only breaks.</li>
+  <li><span class="effort">Soon &middot; incremental</span><br><b>Break up <code>index.html</code> gradually.</b> Extract its features into focused modules &mdash; the same way the data, view-model, and rent engine already are. No framework required; just smaller files you can reason about. Done one feature at a time, nothing breaks at once.</li>
+  <li><span class="effort">Later &middot; only if scope grows</span><br><b>Adopt a framework + build pipeline</b> (Next.js is the natural fit, since you&rsquo;re already on Vercel) <em>if and when</em> the tool expands &mdash; multiple properties, several people editing at once, or a public-facing leasing site. Until then it&rsquo;s cost without payoff.</li>
+</ol>
+
+<div class="callout">
+  <h3>One deliberate decision, not a bug</h3>
+  <p style="margin:0">The dashboard is currently <b>public-read</b> &mdash; that was a conscious choice (e.g. for the site-access instructions). It&rsquo;s worth re-confirming on purpose rather than leaving implicit: if any rent or tenant detail should be gated behind a login, adding authentication is a contained, well-trodden change &mdash; not a rebuild.</p>
+</div>
+
+<h2>5 &middot; Bottom line</h2>
+<p>The foundation &mdash; Firestore, Storage, Vercel, and the tested rent engine &mdash; is the right, scalable architecture; leave it in place. The friction you feel is maintainability concentrated in a single oversized file, and the fix is gradual extraction plus a couple of cheap safety nets, not a transition to something new. Reserve a framework rewrite for the day the property count or the editing team grows.</p>
+
+<footer>Crosby Development &middot; Sanctuary Office Park &middot; System architecture overview &middot; prepared for review.</footer>
+</div></body></html>
