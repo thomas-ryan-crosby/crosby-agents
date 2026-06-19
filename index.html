@@ -347,6 +347,7 @@
     <button class="nav-btn" data-view="proposed"><i data-lucide="combine" style="width:15px;height:15px;"></i> Proposed Suites <span class="nav-badge" id="proposedBadge" style="display:none;">0</span></button>
     <button class="nav-btn" data-view="playbook"><i data-lucide="clipboard-list" style="width:15px;height:15px;"></i> Marketing Playbook</button>
     <button class="nav-btn" data-view="assistant"><i data-lucide="message-square" style="width:15px;height:15px;"></i> Assistant</button>
+    <button class="nav-btn" data-view="nerdy"><i data-lucide="glasses" style="width:15px;height:15px;"></i> The Nerdy Stuff</button>
   </nav>
 
   <!-- ═══ PORTFOLIO ═══ -->
@@ -381,6 +382,11 @@
       <button onclick="renderAssistantLog()" style="font-size:12px;color:#374151;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:6px;padding:6px 12px;cursor:pointer;">Refresh</button>
     </div>
     <div class="card"><div id="assistantLogBody"><div style="color:#9ca3af;font-size:13px;padding:8px;">Loading…</div></div></div>
+  </div>
+
+  <!-- ═══ THE NERDY STUFF (tech docs) ═══ -->
+  <div class="view" id="view-nerdy">
+    <div id="nerdyContent"></div>
   </div>
 
   <!-- ═══ PROPERTY DETAIL ═══ -->
@@ -674,8 +680,154 @@ function switchView(id) {
   if(id==="leasing") renderLeasing();
   if(id==="proposed") renderProposed();
   if(id==="playbook") renderPlaybook();
+  if(id==="nerdy") renderNerdy();
   lucide.createIcons();
 }
+
+// ── THE NERDY STUFF (tech docs) ─────────────────────────────────────────────
+// A small in-app library of "how the system works" write-ups. Each doc is a
+// self-contained HTML file under /docs (no PII — design + architecture only),
+// embedded in an auto-sized iframe so its own styling/diagrams render intact.
+var NERDY_DOCS = [
+  {
+    id: "rent-roll-engine",
+    title: "Rent Roll Engine — Technology Overview",
+    blurb: "How every monthly rent figure is computed — the schedule-first model, the as-of-date engine, abatements & holdovers, and exactly where Claude is (and isn't) in the loop.",
+    file: "docs/rent-roll-engine.html",
+    updated: "Jun 2026",
+    figures: 4,
+    sections: ["How it works today", "Why it kept needing correction", "The asset we now have", "Recommended architecture", "Is Claude in the loop?", "Phased rollout"]
+  }
+];
+
+// The data pipeline, as small chips with an arrow between each stage.
+var NERDY_PIPELINE = [
+  { icon: "printer",        label: "Office copier",  sub: "scans a lease" },
+  { icon: "mail",           label: "Gmail",          sub: "Apps Script trigger" },
+  { icon: "hard-drive",     label: "Google Drive",   sub: "synced to G:\\" },
+  { icon: "scan-text",      label: "Codex OCR",      sub: "PDF → clean HTML" },
+  { icon: "database",       label: "Firestore",      sub: "structured records" },
+  { icon: "layout-dashboard", label: "Dashboard + WhatsApp", sub: "read live" }
+];
+
+function renderNerdy() {
+  var c = document.getElementById("nerdyContent");
+  if(!c) return;
+  if(c.getAttribute("data-rendered") === "1"){ lucide.createIcons(); return; }
+  var esc = function(t){ return String(t==null?"":t).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); };
+
+  var html = "";
+
+  // Hero
+  html += '<div style="margin-bottom:26px;">'
+    + '<div style="font-size:11px;font-weight:650;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);margin-bottom:6px;">Under the hood</div>'
+    + '<h2 style="font-family:\'Fraunces\',Georgia,serif;font-size:30px;font-weight:600;letter-spacing:-0.015em;line-height:1.05;margin:0 0 8px;color:var(--ink);">The Nerdy Stuff</h2>'
+    + '<div style="font-size:14.5px;color:#475569;max-width:760px;line-height:1.55;">A living reference for how this dashboard actually works — the data pipeline, the rent-roll engine, key diagrams, and the design decisions behind them. Think of it as the engineering wiki for Sanctuary Office Park.</div>'
+    + '</div>';
+
+  // System at a glance — data pipeline
+  var chips = NERDY_PIPELINE.map(function(s, i){
+    var arrow = i < NERDY_PIPELINE.length - 1
+      ? '<div style="display:flex;align-items:center;color:#cbd5e1;flex:0 0 auto;"><i data-lucide="chevron-right" style="width:18px;height:18px;"></i></div>'
+      : '';
+    return '<div style="display:flex;flex-direction:column;align-items:center;gap:5px;flex:0 0 auto;width:104px;text-align:center;">'
+        + '<div style="width:42px;height:42px;border-radius:11px;background:#eef4fb;border:1px solid #d6e3f4;display:flex;align-items:center;justify-content:center;color:#22315d;"><i data-lucide="'+s.icon+'" style="width:20px;height:20px;"></i></div>'
+        + '<div style="font-size:12px;font-weight:650;color:var(--ink);line-height:1.2;">'+esc(s.label)+'</div>'
+        + '<div style="font-size:10.5px;color:var(--ink-3);line-height:1.25;">'+esc(s.sub)+'</div>'
+        + '</div>' + arrow;
+  }).join("");
+  html += '<div class="card" style="margin-bottom:22px;">'
+    + '<div class="card-title" style="margin-bottom:14px;">System at a glance</div>'
+    + '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:4px;flex-wrap:wrap;row-gap:14px;">'+chips+'</div>'
+    + '<div style="margin-top:14px;font-size:12px;color:var(--ink-3);border-top:1px solid var(--line,#e5e7eb);padding-top:12px;line-height:1.5;">'
+    + 'A shared, tested <code style="background:#eef2f7;border:1px solid #e1e7ef;border-radius:4px;padding:1px 5px;font-size:11.5px;">crosby-rent-engine.js</code> module computes every rent figure once — the dashboard rent roll and the WhatsApp assistant both call it, so they can never disagree.'
+    + '</div>'
+    + '</div>';
+
+  // Document library
+  html += '<div class="card-title" style="margin:0 0 12px;">Documentation</div>';
+  html += '<div class="grid-2" id="nerdyDocList" style="margin-bottom:24px;">';
+  NERDY_DOCS.forEach(function(d){
+    html += '<div class="nerdy-doc-card" data-doc="'+esc(d.id)+'" onclick="loadNerdyDoc(\''+esc(d.id)+'\')" '
+      + 'style="cursor:pointer;border:1px solid var(--line,#e5e7eb);border-radius:12px;padding:16px 18px;background:#fff;transition:all 150ms;">'
+      + '<div style="display:flex;align-items:flex-start;gap:12px;">'
+      + '<div style="width:38px;height:38px;border-radius:10px;background:#22315d;color:#fff;display:flex;align-items:center;justify-content:center;flex:0 0 auto;"><i data-lucide="file-text" style="width:19px;height:19px;"></i></div>'
+      + '<div style="min-width:0;">'
+      + '<div style="font-size:15px;font-weight:650;color:var(--ink);line-height:1.2;margin-bottom:3px;">'+esc(d.title)+'</div>'
+      + '<div style="font-size:12.5px;color:#475569;line-height:1.5;margin-bottom:9px;">'+esc(d.blurb)+'</div>'
+      + '<div style="display:flex;gap:6px;flex-wrap:wrap;">'
+      + '<span class="badge badge-idle" style="font-size:10.5px;">'+esc(d.sections.length)+' sections</span>'
+      + '<span class="badge badge-idle" style="font-size:10.5px;">'+esc(d.figures)+' diagrams</span>'
+      + '<span class="badge badge-idle" style="font-size:10.5px;">Updated '+esc(d.updated)+'</span>'
+      + '</div></div></div></div>';
+  });
+  html += '</div>';
+
+  // Embedded viewer
+  html += '<div class="card" style="padding:0;overflow:hidden;">'
+    + '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line,#e5e7eb);background:#fafbfc;">'
+    + '<div id="nerdyViewerTitle" style="font-size:13px;font-weight:650;color:var(--ink);">—</div>'
+    + '<a id="nerdyOpenNew" href="#" target="_blank" rel="noopener" style="font-size:12px;color:#2563eb;text-decoration:none;display:inline-flex;align-items:center;gap:4px;white-space:nowrap;"><i data-lucide="external-link" style="width:13px;height:13px;"></i> Open in new tab</a>'
+    + '</div>'
+    + '<iframe id="nerdyFrame" title="Tech document" style="width:100%;border:0;display:block;height:620px;background:#f6f8fb;"></iframe>'
+    + '</div>';
+
+  c.innerHTML = html;
+  c.setAttribute("data-rendered", "1");
+  if(NERDY_DOCS.length) loadNerdyDoc(NERDY_DOCS[0].id);
+  lucide.createIcons();
+}
+
+function loadNerdyDoc(id) {
+  var d = NERDY_DOCS.filter(function(x){ return x.id === id; })[0];
+  if(!d) return;
+  document.querySelectorAll(".nerdy-doc-card").forEach(function(el){
+    var on = el.getAttribute("data-doc") === id;
+    el.style.borderColor = on ? "#22315d" : "var(--line,#e5e7eb)";
+    el.style.boxShadow = on ? "0 0 0 1px #22315d" : "none";
+    el.style.background = on ? "#fbfcfe" : "#fff";
+  });
+  var t = document.getElementById("nerdyViewerTitle");
+  if(t) t.textContent = d.title;
+  var link = document.getElementById("nerdyOpenNew");
+  if(link) link.href = d.file;
+  var fr = document.getElementById("nerdyFrame");
+  if(fr){
+    fr.style.height = "620px";
+    fr.onload = function(){ sizeNerdyFrame(fr); };
+    fr.src = d.file;
+  }
+}
+
+// Grow the iframe to its content so the doc flows inline (no nested scrollbar).
+// Guard on width: if the frame isn't laid out yet (e.g. measured while its view
+// is hidden / zero-width), text wraps into a huge column — so only size when the
+// frame is genuinely wide, otherwise keep the scrollable fallback height.
+function sizeNerdyFrame(fr){
+  if(!fr) return;
+  try {
+    if(fr.clientWidth < 300) return;
+    var b = fr.contentDocument && fr.contentDocument.body;
+    var h = b ? b.scrollHeight : 0;
+    if(h > 240) fr.style.height = (h + 32) + "px";
+  } catch(e) { /* cross-origin fallback: keep fixed height */ }
+}
+
+// Re-measure on resize so the embedded doc tracks the viewport width.
+(function(){
+  var t;
+  window.addEventListener("resize", function(){
+    clearTimeout(t);
+    t = setTimeout(function(){
+      var fr = document.getElementById("nerdyFrame");
+      if(fr && document.getElementById("view-nerdy") &&
+         document.getElementById("view-nerdy").classList.contains("active")){
+        fr.style.height = "620px";
+        sizeNerdyFrame(fr);
+      }
+    }, 180);
+  });
+})();
 
 // ── ASSISTANT ACTIVITY ──────────────────────────────────────────────────────
 function renderAssistantLog() {

@@ -1,0 +1,366 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Crosby Rent Roll Engine — Technology Overview &amp; Recommendation</title>
+<style>
+  :root{--navy:#22315d;--navy2:#3c5488;--blue:#5e8ed0;--ink:#1f2937;--mute:#64748b;--line:#e2e8f0;--bg:#f6f8fb;--good:#0f766e;--warn:#b45309;--bad:#b91c1c;}
+  *{box-sizing:border-box;}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Arial,sans-serif;color:var(--ink);margin:0;background:var(--bg);line-height:1.55;}
+  .wrap{max-width:920px;margin:0 auto;padding:30px 26px 70px;}
+  header.doc{border-bottom:3px solid var(--navy);padding-bottom:16px;margin-bottom:8px;}
+  .eyebrow{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--blue);}
+  h1{font-size:27px;color:var(--navy);margin:4px 0 4px;}
+  .byline{color:var(--mute);font-size:13px;}
+  h2{font-size:19px;color:var(--navy);margin:34px 0 8px;padding-bottom:6px;border-bottom:2px solid var(--blue);}
+  h3{font-size:14.5px;color:var(--navy2);margin:20px 0 6px;}
+  p{margin:9px 0;font-size:14px;}
+  .lead{font-size:15px;color:#334155;}
+  code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;background:#eef2f7;border:1px solid #e1e7ef;border-radius:4px;padding:1px 5px;color:#0f172a;}
+  .callout{background:#eef4fb;border:1px solid #d6e3f4;border-left:4px solid var(--blue);border-radius:10px;padding:14px 16px;margin:16px 0;}
+  .callout.warn{background:#fffbeb;border-color:#fde68a;border-left-color:var(--warn);}
+  .callout.good{background:#ecfdf5;border-color:#a7f3d0;border-left-color:var(--good);}
+  .callout h3{margin-top:0;}
+  figure{margin:20px 0;text-align:center;}
+  figure svg{max-width:100%;height:auto;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 1px 3px rgba(15,23,42,.05);}
+  figcaption{font-size:11.5px;color:var(--mute);margin-top:7px;}
+  table.modes{border-collapse:collapse;width:100%;font-size:13px;margin:14px 0;}
+  table.modes th{background:var(--navy);color:#fff;text-align:left;padding:8px 11px;font-size:11.5px;letter-spacing:.02em;}
+  table.modes td{border-bottom:1px solid var(--line);padding:9px 11px;vertical-align:top;}
+  table.modes tr:nth-child(even) td{background:#fafcff;}
+  table.modes .who{font-weight:700;color:var(--navy);white-space:nowrap;}
+  .pill{display:inline-block;font-size:10px;font-weight:700;border-radius:5px;padding:1px 7px;}
+  .pill.fixed{color:var(--good);background:#d1fae5;}
+  .schema{background:#0d1726;color:#dce3ee;border-radius:11px;padding:16px 18px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;line-height:1.7;overflow-x:auto;margin:14px 0;}
+  .schema .k{color:#93c5fd;}.schema .s{color:#86efac;}.schema .c{color:#64748b;}
+  ol.phases{counter-reset:p;list-style:none;padding:0;margin:14px 0;}
+  ol.phases li{position:relative;padding:12px 14px 12px 54px;border:1px solid var(--line);border-radius:10px;background:#fff;margin-bottom:10px;}
+  ol.phases li::before{counter-increment:p;content:counter(p);position:absolute;left:14px;top:13px;width:26px;height:26px;border-radius:50%;background:var(--navy);color:#fff;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;}
+  ol.phases b{color:var(--navy);}
+  .effort{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--mute);}
+  ul.tight{margin:8px 0;padding-left:20px;font-size:14px;}ul.tight li{margin:4px 0;}
+  footer{margin-top:34px;border-top:1px solid var(--line);padding-top:14px;color:var(--mute);font-size:11.5px;text-align:center;}
+  @media print{body{background:#fff;}figure svg,ol.phases li{box-shadow:none;}.wrap{padding:0;}h2{break-after:avoid;}figure{break-inside:avoid;}}
+</style></head><body><div class="wrap">
+
+<header class="doc">
+  <div class="eyebrow">Crosby Development &middot; Sanctuary Office Park</div>
+  <h1>Rent Roll Engine — Technology Overview &amp; Recommendation</h1>
+  <div class="byline">How the rent roll is generated today, why it keeps needing manual correction, and a design for a document-driven engine built on the lease transcriptions now on file.</div>
+</header>
+
+<div class="callout">
+  <h3>In one paragraph</h3>
+  <p style="margin-bottom:0">Today every lease is reduced to a few numbers — one rent, one escalation %, one escalation month — and the engine <em>reconstructs</em> the month-by-month schedule from them. Real leases routinely break those assumptions (stepped amounts, mid-term premises changes, stated dollar figures, future rates), so we keep correcting them one at a time by reading the PDFs. We now have clean HTML transcriptions of all <strong>127</strong> leases and amendments. The recommendation: make an explicit, dated <strong>rent schedule</strong> the source of truth, <strong>generate it from the documents</strong> with a verified extraction pipeline, and drive every surface (dashboard, Excel, WhatsApp) from one auditable <strong>as-of-date engine</strong>. Claude is used only to <em>ingest</em> documents into that engine &mdash; never to serve the rent roll (see &sect;5).</p>
+</div>
+
+<h2>1 &middot; How it works today</h2>
+<p>The rent roll is computed in two parallel places — <code>monthRent()</code> in the dashboard (which also feeds the Excel export) and <code>monthRentFor()</code> in the WhatsApp assistant. Both take the same thin inputs and rebuild the schedule the same way:</p>
+
+<figure>
+<svg viewBox="0 0 840 250" xmlns="http://www.w3.org/2000/svg" font-family="Inter,Arial,sans-serif">
+  <defs><marker id="ar1" markerWidth="12" markerHeight="12" refX="8" refY="4" orient="auto"><path d="M0,0 L9,4 L0,8 Z" fill="#94a3b8"/></marker></defs>
+  <rect x="18" y="48" width="232" height="150" rx="12" fill="#22315d"/>
+  <text x="134" y="74" fill="#fff" font-size="14" font-weight="700" text-anchor="middle">Lease record (scalars)</text>
+  <text x="36" y="100" fill="#cbd5e1" font-size="12">monthlyRent</text>
+  <text x="36" y="120" fill="#cbd5e1" font-size="12">escalationPct &middot; escalationMonth</text>
+  <text x="36" y="140" fill="#cbd5e1" font-size="12">commenced &middot; terminates</text>
+  <text x="36" y="160" fill="#cbd5e1" font-size="12">autoRenew &middot; noticeDeadline</text>
+  <text x="36" y="184" fill="#64748b" font-size="10.5">one rate &middot; one escalation rule</text>
+  <line x1="250" y1="123" x2="304" y2="123" stroke="#94a3b8" stroke-width="2" marker-end="url(#ar1)"/>
+  <rect x="306" y="48" width="240" height="150" rx="12" fill="#5e8ed0"/>
+  <text x="426" y="74" fill="#fff" font-size="14" font-weight="700" text-anchor="middle">monthRent() reconstruct</text>
+  <text x="426" y="100" fill="#eaf2fc" font-size="11.5" text-anchor="middle">Treat monthlyRent as TODAY's</text>
+  <text x="426" y="118" fill="#eaf2fc" font-size="11.5" text-anchor="middle">rent; apply one uniform %</text>
+  <text x="426" y="136" fill="#eaf2fc" font-size="11.5" text-anchor="middle">forward &amp; backward by</text>
+  <text x="426" y="154" fill="#eaf2fc" font-size="11.5" text-anchor="middle">anniversary count</text>
+  <line x1="546" y1="123" x2="600" y2="123" stroke="#94a3b8" stroke-width="2" marker-end="url(#ar1)"/>
+  <rect x="602" y="48" width="220" height="150" rx="12" fill="#334155"/>
+  <text x="712" y="106" fill="#fff" font-size="13" font-weight="700" text-anchor="middle">Rent roll grid</text>
+  <text x="712" y="128" fill="#cbd5e1" font-size="12" text-anchor="middle">Excel export</text>
+  <text x="712" y="150" fill="#cbd5e1" font-size="12" text-anchor="middle">WhatsApp answers</text>
+  <text x="420" y="226" fill="#b91c1c" font-size="12" text-anchor="middle" font-weight="600">The reconstruction assumes a single rate and a single uniform escalation — the assumption reality keeps breaking.</text>
+</svg>
+<figcaption>Current flow: scalar inputs → algorithmic reconstruction → every surface.</figcaption>
+</figure>
+
+<h2>2 &middot; Why it keeps needing correction</h2>
+<p>Each lease we audited broke the scalar model a different way. We fixed them — but as exceptions, by hand:</p>
+<table class="modes">
+  <thead><tr><th>Lease</th><th>What the scalar model couldn't express</th><th>Fix applied</th></tr></thead>
+  <tbody>
+    <tr><td class="who">Acorn / M&nbsp;Squared</td><td>Escalation timing: de-escalating already-elapsed months; a new lease holding its starting rent through its commencement year.</td><td><span class="pill fixed">engine logic</span></td></tr>
+    <tr><td class="who">Brandner</td><td>Mid-term <b>premises reduction</b> — full Suite 303 @ $862 became Suite 303B @ $431 on Apr 1.</td><td><span class="pill fixed">rentSchedule</span></td></tr>
+    <tr><td class="who">Gary&nbsp;Thomas</td><td>A <b>future</b> rate ($2,007.32 eff. Aug 2026) was stored as the current rate, so it showed early and double-escalated.</td><td><span class="pill fixed">rentSchedule</span></td></tr>
+    <tr><td class="who">Hartford</td><td><b>Stated</b> dollar steps (not a clean 2%), with a flat year — $4,213.62 → $4,318.12 → $4,423.87 on Oct 1.</td><td><span class="pill fixed">rentSchedule</span></td></tr>
+    <tr><td class="who">Mandeville</td><td><b>Placeholder term-end date</b> (2027-02-28) instead of the real 1-yr-auto-renew end (2027-03-31).</td><td><span class="pill fixed">data</span></td></tr>
+    <tr><td class="who">Baker&nbsp;Donelson</td><td><b>Rent abatements (free rent)</b> — March 2025/2026/2027 are fully abated, but full rent was projected for those months.</td><td><span class="pill fixed">abatements</span></td></tr>
+  </tbody>
+</table>
+<div class="callout warn">
+  <p style="margin:0">The common thread: the <strong>authoritative terms live in the lease documents</strong>, but the rent roll runs off hand-maintained numbers that drift from them. The <code>rentSchedule</code> primitive I kept adding is the right idea — it's just being entered by hand, one lease at a time, instead of generated and verified at scale.</p>
+</div>
+
+<h2>3 &middot; The asset we now have</h2>
+<p>Every primary lease and amendment (127 documents) is now a <strong>clean HTML transcription</strong> on file — not raw scans. Each carries structured metadata, a stable reference code, and a mirrored lease object. That means the ground truth — term dates, rent amounts, escalation clauses, renewal options, notice provisions — is finally <em>machine-readable</em>. This is what makes a document-driven engine practical now where it wasn't before.</p>
+
+<h2>4 &middot; Recommended architecture</h2>
+
+<h3>4.1 &nbsp;Schedule-first data model</h3>
+<p>Make an explicit, dated schedule the source of truth for every lease; the old scalars become <em>derived</em> (the segment governing today). Each figure cites the amendment it came from.</p>
+<div class="schema">
+<span class="k">financials</span>: {
+  <span class="k">term</span>: { commenced, expires, type: <span class="s">"fixed" | "auto-renew"</span>, renewalMonths },
+  <span class="k">rentSchedule</span>: [
+    { from, to, monthlyRent, basis: <span class="s">"stated" | "escalated"</span>, source: <span class="s">"AMD6"</span> }, <span class="c">// …</span>
+  ],
+  <span class="k">abatements</span>:  [ { from, to, pct, source } ],     <span class="c">// free rent — full or %; pct defaults to 100</span>
+  <span class="k">escalation</span>:  { month, pct, basis },             <span class="c">// governs the open tail / future renewals only</span>
+  <span class="k">otherCharges</span>:[ { label, monthlyAmount } ],      <span class="c">// parking, storage, signage (non-base)</span>
+  <span class="k">holdover</span>:    { multiplier },                    <span class="c">// e.g. 1.5x / 2x rent after expiry</span>
+  <span class="k">options</span>:     [ { type: <span class="s">"renewal"</span>, termMonths, rate } ],
+  <span class="k">concessions</span>: { tiAllowance, drawWindow },         <span class="c">// TI $ — affects net-effective rent, not base</span>
+  <span class="k">notice</span>:      { days, deadline, basis },
+  <span class="k">provenance</span>:  { governingDoc, extractedAt, confidence }
+}
+</div>
+
+<h3>4.2 &nbsp;One as-of-date engine</h3>
+<p>Collapse the two reconstruction functions into a single, tested <code>rentFor(lease, date)</code> that returns the governing amount <em>and its source</em>. This is the &ldquo;governing lease during this period&rdquo; idea made literal — it handles steps, premises changes, holdover, auto-renew commitment, stated amounts, and % tails uniformly.</p>
+
+<figure>
+<svg viewBox="0 0 840 360" xmlns="http://www.w3.org/2000/svg" font-family="Inter,Arial,sans-serif">
+  <defs><marker id="ar2" markerWidth="12" markerHeight="12" refX="8" refY="4" orient="auto"><path d="M0,0 L9,4 L0,8 Z" fill="#94a3b8"/></marker></defs>
+  <rect x="320" y="14" width="200" height="40" rx="10" fill="#22315d"/>
+  <text x="420" y="39" fill="#fff" font-size="13" font-weight="700" text-anchor="middle">rentFor(lease, date)</text>
+  <line x1="420" y1="54" x2="420" y2="74" stroke="#94a3b8" stroke-width="2" marker-end="url(#ar2)"/>
+  <!-- decision 1 -->
+  <rect x="300" y="76" width="240" height="38" rx="8" fill="#fff" stroke="#cbd5e1"/>
+  <text x="420" y="100" fill="#1f2937" font-size="12.5" text-anchor="middle">date &lt; commencement?</text>
+  <rect x="600" y="78" width="120" height="34" rx="8" fill="#fee2e2" stroke="#fca5a5"/>
+  <text x="660" y="100" fill="#991b1b" font-size="12" font-weight="700" text-anchor="middle">$0</text>
+  <line x1="540" y1="95" x2="600" y2="95" stroke="#94a3b8" stroke-width="2" marker-end="url(#ar2)"/>
+  <text x="572" y="89" fill="#64748b" font-size="10">yes</text>
+  <line x1="420" y1="114" x2="420" y2="134" stroke="#94a3b8" stroke-width="2" marker-end="url(#ar2)"/>
+  <!-- decision 2 -->
+  <rect x="280" y="136" width="280" height="38" rx="8" fill="#fff" stroke="#cbd5e1"/>
+  <text x="420" y="160" fill="#1f2937" font-size="12.5" text-anchor="middle">past committed term end?</text>
+  <rect x="600" y="138" width="120" height="34" rx="8" fill="#fee2e2" stroke="#fca5a5"/>
+  <text x="660" y="160" fill="#991b1b" font-size="11.5" font-weight="700" text-anchor="middle">$0 / holdover</text>
+  <line x1="560" y1="155" x2="600" y2="155" stroke="#94a3b8" stroke-width="2" marker-end="url(#ar2)"/>
+  <text x="578" y="149" fill="#64748b" font-size="10">yes</text>
+  <line x1="420" y1="174" x2="420" y2="194" stroke="#94a3b8" stroke-width="2" marker-end="url(#ar2)"/>
+  <!-- main -->
+  <rect x="250" y="196" width="340" height="42" rx="8" fill="#5e8ed0"/>
+  <text x="420" y="216" fill="#fff" font-size="12.5" font-weight="700" text-anchor="middle">find governing rentSchedule segment</text>
+  <text x="420" y="231" fill="#eaf2fc" font-size="11" text-anchor="middle">→ return its amount + source amendment</text>
+  <line x1="420" y1="238" x2="420" y2="258" stroke="#94a3b8" stroke-width="2" marker-end="url(#ar2)"/>
+  <!-- tail -->
+  <rect x="250" y="260" width="340" height="48" rx="8" fill="#fff" stroke="#cbd5e1"/>
+  <text x="420" y="281" fill="#1f2937" font-size="12.5" text-anchor="middle">beyond the last segment but still in term?</text>
+  <text x="420" y="298" fill="#64748b" font-size="11" text-anchor="middle">→ escalate from THAT segment's effective date</text>
+  <text x="420" y="338" fill="#0f766e" font-size="12" text-anchor="middle" font-weight="600">Every figure is traceable to the amendment that set it.</text>
+</svg>
+<figcaption>The as-of-date engine: a single decision path, shared by the dashboard, Excel, and WhatsApp.</figcaption>
+</figure>
+
+<h3>4.3 &nbsp;Generate schedules from the transcriptions</h3>
+<p>The unlock. A pipeline reads each tenant's lease + all amendments and produces the schedule above — with the Crosby-specific rules we've nailed down baked into the extraction so they're applied consistently every time.</p>
+
+<figure>
+<svg viewBox="0 0 840 520" xmlns="http://www.w3.org/2000/svg" font-family="Inter,Arial,sans-serif">
+  <defs><marker id="ar3" markerWidth="12" markerHeight="12" refX="8" refY="4" orient="auto"><path d="M0,0 L9,4 L0,8 Z" fill="#5e8ed0"/></marker>
+    <marker id="ar3b" markerWidth="12" markerHeight="12" refX="8" refY="4" orient="auto"><path d="M0,0 L9,4 L0,8 Z" fill="#b45309"/></marker></defs>
+  <!-- 1 -->
+  <rect x="250" y="14" width="340" height="44" rx="10" fill="#22315d"/>
+  <text x="420" y="33" fill="#fff" font-size="13" font-weight="700" text-anchor="middle">127 lease + amendment HTML transcriptions</text>
+  <text x="420" y="49" fill="#cbd5e1" font-size="11" text-anchor="middle">clean text + structured metadata (already on file)</text>
+  <line x1="420" y1="58" x2="420" y2="78" stroke="#5e8ed0" stroke-width="2" marker-end="url(#ar3)"/>
+  <!-- 2 + rules sidecar -->
+  <rect x="250" y="80" width="340" height="64" rx="10" fill="#5e8ed0"/>
+  <text x="420" y="104" fill="#fff" font-size="13" font-weight="700" text-anchor="middle">Claude extraction</text>
+  <text x="420" y="123" fill="#eaf2fc" font-size="11.5" text-anchor="middle">structured-output schema +</text>
+  <text x="420" y="138" fill="#eaf2fc" font-size="11.5" text-anchor="middle">Crosby rules, one tenant at a time</text>
+  <rect x="612" y="78" width="214" height="106" rx="9" fill="#eef4fb" stroke="#cbd5e1"/>
+  <text x="620" y="97" fill="#22315d" font-size="10.5" font-weight="700">RULES ENCODED</text>
+  <text x="620" y="114" fill="#334155" font-size="10">• escalation = commencement</text>
+  <text x="632" y="127" fill="#334155" font-size="10">anniversary month</text>
+  <text x="620" y="143" fill="#334155" font-size="10">• latest amendment supersedes</text>
+  <text x="620" y="159" fill="#334155" font-size="10">• stated $ override computed %</text>
+  <text x="620" y="175" fill="#334155" font-size="10">• full-service gross; auto-renew</text>
+  <line x1="611" y1="120" x2="592" y2="118" stroke="#cbd5e1" stroke-width="1.5"/>
+  <line x1="420" y1="144" x2="420" y2="164" stroke="#5e8ed0" stroke-width="2" marker-end="url(#ar3)"/>
+  <!-- 3 -->
+  <rect x="250" y="166" width="340" height="48" rx="10" fill="#3c5488"/>
+  <text x="420" y="188" fill="#fff" font-size="13" font-weight="700" text-anchor="middle">Proposed financials</text>
+  <text x="420" y="205" fill="#cbd5e1" font-size="11" text-anchor="middle">dated rentSchedule + term + notice, cited per figure</text>
+  <line x1="420" y1="214" x2="420" y2="234" stroke="#5e8ed0" stroke-width="2" marker-end="url(#ar3)"/>
+  <!-- 4 reconcile -->
+  <rect x="250" y="236" width="340" height="44" rx="10" fill="#fff" stroke="#cbd5e1"/>
+  <text x="420" y="258" fill="#1f2937" font-size="13" font-weight="700" text-anchor="middle">Reconcile: diff vs current data</text>
+  <text x="420" y="273" fill="#64748b" font-size="10.5" text-anchor="middle">would have caught Hartford, Gary Thomas, Mandeville automatically</text>
+  <!-- branch to review -->
+  <line x1="590" y1="258" x2="660" y2="258" stroke="#b45309" stroke-width="2" marker-end="url(#ar3b)"/>
+  <rect x="662" y="236" width="160" height="44" rx="10" fill="#fffbeb" stroke="#fde68a"/>
+  <text x="742" y="255" fill="#92400e" font-size="12" font-weight="700" text-anchor="middle">Discrepancy report</text>
+  <text x="742" y="271" fill="#92400e" font-size="11" text-anchor="middle">→ human review</text>
+  <line x1="420" y1="280" x2="420" y2="300" stroke="#5e8ed0" stroke-width="2" marker-end="url(#ar3)"/>
+  <!-- 5 canonical -->
+  <rect x="250" y="302" width="340" height="44" rx="10" fill="#22315d"/>
+  <text x="420" y="323" fill="#fff" font-size="13" font-weight="700" text-anchor="middle">Canonical lease.financials</text>
+  <text x="420" y="339" fill="#cbd5e1" font-size="11" text-anchor="middle">source of truth — approved, versioned</text>
+  <line x1="420" y1="346" x2="420" y2="366" stroke="#5e8ed0" stroke-width="2" marker-end="url(#ar3)"/>
+  <!-- 6 engine -->
+  <rect x="250" y="368" width="340" height="40" rx="10" fill="#5e8ed0"/>
+  <text x="420" y="393" fill="#fff" font-size="13" font-weight="700" text-anchor="middle">As-of-date engine &middot; rentFor()</text>
+  <line x1="420" y1="408" x2="420" y2="428" stroke="#5e8ed0" stroke-width="2" marker-end="url(#ar3)"/>
+  <!-- 7 surfaces -->
+  <rect x="250" y="430" width="340" height="40" rx="10" fill="#334155"/>
+  <text x="420" y="455" fill="#fff" font-size="12.5" font-weight="700" text-anchor="middle">Rent roll + provenance &middot; Excel &middot; WhatsApp</text>
+  <!-- intake feedback loop -->
+  <rect x="18" y="166" width="200" height="64" rx="10" fill="#0d1726"/>
+  <text x="118" y="190" fill="#fff" font-size="12" font-weight="700" text-anchor="middle">Copier → OCR intake</text>
+  <text x="118" y="208" fill="#cbd5e1" font-size="10.5" text-anchor="middle">new amendment scanned</text>
+  <text x="118" y="222" fill="#cbd5e1" font-size="10.5" text-anchor="middle">→ auto-extract → propose</text>
+  <line x1="118" y1="166" x2="118" y2="112" stroke="#5e8ed0" stroke-width="2"/>
+  <line x1="118" y1="112" x2="248" y2="112" stroke="#5e8ed0" stroke-width="2" marker-end="url(#ar3)"/>
+  <text x="40" y="250" fill="#64748b" font-size="10">feeds the same pipeline</text>
+</svg>
+<figcaption>Document-driven pipeline: transcriptions → verified extraction → reconciliation → approved canonical data → one engine → every surface. New amendments rejoin at the top.</figcaption>
+</figure>
+
+<h3>4.4 &nbsp;Guardrails (so we can trust it)</h3>
+<ul class="tight">
+  <li><b>Reconciliation report</b> — never auto-overwrite; surface every extracted-vs-current difference for review first.</li>
+  <li><b>Golden tests</b> — lock in the leases we hand-verified (Acorn, Brandner, M&nbsp;Squared, Mandeville, Gary&nbsp;Thomas, Hartford, 4&nbsp;Your&nbsp;Eyes, Pazos, Baker&nbsp;Donelson) so the engine can't regress.</li>
+  <li><b>Provenance in the UI</b> — each rent-roll figure's hover shows the governing amendment (&ldquo;Oct 2027 = $4,318.12 per AMD6&rdquo;).</li>
+  <li><b>Second-pass verification</b> — extract twice / independently and flag disagreements; low-confidence rows go to review.</li>
+  <li><b>Intake hook</b> — a freshly scanned amendment auto-proposes a schedule change for one-click approval.</li>
+</ul>
+
+<h3>4.5 &nbsp;What the engine must model &mdash; a coverage checklist</h3>
+<p>The rent isn't just &ldquo;a number that grows 3% a year.&rdquo; Each case below is a real lease economic the engine has to get right. Status reflects where we are today.</p>
+<table class="modes">
+  <thead><tr><th>Concept</th><th>What it means / why it matters</th><th>Status</th></tr></thead>
+  <tbody>
+    <tr><td class="who">Escalations</td><td>Fixed-% bump at the anniversary month, forward and de-escalated for elapsed months; no bump in the commencement year.</td><td><span class="pill fixed">handled</span></td></tr>
+    <tr><td class="who">Stepped / stated rents</td><td>Lease lists explicit dollar amounts that don't compound cleanly (Hartford, Gary Thomas).</td><td><span class="pill fixed">handled</span></td></tr>
+    <tr><td class="who">Mid-term changes</td><td>Premises added/reduced or a re-based rate mid-term (Brandner, 4 Your Eyes).</td><td><span class="pill fixed">handled</span></td></tr>
+    <tr><td class="who">Committed term</td><td>Project only through the committed term; auto-renew counts as committed once notice has passed; holdover holds at last rate.</td><td><span class="pill fixed">handled</span></td></tr>
+    <tr><td class="who">Rent abatements</td><td><b>Free rent</b> for specific months, full or partial (Baker Donelson: Mar 25/26/27 fully abated).</td><td><span class="pill fixed">handled</span></td></tr>
+    <tr><td class="who">Net effective rent</td><td>Average rent over the term <em>net of abatements + TI</em> &mdash; the number to compare deals on.</td><td><span class="pill" style="color:#92400e;background:#fef3c7;">planned</span></td></tr>
+    <tr><td class="who">TI allowances</td><td>Landlord build-out concession ($) with a draw window/expiry (Baker Donelson $28,245.12). Not base rent, but key to economics and cash flow.</td><td><span class="pill" style="color:#92400e;background:#fef3c7;">planned</span></td></tr>
+    <tr><td class="who">Holdover premium</td><td>Many leases charge 125&ndash;200% (Mandeville's says 2&times;) after expiry; we currently hold at the last rate.</td><td><span class="pill" style="color:#92400e;background:#fef3c7;">planned</span></td></tr>
+    <tr><td class="who">Partial-month proration</td><td>We use a full-month convention; commencement, termination, and partial-abatement months could prorate.</td><td><span class="pill" style="color:#92400e;background:#fef3c7;">planned</span></td></tr>
+    <tr><td class="who">Other recurring charges</td><td>Parking, storage, signage, after-hours HVAC &mdash; base-rent-only today.</td><td><span class="pill" style="color:#92400e;background:#fef3c7;">planned</span></td></tr>
+    <tr><td class="who">Escalation basis</td><td>CPI-indexed or stated-schedule escalations, and caps/floors &mdash; vs the fixed % we assume.</td><td><span class="pill" style="color:#92400e;background:#fef3c7;">planned</span></td></tr>
+    <tr><td class="who">Renewal options</td><td>FMV/option terms beyond the committed term (Baker Donelson, Hartford) &mdash; show as <em>uncommitted option</em>, not projected rent, until exercised.</td><td><span class="pill" style="color:#92400e;background:#fef3c7;">planned</span></td></tr>
+    <tr><td class="who">Multi-suite tenants</td><td>One tenant across suites/combined premises (4 Your Eyes 303+302A&amp;B; Watch Systems 101&amp;201).</td><td><span class="pill" style="color:#92400e;background:#fef3c7;">planned</span></td></tr>
+    <tr><td class="who">As-billed vs intent</td><td>The roll shows contractual intent; actual billing can differ (Pazos clerical error). Optionally track both.</td><td><span class="pill" style="color:#92400e;background:#fef3c7;">planned</span></td></tr>
+    <tr><td class="who">CAM / op-ex</td><td>Pass-throughs &amp; year-end reconciliations &mdash; <b>deliberately N/A</b>: Crosby is full-service gross (no CAM). State it so it isn't assumed missing.</td><td><span class="pill" style="color:#475569;background:#eef2f7;">N/A</span></td></tr>
+    <tr><td class="who">Percentage rent</td><td>Retail sales-based rent &mdash; not used for office.</td><td><span class="pill" style="color:#475569;background:#eef2f7;">N/A</span></td></tr>
+  </tbody>
+</table>
+<div class="callout">
+  <p style="margin:0">The pattern that ties these together: the engine should compute a month's rent as <strong>contractual rate &rarr; minus abatement &rarr; (later: plus other charges, holdover premium, proration)</strong>, every layer sourced from the documents. <b>Net effective rent</b> and <b>TI tracking</b> are the highest-value next additions &mdash; they turn the rent roll from &ldquo;what's owed&rdquo; into &ldquo;how good is this deal.&rdquo;</p>
+</div>
+
+<h2>5 &middot; Is Claude in the loop? Build-time vs run-time</h2>
+<p class="lead">Short answer: <strong>Claude runs at ingestion, not at serve time.</strong> It is a once-per-document step that <em>compiles</em> a lease into structured data &mdash; it is never called when the rent roll is viewed, exported, or queried. Once a lease's schedule exists, producing the rent roll is pure arithmetic with no model involved.</p>
+<div class="callout">
+  <h3>The mental model</h3>
+  <p style="margin:0">Claude is a <strong>compiler</strong>, not an <strong>interpreter</strong>. It translates each document into a structured rent schedule exactly once &mdash; when that document first arrives. The runtime engine then interprets that structured data <strong>deterministically, forever</strong>, with no model in the path. Think &ldquo;compile once, serve many.&rdquo;</p>
+</div>
+
+<figure>
+<svg viewBox="0 0 860 392" xmlns="http://www.w3.org/2000/svg" font-family="Inter,Arial,sans-serif">
+  <defs><marker id="arc" markerWidth="12" markerHeight="12" refX="8" refY="4" orient="auto"><path d="M0,0 L9,4 L0,8 Z" fill="#94a3b8"/></marker></defs>
+  <rect x="20" y="26" width="6" height="166" rx="3" fill="#5e8ed0"/>
+  <text x="38" y="44" font-size="11.5" font-weight="700" fill="#22315d">BUILD-TIME</text>
+  <text x="38" y="62" font-size="10.5" fill="#475569">Only when a new lease or</text>
+  <text x="38" y="77" font-size="10.5" fill="#475569">amendment arrives &mdash; a few</text>
+  <text x="38" y="92" font-size="10.5" fill="#475569">times a month.</text>
+  <text x="38" y="116" font-size="10.5" fill="#b45309" font-weight="700">Claude runs here.</text>
+  <rect x="20" y="276" width="6" height="104" rx="3" fill="#0f766e"/>
+  <text x="38" y="296" font-size="11.5" font-weight="700" fill="#0f766e">RUN-TIME</text>
+  <text x="38" y="314" font-size="10.5" fill="#475569">Every view of the rent roll.</text>
+  <text x="38" y="329" font-size="10.5" fill="#475569">Instant &amp; reproducible &mdash;</text>
+  <text x="38" y="344" font-size="10.5" fill="#0f766e" font-weight="700">no Claude.</text>
+  <rect x="300" y="26" width="360" height="40" rx="10" fill="#22315d"/>
+  <text x="480" y="51" fill="#fff" font-size="13" font-weight="700" text-anchor="middle">New lease / amendment scanned</text>
+  <line x1="480" y1="66" x2="480" y2="84" stroke="#94a3b8" stroke-width="2" marker-end="url(#arc)"/>
+  <rect x="300" y="86" width="360" height="46" rx="10" fill="#5e8ed0"/>
+  <text x="480" y="106" fill="#fff" font-size="13" font-weight="700" text-anchor="middle">Claude &mdash; extract structured schedule</text>
+  <text x="480" y="123" fill="#eaf2fc" font-size="10.5" text-anchor="middle">reads the HTML transcription &rarr; proposed rentSchedule</text>
+  <line x1="480" y1="132" x2="480" y2="150" stroke="#94a3b8" stroke-width="2" marker-end="url(#arc)"/>
+  <rect x="300" y="152" width="360" height="40" rx="10" fill="#fff" stroke="#cbd5e1"/>
+  <text x="480" y="177" fill="#1f2937" font-size="13" font-weight="700" text-anchor="middle">Human review &amp; approve</text>
+  <line x1="480" y1="192" x2="480" y2="210" stroke="#94a3b8" stroke-width="2" marker-end="url(#arc)"/>
+  <rect x="280" y="212" width="400" height="48" rx="10" fill="#22315d" stroke="#5e8ed0" stroke-width="2"/>
+  <text x="480" y="232" fill="#fff" font-size="13" font-weight="700" text-anchor="middle">Canonical rentSchedule data</text>
+  <text x="480" y="250" fill="#cbd5e1" font-size="10.5" text-anchor="middle">approved &amp; versioned &mdash; the handoff point</text>
+  <line x1="480" y1="260" x2="480" y2="278" stroke="#94a3b8" stroke-width="2" marker-end="url(#arc)"/>
+  <rect x="300" y="280" width="360" height="46" rx="10" fill="#0f766e"/>
+  <text x="480" y="300" fill="#fff" font-size="13" font-weight="700" text-anchor="middle">rentFor() &mdash; deterministic engine</text>
+  <text x="480" y="317" fill="#d1fae5" font-size="10.5" text-anchor="middle">pure arithmetic &middot; no model in the path</text>
+  <line x1="480" y1="326" x2="480" y2="344" stroke="#94a3b8" stroke-width="2" marker-end="url(#arc)"/>
+  <rect x="300" y="346" width="360" height="40" rx="10" fill="#334155"/>
+  <text x="480" y="371" fill="#fff" font-size="12.5" font-weight="700" text-anchor="middle">Dashboard &middot; Excel &middot; WhatsApp</text>
+</svg>
+<figcaption>Compile once, serve many. Claude sits in the build-time lane (per document); the run-time lane that serves every rent roll has no model in it.</figcaption>
+</figure>
+
+<h3>5.1 &nbsp;Two lanes that rarely touch</h3>
+<p><b>Build-time (ingestion).</b> When a new lease or amendment enters the system, Claude reads its transcription and proposes a structured schedule; a person approves it; the approved data is committed. This happens <em>per document</em> &mdash; a handful of times a month, matching how often you actually sign paper.</p>
+<p><b>Run-time (serving).</b> Every dashboard view, Excel export, and WhatsApp answer reads the committed structured data through <code>rentFor()</code> &mdash; deterministic arithmetic, instant, and offline-capable. <strong>No model call happens here, ever.</strong></p>
+
+<h3>5.2 &nbsp;When Claude IS invoked again</h3>
+<ul class="tight">
+  <li><b>A new lease or amendment is signed and scanned.</b> Claude extracts that one document; you approve. The existing copier&rarr;OCR intake already detects new scans, so it's automatic to trigger.</li>
+  <li><b>You deliberately improve the extraction prompt or schema</b> and re-run the back-catalogue to pick up the improvement &mdash; a planned batch, followed by a diff review. Optional and infrequent.</li>
+  <li><b>A dispute or correction</b> sends you back to re-read one specific document.</li>
+</ul>
+
+<h3>5.3 &nbsp;When Claude is NOT invoked</h3>
+<ul class="tight">
+  <li>Opening the dashboard, generating the Excel, or answering a WhatsApp rent question &mdash; all read the committed data. Zero model calls.</li>
+  <li>There is <b>no nightly job, no per-view call, and no recurring timer</b> that re-derives schedules. Nothing re-runs on a clock.</li>
+</ul>
+<table class="modes">
+  <thead><tr><th>Operation</th><th>Calls Claude?</th><th>How often</th></tr></thead>
+  <tbody>
+    <tr><td>New lease / amendment scanned</td><td><span class="pill" style="color:#92400e;background:#fef3c7;">Yes &middot; 1 doc</span></td><td>per event (~a few / month)</td></tr>
+    <tr><td>Improve extraction prompt &rarr; re-run corpus</td><td><span class="pill" style="color:#92400e;background:#fef3c7;">Yes &middot; batch</span></td><td>rare / optional</td></tr>
+    <tr><td>Open the dashboard rent roll</td><td><span class="pill" style="color:#0f766e;background:#d1fae5;">No</span></td><td>&mdash;</td></tr>
+    <tr><td>Download the Excel rent roll</td><td><span class="pill" style="color:#0f766e;background:#d1fae5;">No</span></td><td>&mdash;</td></tr>
+    <tr><td>WhatsApp rent question</td><td><span class="pill" style="color:#0f766e;background:#d1fae5;">No</span></td><td>&mdash;</td></tr>
+    <tr><td>Background / scheduled job</td><td><span class="pill" style="color:#0f766e;background:#d1fae5;">None exists</span></td><td>&mdash;</td></tr>
+  </tbody>
+</table>
+
+<h3>5.4 &nbsp;Why it's built this way</h3>
+<ul class="tight">
+  <li><b>Cost scales with paperwork, not usage</b> &mdash; ~127 documents once, plus a few new ones a month; viewing the rent roll a thousand times costs nothing.</li>
+  <li><b>Deterministic &amp; auditable</b> &mdash; the same inputs always produce the same numbers; a figure can't silently change because a model was re-run.</li>
+  <li><b>Fast</b> &mdash; no model in the request path, so rent rolls render instantly.</li>
+  <li><b>Resilient</b> &mdash; the dashboard works even if the LLM API is down; extraction is an offline back-office step.</li>
+  <li><b>Affordable rigor</b> &mdash; because extraction is rare and batched, you can verify it heavily (second pass + human review) without slowing day-to-day use.</li>
+</ul>
+
+<h3>5.5 &nbsp;Could it be purely one-time?</h3>
+<p>Yes. You could run Claude once over today's 127 documents and then hand-enter every future amendment yourself, never calling Claude again &mdash; the runtime would be identical. But that re-introduces exactly the manual data entry (and the errors) we're retiring. Keeping Claude as the per-document ingestion step buys the automation, while the runtime stays deterministic either way. <strong>The engine never depends on Claude being available.</strong></p>
+
+<h2>6 &middot; Phased rollout</h2>
+<ol class="phases">
+  <li><b>Read-only reconcile pass.</b> <span class="effort">low risk &middot; high leverage</span><br>Build the extraction; run it over every Sanctuary lease's transcriptions; emit proposed schedules + a discrepancy report. No data changes. Proves extraction quality and finds remaining bad leases.</li>
+  <li><b>Schedule-first engine.</b> <span class="effort">medium</span><br>Make <code>rentSchedule</code> canonical for all leases; collapse <code>monthRent</code>/<code>monthRentFor</code> into one shared <code>rentFor()</code>; derive the display scalars from it.</li>
+  <li><b>Backfill + provenance.</b> <span class="effort">medium</span><br>Approve the reconciled schedules into the data; add source-amendment hovers to the rent roll and Excel.</li>
+  <li><b>Golden tests + CI check.</b> <span class="effort">low</span><br>Freeze the verified cases; fail the build on any rent-roll regression.</li>
+  <li><b>Intake integration.</b> <span class="effort">medium</span><br>Wire the copier→OCR pipeline to auto-extract new amendments and propose schedule updates for approval.</li>
+</ol>
+
+<div class="callout good">
+  <h3>Recommended starting point</h3>
+  <p style="margin:0">Begin with <strong>Phase 1</strong> — the read-only reconcile pass. It changes no data, validates that extraction from the transcriptions is trustworthy, and immediately produces a reviewed list of any remaining incorrect leases. Everything after it builds on a foundation we've confirmed.</p>
+</div>
+
+<footer>Crosby Development &middot; Sanctuary Office Park &middot; Rent Roll Engine overview &middot; prepared for review.</footer>
+</div></body></html>

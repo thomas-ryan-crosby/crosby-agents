@@ -16,6 +16,10 @@
 !crosby-rent-engine.js
 !vercel.json
 
+# "The Nerdy Stuff" page — self-contained tech docs (no PII; design/architecture
+# write-ups with diagrams). Embedded via iframe in index.html.
+!docs
+
 # Chat assistant serverless function + its helper. Reads PII from the
 # auth-gated Firestore at runtime (not from the bundle) — no data/*.json ships.
 !package.json
