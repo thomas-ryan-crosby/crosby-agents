@@ -5593,17 +5593,21 @@
     "propertyId": "sanctuary-office-park",
     "buildingId": "sanctuary-bldg-2",
     "commenced": "2025-11-01",
-    "terminates": "2026-10-31",
+    "terminates": "2027-10-31",
     "monthlyRent": 1867.18,
     "escalationPct": 3,
     "escalationMonth": 11,
     "autoRenew": null,
     "noticeDays": 60,
-    "noticeDeadline": null,
+    "noticeDeadline": "2027-09-01",
     "daysToNoticeDeadline": null,
     "status": "active",
-    "docFile": "BLDG2_FLR2_203_Nationwide.pdf",
-    "notes": "Current term from 2025-07-18 amendment (2nd renewal). Lineage now on file: Init 2023-11-03 ($1,760, 12mo) → 1st renewal 2024-06-24 (to 2025-10-31, $1,812.80) → current 2025-11-01..2026-10-31 ($1,867.18). 3% annual (Nov); 1-yr renewals with 60-day notice. Full-service gross."
+    "docFile": "Nationwide_BLDG2_STE203_AMD2.pdf",
+    "rentSchedule": [
+      { "effective": "2025-11-01", "monthlyRent": 1867.18, "source": "current term", "note": "Amendment #1 term, through 2026-10-31" },
+      { "effective": "2026-11-01", "monthlyRent": 1923.20, "source": "Amendment #2", "note": "1-yr extension to 2027-10-31; +3% each subsequent Nov" }
+    ],
+    "notes": "Term extended by Amendment #2 (executed 2026-06-22) for one year to 2027-10-31; rent steps to $1,923.20 on 2026-11-01 (+3% each subsequent Nov). Lineage on file: Init 2023-11-03 ($1,760, 12mo) → 1st renewal 2024-06-24 (to 2025-10-31, $1,812.80) → Amendment #1 2025-07-18 (to 2026-10-31, $1,867.18) → Amendment #2 2026-06-11 (to 2027-10-31, $1,923.20). 3% annual (Nov); 1-yr renewals with 60-day notice. Broker: Jack Sikora, CBRE (2%). Full-service gross."
   },
   {
     "id": "lease-bldg2-suite100-benjamin",

@@ -1150,6 +1150,50 @@
     "ref": "hf3pbd9"
   },
   {
+    "id": "leasedoc-nationwidebldg2ste203amd2",
+    "propertyId": "sanctuary-office-park",
+    "building": "Building #2",
+    "tenant": "Nationwide Mutual Insurance Company",
+    "suite": "203",
+    "file": "Nationwide_BLDG2_STE203_AMD2.pdf",
+    "docType": "Amendment",
+    "url": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases%2FNationwide_BLDG2_STE203_AMD2.pdf?alt=media&token=ea148c8b-8194-4016-9ec8-e033a1b75365",
+    "htmlUrl": "https://firebasestorage.googleapis.com/v0/b/crosby-agents.firebasestorage.app/o/leases-html%2FNationwide_BLDG2_STE203_AMD2.html?alt=media&token=878ef516-5933-4396-859e-b624300cb725",
+    "meta": {
+      "documentType": "Lease Amendment",
+      "lessor": "Crosby Development Company, LLC",
+      "lessee": "Nationwide Mutual Insurance Company",
+      "property": "Sanctuary Office Park, Building #2, #2 Sanctuary Blvd., Mandeville, LA 70471",
+      "suite": "203",
+      "dated": "2026-06-11",
+      "monthlyRent": "1923.20",
+      "commencement": "2026-11-01",
+      "termination": "2027-10-31",
+      "escalation": "3% annual increase each subsequent November",
+      "broker": "Jack Sikora, CBRE, Inc. (2% of total lease value)",
+      "title": "Amendment #2 to Lease — #2 Sanctuary, Suite 203, Nationwide"
+    },
+    "date": "2026-06-11",
+    "lease": {
+      "leaseId": "lease-bldg2-suite203-nationwide",
+      "status": "active",
+      "commenced": "2025-11-01",
+      "terminates": "2027-10-31",
+      "monthlyRent": 1867.18,
+      "escalationPct": 3,
+      "escalationMonth": 11,
+      "escalationMonthName": "November",
+      "autoRenew": null,
+      "noticeDays": 60,
+      "noticeDeadline": "2027-09-01",
+      "rentSchedule": [
+        { "effective": "2025-11-01", "monthlyRent": 1867.18, "source": "current term", "note": "Amendment #1 term, through 2026-10-31" },
+        { "effective": "2026-11-01", "monthlyRent": 1923.20, "source": "Amendment #2", "note": "1-yr extension to 2027-10-31; +3% each subsequent Nov" }
+      ]
+    },
+    "ref": "n2w6amd"
+  },
+  {
     "id": "leasedoc-northshorelazerllcsignedpdf",
     "propertyId": "sanctuary-office-park",
     "building": "Building #2",
