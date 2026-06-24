@@ -1710,6 +1710,25 @@
     "source": "proppli"
   },
   {
+    "id": "ct-kelsey-maps-2026",
+    "tenantId": "tenant-maps",
+    "group": "Mediation Arbitration Professional Systems",
+    "property": "Sanctuary Office Park",
+    "propertyId": "sanctuary-office-park",
+    "status": "Active",
+    "name": "Kelsey",
+    "title": null,
+    "email": "kelsey@maps-adr.com",
+    "phone": "504-831-2141",
+    "roles": [
+      "Secondary"
+    ],
+    "isPrimary": false,
+    "isBroker": false,
+    "notes": null,
+    "source": "manual"
+  },
+  {
     "id": "ct-qvJxoLNdHPqL0pQ3I8EG",
     "tenantId": null,
     "group": "Rose Mountain",
