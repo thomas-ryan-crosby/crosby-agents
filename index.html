@@ -687,13 +687,19 @@ function brokerDocsColCell(docs){
 // ── Copy contact emails to clipboard (all / brokers only / tenants only) ─────
 // Collects a de-duplicated (case-insensitive) list of emails for a property,
 // scoped by isBroker, for pasting into a mail client's To/Bcc field.
+// A contact is "active" if it's tied to a current lease (has a tenantId). The
+// contacts with no tenantId are the "Other Contacts" — moved-out, prospect, or
+// owner-occupied — which appear in `all` but are excluded from active/tenant.
+//   scope: 'all' | 'active' | 'broker' | 'tenant'
 function collectContactEmails(scope, propSlug){
   var E = window.__crosbyEntities || {};
   var seen = {}, out = [];
   (E.contacts || []).forEach(function(c){
     if(propSlug && c.propertyId !== propSlug) return;
+    var active = !!c.tenantId;
+    if(scope === 'active' && !active) return;
     if(scope === 'broker' && !c.isBroker) return;
-    if(scope === 'tenant' && c.isBroker) return;
+    if(scope === 'tenant' && (c.isBroker || !active)) return; // current tenant contacts only
     var e = (c.email || '').trim();
     if(!e) return;
     var k = e.toLowerCase();
@@ -744,8 +750,10 @@ function contactsCopyToolbarHTML(propSlug, ctx){
   ctx = ctx || (propSlug || 'all');
   var all = collectContactEmails('all', propSlug).length;
   if(!all) return '';
+  var active = collectContactEmails('active', propSlug).length;
   var br = collectContactEmails('broker', propSlug).length;
   var tn = collectContactEmails('tenant', propSlug).length;
+  var other = all - active;
   var slug = escHtml(propSlug || '');
   var cid = escHtml(ctx).replace(/[^a-z0-9_-]/gi, '');
   var btn = function(scope, label, n, color){
@@ -757,13 +765,16 @@ function contactsCopyToolbarHTML(propSlug, ctx){
       + iconSvg('copy', 13, color) + '<span class="cce-label">' + label + '</span>'
       + '<span style="font-size:11px;color:#9ca3af;font-weight:500;">' + n + '</span></button>';
   };
+  var divider = '<span style="align-self:stretch;width:1px;background:#e5e7eb;margin:0 2px;"></span>';
   var html = '<div class="card" style="margin-bottom:24px;">';
   html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">' + iconSvg('clipboard-list', 18, '#6b7280') + '<span class="card-title" style="margin-bottom:0;">Copy contact emails</span></div>';
-  html += '<div style="font-size:12px;color:#6b7280;margin-bottom:12px;">Copies a de-duplicated, comma-separated list to your clipboard — paste straight into the To/Bcc field of an email.</div>';
-  html += '<div style="display:flex;gap:10px;flex-wrap:wrap;">'
+  html += '<div style="font-size:12px;color:#6b7280;margin-bottom:12px;">Copies a de-duplicated, comma-separated list to your clipboard — paste straight into the To/Bcc field. <strong>Active</strong> = current-lease contacts only; <strong>All</strong> also includes the ' + other + ' Other Contacts (moved-out, prospect, owner-occupied).</div>';
+  html += '<div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">'
+    + btn('active', 'Active contacts', active, '#0891b2')
     + btn('all', 'All contacts', all, '#2563eb')
-    + btn('broker', 'Brokers only', br, '#7c3aed')
-    + btn('tenant', 'Tenants only', tn, '#0f766e')
+    + divider
+    + btn('tenant', 'Active tenants', tn, '#0f766e')
+    + btn('broker', 'Brokers', br, '#7c3aed')
     + '</div>';
   html += '</div>';
   return html;
