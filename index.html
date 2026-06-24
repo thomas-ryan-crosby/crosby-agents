@@ -418,6 +418,7 @@
   <!-- ═══ PORTFOLIO ═══ -->
   <div class="view active" id="view-portfolio">
     <div class="grid-4" id="portfolioStats"></div>
+    <div id="portfolioCopyEmails"></div>
     <h2 class="card-title">Properties</h2>
     <div class="grid-2" id="propertyGrid" style="margin-bottom:24px;"></div>
   </div>
@@ -736,23 +737,29 @@ function copyContactEmails(scope, propSlug, btnId){
 }
 
 // Toolbar of three copy buttons; counts are computed live from loaded contacts.
-function contactsCopyToolbarHTML(p){
-  var all = collectContactEmails('all', p.slug).length;
+// propSlug = '' (or null) scopes to ALL contacts across the portfolio; pass a
+// property slug to scope to one property. ctx namespaces the button ids so the
+// toolbar can appear in more than one place (portfolio + property detail).
+function contactsCopyToolbarHTML(propSlug, ctx){
+  ctx = ctx || (propSlug || 'all');
+  var all = collectContactEmails('all', propSlug).length;
   if(!all) return '';
-  var br = collectContactEmails('broker', p.slug).length;
-  var tn = collectContactEmails('tenant', p.slug).length;
-  var slug = escHtml(p.slug);
+  var br = collectContactEmails('broker', propSlug).length;
+  var tn = collectContactEmails('tenant', propSlug).length;
+  var slug = escHtml(propSlug || '');
+  var cid = escHtml(ctx).replace(/[^a-z0-9_-]/gi, '');
   var btn = function(scope, label, n, color){
-    return '<button id="cce-' + scope + '" type="button" '
-      + 'onclick="copyContactEmails(\'' + scope + '\',\'' + slug + '\',\'cce-' + scope + '\')" '
+    var id = 'cce-' + cid + '-' + scope;
+    return '<button id="' + id + '" type="button" '
+      + 'onclick="copyContactEmails(\'' + scope + '\',\'' + slug + '\',\'' + id + '\')" '
       + 'style="display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;color:#374151;'
       + 'background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:7px 13px;cursor:pointer;transition:background 140ms;">'
       + iconSvg('copy', 13, color) + '<span class="cce-label">' + label + '</span>'
       + '<span style="font-size:11px;color:#9ca3af;font-weight:500;">' + n + '</span></button>';
   };
-  var html = '<div class="card" style="margin-bottom:16px;">';
+  var html = '<div class="card" style="margin-bottom:24px;">';
   html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">' + iconSvg('clipboard-list', 18, '#6b7280') + '<span class="card-title" style="margin-bottom:0;">Copy contact emails</span></div>';
-  html += '<div style="font-size:12px;color:#6b7280;margin-bottom:12px;">Copies a de-duplicated, comma-separated list to your clipboard — paste straight into the To/Bcc field.</div>';
+  html += '<div style="font-size:12px;color:#6b7280;margin-bottom:12px;">Copies a de-duplicated, comma-separated list to your clipboard — paste straight into the To/Bcc field of an email.</div>';
   html += '<div style="display:flex;gap:10px;flex-wrap:wrap;">'
     + btn('all', 'All contacts', all, '#2563eb')
     + btn('broker', 'Brokers only', br, '#7c3aed')
@@ -1044,6 +1051,8 @@ function renderPortfolio() {
     propHTML += '</div>';
   });
   document.getElementById("propertyGrid").innerHTML = propHTML;
+  var ce = document.getElementById("portfolioCopyEmails");
+  if(ce) ce.innerHTML = contactsCopyToolbarHTML('', 'portfolio');
   lucide.createIcons();
 }
 
@@ -4429,7 +4438,7 @@ function renderPropertyDetail(p) {
     }
 
     // Copy-emails toolbar (all / brokers / tenants) + tenant contacts directory
-    html += contactsCopyToolbarHTML(p);
+    html += contactsCopyToolbarHTML(p.slug, p.slug);
     html += sopContactsHTML(p);
 
     // Terminations & Notices — current tenants who have given termination/vacate notice
