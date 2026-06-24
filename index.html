@@ -682,6 +682,86 @@ function brokerDocsColCell(docs){
 // Prospect / former / owner-occupied contact groups that have no row in the
 // building roster, so they would otherwise be invisible. Current-tenant contacts
 // live inline in the table (see tenantContactsCell / brokerContactsCell).
+
+// ── Copy contact emails to clipboard (all / brokers only / tenants only) ─────
+// Collects a de-duplicated (case-insensitive) list of emails for a property,
+// scoped by isBroker, for pasting into a mail client's To/Bcc field.
+function collectContactEmails(scope, propSlug){
+  var E = window.__crosbyEntities || {};
+  var seen = {}, out = [];
+  (E.contacts || []).forEach(function(c){
+    if(propSlug && c.propertyId !== propSlug) return;
+    if(scope === 'broker' && !c.isBroker) return;
+    if(scope === 'tenant' && c.isBroker) return;
+    var e = (c.email || '').trim();
+    if(!e) return;
+    var k = e.toLowerCase();
+    if(seen[k]) return;
+    seen[k] = 1; out.push(e);
+  });
+  return out;
+}
+
+function fallbackCopyText(text){
+  try {
+    var ta = document.createElement('textarea');
+    ta.value = text; ta.setAttribute('readonly',''); ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    var ok = document.execCommand('copy');
+    document.body.removeChild(ta);
+    return ok;
+  } catch(e) { return false; }
+}
+
+function copyContactEmails(scope, propSlug, btnId){
+  var emails = collectContactEmails(scope, propSlug);
+  var btn = btnId && document.getElementById(btnId);
+  var label = btn && btn.querySelector('.cce-label');
+  var orig = label ? label.textContent : '';
+  var flash = function(msg, bg){
+    if(!btn) return;
+    if(label) label.textContent = msg;
+    btn.style.background = bg || '';
+    setTimeout(function(){ if(label) label.textContent = orig; btn.style.background = ''; }, 1800);
+  };
+  if(!emails.length){ flash('No emails', '#fef3c7'); return; }
+  var text = emails.join(', ');
+  var ok = function(){ flash('Copied ' + emails.length + ' ✓', '#dcfce7'); };
+  var bad = function(){ flash('Copy failed', '#fee2e2'); };
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(ok, function(){ fallbackCopyText(text) ? ok() : bad(); });
+  } else {
+    fallbackCopyText(text) ? ok() : bad();
+  }
+}
+
+// Toolbar of three copy buttons; counts are computed live from loaded contacts.
+function contactsCopyToolbarHTML(p){
+  var all = collectContactEmails('all', p.slug).length;
+  if(!all) return '';
+  var br = collectContactEmails('broker', p.slug).length;
+  var tn = collectContactEmails('tenant', p.slug).length;
+  var slug = escHtml(p.slug);
+  var btn = function(scope, label, n, color){
+    return '<button id="cce-' + scope + '" type="button" '
+      + 'onclick="copyContactEmails(\'' + scope + '\',\'' + slug + '\',\'cce-' + scope + '\')" '
+      + 'style="display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;color:#374151;'
+      + 'background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:7px 13px;cursor:pointer;transition:background 140ms;">'
+      + iconSvg('copy', 13, color) + '<span class="cce-label">' + label + '</span>'
+      + '<span style="font-size:11px;color:#9ca3af;font-weight:500;">' + n + '</span></button>';
+  };
+  var html = '<div class="card" style="margin-bottom:16px;">';
+  html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">' + iconSvg('clipboard-list', 18, '#6b7280') + '<span class="card-title" style="margin-bottom:0;">Copy contact emails</span></div>';
+  html += '<div style="font-size:12px;color:#6b7280;margin-bottom:12px;">Copies a de-duplicated, comma-separated list to your clipboard — paste straight into the To/Bcc field.</div>';
+  html += '<div style="display:flex;gap:10px;flex-wrap:wrap;">'
+    + btn('all', 'All contacts', all, '#2563eb')
+    + btn('broker', 'Brokers only', br, '#7c3aed')
+    + btn('tenant', 'Tenants only', tn, '#0f766e')
+    + '</div>';
+  html += '</div>';
+  return html;
+}
+
 function sopContactsHTML(p) {
   var E = window.__crosbyEntities || {};
   // ONLY non-current-tenant groups (prospect / former / owner-occupied) — current
@@ -4348,7 +4428,8 @@ function renderPropertyDetail(p) {
       });
     }
 
-    // Tenant contacts directory (imported from Proppli)
+    // Copy-emails toolbar (all / brokers / tenants) + tenant contacts directory
+    html += contactsCopyToolbarHTML(p);
     html += sopContactsHTML(p);
 
     // Terminations & Notices — current tenants who have given termination/vacate notice
