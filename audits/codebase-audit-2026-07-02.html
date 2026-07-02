@@ -1,0 +1,219 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Crosby Agents — Codebase Audit (July 2026)</title>
+<style>
+  :root{--navy:#22315d;--navy2:#3c5488;--blue:#5e8ed0;--ink:#1f2937;--mute:#64748b;--line:#e2e8f0;--bg:#f6f8fb;--good:#0f766e;--warn:#b45309;--bad:#b91c1c;--crit:#7f1d1d;}
+  *{box-sizing:border-box;}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Arial,sans-serif;color:var(--ink);margin:0;background:var(--bg);line-height:1.55;}
+  .wrap{max-width:960px;margin:0 auto;padding:32px 26px 80px;}
+  header.doc{border-bottom:3px solid var(--navy);padding-bottom:16px;margin-bottom:10px;}
+  .eyebrow{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--blue);}
+  h1{font-size:28px;color:var(--navy);margin:4px 0 4px;}
+  .byline{color:var(--mute);font-size:13px;}
+  h2{font-size:20px;color:var(--navy);margin:36px 0 8px;padding-bottom:6px;border-bottom:2px solid var(--blue);}
+  h3{font-size:15px;color:var(--navy2);margin:22px 0 6px;}
+  p{margin:9px 0;font-size:14px;}
+  .lead{font-size:15px;color:#334155;}
+  code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;background:#eef2f7;border:1px solid #e1e7ef;border-radius:4px;padding:1px 5px;color:#0f172a;}
+  .callout{background:#eef4fb;border:1px solid #d6e3f4;border-left:4px solid var(--blue);border-radius:10px;padding:14px 16px;margin:16px 0;}
+  .callout.warn{background:#fffbeb;border-color:#fde68a;border-left-color:var(--warn);}
+  .callout.good{background:#ecfdf5;border-color:#a7f3d0;border-left-color:var(--good);}
+  .callout.bad{background:#fef2f2;border-color:#fecaca;border-left-color:var(--bad);}
+  .callout h3{margin-top:0;}
+  table{border-collapse:collapse;width:100%;font-size:13px;margin:14px 0;}
+  th{background:var(--navy);color:#fff;text-align:left;padding:8px 10px;font-size:11.5px;letter-spacing:.02em;}
+  td{border-bottom:1px solid var(--line);padding:8px 10px;vertical-align:top;}
+  tr:nth-child(even) td{background:#fafcff;}
+  .sev{display:inline-block;font-size:10px;font-weight:800;border-radius:5px;padding:2px 7px;letter-spacing:.03em;white-space:nowrap;color:#fff;}
+  .sev.crit{background:var(--crit);}
+  .sev.high{background:var(--bad);}
+  .sev.med{background:var(--warn);}
+  .sev.low{background:#64748b;}
+  .sev.ok{background:var(--good);}
+  .scorecard{display:flex;gap:12px;flex-wrap:wrap;margin:16px 0;}
+  .scorecard .box{flex:1 1 120px;border:1px solid var(--line);border-radius:11px;background:#fff;padding:13px 15px;text-align:center;}
+  .scorecard .n{font-size:26px;font-weight:800;line-height:1;}
+  .scorecard .l{font-size:11px;color:var(--mute);margin-top:5px;text-transform:uppercase;letter-spacing:.04em;}
+  .finding{border:1px solid var(--line);border-left-width:4px;border-radius:9px;background:#fff;padding:12px 15px;margin:11px 0;}
+  .finding.crit{border-left-color:var(--crit);}
+  .finding.high{border-left-color:var(--bad);}
+  .finding.med{border-left-color:var(--warn);}
+  .finding.low{border-left-color:#94a3b8;}
+  .finding .ft{font-weight:700;color:var(--navy);font-size:14px;margin-bottom:2px;}
+  .finding .loc{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11px;color:var(--mute);}
+  .finding .fix{font-size:13px;margin-top:6px;}
+  .finding .fix b{color:var(--good);}
+  .id{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11px;color:var(--blue);font-weight:700;}
+  ul.tight{margin:8px 0;padding-left:20px;font-size:14px;}ul.tight li{margin:5px 0;}
+  ol.phases{counter-reset:p;list-style:none;padding:0;margin:14px 0;}
+  ol.phases li{position:relative;padding:12px 14px 12px 52px;border:1px solid var(--line);border-radius:10px;background:#fff;margin-bottom:10px;font-size:14px;}
+  ol.phases li::before{counter-increment:p;content:counter(p);position:absolute;left:14px;top:12px;width:24px;height:24px;border-radius:50%;background:var(--navy);color:#fff;font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center;}
+  ol.phases b{color:var(--navy);}
+  .tag{display:inline-block;font-size:9.5px;font-weight:700;border-radius:4px;padding:1px 6px;background:#eef2f7;color:var(--navy2);margin-left:5px;vertical-align:middle;}
+  footer{margin-top:38px;border-top:1px solid var(--line);padding-top:14px;color:var(--mute);font-size:11.5px;text-align:center;}
+  a{color:#2563eb;}
+</style></head>
+<body><div class="wrap">
+
+<header class="doc">
+  <div class="eyebrow">Crosby Development · Sanctuary Office Park · Engineering</div>
+  <h1>Codebase Audit — <code>crosby-agents</code></h1>
+  <div class="byline">Comprehensive review of intended functionality, software best-practice compliance, and feature gaps · July 2, 2026</div>
+</header>
+
+<p class="lead">This audit covers the full <code>crosby-agents</code> stack: the dashboard SPA (<code>index.html</code>), the data + derivation layer (<code>crosby-data.js</code>, <code>crosby-viewmodel.js</code>), the shared rent engine (<code>crosby-rent-engine.js</code>), the WhatsApp assistant backend (<code>api/</code>, <code>lib/</code>), the seed/OCR data pipeline, and the security configuration (Firestore/Storage rules, auth, git hygiene). It was produced by five parallel specialist reviews plus a manual configuration pass, with findings verified against the current code.</p>
+
+<h2>1 · Executive summary</h2>
+<p>The product is <strong>functionally strong and, in its core, well-engineered</strong>. The property-management surface — rent-roll generation with a real escalation/abatement/holdover engine, Excel &amp; PDF export, COI compliance, contacts, access instructions, lease-document library, occupancy outlook, and a 20-tool WhatsApp assistant — works end-to-end. The rent engine is the standout layer: pure, deterministic, and shared identically by the dashboard, the Excel export, and the assistant, so those surfaces cannot disagree. Two of the highest-stakes security controls people usually get wrong — <em>Twilio webhook signature verification</em> and a <em>phone-number allowlist</em> — are present and correctly implemented.</p>
+
+<p>The weaknesses are concentrated and addressable. They fall into five buckets: <strong>(1) data-protection posture</strong> — auth is switched off and Firestore is world-readable, exposing all tenant PII including door/alarm/key codes; <strong>(2) output escaping</strong> — Firestore data is rendered into the DOM without HTML-escaping in the core tables, a stored-XSS surface; <strong>(3) test/CI wiring</strong> — the rent engine, the single source of truth for money, is not run by <code>npm test</code> and its regression baseline is self-referential; <strong>(4) resilience &amp; data hygiene</strong> — all-or-nothing data loading, fragile exact-string joins, and dirty imported data; and <strong>(5) feature completeness</strong> — lease term-dates exist only for one building, there are no proactive deadline alerts, and a couple of buttons are stubs.</p>
+
+<div class="callout"><h3>How to read severity</h3>
+<p style="margin:0"><span class="sev crit">CRITICAL</span> exposes data or breaks a core guarantee; fix before broad use. <span class="sev high">HIGH</span> material correctness/security risk. <span class="sev med">MEDIUM</span> real but bounded. <span class="sev low">LOW</span> hygiene/polish. Several items are <strong>deliberate, documented choices</strong> (auth off, public access instructions) — they're listed for completeness and flagged as such; the decision is yours.</p></div>
+
+<div class="scorecard">
+  <div class="box"><div class="n" style="color:var(--crit)">4</div><div class="l">Critical</div></div>
+  <div class="box"><div class="n" style="color:var(--bad)">13</div><div class="l">High</div></div>
+  <div class="box"><div class="n" style="color:var(--warn)">18</div><div class="l">Medium</div></div>
+  <div class="box"><div class="n" style="color:#64748b">14</div><div class="l">Low</div></div>
+  <div class="box"><div class="n" style="color:var(--good)">✓</div><div class="l">Core works</div></div>
+</div>
+
+<h2>2 · Start here — the priority findings</h2>
+<p>If you do nothing else, address these first. Each links to its detailed entry below.</p>
+
+<div class="finding crit"><div class="ft"><span class="sev crit">CRITICAL</span> &nbsp;<span class="id">SEC‑1</span> · Dashboard is public — all tenant PII and door/alarm/key codes are world-readable</div>
+<div class="loc">firebase-config.js:35 · firestore.rules:50‑53</div>
+<p style="margin:6px 0 0;font-size:13px;"><code>AUTH_ENABLED=false</code> plus <code>allow read: if true</code> means anyone with the URL can read every tenant name, phone, email, rent, lease term, and the <strong>access-instruction door/alarm/key codes</strong>. Four collections (<code>marketing</code>, <code>marketingMedia</code>, <code>proposedSuites</code>, <code>trackerPrefs</code>) are also <strong>publicly writable</strong>. This is documented as a temporary preview choice — but it is a live exposure, not a preview nicety.</p>
+<div class="fix"><b>Fix:</b> Set <code>AUTH_ENABLED=true</code>, restore <code>allow read: if isOperator()</code>, redeploy rules. If public read must stay for now, at minimum move the door/alarm/key codes out of the public dataset (Firestore-only, operator-gated) and replace the public-write collections with scoped writes.</div></div>
+
+<div class="finding crit"><div class="ft"><span class="sev crit">CRITICAL</span> &nbsp;<span class="id">FE‑1</span> · Stored XSS — Firestore data rendered into the DOM without escaping</div>
+<div class="loc">index.html:4442 (roster) · index.html:1905‑1949 (markdown doc renderer) · +6 sites</div>
+<p style="margin:6px 0 0;font-size:13px;">The core roster table and the live markdown document renderer interpolate tenant names, suite labels, doc titles, and document bodies straight into <code>innerHTML</code> with no escaping. An <code>escHtml()</code> helper exists and is used in newer code, but unevenly. A record containing <code>&lt;img src=x onerror=…&gt;</code> executes script for every viewer. Combined with the public-write collections (SEC‑1), this is reachable.</p>
+<div class="fix"><b>Fix:</b> Escape every interpolated data field with <code>escHtml()</code> at the sink; run the markdown output through a sanitizer (DOMPurify) or escape each line before inline transforms; allowlist <code>http(s):</code> on injected <code>href</code>s.</div></div>
+
+<div class="finding crit"><div class="ft"><span class="sev crit">CRITICAL</span> &nbsp;<span class="id">API‑1</span> · WhatsApp webhook fails OPEN when its env vars are unset</div>
+<div class="loc">api/whatsapp.js:37‑42, 57‑63 · api/whatsapp-status.js:30‑35</div>
+<p style="margin:6px 0 0;font-size:13px;">Signature verification only runs <em>if</em> <code>TWILIO_AUTH_TOKEN</code> is set; the allowlist only enforces <em>if</em> <code>ALLOWED_NUMBERS</code> is non-empty. A deploy that forgets either silently downgrades to "anyone can POST forged requests / any number gets full PII answers" rather than failing closed.</p>
+<div class="fix"><b>Fix:</b> In production, refuse to start / return 500 when either var is missing. Only allow the fail-open path under an explicit non-production flag.</div></div>
+
+<div class="finding crit"><div class="ft"><span class="sev crit">CRITICAL</span> &nbsp;<span class="id">ENG‑1</span> · The rent engine — the source of truth for money — is not run by <code>npm test</code></div>
+<div class="loc">package.json:8 · scripts/test-rent-engine.mjs</div>
+<p style="margin:6px 0 0;font-size:13px;"><code>npm test</code> runs <code>tests/*.test.mjs</code> (which exist for other modules) but <strong>not</strong> the 2,858-assertion rent-engine suite in <code>scripts/</code>. So CI is green while never exercising rent math. Compounding it, the regression baseline is regenerated from engine output, so it's a self-fulfilling oracle: a logic change that also shifts the baseline passes silently; only ~50 hand-verified golden cases can actually catch a regression.</p>
+<div class="fix"><b>Fix:</b> Add <code>tests/rent-engine.test.mjs</code> that imports and asserts (or point the test script at the suite). Freeze the baseline (commit once, never regenerate) or derive it from an independent implementation.</div></div>
+
+<h2>3 · Security &amp; data protection</h2>
+<p>The highest-stakes area. Note the strong parts first: Twilio signature verification is correct (HMAC-SHA1, constant-time compare), the phone allowlist is enforced before any data access, Storage is locked down except the intentionally-public <code>marketing/</code> path, secrets are all env-driven with none committed, and <code>.gitignore</code> correctly excludes service-account keys and <code>.env</code>.</p>
+
+<div class="finding crit"><div class="ft"><span class="sev crit">CRITICAL</span> <span class="id">SEC‑1</span> — Public read of all PII + public write on 4 collections <span class="tag">DELIBERATE / DOCUMENTED</span></div><div class="loc">firebase-config.js:35 · firestore.rules:27‑53</div><div class="fix">See §2. The <code>access-instructions</code> collection (door/alarm/key codes, alarm-bypass password) being world-readable is the sharpest edge of this. <b>Decide intentionally.</b></div></div>
+
+<div class="finding high"><div class="ft"><span class="sev high">HIGH</span> <span class="id">SEC‑2</span> — Tenant PII (incl. access key codes) committed to git</div><div class="loc">.gitignore (excludes *.xls/*.csv but not data/*.json)</div><div class="fix"><code>data/tenants.json</code>, <code>contacts.json</code>, <code>leases.json</code>, and <code>access-instructions.json</code> are version-controlled — PII lives in history forever. Mitigated only if the repo is private. <b>Fix:</b> at minimum move access-code data to a gitignored/Firestore-only source; decide consciously whether the rest belongs in git.</div></div>
+
+<div class="finding high"><div class="ft"><span class="sev high">HIGH</span> <span class="id">API‑2</span> — No rate limiting on a paid, PII-exposing endpoint</div><div class="loc">api/whatsapp.js:30 · lib/portfolio.mjs:24‑32</div><div class="fix">Every inbound message = full Firestore read of 11 collections + up to 5 LLM round-trips ×3 retries, with no throttle. A compromised (or, with API‑1, any) number can drive unbounded spend and data egress. <b>Fix:</b> per-number token-bucket in the existing session doc or Vercel KV; short-circuit before <code>buildContext()</code>.</div></div>
+
+<div class="finding high"><div class="ft"><span class="sev high">HIGH</span> <span class="id">API‑3</span> — Prompt-injection / tool-abuse can enumerate all door codes &amp; contacts in bulk</div><div class="loc">api/whatsapp.js:153‑176 · lib/assistant-tools.mjs:423‑447</div><div class="fix">Any allowlisted sender's free text drives an autonomous tool-calling loop over PII and <em>physical access codes</em>; <code>access_instructions</code> with no filter returns up to 80 rows including codes. Read-only and reply-only (bounded), but the allowlist is the <em>only</em> real authorization and it is flat. <b>Fix:</b> role-tier the allowlist; require <code>access_instructions</code> to carry a specific filter before returning any code; refuse "list all codes."</div></div>
+
+<div class="finding med"><div class="ft"><span class="sev med">MEDIUM</span> <span class="id">API‑4</span> — Assistant answers (rents, contacts, door codes) logged to Firestore in plaintext, indefinitely</div><div class="loc">lib/portfolio.mjs:142‑156</div><div class="fix"><code>assistantLog</code>/<code>deliveryLog</code> store sender number + question + full answer with no retention or redaction — a growing plaintext PII/secrets store. <b>Fix:</b> Firestore TTL, redact code answers, lock these collections to admin-only reads.</div></div>
+
+<div class="finding med"><div class="ft"><span class="sev med">MEDIUM</span> <span class="id">SEC‑3</span> — Tokenized Storage URLs are bearer links</div><div class="loc">lease-docs.json url/htmlUrl · api/whatsapp.js:181‑202</div><div class="fix">Lease-PDF links use permanent <code>?token=</code> download URLs that bypass Storage rules; anyone with a link (or to whom the assistant sends one) can open the document. Acceptable by design but worth knowing; rotate a token if a link leaks.</div></div>
+
+<div class="finding med"><div class="ft"><span class="sev med">MEDIUM</span> <span class="id">API‑5</span> — Signature URL is reconstructed from client-suppliable headers</div><div class="loc">lib/twilio.mjs:26‑30</div><div class="fix">Rebuilding the signed URL from <code>x-forwarded-*</code> can make legitimate requests fail (proxy/domain/trailing-slash quirks), tempting an operator to disable verification (→ API‑1). Not a forge vector. <b>Fix:</b> pin the expected webhook URL via env.</div></div>
+
+<div class="callout good" style="margin-top:14px"><h3>Done well (security)</h3><p style="margin:0">Twilio HMAC signature verification with constant-time compare; phone allowlist before data access; Storage locked except size/type-limited public <code>marketing/</code>; all secrets env-driven, none committed; <code>.gitignore</code> covers service-account keys and <code>.env</code>; the public Firebase web config is correctly treated as non-secret; assistant tools are all read-only (injection can't mutate data or exfiltrate off-thread).</p></div>
+
+<h2>4 · Frontend — <code>index.html</code></h2>
+
+<div class="finding crit"><div class="ft"><span class="sev crit">CRITICAL</span> <span class="id">FE‑1</span> — Unescaped data in roster table &amp; markdown renderer (stored XSS)</div><div class="loc">index.html:4442, 4472, 4486, 1905‑1949, 2276, 2349; origin crosby-viewmodel.js:308,332,342</div><div class="fix">See §2. ~8 sinks total; escape at each.</div></div>
+
+<div class="finding high"><div class="ft"><span class="sev high">HIGH</span> <span class="id">FE‑2</span> — Silent failure on data-load error → blank dashboard, no message</div><div class="loc">index.html:5713</div><div class="fix"><code>catch(e){ console.error }</code> only; if Firestore/CDN fails the user sees an empty board with the auth overlay already hidden. <b>Fix:</b> render a visible "Couldn't load — retry" state.</div></div>
+
+<div class="finding high"><div class="ft"><span class="sev high">HIGH</span> <span class="id">FE‑3</span> — 5,500-line single file, ~200 functions, all state global</div><div class="loc">index.html (whole)</div><div class="fix">Every structure lives on <code>window</code>; any function can mutate any state. The dominant maintainability risk (matches the System Architecture doc's own diagnosis). <b>Fix (incremental):</b> extract the rent-roll generator and the ~1,500 lines of hardcoded doc-builder HTML into modules; move globals behind a state object.</div></div>
+
+<div class="finding med"><div class="ft"><span class="sev med">MEDIUM</span> <span class="id">FE‑4</span> — Every Firestore snapshot triggers a full re-render</div><div class="loc">index.html:5717‑5720</div><div class="fix">Four live collections each call <code>rerenderActiveViews()</code> → full <code>innerHTML</code> rebuild + <code>lucide.createIcons()</code> full-DOM rescan, even for off-screen collections; drops focus/scroll and closes open popovers mid-interaction. <b>Fix:</b> debounce; re-render only the active view; scope icon creation to the new subtree.</div></div>
+
+<div class="finding med"><div class="ft"><span class="sev med">MEDIUM</span> <span class="id">FE‑5</span> — Interactive <code>&lt;div&gt;</code>s and <code>&lt;span&gt;</code>s instead of buttons (a11y)</div><div class="loc">index.html:1037, 1196, 2221, 2311, 2351</div><div class="fix">Property/doc cards and info-popovers are click-only divs/spans — not keyboard-focusable or screen-reader-operable; access codes and lease details sit behind them. <b>Fix:</b> real <code>&lt;button&gt;</code> / <code>role=button</code> + <code>tabindex</code> + Enter/Space + <code>aria-expanded</code>.</div></div>
+
+<div class="finding med"><div class="ft"><span class="sev med">MEDIUM</span> <span class="id">FE‑6</span> — <code>switchView</code> null-derefs on an unknown id; <code>renderPropertyDetail</code> is one ~400-line function</div><div class="loc">index.html:839 · 4274‑4690</div><div class="fix">Guard the view element before <code>.classList</code>; split the detail renderer per section.</div></div>
+
+<div class="finding low"><div class="ft"><span class="sev low">LOW</span> <span class="id">FE‑7</span> — Three near-duplicate escape helpers; positional <code>prop-N</code> ids; large inline static data; color-only status; empty <code>alt</code></div><div class="loc">index.html:635/974/2289, 1037, 1250‑1900, 4433, 3147</div><div class="fix">Consolidate to one escaper (reduces "wrong escaper in attribute context" risk); key ids by slug; lazy-load the big static blocks; pair urgency color with text/icon; populate image alts.</div></div>
+
+<h2>5 · Data &amp; derivation layer</h2>
+<p>Referential integrity on the core keys is <strong>clean</strong> — no dangling <code>tenantId/unitId/buildingId/propertyId/leaseId</code> foreign keys across 486 leases / 495 units / 131 lease-docs / 109 contacts / 13 COIs. The risks are join fragility, resilience, and dirty imported data.</p>
+
+<div class="finding high"><div class="ft"><span class="sev high">HIGH</span> <span class="id">DATA‑1</span> — Lease-doc escalation join is an exact <code>name||suite</code> string match — 17 misses today</div><div class="loc">crosby-viewmodel.js:167, 242</div><div class="fix">17/131 lease-docs fail to resolve their escalation due to name/suite drift. The docs already carry an authoritative <code>lease.leaseId</code>. <b>Fix:</b> join via <code>leaseId → leases</code>, not a reconstructed name key — eliminates every miss and the rename fragility.</div></div>
+
+<div class="finding high"><div class="ft"><span class="sev high">HIGH</span> <span class="id">DATA‑2</span> — Two distinct tenants share the identical name "Detox Management Company, LLC"</div><div class="loc">tenants.json (tenant-detox, tenant-detox-4)</div><div class="fix">Any name-keyed join (COIs, escalation, doc grouping) conflates them. <b>Fix:</b> disambiguate display names and route all joins through <code>tenantId</code>.</div></div>
+
+<div class="finding high"><div class="ft"><span class="sev high">HIGH</span> <span class="id">DATA‑3</span> — All-or-nothing entity load: one collection failure blanks the whole dashboard</div><div class="loc">crosby-data.js:89‑93</div><div class="fix"><code>Promise.all</code> over 10 <code>getDocs</code> — a single read failure rejects everything with no partial fallback (local mode degrades gracefully; Firestore mode doesn't). <b>Fix:</b> <code>Promise.allSettled</code> / per-collection <code>.catch(()=&gt;[])</code>.</div></div>
+
+<div class="finding high"><div class="ft"><span class="sev high">HIGH</span> <span class="id">DATA‑4</span> — 162 active leases have null/zero rent but still count as occupied → <code>avgRentSF</code> silently diluted</div><div class="loc">crosby-viewmodel.js:305, 371</div><div class="fix">Mostly the residential backfill. Occupancy looks full while average rent is quietly wrong, with no flag. <b>Fix:</b> track a "rent-unknown occupied SF" bucket; exclude it from <code>avgRentSF</code> or badge it.</div></div>
+
+<div class="finding med"><div class="ft"><span class="sev med">MEDIUM</span> <span class="id">DATA‑5</span> — Entities are a one-shot read; derived urgency freezes at page-load date</div><div class="loc">crosby-data.js:79‑94 vs onSnapshot state</div><div class="fix">Editing a lease/COI in Firestore doesn't refresh until full reload; expiry/notice tones are frozen at load-time <code>today</code>. <b>Fix:</b> subscribe entities or periodically re-load + re-derive with a fresh <code>today</code>.</div></div>
+
+<div class="finding med"><div class="ft"><span class="sev med">MEDIUM</span> <span class="id">DATA‑6</span> — Corrupt phone numbers flow through untouched</div><div class="loc">contacts.json phone field</div><div class="fix">~10/80 are invalid (e.g. <code>98577806805042894939</code> — two numbers jammed; 7- and 9-digit fragments). Reach the roster and the WhatsApp assistant. <b>Fix:</b> normalize to E.164 at seed time; flag non-10/11-digit values.</div></div>
+
+<div class="finding med"><div class="ft"><span class="sev med">MEDIUM</span> <span class="id">DATA‑7</span> — Embedded <code>lease</code> snapshot in lease-docs has drifted from authoritative <code>leases.json</code> (3 leases)</div><div class="loc">lease-docs.json .lease vs leases.json · crosby-viewmodel.js:248</div><div class="fix">Non-historical doc cards can show a different notice/term date than the lease-terms table for the same suite (e.g. Nationwide 203, Thomas 304). <b>Fix:</b> re-hydrate current-term fields from <code>leases.json</code> by <code>leaseId</code> at derive time; keep embedded snapshots only for superseded amendments and label them as-of.</div></div>
+
+<div class="finding med"><div class="ft"><span class="sev med">MEDIUM</span> <span class="id">DATA‑8</span> — Seed/sync are upsert-only: deletions in JSON never propagate to Firestore</div><div class="loc">seed-firestore.mjs:38 · sync-firestore.mjs:40</div><div class="fix">Merge-writes are correctly idempotent and preserve approval status, but a removed record stays orphaned in Firestore forever. <b>Fix:</b> add a reconcile/diff-and-delete pass, or document that deletions need manual cleanup.</div></div>
+
+<div class="finding med"><div class="ft"><span class="sev med">MEDIUM</span> <span class="id">DATA‑9</span> — COI compliance is brittle to labeling</div><div class="loc">crosby-viewmodel.js:120‑124, 223</div><div class="fix">GL check matches only a coverage literally typed "General Liability" (else flags non-compliant); COI→roster join is exact-name. Benign on today's 13 COIs, brittle on the next rename/relabel. <b>Fix:</b> fall back to certificate-level limits; treat "no GL line" as "unverified" not "below requirement"; add <code>tenantId</code> to <code>cois.json</code>.</div></div>
+
+<div class="finding low"><div class="ft"><span class="sev low">LOW</span> <span class="id">DATA‑10</span> — <code>fetchJson</code> swallows errors to null; stored <code>daysToNoticeDeadline</code> rots; <code>daysBetween</code> TZ skew; seeder path/id not validated; de-facto untyped schema</div><div class="loc">crosby-data.js:48 · leases.json · crosby-viewmodel.js:17‑20 · seed-firestore.mjs:36,75</div><div class="fix">Log failing URLs; drop the frozen countdown field; normalize <code>today</code> to UTC-midnight in <code>daysBetween</code> as <code>humanUntil</code> does; assert <code>id</code> presence + path containment in the seeder; add a per-collection JSON-schema/seed-time validator.</div></div>
+
+<h2>6 · Rent engine &amp; test quality</h2>
+<p>The math is <strong>sound on every real path probed</strong> — layered model, net-signed escalation, rentSchedule segment selection, terminate-on-the-1st, leap years, and holdover×abatement ordering all verified correct. The issues are test wiring and "too-forgiving" input handling.</p>
+
+<div class="finding crit"><div class="ft"><span class="sev crit">CRITICAL</span> <span class="id">ENG‑1</span> — Suite not in <code>npm test</code> + self-fulfilling baseline</div><div class="loc">package.json:8 · scripts/rent-engine-baseline.json</div><div class="fix">See §2.</div></div>
+
+<div class="finding high"><div class="ft"><span class="sev high">HIGH</span> <span class="id">ENG‑2</span> — Expired non-auto-renew "active" lease holds over forever with no terminal bound</div><div class="loc">crosby-rent-engine.js:40‑43, 60‑62</div><div class="fix">Holdover sets <code>term=null</code>, skipping the after-term zero guard, so a lease that ended years ago keeps billing indefinitely into the rent roll &amp; Excel. Intended for genuine month-to-month, but uncapped: any stale lease missing <code>status:"vacating"</code> silently pollutes all future months. <b>Fix:</b> explicit holdover-end field or a sanity cap.</div></div>
+
+<div class="finding high"><div class="ft"><span class="sev high">HIGH</span> <span class="id">ENG‑3</span> — Whole feature branches have only one synthetic test each; no real-data coverage</div><div class="loc">scripts/test-rent-engine.mjs:118‑132</div><div class="fix">No lease in <code>data/leases.json</code> uses <code>holdover</code>, <code>otherCharges</code>, or <code>concessions/tiAllowance</code>, so the 2,807-cell baseline exercises none of them; <code>netEffectiveRent</code> default window, the null guard, and the 600-month cap are untested. <b>Fix:</b> add real-data fixtures for each branch.</div></div>
+
+<div class="finding med"><div class="ft"><span class="sev med">MEDIUM</span> <span class="id">ENG‑4</span> — Money is never rounded at the engine boundary</div><div class="loc">crosby-rent-engine.js:77, 88, 125</div><div class="fix">Raw float products reach every consumer (e.g. <code>13506.105719999998</code>); <code>annualRent</code> sums 12 unrounded months, so it can differ in cents from the sum of displayed months across the three surfaces this engine exists to keep identical. <b>Fix:</b> round to cents in <code>rentForMonth</code>/<code>annualRent</code>.</div></div>
+
+<div class="finding med"><div class="ft"><span class="sev med">MEDIUM</span> <span class="id">ENG‑5</span> — Silent garbage-in: malformed lease data yields a plausible wrong number, not an error</div><div class="loc">crosby-rent-engine.js:32, 47, 65‑80</div><div class="fix">Inverted abatement ranges still abate; <code>escalationMonth:0</code> silently disables escalation; <code>13</code> rolls to next January; non-array <code>abatements</code>/<code>rentSchedule</code> is swallowed; <code>monthlyRent:"abc"</code> → $0. <b>Fix:</b> validate at the boundary (month 1–12, <code>from≤to</code>, array shapes, numeric rent) and surface a warning rather than a quiet number.</div></div>
+
+<div class="callout good" style="margin-top:12px"><h3>Done well (engine)</h3><p style="margin:0">Pure/deterministic, no DOM/IO; timezone-safe local date parsing; correct de-escalation across the commencement-year plateau; single source shared by dashboard + Excel + assistant; 2,858 assertions that <em>do</em> pass when run manually.</p></div>
+
+<h2>7 · Feature completeness &amp; gaps</h2>
+<p>The core is complete. Gaps cluster in data completeness, proactive automation, and two stub buttons.</p>
+
+<table>
+<tr><th>Feature</th><th style="width:90px">Status</th><th>Notes</th></tr>
+<tr><td>Rent roll + engine (escalation/abatement/holdover/rentSchedule)</td><td><span class="sev ok">WORKS</span></td><td>Strongest layer; provenance tags emitted.</td></tr>
+<tr><td>Excel / PDF export</td><td><span class="sev ok">WORKS</span></td><td>ExcelJS + print windows.</td></tr>
+<tr><td>COI / insurance compliance</td><td><span class="sev med">PARTIAL</span></td><td>Derived correctly but only inline badges — no compliance view/export/reminder.</td></tr>
+<tr><td>Contacts + copy-emails</td><td><span class="sev ok">WORKS</span></td><td>All / active / tenants / brokers.</td></tr>
+<tr><td>Access instructions · Lease-doc library · Terminations · Occupancy outlook</td><td><span class="sev ok">WORKS</span></td><td>—</td></tr>
+<tr><td>Leasing/marketing · Proposed suites · Playbook</td><td><span class="sev ok">WORKS</span></td><td>Live multi-user via Firestore.</td></tr>
+<tr><td>WhatsApp assistant (20 read-only tools)</td><td><span class="sev ok">WORKS</span></td><td>Groq Llama + OpenAI fallback (not Claude).</td></tr>
+<tr><td>"Convert to DOCX" / "Create Gmail Draft" buttons</td><td><span class="sev high">STUB</span></td><td><code>alert('…coming soon')</code> — index.html:1128‑1129.</td></tr>
+<tr><td>Marketing-agent fleet (Agents/Schedule/Metrics)</td><td><span class="sev med">SCAFFOLD</span></td><td>UI renders; Metrics show "No agents deployed yet."</td></tr>
+<tr><td>Auth / Google sign-in gate</td><td><span class="sev high">DISABLED</span></td><td>Coded, off via <code>AUTH_ENABLED=false</code> (see SEC‑1).</td></tr>
+<tr><td>Claude lease-extraction pipeline (build-time)</td><td><span class="sev high">UNBUILT</span></td><td>Designed in <code>docs/rent-roll-engine.html</code> §4‑6; no extraction/reconcile script exists.</td></tr>
+<tr><td>In-app "Data Schema Reference" doc</td><td><span class="sev med">STALE</span></td><td>Still says "13 records, Bldg #1 only"; data now 485+.</td></tr>
+</table>
+
+<h3>Prioritized gaps</h3>
+<div class="finding high"><div class="ft"><span class="sev high">HIGH</span> <span class="id">FEAT‑1</span> — Lease term-dates exist only for Sanctuary Building #1</div><div class="loc">data/CHANGELOG.md (2026‑06‑11)</div><div class="fix">Buildings #2‑5 and all residential leases were loaded rent-only — <code>commenced/terminates/notice/escalation</code> are null. This silently degrades <em>every date-driven feature</em> (expiration &amp; notice scans, rent projection, occupancy outlook, lease-action badges) to one building of the flagship property. <b>Fix:</b> backfill term dates (the intake pipeline already produces them for #1).</div></div>
+
+<div class="finding high"><div class="ft"><span class="sev high">HIGH</span> <span class="id">FEAT‑2</span> — No proactive alerts/reminders</div><div class="loc">(absent) · logic exists in leaseAction / deriveInsurance / notice_deadlines</div><div class="fix">The app <em>computes</em> lease-expiration, notice-deadline, and COI-expiration urgency and can <em>answer</em> when asked, but nothing <em>pushes</em>. For a property manager this is the single most valuable missing capability given the dates are already modeled. <b>Fix:</b> a scheduled job (cron/Vercel) that emails/WhatsApps the operator when a deadline enters its window.</div></div>
+
+<div class="finding med"><div class="ft"><span class="sev med">MEDIUM</span> <span class="id">FEAT‑3</span> — Two action buttons are stubs; extraction pipeline unbuilt; schema doc stale</div><div class="loc">index.html:1128‑1129, 5089‑5094 · docs/rent-roll-engine.html §4‑6</div><div class="fix">Wire DOCX/Gmail or hide them; build (or de-scope) the Claude extraction/reconciliation step that would retire the manual JSON hand-wiring; refresh the in-app schema counts.</div></div>
+
+<div class="finding med"><div class="ft"><span class="sev med">MEDIUM</span> <span class="id">FEAT‑4</span> — No rent invoicing/AR, no dedicated COI view, no audit trail; net-effective-rent computed but never surfaced</div><div class="loc">—</div><div class="fix">Billing/arrears may be intentionally out of scope (bill elsewhere); if so, note it. <code>netEffectiveRent</code> + TI + holdover premium are built in the engine but no UI/Excel column exposes them — low-effort, high-value surface. <code>CHANGELOG.md</code> is a hand-kept log, not an enforced trail — consider per-field history + backups.</div></div>
+
+<div class="finding low"><div class="ft"><span class="sev low">LOW</span> <span class="id">FEAT‑5</span> — Semi-manual ingestion; single-property/operator ceiling; 3 uploaded-but-unlinked lease PDFs; known data-quality TODOs</div><div class="loc">CHANGELOG.md · system-architecture.html §3</div><div class="fix">All acknowledged in the tech docs. Ingestion automation, multi-property/roles, and the <code>Maven Group</code>/<code>CONN_BLDG1_AMD1</code> unlinked PDFs + duplicate Mandeville unit ids are the cleanup backlog.</div></div>
+
+<h2>8 · Remediation roadmap</h2>
+<ol class="phases">
+  <li><b>Now — close the exposures (days).</b> Decide the auth posture (SEC‑1): re-enable auth or, at minimum, pull door/alarm/key codes out of public read and lock the 4 public-write collections. Escape the XSS sinks (FE‑1). Make the WhatsApp webhook fail closed (API‑1). Wire the rent engine into <code>npm test</code> and freeze the baseline (ENG‑1).</li>
+  <li><b>Soon — correctness &amp; resilience (1‑2 weeks).</b> Cap/flag indefinite holdover (ENG‑2) and round money at the boundary (ENG‑4). Switch escalation/COI joins to <code>leaseId</code>/<code>tenantId</code> (DATA‑1/2/9). Make data loading degrade gracefully and surface load errors (DATA‑3, FE‑2). Add rate limiting + code-enumeration guards to the assistant (API‑2/3). Backfill Building #2‑5 lease dates (FEAT‑1).</li>
+  <li><b>Next — proactive value (2‑4 weeks).</b> Ship the deadline-alert job (FEAT‑2) and a COI-compliance view/export (FEAT‑4). Surface net-effective-rent. Add seed-time data validation (phones, schema, id/path) and a delete-reconcile pass (DATA‑6/8/10).</li>
+  <li><b>Later — only if scope grows.</b> Incrementally de-monolith <code>index.html</code> (FE‑3), build the Claude extraction/reconciliation pipeline to retire manual JSON entry, and add multi-property/roles + audit trail. The System Architecture doc's "harden, don't rewrite" guidance still holds.</li>
+</ol>
+
+<div class="callout"><h3>Bottom line</h3><p style="margin:0">This is a capable, genuinely useful tool with an unusually solid rent-calculation core and a well-secured assistant webhook. Its risk is concentrated in a deliberately-open data posture, uneven output escaping, and test/CI wiring — all fixable in days without a rewrite. The largest <em>product</em> lever is turning the dates the app already models into proactive alerts, and extending real lease terms beyond Building&nbsp;#1.</p></div>
+
+<footer>Crosby Development · Sanctuary Office Park · <code>crosby-agents</code> codebase audit · July 2, 2026 · Prepared from five parallel specialist reviews + manual configuration pass. Internal — contains security findings; not published to the dashboard.</footer>
+</div></body></html>
