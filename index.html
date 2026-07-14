@@ -926,9 +926,21 @@ var BRAND_ASSETS = [
   { id:"metairie-plaza",        label:"Metairie Plaza", grp:"community", kind:"logo", img:"metairie-plaza.jpg", bg:"#ffffff" }
 ];
 var BRAND_BANNERS = [
-  { id:"header-1500x500", label:"Header — 1500 × 500 (LinkedIn / X)", w:1500, h:500 },
-  { id:"cover-820x312",   label:"Cover — 820 × 312 (Facebook)", w:820, h:312 }
+  { id:"facebook-cover",  label:"Facebook cover — 1640 × 624", w:1640, h:624 },
+  { id:"x-header",        label:"X / Twitter header — 1500 × 500", w:1500, h:500 },
+  { id:"linkedin-banner", label:"LinkedIn banner — 1584 × 396", w:1584, h:396 }
 ];
+// Shrink font until every line fits the available width (so text can never clip).
+function brandFitFont(ctx, lines, maxW, startPx, weight, family){
+  var px = startPx;
+  for(; px > 10; px -= 1){
+    ctx.font = weight + " " + px + "px " + family;
+    var ok = true;
+    for(var i=0;i<lines.length;i++){ if(ctx.measureText(lines[i]).width > maxW){ ok = false; break; } }
+    if(ok) break;
+  }
+  return px;
+}
 
 // Paint one asset at (W×H). Uses preloaded images from _brandImg.
 function brandPaint(ctx, a, W, H){
@@ -947,31 +959,40 @@ function brandPaint(ctx, a, W, H){
     ctx.font = "700 " + (W*0.56) + "px Bahnschrift, 'DIN Alternate', 'Arial Narrow', system-ui, sans-serif";
     ctx.fillText(a.text, W/2, H*0.54);
   } else if(a.kind === "banner"){
+    var DISP = "Bahnschrift, 'DIN Alternate', 'Arial Narrow', system-ui, sans-serif";
     var g = ctx.createLinearGradient(0,0,W,H);
-    g.addColorStop(0,"#2b3d66"); g.addColorStop(0.5,"#26265c"); g.addColorStop(1,BRAND_INK);
+    g.addColorStop(0,"#2c3e68"); g.addColorStop(0.55,BRAND_NAVY); g.addColorStop(1,"#191938");
     ctx.fillStyle = g; ctx.fillRect(0,0,W,H);
-    // faint survey contours
+    // refined survey contours — fewer, softer
     ctx.save();
-    for(var i=0;i<14;i++){
-      var baseY = -H*0.2 + (i/14)*H*1.5, amp = H*0.05*(1+Math.sin(i));
+    for(var i=0;i<10;i++){
+      var baseY = -H*0.15 + (i/10)*H*1.35, amp = H*0.055;
       ctx.beginPath();
-      for(var x=0;x<=W;x+=10){ var y = baseY + Math.sin(x*0.006+i*0.5)*amp + Math.cos(x*0.0025-i*0.3)*H*0.04; if(x===0)ctx.moveTo(x,y); else ctx.lineTo(x,y); }
-      ctx.strokeStyle = (i%3===0) ? "rgba(91,143,201,0.22)" : "rgba(150,160,220,0.10)";
-      ctx.lineWidth = W*0.0012; ctx.stroke();
+      for(var x=0;x<=W;x+=12){ var y = baseY + Math.sin(x*0.0048+i*0.6)*amp + Math.cos(x*0.0021-i*0.3)*H*0.05; if(x===0)ctx.moveTo(x,y); else ctx.lineTo(x,y); }
+      ctx.strokeStyle = (i%3===0) ? "rgba(91,143,201,0.16)" : "rgba(160,170,225,0.07)";
+      ctx.lineWidth = Math.max(1, W*0.0009); ctx.stroke();
     }
     ctx.restore();
-    // white plate + master logo (left)
-    var pad = H*0.18, plateH = H-2*pad, plateW = Math.min(W*0.42, plateH*3.0), pr = H*0.08;
-    brandRoundRect(ctx, pad, pad, plateW, plateH, pr); ctx.fillStyle = "#fff"; ctx.fill();
-    brandContain(ctx, _brandImg["crosby-master.jpg"], pad+plateW/2, H/2, plateW*0.80, plateH*0.66);
-    // tagline (right)
-    var tx = pad + plateW + H*0.16;
-    ctx.textAlign = "left"; ctx.textBaseline = "alphabetic"; ctx.fillStyle = "#f3f0e6";
-    ctx.font = "700 " + (H*0.13) + "px Bahnschrift, 'DIN Alternate', system-ui, sans-serif";
-    ctx.fillText("Building Louisiana", tx, H*0.44);
-    ctx.fillText("communities since 1954.", tx, H*0.44 + H*0.16);
-    ctx.fillStyle = BRAND_BLUE; ctx.font = "600 " + (H*0.075) + "px ui-monospace, Consolas, monospace";
-    ctx.fillText("crosbydevelopment.com", tx, H*0.44 + H*0.34);
+    var inset = W*0.055;
+    var im = _brandImg["crosby-master.jpg"], logoAR = im ? im.width/im.height : 3;
+    // white containment plate for the color logo (left, vertically centered)
+    var plateH = H*0.58, plateW = Math.min(plateH*logoAR*1.28, W*0.38), pr = H*0.055;
+    var px0 = inset, py0 = (H-plateH)/2;
+    ctx.save(); ctx.shadowColor = "rgba(0,0,0,0.30)"; ctx.shadowBlur = H*0.045; ctx.shadowOffsetY = H*0.012;
+    brandRoundRect(ctx, px0, py0, plateW, plateH, pr); ctx.fillStyle = "#fff"; ctx.fill(); ctx.restore();
+    brandContain(ctx, im, px0+plateW/2, H/2, plateW*0.80, plateH*0.62);
+    // tagline block (right), auto-fit so it never clips; kept off the right edge
+    var tx0 = px0 + plateW + W*0.045, tx1 = W - W*0.06, availW = tx1 - tx0;
+    var lines = ["Building Louisiana", "communities since 1954."];
+    var fs = brandFitFont(ctx, lines, availW, H*0.16, "700", DISP);
+    var lh = fs*1.12, us = Math.min(fs*0.46, H*0.07), blockH = lh + fs + fs*0.55 + us;
+    var y1 = (H-blockH)/2 + fs;                 // baseline of line 1
+    ctx.textAlign = "left"; ctx.textBaseline = "alphabetic";
+    ctx.font = "700 " + fs + "px " + DISP; ctx.fillStyle = "#f3f0e6";
+    ctx.fillText(lines[0], tx0, y1);
+    ctx.fillText(lines[1], tx0, y1 + lh);
+    ctx.fillStyle = BRAND_BLUE; ctx.font = "600 " + us + "px ui-monospace, Consolas, monospace";
+    ctx.fillText("crosbydevelopment.com", tx0, y1 + lh + fs*0.55 + us);
   }
 }
 function brandDownload(a){
@@ -1053,7 +1074,8 @@ function renderBrand(){
   html += '</div></div>';
 
   // banners
-  html += '<div class="b-card" style="margin-bottom:16px;"><div style="font-size:12.5px;font-weight:700;color:#26265c;margin-bottom:14px;">Cover &amp; header art</div>';
+  html += '<div class="b-card" style="margin-bottom:16px;"><div style="font-size:12.5px;font-weight:700;color:#26265c;margin-bottom:3px;">Cover &amp; header art</div>'
+    + '<div style="font-size:11.5px;color:#9ca3af;margin-bottom:14px;">Use the size that matches the platform — each network crops other aspect ratios. Text is auto-fit and kept clear of the profile-picture zone.</div>';
   html += '<div style="display:flex;flex-direction:column;gap:18px;">';
   BRAND_BANNERS.forEach(function(b){
     html += '<div class="b-banner"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;"><span style="font-size:12px;color:#6b7280;">'+esc(b.label)+'</span>'
