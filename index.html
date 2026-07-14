@@ -337,10 +337,35 @@
     .nd-loading, .nd-error { color: #9ca3af; font-size: 13px; padding: 24px 4px; }
     .nd-error a { color: #2563eb; }
 
-    /* Brand tab toggle (Master Brand / Community Sub-Brands) */
-    .brand-tab { font-size: 13px; font-weight: 600; color: #6b7280; background: transparent; border: 0; border-radius: 7px; padding: 6px 14px; cursor: pointer; transition: all 140ms; }
-    .brand-tab:hover { color: #22315d; }
-    .brand-tab.active { background: #fff; color: #22315d; box-shadow: 0 1px 2px rgba(15,23,42,.12); }
+    /* ── Brand section (native) ─────────────────────────────────────── */
+    .b-eyebrow { font-size: 11px; font-weight: 650; letter-spacing: .12em; text-transform: uppercase; color: #5b8fc9; margin-bottom: 6px; }
+    .b-h1 { font-family: 'Fraunces', Georgia, serif; font-size: 28px; font-weight: 600; letter-spacing: -.015em; color: #26265c; margin: 0 0 6px; }
+    .b-sub { font-size: 14px; color: #6b7280; max-width: 70ch; }
+    .b-sectitle { display: flex; align-items: center; gap: 9px; font-size: 15px; font-weight: 700; color: #26265c; margin: 34px 0 4px; }
+    .b-secsub { font-size: 12.5px; color: #6b7280; margin-bottom: 16px; }
+    .b-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 14px; padding: 20px 22px; }
+    .b-guidecard { display: flex; gap: 15px; align-items: flex-start; border: 1px solid #e5e7eb; border-radius: 13px; padding: 17px 19px; background: #fff; text-decoration: none; transition: all 160ms ease; cursor: pointer; }
+    .b-guidecard:hover { border-color: #26265c; box-shadow: 0 8px 24px -12px rgba(38,38,92,.45); transform: translateY(-2px); }
+    .b-guidecard .gc-ico { width: 42px; height: 42px; border-radius: 11px; background: #26265c; color: #fff; display: flex; align-items: center; justify-content: center; flex: 0 0 auto; }
+    .b-guidecard .gc-t { font-size: 15px; font-weight: 700; color: #26265c; }
+    .b-guidecard .gc-d { font-size: 12.5px; color: #6b7280; line-height: 1.5; margin-top: 2px; }
+    .b-guidecard .gc-go { font-size: 12px; font-weight: 600; color: #5b8fc9; margin-top: 8px; display: inline-flex; align-items: center; gap: 4px; }
+    .b-av { display: flex; flex-direction: column; align-items: center; gap: 9px; }
+    .b-av .ring { width: 110px; height: 110px; border-radius: 50%; overflow: hidden; border: 3px solid #fff; box-shadow: 0 2px 10px -3px rgba(15,23,42,.3), 0 0 0 1px #e5e7eb; }
+    .b-av .ring canvas { display: block; width: 110px; height: 110px; }
+    .b-av .lbl { font-size: 11.5px; color: #374151; font-weight: 600; text-align: center; line-height: 1.3; }
+    .b-dl { font-size: 11px; font-weight: 600; color: #26265c; background: #eef1f6; border: 1px solid #dfe4ee; border-radius: 7px; padding: 5px 11px; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; transition: all 130ms; }
+    .b-dl:hover { background: #26265c; color: #fff; border-color: #26265c; }
+    .b-banner canvas { display: block; width: 100%; height: auto; border-radius: 10px; border: 1px solid #e5e7eb; }
+    .b-hexchip { display: flex; align-items: center; gap: 8px; font-family: ui-monospace, Consolas, monospace; font-size: 12px; color: #374151; background: #f8fafc; border: 1px solid #e5e7eb; border-radius: 8px; padding: 7px 10px; cursor: pointer; transition: all 120ms; }
+    .b-hexchip:hover { border-color: #5b8fc9; }
+    .b-hexchip .sw { width: 18px; height: 18px; border-radius: 5px; border: 1px solid rgba(0,0,0,.12); flex: 0 0 auto; }
+    .b-copyrow { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 9px 0; border-bottom: 1px dashed #e5e7eb; }
+    .b-copyrow:last-child { border-bottom: 0; }
+    .b-copyrow .k { font-size: 11px; font-weight: 650; letter-spacing: .06em; text-transform: uppercase; color: #9ca3af; flex: 0 0 92px; }
+    .b-copyrow .v { font-size: 13.5px; color: #1f2937; flex: 1; }
+    .b-copybtn { font-size: 11px; color: #5b8fc9; background: transparent; border: 1px solid #dfe4ee; border-radius: 6px; padding: 3px 9px; cursor: pointer; }
+    .b-copybtn:hover { background: #eef1f6; color: #26265c; }
 
     /* Scoped rendering of the fetched doc bodies (mirrors the docs/*.html CSS). */
     .nd { font-size: 14px; color: #1f2937; line-height: 1.55; max-width: 840px; }
@@ -461,22 +486,9 @@
     <div id="nerdyContent"></div>
   </div>
 
-  <!-- ═══ BRAND IDENTITY ═══ -->
+  <!-- ═══ BRAND ═══ -->
   <div class="view" id="view-brand">
-    <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:14px;gap:10px;flex-wrap:wrap;">
-      <div>
-        <div class="card-title" style="margin-bottom:2px;">Brand Identity</div>
-        <div style="font-size:13px;color:#6b7280;">Crosby Development Company — the master brand, plus a sub-brand identity for every community.</div>
-      </div>
-      <a id="brandOpenNew" href="docs/brand-identity.html" target="_blank" rel="noopener" style="font-size:12px;color:#2563eb;text-decoration:none;display:inline-flex;align-items:center;gap:5px;white-space:nowrap;"><i data-lucide="external-link" style="width:14px;height:14px;"></i> Open full page</a>
-    </div>
-    <div id="brandTabs" style="display:inline-flex;gap:4px;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:9px;padding:4px;margin-bottom:12px;">
-      <button class="brand-tab" data-doc="brand-identity" onclick="loadBrandDoc('brand-identity')">Master Brand</button>
-      <button class="brand-tab" data-doc="community-sub-brands" onclick="loadBrandDoc('community-sub-brands')">Community Sub-Brands</button>
-    </div>
-    <div style="border:1px solid var(--line,#e5e7eb);border-radius:12px;overflow:hidden;background:#fff;box-shadow:0 1px 3px rgba(15,23,42,.05);">
-      <iframe id="brandFrame" title="Crosby brand identity" loading="lazy" style="width:100%;border:0;display:block;height:82vh;background:#eef1f6;"></iframe>
-    </div>
+    <div id="brandContent"></div>
   </div>
 
   <!-- ═══ PROPERTY DETAIL ═══ -->
@@ -872,21 +884,215 @@ function switchView(id) {
   lucide.createIcons();
 }
 
-// ── BRAND IDENTITY ──────────────────────────────────────────────────────────
-// Two standalone brand-guide pages (own fonts/canvas/theme) embedded in an
-// iframe — same-origin, so X-Frame-Options: SAMEORIGIN allows it. Loaded lazily
-// on first visit so the ~300KB pages don't cost anything until the tab is opened.
-function renderBrand() {
-  var fr = document.getElementById("brandFrame");
-  if(fr && !fr.getAttribute("src")) loadBrandDoc("brand-identity");
+// ── BRAND ───────────────────────────────────────────────────────────────────
+// Native brand hub: links to the full brand guides, a brand-at-a-glance card,
+// and a "For Socials" studio that renders ready-to-post profile pictures and
+// cover banners on <canvas> (downloadable as PNG) from the real logo files in
+// docs/brand/. No iframes.
+var BRAND_NAVY = "#26265c", BRAND_BLUE = "#5b8fc9", BRAND_INK = "#171733";
+var _brandImg = {};
+function brandLoadImg(name){
+  return new Promise(function(res){
+    if(_brandImg[name]) return res(_brandImg[name]);
+    var im = new Image();
+    im.onload = function(){ _brandImg[name] = im; res(im); };
+    im.onerror = function(){ res(null); };
+    im.src = "docs/brand/" + name;
+  });
 }
-function loadBrandDoc(doc) {
-  var fr = document.getElementById("brandFrame");
-  if(fr) fr.src = "docs/" + doc + ".html";
-  var link = document.getElementById("brandOpenNew");
-  if(link) link.href = "docs/" + doc + ".html";
-  document.querySelectorAll(".brand-tab").forEach(function(b){
-    b.classList.toggle("active", b.getAttribute("data-doc") === doc);
+function brandRoundRect(ctx, x, y, w, h, r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath();
+}
+function brandContain(ctx, im, cx, cy, maxW, maxH){
+  if(!im) return;
+  var s = Math.min(maxW/im.width, maxH/im.height);
+  var w = im.width*s, h = im.height*s;
+  ctx.drawImage(im, cx-w/2, cy-h/2, w, h);
+}
+// Social profile pictures (1:1) + banners.
+var BRAND_ASSETS = [
+  { id:"crosby-monogram-white", label:"Crosby · monogram", grp:"crosby", kind:"logo", img:"crosby-monogram.png", bg:"#ffffff" },
+  { id:"crosby-monogram-navy",  label:"Crosby · navy", grp:"crosby", kind:"card", img:"crosby-monogram.png" },
+  { id:"crosby-initial-navy",   label:"Crosby · initial", grp:"crosby", kind:"text", text:"C", bg:BRAND_NAVY, fg:"#ffffff" },
+  { id:"sanctuary-office-park", label:"Sanctuary Office Park", grp:"community", kind:"logo", img:"sanctuary-office-park.png", bg:"#ffffff" },
+  { id:"gulf-south",            label:"Gulf South", grp:"community", kind:"logo", img:"gulf-south.png", bg:"#ffffff" },
+  { id:"the-sanctuary",         label:"The Sanctuary", grp:"community", kind:"logo", img:"the-sanctuary.jpg", bg:"#ffffff" },
+  { id:"mandeville-lake",       label:"Mandeville Lake", grp:"community", kind:"logo", img:"mandeville-lake.jpg", bg:"#ffffff" },
+  { id:"lakeside-village",      label:"Lakeside Village", grp:"community", kind:"logo", img:"lakeside-village.jpg", bg:"#ffffff" },
+  { id:"delimon",               label:"DeLimon Place", grp:"community", kind:"logo", img:"delimon.jpg", bg:"#ffffff" },
+  { id:"metairie-lake",         label:"Metairie Lake", grp:"community", kind:"logo", img:"metairie-lake.jpg", bg:"#ffffff" },
+  { id:"metairie-plaza",        label:"Metairie Plaza", grp:"community", kind:"logo", img:"metairie-plaza.jpg", bg:"#ffffff" }
+];
+var BRAND_BANNERS = [
+  { id:"header-1500x500", label:"Header — 1500 × 500 (LinkedIn / X)", w:1500, h:500 },
+  { id:"cover-820x312",   label:"Cover — 820 × 312 (Facebook)", w:820, h:312 }
+];
+
+// Paint one asset at (W×H). Uses preloaded images from _brandImg.
+function brandPaint(ctx, a, W, H){
+  if(a.kind === "logo"){
+    ctx.fillStyle = a.bg || "#fff"; ctx.fillRect(0,0,W,H);
+    // safe area 64% so a circular crop never clips the mark
+    brandContain(ctx, _brandImg[a.img], W/2, H/2, W*0.64, H*0.64);
+  } else if(a.kind === "card"){
+    ctx.fillStyle = BRAND_NAVY; ctx.fillRect(0,0,W,H);
+    var m = W*0.15, r = W*0.16;
+    brandRoundRect(ctx, m, m, W-2*m, H-2*m, r); ctx.fillStyle = "#fff"; ctx.fill();
+    brandContain(ctx, _brandImg[a.img], W/2, H/2, W*0.46, H*0.46);
+  } else if(a.kind === "text"){
+    ctx.fillStyle = a.bg; ctx.fillRect(0,0,W,H);
+    ctx.fillStyle = a.fg; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.font = "700 " + (W*0.56) + "px Bahnschrift, 'DIN Alternate', 'Arial Narrow', system-ui, sans-serif";
+    ctx.fillText(a.text, W/2, H*0.54);
+  } else if(a.kind === "banner"){
+    var g = ctx.createLinearGradient(0,0,W,H);
+    g.addColorStop(0,"#2b3d66"); g.addColorStop(0.5,"#26265c"); g.addColorStop(1,BRAND_INK);
+    ctx.fillStyle = g; ctx.fillRect(0,0,W,H);
+    // faint survey contours
+    ctx.save();
+    for(var i=0;i<14;i++){
+      var baseY = -H*0.2 + (i/14)*H*1.5, amp = H*0.05*(1+Math.sin(i));
+      ctx.beginPath();
+      for(var x=0;x<=W;x+=10){ var y = baseY + Math.sin(x*0.006+i*0.5)*amp + Math.cos(x*0.0025-i*0.3)*H*0.04; if(x===0)ctx.moveTo(x,y); else ctx.lineTo(x,y); }
+      ctx.strokeStyle = (i%3===0) ? "rgba(91,143,201,0.22)" : "rgba(150,160,220,0.10)";
+      ctx.lineWidth = W*0.0012; ctx.stroke();
+    }
+    ctx.restore();
+    // white plate + master logo (left)
+    var pad = H*0.18, plateH = H-2*pad, plateW = Math.min(W*0.42, plateH*3.0), pr = H*0.08;
+    brandRoundRect(ctx, pad, pad, plateW, plateH, pr); ctx.fillStyle = "#fff"; ctx.fill();
+    brandContain(ctx, _brandImg["crosby-master.jpg"], pad+plateW/2, H/2, plateW*0.80, plateH*0.66);
+    // tagline (right)
+    var tx = pad + plateW + H*0.16;
+    ctx.textAlign = "left"; ctx.textBaseline = "alphabetic"; ctx.fillStyle = "#f3f0e6";
+    ctx.font = "700 " + (H*0.13) + "px Bahnschrift, 'DIN Alternate', system-ui, sans-serif";
+    ctx.fillText("Building Louisiana", tx, H*0.44);
+    ctx.fillText("communities since 1954.", tx, H*0.44 + H*0.16);
+    ctx.fillStyle = BRAND_BLUE; ctx.font = "600 " + (H*0.075) + "px ui-monospace, Consolas, monospace";
+    ctx.fillText("crosbydevelopment.com", tx, H*0.44 + H*0.34);
+  }
+}
+function brandDownload(a){
+  var W = a.w || 1080, H = a.h || 1080;
+  var cv = document.createElement("canvas"); cv.width = W; cv.height = H;
+  brandPaint(cv.getContext("2d"), a.w ? {kind:"banner", id:a.id} : a, W, H);
+  cv.toBlob(function(b){
+    if(!b) return;
+    var u = URL.createObjectURL(b), lnk = document.createElement("a");
+    lnk.href = u; lnk.download = "crosby-" + a.id + ".png"; document.body.appendChild(lnk); lnk.click();
+    document.body.removeChild(lnk); setTimeout(function(){ URL.revokeObjectURL(u); }, 1500);
+  }, "image/png");
+}
+function brandCopy(text, btn){
+  var done = function(ok){ if(!btn) return; var o=btn.textContent; btn.textContent = ok?"Copied ✓":"Copy failed"; setTimeout(function(){ btn.textContent=o; },1400); };
+  if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(text).then(function(){done(true);},function(){done(false);}); }
+  else { done(false); }
+}
+
+function renderBrand(){
+  var c = document.getElementById("brandContent");
+  if(!c) return;
+  if(c.getAttribute("data-rendered") === "1"){ lucide.createIcons(); return; }
+  var esc = function(t){ return String(t==null?"":t).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); };
+
+  var pal = [
+    ["Crosby Navy","#26265C","Primary"], ["Crosby Blue","#5B8FC9","Secondary"],
+    ["Deep Navy","#171733","Ink"], ["Mist","#EEF1F6","Neutral"]
+  ];
+  var bio = "Family-owned developer of homes, workplaces & industry across Greater New Orleans and the Northshore. Building Louisiana communities since 1954.";
+
+  var html = "";
+  // header
+  html += '<div style="margin-bottom:8px;">'
+    + '<div class="b-eyebrow">Brand</div>'
+    + '<h2 class="b-h1">Crosby Development Brand</h2>'
+    + '<div class="b-sub">The master identity, sub-brands for every community, and a social-media asset studio — everything on-brand and ready to publish.</div></div>';
+
+  // guides
+  html += '<div class="b-sectitle">'+iconSvg("book-open",17,"#5b8fc9")+' Brand guides</div>';
+  html += '<div class="b-secsub">The full identity system, in two illustrated documents. Open in a new tab.</div>';
+  html += '<div class="grid-2" style="margin-bottom:8px;">'
+    + '<a class="b-guidecard" href="docs/brand-identity.html" target="_blank" rel="noopener"><div class="gc-ico">'+iconSvg("palette",20)+'</div><div><div class="gc-t">Master Brand Guide</div><div class="gc-d">Logo &amp; marks, color, type, voice, imagery, and applications.</div><div class="gc-go">Open guide '+iconSvg("arrow-up-right",13,"#5b8fc9")+'</div></div></a>'
+    + '<a class="b-guidecard" href="docs/community-sub-brands.html" target="_blank" rel="noopener"><div class="gc-ico">'+iconSvg("layout-grid",20)+'</div><div><div class="gc-t">Community Sub-Brands</div><div class="gc-d">A sub-brand identity for all eight communities + endorsement strategy.</div><div class="gc-go">Open guide '+iconSvg("arrow-up-right",13,"#5b8fc9")+'</div></div></a>'
+    + '</div>';
+
+  // brand at a glance
+  html += '<div class="b-sectitle">'+iconSvg("bookmark",17,"#5b8fc9")+' Brand at a glance</div>';
+  html += '<div class="b-card" style="margin-top:6px;"><div style="display:grid;grid-template-columns:200px 1fr;gap:24px;align-items:center;" class="b-glance-grid">'
+    + '<div style="background:#fff;border:1px solid #eef1f6;border-radius:10px;padding:14px;display:flex;align-items:center;justify-content:center;"><img src="docs/brand/crosby-master.jpg" alt="Crosby Development logo" style="width:100%;max-width:180px;height:auto;"></div>'
+    + '<div><div style="display:flex;gap:9px;flex-wrap:wrap;margin-bottom:12px;">'
+    + pal.map(function(p){ return '<div class="b-hexchip" title="Copy '+p[1]+'" onclick="brandCopy(\''+p[1]+'\',this)"><span class="sw" style="background:'+p[1]+'"></span>'+esc(p[0])+' · '+p[1]+'</div>'; }).join("")
+    + '</div>'
+    + '<div style="font-size:13px;color:#374151;line-height:1.7;"><strong>Type:</strong> squared geometric sans (DIN / Bahnschrift) · <strong>Tagline:</strong> <em>&ldquo;Building Louisiana communities since 1954.&rdquo;</em></div>'
+    + '</div></div></div>';
+
+  // FOR SOCIALS
+  html += '<div class="b-sectitle" style="margin-top:40px;">'+iconSvg("share-2",17,"#5b8fc9")+' For Socials</div>';
+  html += '<div class="b-secsub">Profile pictures and cover art for the Crosby Development social accounts — click any tile to download a print-quality PNG.</div>';
+
+  // profile pics — crosby
+  html += '<div class="b-card" style="margin-bottom:16px;"><div style="font-size:12.5px;font-weight:700;color:#26265c;margin-bottom:14px;">Profile pictures · Crosby Development <span style="font-weight:500;color:#9ca3af;">1080 × 1080</span></div>';
+  html += '<div style="display:flex;gap:26px;flex-wrap:wrap;">';
+  BRAND_ASSETS.filter(function(a){return a.grp==="crosby";}).forEach(function(a){
+    html += '<div class="b-av"><div class="ring"><canvas id="av-'+a.id+'" width="220" height="220"></canvas></div>'
+      + '<div class="lbl">'+esc(a.label)+'</div>'
+      + '<button class="b-dl" onclick="brandDownload(BRAND_ASSETS.filter(function(x){return x.id===\''+a.id+'\';})[0])">'+iconSvg("download",12)+' PNG</button></div>';
+  });
+  html += '</div></div>';
+
+  // profile pics — communities
+  html += '<div class="b-card" style="margin-bottom:16px;"><div style="font-size:12.5px;font-weight:700;color:#26265c;margin-bottom:14px;">Profile pictures · Communities <span style="font-weight:500;color:#9ca3af;">1080 × 1080 · when each community opens its own accounts</span></div>';
+  html += '<div style="display:flex;gap:22px;flex-wrap:wrap;">';
+  BRAND_ASSETS.filter(function(a){return a.grp==="community";}).forEach(function(a){
+    html += '<div class="b-av"><div class="ring"><canvas id="av-'+a.id+'" width="220" height="220"></canvas></div>'
+      + '<div class="lbl">'+esc(a.label)+'</div>'
+      + '<button class="b-dl" onclick="brandDownload(BRAND_ASSETS.filter(function(x){return x.id===\''+a.id+'\';})[0])">'+iconSvg("download",12)+' PNG</button></div>';
+  });
+  html += '</div></div>';
+
+  // banners
+  html += '<div class="b-card" style="margin-bottom:16px;"><div style="font-size:12.5px;font-weight:700;color:#26265c;margin-bottom:14px;">Cover &amp; header art</div>';
+  html += '<div style="display:flex;flex-direction:column;gap:18px;">';
+  BRAND_BANNERS.forEach(function(b){
+    html += '<div class="b-banner"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;"><span style="font-size:12px;color:#6b7280;">'+esc(b.label)+'</span>'
+      + '<button class="b-dl" onclick="brandDownload(BRAND_BANNERS.filter(function(x){return x.id===\''+b.id+'\';})[0])">'+iconSvg("download",12)+' PNG</button></div>'
+      + '<canvas id="ban-'+b.id+'" width="'+b.w+'" height="'+b.h+'"></canvas></div>';
+  });
+  html += '</div></div>';
+
+  // social bio kit
+  html += '<div class="b-card"><div style="font-size:12.5px;font-weight:700;color:#26265c;margin-bottom:6px;">Social bio kit</div>'
+    + '<div style="font-size:12px;color:#6b7280;margin-bottom:8px;">Copy-ready profile details — consistent across every platform.</div>';
+  var kit = [
+    ["Handle","@CrosbyDevelopment"],
+    ["Name","Crosby Development Company"],
+    ["Bio", bio],
+    ["Website","crosbydevelopment.com"],
+    ["Location","Mandeville, Louisiana"]
+  ];
+  kit.forEach(function(k){
+    html += '<div class="b-copyrow"><span class="k">'+esc(k[0])+'</span><span class="v">'+esc(k[1])+'</span>'
+      + '<button class="b-copybtn" onclick="brandCopy('+JSON.stringify(k[1]).replace(/"/g,"&quot;")+',this)">Copy</button></div>';
+  });
+  html += '</div>';
+
+  c.innerHTML = html;
+  c.setAttribute("data-rendered","1");
+  lucide.createIcons();
+
+  // preload every logo, then paint all preview canvases
+  var need = {};
+  BRAND_ASSETS.forEach(function(a){ if(a.img) need[a.img]=1; });
+  need["crosby-master.jpg"] = 1;
+  Promise.all(Object.keys(need).map(brandLoadImg)).then(function(){
+    BRAND_ASSETS.forEach(function(a){
+      var cv = document.getElementById("av-"+a.id); if(cv) brandPaint(cv.getContext("2d"), a, cv.width, cv.height);
+    });
+    BRAND_BANNERS.forEach(function(b){
+      var cv = document.getElementById("ban-"+b.id); if(cv) brandPaint(cv.getContext("2d"), {kind:"banner",id:b.id}, cv.width, cv.height);
+    });
   });
 }
 
