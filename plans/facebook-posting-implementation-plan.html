@@ -1,0 +1,164 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Crosby Social Portal — Facebook Posting Implementation Plan</title>
+<style>
+  :root{--navy:#26265c;--navy2:#3c5488;--blue:#5b8fc9;--blue-ink:#345096;--ink:#1b1c3a;--mute:#565a7c;--line:#d7dce6;--bg:#eef1f6;--good:#0f766e;--warn:#b45309;--bad:#b91c1c;}
+  *{box-sizing:border-box;}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Arial,sans-serif;color:var(--ink);margin:0;background:var(--bg);line-height:1.55;}
+  .wrap{max-width:940px;margin:0 auto;padding:32px 26px 80px;}
+  header.doc{border-bottom:3px solid var(--navy);padding-bottom:16px;margin-bottom:10px;}
+  .eyebrow{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--blue);}
+  h1{font-size:27px;color:var(--navy);margin:4px 0 4px;}
+  .byline{color:var(--mute);font-size:13px;}
+  h2{font-size:20px;color:var(--navy);margin:34px 0 8px;padding-bottom:6px;border-bottom:2px solid var(--blue);}
+  h3{font-size:15px;color:var(--navy2);margin:20px 0 6px;}
+  p{margin:9px 0;font-size:14px;}
+  .lead{font-size:15px;color:#334155;}
+  code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;background:#e4e8f0;border:1px solid #d3d9e6;border-radius:4px;padding:1px 5px;color:#1e2540;}
+  .callout{background:#eef4fb;border:1px solid #d6e3f4;border-left:4px solid var(--blue);border-radius:10px;padding:14px 16px;margin:16px 0;}
+  .callout.good{background:#ecfdf5;border-color:#a7f3d0;border-left-color:var(--good);}
+  .callout.warn{background:#fffbeb;border-color:#fde68a;border-left-color:var(--warn);}
+  .callout h3{margin-top:0;}
+  table{border-collapse:collapse;width:100%;font-size:13px;margin:14px 0;}
+  th{background:var(--navy);color:#fff;text-align:left;padding:8px 10px;font-size:11.5px;letter-spacing:.02em;}
+  td{border-bottom:1px solid var(--line);padding:8px 10px;vertical-align:top;}
+  tr:nth-child(even) td{background:#f6f8fc;}
+  .pill{display:inline-block;font-size:10px;font-weight:800;border-radius:5px;padding:2px 7px;color:#fff;letter-spacing:.03em;}
+  .pill.yes{background:var(--good);}.pill.no{background:var(--bad);}.pill.maybe{background:var(--warn);}
+  ol.phases{counter-reset:p;list-style:none;padding:0;margin:14px 0;}
+  ol.phases li{position:relative;padding:14px 16px 14px 56px;border:1px solid var(--line);border-radius:10px;background:#fff;margin-bottom:11px;font-size:13.5px;}
+  ol.phases li::before{counter-increment:p;content:counter(p);position:absolute;left:14px;top:13px;width:28px;height:28px;border-radius:50%;background:var(--navy);color:#fff;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;}
+  ol.phases b{color:var(--navy);}
+  ol.phases .eff{font-size:11px;color:var(--mute);font-family:ui-monospace,Consolas,monospace;margin-top:4px;}
+  ul.tight{margin:8px 0;padding-left:20px;font-size:13.5px;}ul.tight li{margin:5px 0;}
+  .flow{display:flex;align-items:stretch;gap:8px;flex-wrap:wrap;margin:16px 0;}
+  .flow .box{flex:1 1 150px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px 13px;font-size:12px;}
+  .flow .box b{color:var(--navy);display:block;font-size:12.5px;margin-bottom:3px;}
+  .flow .arw{display:flex;align-items:center;color:#b6bcc9;font-size:18px;}
+  .kv{display:flex;gap:12px;flex-wrap:wrap;margin:14px 0;}
+  .kv .box{flex:1 1 150px;border:1px solid var(--line);border-radius:11px;background:#fff;padding:13px 15px;}
+  .kv .n{font-size:22px;font-weight:800;color:var(--navy);line-height:1;}
+  .kv .l{font-size:11.5px;color:var(--mute);margin-top:5px;}
+  footer{margin-top:36px;border-top:1px solid var(--line);padding-top:14px;color:var(--mute);font-size:11.5px;}
+  a{color:var(--blue-ink);}
+  .mono{font-family:ui-monospace,Consolas,monospace;}
+</style></head>
+<body><div class="wrap">
+
+<header class="doc">
+  <div class="eyebrow">Crosby Development · Social Portal · Engineering</div>
+  <h1>Facebook Posting — Implementation Plan</h1>
+  <div class="byline">Publishing to the Crosby Development Facebook Page from the dashboard's content calendar · July 2026 · Meta Graph API v25.0</div>
+</header>
+
+<p class="lead">The Brand → Content Calendar already holds ready-to-post captions with photos attached from the asset library. This plan covers wiring a <strong>Post to Facebook</strong> action to it via Meta's Graph API — what's possible, the one real gotcha (securing the action), and a phased build. <strong>Bottom line: it's very doable, and for an internal tool posting to your own Page it avoids Meta's App Review entirely.</strong></p>
+
+<div class="kv">
+  <div class="box"><div class="n">$0</div><div class="l">API cost — Graph API is free (rate-limited)</div></div>
+  <div class="box"><div class="n">No</div><div class="l">App Review needed (Development mode + app admins)</div></div>
+  <div class="box"><div class="n">~3–4</div><div class="l">dev-days for the MVP (post + schedule + album)</div></div>
+  <div class="box"><div class="n">1</div><div class="l">real prerequisite you must decide: how to secure it</div></div>
+</div>
+
+<h2>1 · What's possible</h2>
+<table>
+  <thead><tr><th style="width:230px;">Capability</th><th style="width:70px;">Possible?</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td>Post to a Facebook <strong>Page</strong> (text)</td><td><span class="pill yes">YES</span></td><td><code>POST /{page-id}/feed</code> with a Page access token.</td></tr>
+    <tr><td>Post with a <strong>link</strong> (auto preview card)</td><td><span class="pill yes">YES</span></td><td><code>feed</code> + <code>link</code>. Great for leasing CTAs → crosbydevelopment.com.</td></tr>
+    <tr><td>Post a <strong>single photo</strong> + caption</td><td><span class="pill yes">YES</span></td><td><code>POST /{page-id}/photos</code> with the image + <code>caption</code>.</td></tr>
+    <tr><td><strong>Multi-photo album / carousel</strong></td><td><span class="pill yes">YES</span></td><td>Upload each photo <code>published=false</code> → collect ids → <code>feed</code> with <code>attached_media</code>. This is how the 6 Mandeville Lake floor plans go up as one swipeable post.</td></tr>
+    <tr><td><strong>Schedule</strong> a post for later</td><td><span class="pill yes">YES</span></td><td>Add <code>published=false</code> + <code>scheduled_publish_time</code> (10 min – 75 days out). Native FB scheduling — no cron needed.</td></tr>
+    <tr><td>Read <strong>engagement</strong> (likes / comments / shares)</td><td><span class="pill yes">YES</span></td><td><code>GET /{post-id}?fields=likes.summary(true),comments.summary(true),shares</code> — feed post performance back into the calendar.</td></tr>
+    <tr><td>Post to <strong>Instagram</strong> (linked business account)</td><td><span class="pill maybe">YES*</span></td><td>Same Graph API. *Requires the image to be a <strong>public URL</strong> (see §6). A natural Phase-4 extension.</td></tr>
+    <tr><td>Post to a personal <strong>profile</strong></td><td><span class="pill no">NO</span></td><td>Meta removed personal-profile publishing years ago. Must be a Page. (You have one — good.)</td></tr>
+    <tr><td>Post to <strong>X / LinkedIn</strong></td><td><span class="pill maybe">LATER</span></td><td>Different APIs; out of scope here, but the same portal pattern extends to them.</td></tr>
+  </tbody>
+</table>
+
+<div class="callout good">
+  <h3>The important simplification: no App Review</h3>
+  <p style="margin:0">Meta's App Review (business verification, screencast, privacy-policy review, weeks of back-and-forth) is the usual pain — <strong>and you can skip all of it.</strong> While a Meta app is in <strong>Development mode</strong>, <code>pages_manage_posts</code>, <code>pages_read_engagement</code>, and <code>pages_show_list</code> work for anyone with a <strong>role on the app</strong> (admin / developer / tester), for Pages they administer. Since this posts only to <em>your own</em> Crosby Page and only <em>you</em> operate it, add Ryan &amp; Tommy as app admins and you're done — Review is only needed if you later let outside users post.</p>
+</div>
+
+<h2>2 · How it fits the dashboard</h2>
+<p>Posting must happen <strong>server-side</strong>: the Page access token is a powerful secret and can't live in the browser, and Meta's endpoints aren't CORS-open to a static page. The dashboard already runs Vercel serverless functions (the WhatsApp assistant), so this slots in the same way.</p>
+<div class="flow">
+  <div class="box"><b>Content Calendar</b>Operator clicks “Post to Facebook” on a post (caption + attached library photos).</div>
+  <div class="arw">→</div>
+  <div class="box"><b>Vercel function</b><span class="mono">api/social-post</span> — verifies the operator, resolves the photos, calls Graph API.</div>
+  <div class="arw">→</div>
+  <div class="box"><b>Meta Graph API</b>Creates the (scheduled) post on the Crosby Page; returns a post id + permalink.</div>
+  <div class="arw">→</div>
+  <div class="box"><b>Firestore</b>Post status saved (posted / scheduled / link) so the calendar shows what's live.</div>
+</div>
+
+<div class="callout warn">
+  <h3>The one real requirement: secure the post action</h3>
+  <p style="margin:0 0 6px">The dashboard currently runs <strong>unauthenticated</strong> (<code>AUTH_ENABLED = false</code>, public Firestore) — the same posture the codebase audit flagged. A publish endpoint <strong>cannot</strong> be left open, or anyone who finds the URL could post to the Crosby Page. This is the one thing that must be solved before go-live. Two options:</p>
+  <ul class="tight" style="margin:0;">
+    <li><strong>(Recommended) Operator login</strong> — turn Firebase Auth back on for the operator; the function verifies the signed-in Google account (Ryan/Tommy) before posting. Also closes the audit's top finding.</li>
+    <li><strong>(Interim) Posting passphrase</strong> — a secret stored as a Vercel env var, entered once in the app and sent with each publish request, checked server-side. Faster to ship, weaker; fine as a stopgap.</li>
+  </ul>
+</div>
+
+<h2>3 · Implementation plan</h2>
+<ol class="phases">
+  <li><b>Phase 0 — Meta setup (you, in the browser).</b> Create a Meta app (Business type) at developers.facebook.com; confirm Ryan/Tommy are <strong>admins of the Crosby Facebook Page</strong>; add them as <strong>app admins</strong>. Grant <code>pages_show_list</code>, <code>pages_read_engagement</code>, <code>pages_manage_posts</code>. Generate a <strong>long-lived Page access token</strong> and note the <strong>Page ID</strong>. (Add <code>instagram_basic</code> + <code>instagram_content_publish</code> now if IG is wanted later.)
+    <div class="eff">Effort: ~1–2 hours of clicking · no code · no App Review</div></li>
+  <li><b>Phase 1 — Serverless posting endpoint.</b> Store <code>FB_PAGE_TOKEN</code> + <code>FB_PAGE_ID</code> as Vercel env vars (never in Firestore — it's public-read). Add <code>lib/facebook.mjs</code> (postText / postLink / postPhoto / postAlbum / schedule) and <code>api/social-post.js</code> that authorizes the caller, resolves the post's attached photos, calls Graph API, and returns the permalink. Handle the album flow (upload unpublished → attach).
+    <div class="eff">Effort: ~1 day</div></li>
+  <li><b>Phase 2 — Calendar UI.</b> On each post card: a <strong>Post to Facebook</strong> button, an optional <strong>schedule</strong> date/time, and a confirm modal (review caption + photos before it goes out). Show a status chip — <em>Draft · Scheduled · Posted</em> — with a link to the live post. Persist status in Firestore keyed by post id.
+    <div class="eff">Effort: ~1–1.5 days</div></li>
+  <li><b>Phase 3 — Secure it.</b> Implement the chosen auth (operator login or passphrase, §2). Add a small server-side rate limit and an audit log of what was posted, when, by whom.
+    <div class="eff">Effort: ~0.5–1 day (more if re-enabling full auth)</div></li>
+  <li><b>Phase 4 — Extensions (optional, later).</b> Instagram publishing (needs §6); engagement read-back into the calendar; a nightly cron that publishes anything queued; then X / LinkedIn on the same portal pattern.
+    <div class="eff">Effort: per feature, ~0.5–1 day each</div></li>
+</ol>
+
+<h2>4 · The API, concretely</h2>
+<table>
+  <thead><tr><th style="width:150px;">Action</th><th>Call</th></tr></thead>
+  <tbody>
+    <tr><td>Text / link post</td><td class="mono">POST /{page}/feed &nbsp;{ message, link?, access_token }</td></tr>
+    <tr><td>Single photo</td><td class="mono">POST /{page}/photos &nbsp;{ caption, source(bytes) | url, access_token }</td></tr>
+    <tr><td>Album (carousel)</td><td class="mono">POST /{page}/photos { published:false, source } ×N → feed { message, attached_media:[{media_fbid}] }</td></tr>
+    <tr><td>Schedule</td><td class="mono">…add { published:false, scheduled_publish_time: &lt;unix, 10min–75d&gt; }</td></tr>
+    <tr><td>Engagement</td><td class="mono">GET /{post}?fields=permalink_url,likes.summary(true),comments.summary(true),shares</td></tr>
+    <tr><td>Instagram</td><td class="mono">POST /{ig}/media { image_url, caption } → POST /{ig}/media_publish { creation_id }</td></tr>
+  </tbody>
+</table>
+
+<h2>5 · Token strategy &amp; maintenance</h2>
+<p>A short-lived token → exchange for a long-lived user token (60 days) → derive a <strong>never-expiring Page token</strong>. For a set-and-forget internal tool, the most robust option is a <strong>Meta Business Manager “System User” token</strong> — a non-expiring, server-to-server credential that survives password changes. <strong>Recommendation:</strong> ship the MVP on a long-lived Page token, then move to a System User token so nobody has to babysit expiry. Either way, if a token is ever invalidated, a one-click re-auth (or a small helper script) regenerates it.</p>
+
+<h2>6 · Image handling — one design choice</h2>
+<p>Library photos live in Firestore as <strong>base64 data URLs</strong>. Facebook accepts raw bytes, so for FB the function just decodes and uploads them (multipart) — no change needed. <strong>Instagram, however, requires a public image URL.</strong> So if/when IG is in scope, we should store brand-library photos in <strong>Firebase Storage</strong> (public URL) instead of base64 — a modest refactor that also lightens Firestore. <strong>Recommendation:</strong> FB-only MVP on the current base64 model; add Storage-backed images when Instagram is turned on.</p>
+
+<h2>7 · Effort, cost, risk</h2>
+<ul class="tight">
+  <li><strong>Cost:</strong> $0 — the Graph API is free; only rate limits (far above your posting volume).</li>
+  <li><strong>Effort:</strong> MVP (secured post + schedule + album, from the calendar) ≈ <strong>3–4 dev-days</strong> after Phase 0.</li>
+  <li><strong>Main risk:</strong> leaving the endpoint unsecured — addressed in Phase 3, non-negotiable.</li>
+  <li><strong>Secondary:</strong> token expiry — solved by the System User token.</li>
+  <li><strong>Not a risk:</strong> App Review — avoided entirely by staying in Development mode with app-admin operators.</li>
+</ul>
+
+<h2>8 · Decisions I need from you</h2>
+<ol class="phases">
+  <li><b>The Page &amp; admins.</b> Confirm the target is the new <strong>Crosby Development</strong> Facebook Page, and that Ryan/Tommy are Page admins (needed for Phase 0).</li>
+  <li><b>Security approach.</b> Operator login (recommended, also fixes the audit finding) or an interim posting passphrase?</li>
+  <li><b>Scheduling.</b> Instant “post now” only, or also schedule-for-later from the start?</li>
+  <li><b>Instagram.</b> FB only for now, or set up IG too (drives the Storage image decision in §6)?</li>
+</ol>
+
+<div class="callout">
+  <h3>Recommended path</h3>
+  <p style="margin:0">Do <strong>Phase 0</strong> (you) + a <strong>Facebook-only MVP</strong> with instant + scheduled posting and album support, secured behind operator login, on a long-lived Page token. That gets one-click publishing from the content calendar you already have — captions and photos included — with no App Review and no recurring cost. Instagram and engagement read-back follow once the base works.</p>
+</div>
+
+<footer>
+  Crosby Development · Social Portal — Facebook Posting Implementation Plan · Prepared July 2026 · Meta Graph API v25.0 (Feb 2026). Internal planning document.<br>
+  Sources: Meta <a href="https://developers.facebook.com/docs/permissions/">Permissions Reference</a> · <a href="https://developers.facebook.com/docs/pages-api/">Pages API</a> · <a href="https://developers.facebook.com/docs/development/build-and-test/">Development mode / Build &amp; Test</a> · <a href="https://developers.facebook.com/docs/graph-api/guides/explorer/">Graph Explorer</a>.
+</footer>
+</div></body></html>
