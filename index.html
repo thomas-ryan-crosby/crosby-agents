@@ -435,6 +435,24 @@
     .lib-tagsel { font-size: 11px; border: 1px solid #e5e7eb; border-radius: 6px; padding: 3px 6px; color: #374151; background: #fff; width: 100%; cursor: pointer; }
     .lib-del { background: transparent; border: 0; color: #bb4b3d; cursor: pointer; padding: 3px; border-radius: 5px; display: inline-flex; }
     .lib-del:hover { background: #fdecea; }
+    /* Post ↔ photo assignment */
+    .post-media { display: flex; gap: 7px; flex-wrap: wrap; align-items: center; margin-top: 9px; }
+    .pm-thumb { position: relative; width: 54px; height: 54px; border-radius: 7px; overflow: hidden; border: 1px solid #e5e7eb; }
+    .pm-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .pm-x { position: absolute; top: 1px; right: 1px; width: 16px; height: 16px; border-radius: 50%; background: rgba(23,23,51,.82); color: #fff; border: 0; font-size: 13px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .post-attach { font-size: 11px; font-weight: 600; color: #345096; background: #eef1f6; border: 1px dashed #c7d0e0; border-radius: 7px; padding: 5px 9px; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; }
+    .post-attach:hover { background: #e3e9f3; color: #26265c; }
+    .pp-overlay { position: fixed; inset: 0; background: rgba(15,20,40,.55); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px; }
+    .pp-modal { background: #fff; border-radius: 14px; max-width: 780px; width: 100%; max-height: 84vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 24px 70px -22px rgba(0,0,0,.55); }
+    .pp-head { display: flex; justify-content: space-between; align-items: center; padding: 15px 18px; border-bottom: 1px solid #eef1f6; font-size: 14px; color: #26265c; }
+    .pp-close { background: transparent; border: 0; color: #6b7280; cursor: pointer; display: inline-flex; }
+    .pp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; padding: 16px 18px; overflow: auto; }
+    .pp-item { position: relative; border: 2px solid #e5e7eb; border-radius: 9px; overflow: hidden; cursor: pointer; aspect-ratio: 1; background: #f8fafc; }
+    .pp-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .pp-item.on { border-color: #26265c; }
+    .pp-tag { position: absolute; left: 5px; bottom: 5px; font-size: 9px; font-family: ui-monospace, Consolas, monospace; background: rgba(23,23,51,.78); color: #fff; padding: 1px 6px; border-radius: 10px; }
+    .pp-check { position: absolute; top: 5px; right: 5px; background: #26265c; color: #fff; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; }
+    .pp-foot { padding: 12px 18px; border-top: 1px solid #eef1f6; display: flex; align-items: center; gap: 12px; }
 
     /* Scoped rendering of the fetched doc bodies (mirrors the docs/*.html CSS). */
     .nd { font-size: 14px; color: #1f2937; line-height: 1.55; max-width: 840px; }
@@ -1145,6 +1163,67 @@ var POSTS = [
     tags:"#CrosbyDevelopment #Northshore #Community #Louisiana", pair:"Warm community / lifestyle photo  [needs photo]" }
 ];
 function copyPost(i, btn){ var p = POSTS[i]; if(p) brandCopy(p.body + "\n\n" + p.tags, btn); }
+// Stable id per post so photo assignments survive re-renders.
+POSTS.forEach(function(p){ if(!p.id) p.id = String(p.title).toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,""); });
+
+// ── Assign library photos to posts ───────────────────────────────────────────
+// A photo carries a `posts` array (which posts use it), so one photo can back
+// many posts. Assignments persist on the brandMedia doc.
+function photosForPost(id){ return (window.__brandMediaCache||[]).filter(function(m){ return (m.posts||[]).indexOf(id) >= 0; }); }
+function brandTogglePhoto(mediaId, postId, el){
+  var m = (window.__brandMediaCache||[]).filter(function(x){ return x.id===mediaId; })[0]; if(!m) return;
+  var posts = (m.posts||[]).slice(), i = posts.indexOf(postId);
+  if(i >= 0) posts.splice(i, 1); else posts.push(postId);
+  m.posts = posts;                                        // optimistic
+  if(brandLibReady()) window.__brand.put({ id:mediaId, posts:posts }).catch(function(e){ console.error(e); });
+  if(el){ el.classList.toggle("on", i < 0); var chk = el.querySelector(".pp-check"); if(i>=0){ if(chk) chk.remove(); } else if(!chk){ el.insertAdjacentHTML("beforeend", '<span class="pp-check"><i data-lucide="check" style="width:14px;height:14px;"></i></span>'); lucide.createIcons(); } }
+  renderBrandCalendar();
+}
+function brandUnassignPhoto(mediaId, postId){
+  var m = (window.__brandMediaCache||[]).filter(function(x){ return x.id===mediaId; })[0]; if(!m) return;
+  var posts = (m.posts||[]).filter(function(x){ return x !== postId; }); m.posts = posts;
+  if(brandLibReady()) window.__brand.put({ id:mediaId, posts:posts }).catch(function(e){ console.error(e); });
+  renderBrandCalendar();
+}
+function openPhotoPicker(postId){
+  var all = window.__brandMediaCache || [];
+  if(!all.length){ alert("No photos in the library yet. Add or import photos in the Asset Library first, then attach them here."); return; }
+  var post = POSTS.filter(function(p){ return p.id===postId; })[0], esc = brandEsc;
+  closePhotoPicker();
+  var ov = document.createElement("div"); ov.className = "pp-overlay"; ov.id = "ppOverlay";
+  ov.onclick = function(e){ if(e.target === ov) closePhotoPicker(); };
+  var grid = all.map(function(m){
+    var on = (m.posts||[]).indexOf(postId) >= 0;
+    return '<div class="pp-item'+(on?" on":"")+'" onclick="brandTogglePhoto(\''+m.id+'\',\''+postId+'\',this)"><img src="'+m.url+'"><span class="pp-tag">'+esc(m.tag||"General")+'</span>'+(on?'<span class="pp-check"><i data-lucide="check" style="width:14px;height:14px;"></i></span>':'')+'</div>';
+  }).join("");
+  ov.innerHTML = '<div class="pp-modal"><div class="pp-head"><div>Attach photos · <strong>'+esc(post?post.title:"")+'</strong></div><button class="pp-close" onclick="closePhotoPicker()">'+iconSvg("x",16)+'</button></div>'
+    + '<div class="pp-grid">'+grid+'</div>'
+    + '<div class="pp-foot"><span style="font-size:11.5px;color:#9ca3af;flex:1;">Click a photo to attach or remove it. Manage the library in the Asset Library tab.</span><button class="b-dl" onclick="closePhotoPicker()">Done</button></div></div>';
+  document.body.appendChild(ov); lucide.createIcons();
+}
+function closePhotoPicker(){ var ov = document.getElementById("ppOverlay"); if(ov) ov.remove(); }
+
+function renderBrandCalendar(){
+  var host = document.getElementById("brandCalPosts"); if(!host) return;
+  var esc = brandEsc;
+  host.innerHTML = POSTS.map(function(p, i){
+    var photos = photosForPost(p.id), media;
+    if(photos.length){
+      media = '<div class="post-media">' + photos.map(function(m){
+          var dl = "crosby-" + String(m.tag||"photo").toLowerCase().replace(/[^a-z0-9]+/g,"-") + ".jpg";
+          return '<div class="pm-thumb"><a href="'+m.url+'" download="'+dl+'" title="Download"><img src="'+m.url+'" alt="assigned photo"></a><button class="pm-x" title="Remove" onclick="brandUnassignPhoto(\''+m.id+'\',\''+p.id+'\')">&times;</button></div>';
+        }).join("") + '<button class="post-attach" title="Attach more" onclick="openPhotoPicker(\''+p.id+'\')">'+iconSvg("plus",12)+'</button></div>';
+    } else {
+      media = '<div class="post-pair">'+iconSvg("image",11,"#9ca3af")+' Suggested: '+esc(p.pair)+' &nbsp;<button class="post-attach" onclick="openPhotoPicker(\''+p.id+'\')">'+iconSvg("image-plus",11)+' Attach photo</button></div>';
+    }
+    return '<div class="post-card"><div class="post-top"><span class="post-pill">'+esc(p.pillar)+'</span><span class="post-num">'+(i+1)+' / '+POSTS.length+'</span></div>'
+      + '<div class="post-title">'+esc(p.title)+'</div><div class="post-body">'+esc(p.body)+'</div>'
+      + '<div class="post-tags">'+esc(p.tags)+'</div>'
+      + media
+      + '<div class="post-actions"><button class="b-copybtn" onclick="copyPost('+i+',this)">'+iconSvg("copy",11)+' Copy caption</button></div></div>';
+  }).join("");
+  lucide.createIcons();
+}
 
 function brandEsc(t){ return String(t==null?"":t).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
 
@@ -1437,16 +1516,8 @@ function renderBrand(){
 
   // ── PANEL: Content Calendar ──
   var pCalendar = head("calendar-clock","Content calendar","A launch sequence of "+POSTS.length+" ready-to-post captions in the Crosby voice. At 2–3 a week that's ~2 months of runway. Copy, add the paired image, publish.")
-    + '<div class="b-card" style="margin-bottom:16px;"><div class="b-cardtitle">Suggested rhythm</div><div style="font-size:12.5px;color:#374151;line-height:1.7;"><strong>Mon</strong> — a community or heritage post &nbsp;·&nbsp; <strong>Wed</strong> — a &ldquo;Why Crosby&rdquo; / place / education post &nbsp;·&nbsp; <strong>Fri</strong> — a leasing CTA or an engagement question. Rotate pillars so it never reads like eight ads in a row.</div></div>'
-    + '<div class="grid-2" style="align-items:start;">'
-    + POSTS.map(function(p, i){
-        return '<div class="post-card"><div class="post-top"><span class="post-pill">'+esc(p.pillar)+'</span><span class="post-num">'+(i+1)+' / '+POSTS.length+'</span></div>'
-          + '<div class="post-title">'+esc(p.title)+'</div><div class="post-body">'+esc(p.body)+'</div>'
-          + '<div class="post-tags">'+esc(p.tags)+'</div>'
-          + '<div class="post-pair">'+iconSvg("image",11,"#9ca3af")+' Pair with: '+esc(p.pair)+'</div>'
-          + '<div class="post-actions"><button class="b-copybtn" onclick="copyPost('+i+',this)">'+iconSvg("copy",11)+' Copy caption</button></div></div>';
-      }).join("")
-    + '</div>';
+    + '<div class="b-card" style="margin-bottom:16px;"><div class="b-cardtitle">Suggested rhythm</div><div style="font-size:12.5px;color:#374151;line-height:1.7;"><strong>Mon</strong> — a community or heritage post &nbsp;·&nbsp; <strong>Wed</strong> — a &ldquo;Why Crosby&rdquo; / place / education post &nbsp;·&nbsp; <strong>Fri</strong> — a leasing CTA or an engagement question. Rotate pillars so it never reads like eight ads in a row. Attach a photo from the library to each post below.</div></div>'
+    + '<div class="grid-2" id="brandCalPosts" style="align-items:start;"></div>';
 
   // ── PANEL: Asset Library ──
   var pLibrary = head("images","Image &amp; asset library","Photography, logos, profile pictures, and cover art — all download-ready.");
@@ -1495,6 +1566,7 @@ function renderBrand(){
   c.setAttribute("data-rendered","1");
   lucide.createIcons();
   renderBrandLibrary();
+  renderBrandCalendar();
 
   // preload logos, then paint the avatar + banner canvases in the library panel
   var need = {};
@@ -6399,8 +6471,10 @@ document.addEventListener("DOMContentLoaded", init);
       onReady: (ok) => { window.__brand.ready = ok; },
       onItems: (a) => {
         window.__brandMediaCache = a.slice();
-        if (typeof renderBrandLibrary === "function" &&
-            document.getElementById("view-brand")?.classList.contains("active")) renderBrandLibrary();
+        if (document.getElementById("view-brand")?.classList.contains("active")) {
+          if (typeof renderBrandLibrary === "function") renderBrandLibrary();
+          if (typeof renderBrandCalendar === "function") renderBrandCalendar();
+        }
       },
       onError: (e) => console.error("[crosby] brand media sync error:", e),
     });
