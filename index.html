@@ -366,6 +366,15 @@
     .b-copyrow .v { font-size: 13.5px; color: #1f2937; flex: 1; }
     .b-copybtn { font-size: 11px; color: #5b8fc9; background: transparent; border: 1px solid #dfe4ee; border-radius: 6px; padding: 3px 9px; cursor: pointer; }
     .b-copybtn:hover { background: #eef1f6; color: #26265c; }
+    .post-card { border: 1px solid #e5e7eb; border-radius: 12px; background: #fff; padding: 16px 18px; }
+    .post-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 7px; }
+    .post-pill { font-family: ui-monospace, Consolas, monospace; font-size: 9.5px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; padding: 3px 9px; border-radius: 20px; background: #eef1f6; color: #345096; }
+    .post-num { font-family: ui-monospace, Consolas, monospace; font-size: 11px; color: #b6bcc9; }
+    .post-title { font-weight: 700; color: #26265c; font-size: 14.5px; margin-bottom: 6px; }
+    .post-body { font-size: 13px; color: #374151; line-height: 1.6; white-space: pre-line; }
+    .post-tags { font-size: 12px; color: #5b8fc9; margin-top: 9px; }
+    .post-pair { font-size: 11px; color: #9ca3af; margin-top: 9px; padding-top: 8px; border-top: 1px dashed #eef1f6; }
+    .post-actions { margin-top: 10px; }
 
     /* Scoped rendering of the fetched doc bodies (mirrors the docs/*.html CSS). */
     .nd { font-size: 14px; color: #1f2937; line-height: 1.55; max-width: 840px; }
@@ -1012,6 +1021,71 @@ function brandCopy(text, btn){
   else { done(false); }
 }
 
+// Ready-to-post caption queue — a launch sequence to warm up the page.
+var POSTS = [
+  { pillar:"Heritage", title:"Hello, we're Crosby.",
+    body:"In 1954, John L. Crosby, Sr. set out to build places where Louisiana families and businesses could put down roots.\n\nSeventy-two years and three generations later, we're still at it — homes, workplaces, and industry across Greater New Orleans and the Northshore.\n\nWelcome to our page. We're glad you're here.",
+    tags:"#CrosbyDevelopment #Since1954 #Louisiana #Northshore #Mandeville", pair:"Facebook cover banner, or the logo on navy" },
+  { pillar:"What we build", title:"Living. Working. Industry.",
+    body:"Few developers do all three — we do.\n\nThe apartments and townhomes families call home. The Class A offices where Northshore businesses grow. The industrial parks that bring jobs to the region.\n\nOne family name. Three ways we build Louisiana.",
+    tags:"#CrosbyDevelopment #RealEstate #Louisiana #Northshore", pair:"3-up collage: an apartment, an office, the commerce park  [needs photos]" },
+  { pillar:"Community · Office", title:"Sanctuary Office Park",
+    body:"Class A office, the Crosby way: full-service gross. No CAM charges. No year-end surprises. Janitorial included.\n\nFive buildings at #1 Sanctuary Blvd — a mile off the Causeway. Suites from about 200 to 13,000+ square feet.\n\nThe foundation for your business success.",
+    tags:"#SanctuaryOfficePark #MandevilleLA #OfficeSpace #Northshore #CRE", pair:"Office-park exterior  [needs photo] + Sanctuary Office Park logo" },
+  { pillar:"Community · Living", title:"Mandeville Lake",
+    body:"Spacious residences, effortless Northshore living.\n\nTwo pools. A clubhouse. 24-hour fitness. Tennis. An elevator in every building — five minutes from the Causeway.\n\nRoom to breathe, close to everything.",
+    tags:"#MandevilleLake #NorthshoreLiving #Apartments #Mandeville", pair:"Pool/amenity or interior  [needs photo] + Mandeville Lake logo" },
+  { pillar:"Why Crosby", title:"What 'full-service gross' means",
+    body:"A quick one for our office tenants 👇\n\n“Full-service gross” means your rent covers it — utilities, janitorial, common areas. No CAM charges. No year-end reconciliations. No surprise chargebacks.\n\nAt Sanctuary Office Park, your rate is your rate. Simple, on purpose.",
+    tags:"#OfficeLeasing #CRE #SanctuaryOfficePark #Mandeville", pair:"Text graphic: “No CAM. No surprises.” on navy" },
+  { pillar:"Community · Industry", title:"Gulf South Commerce Park",
+    body:"906 contiguous acres. Two international airports, five ports, four interstates, six Class I railroads. Shovel-ready sites and real incentives.\n\nLand in Louisiana. Grow in the Gulf. Connect to the world.",
+    tags:"#GulfSouthCommercePark #EconomicDevelopment #Logistics #Louisiana #Manufacturing", pair:"Aerial / site map  [needs photo] + Gulf South logo" },
+  { pillar:"Place", title:"Why the Northshore",
+    body:"Ten minutes from the water. A straight shot across the Causeway to New Orleans. And room to breathe.\n\nWe've been building on the Northshore since 1954 — because this is home.",
+    tags:"#Northshore #StTammany #Mandeville #Louisiana", pair:"Lake Pontchartrain / Causeway / Mandeville lifestyle  [needs photo]" },
+  { pillar:"Community · Living", title:"Lakeside Village",
+    body:"Gated. Lakeside. Close to everything.\n\nTownhomes and cottages with a pond, a community center, and a location a mile from the Causeway. Approachable luxury on the Northshore.",
+    tags:"#LakesideVillage #Mandeville #Townhomes #NorthshoreLiving", pair:"Community / pond  [needs photo] + Lakeside Village logo" },
+  { pillar:"Heritage", title:"Built to belong",
+    body:"We don't build to sell. We build to belong — and we stay to look after what we build.\n\nThe name on the cornerstone is the name on the management office. Decade after decade. That's the Crosby difference.",
+    tags:"#CrosbyDevelopment #FamilyOwned #Stewardship #Louisiana", pair:"Cornerstone / building detail  [needs photo], or brand graphic" },
+  { pillar:"Community · Living", title:"DeLimon Place",
+    body:"A picturesque Old Metairie icon since 1981.\n\nLandscaped grounds, a fountain at its heart, and neighbors who stay for decades. Townhomes with a sense of belonging built in.",
+    tags:"#DeLimonPlace #OldMetairie #Metairie #NewOrleans", pair:"Fountain / grounds  [needs photo] + DeLimon Place logo" },
+  { pillar:"Community · Living", title:"The Sanctuary",
+    body:"Some places sell themselves.\n\nThe Sanctuary is luxury living on the Northshore — where the live oaks and the lake do the marketing for us. A John Crosby community, built to last.",
+    tags:"#TheSanctuary #Mandeville #Northshore #LuxuryLiving", pair:"Landscape / oaks / lake  [needs photo] + The Sanctuary logo" },
+  { pillar:"Why Crosby", title:"No CAM, no surprises",
+    body:"Three words office tenants love: no CAM charges.\n\nNo common-area maintenance bills. No year-end reconciliation. No chargebacks you didn't budget for. Full-service gross at Sanctuary Office Park means the number you sign is the number you pay.",
+    tags:"#OfficeLeasing #CRE #SanctuaryOfficePark #Mandeville #Northshore", pair:"Bold text graphic on navy" },
+  { pillar:"Community · Living", title:"Metairie Lake",
+    body:"Garden-style living, minutes from the CBD, the medical schools, and the universities.\n\nOne- and two-bedroom homes, a sparkling pool, and a great location at an honest price.",
+    tags:"#MetairieLake #Metairie #NewOrleans #Apartments", pair:"Courtyard / pool  [needs photo] + Metairie Lake logo" },
+  { pillar:"Community · Living", title:"Metairie Plaza",
+    body:"The perfect location for your lifestyle.\n\nTwo- and three-bedroom homes, fenced patios, and everything New Orleans just minutes away. Room for the whole family.",
+    tags:"#MetairiePlaza #Metairie #NewOrleans #Apartments #Family", pair:"Exterior / patio  [needs photo] + Metairie Plaza logo" },
+  { pillar:"Place", title:"Old Metairie heritage",
+    body:"Some addresses never go out of style.\n\nWe've been part of Old Metairie for over forty years — building communities like DeLimon Place that feel established the day you move in.",
+    tags:"#OldMetairie #Metairie #NewOrleans #CrosbyDevelopment", pair:"Old Metairie / oak-lined street  [needs photo]" },
+  { pillar:"Heritage", title:"Three generations",
+    body:"One family. Seventy-two years. Three generations of building Louisiana.\n\nThe values John L. Crosby, Sr. started with in 1954 are the same ones we build with today — quality, community, and a long view.",
+    tags:"#CrosbyDevelopment #FamilyOwned #Since1954 #Louisiana", pair:"Archival / founder / family photo  [needs from you]" },
+  { pillar:"Why Crosby", title:"Stewardship",
+    body:"Anyone can build. Fewer stick around to look after what they built.\n\nWe manage what we develop — so the community you move into is the community we're accountable to. Every day, not just on opening day.",
+    tags:"#CrosbyDevelopment #Stewardship #PropertyManagement #Louisiana", pair:"Groundskeeping / community detail  [needs photo]" },
+  { pillar:"Leasing", title:"Sanctuary Office Park — now leasing",
+    body:"Growing your business on the Northshore?\n\nSuites are available now at Sanctuary Office Park — Class A, full-service gross, move-in ready, a mile off the Causeway. Ryan and Tommy Crosby would be glad to show you around.\n\nSend us a message or call to tour.",
+    tags:"#OfficeSpace #MandevilleLA #NowLeasing #SanctuaryOfficePark #CRE", pair:"Suite interior  [needs photo] — pull current availability from the dashboard" },
+  { pillar:"Leasing", title:"Apartments & townhomes — now renting",
+    body:"Looking for your next place to call home?\n\nWe have apartments and townhomes across the Northshore and Greater New Orleans — Mandeville Lake, Lakeside Village, Metairie Lake, and Metairie Plaza.\n\nTell us what you're looking for and we'll point you to the right fit.",
+    tags:"#ApartmentsForRent #Mandeville #Metairie #NewOrleans #Northshore", pair:"Community collage or lifestyle photo  [needs photos]" },
+  { pillar:"Engagement", title:"What makes a place home?",
+    body:"Question for our neighbors:\n\nWhat's the one thing that makes a place feel like home? The porch? The neighbors? The commute? The oak trees?\n\nTell us below 👇 — we've spent 72 years trying to get it right.",
+    tags:"#CrosbyDevelopment #Northshore #Community #Louisiana", pair:"Warm community / lifestyle photo  [needs photo]" }
+];
+function copyPost(i, btn){ var p = POSTS[i]; if(p) brandCopy(p.body + "\n\n" + p.tags, btn); }
+
 function renderBrand(){
   var c = document.getElementById("brandContent");
   if(!c) return;
@@ -1099,6 +1173,32 @@ function renderBrand(){
       + '<button class="b-copybtn" onclick="brandCopy('+JSON.stringify(k[1]).replace(/"/g,"&quot;")+',this)">Copy</button></div>';
   });
   html += '</div>';
+
+  // CONTENT QUEUE — ready-to-post captions
+  html += '<div class="b-sectitle" style="margin-top:40px;">'+iconSvg("calendar-clock",17,"#5b8fc9")+' Content queue — page warm-up</div>';
+  html += '<div class="b-secsub">A launch sequence of '+POSTS.length+' ready-to-post captions in the Crosby voice. Post 2–3 a week — that’s about two months of runway before you need new material. Click <strong>Copy caption</strong>, add the paired image, publish.</div>';
+  html += '<div class="grid-2" style="align-items:start;">';
+  POSTS.forEach(function(p, i){
+    html += '<div class="post-card">'
+      + '<div class="post-top"><span class="post-pill">'+esc(p.pillar)+'</span><span class="post-num">'+(i+1)+' / '+POSTS.length+'</span></div>'
+      + '<div class="post-title">'+esc(p.title)+'</div>'
+      + '<div class="post-body">'+esc(p.body)+'</div>'
+      + '<div class="post-tags">'+esc(p.tags)+'</div>'
+      + '<div class="post-pair">'+iconSvg("image",11,"#9ca3af")+' Pair with: '+esc(p.pair)+'</div>'
+      + '<div class="post-actions"><button class="b-copybtn" onclick="copyPost('+i+',this)">'+iconSvg("copy",11)+' Copy caption</button></div>'
+      + '</div>';
+  });
+  html += '</div>';
+
+  // DIRECTION — what to create next
+  html += '<div class="b-sectitle" style="margin-top:40px;">'+iconSvg("compass",17,"#5b8fc9")+' What to create next</div>';
+  html += '<div class="b-secsub">This queue runs on brand and copy alone. To keep the quality high past the warm-up, here’s where to invest.</div>';
+  html += '<div class="grid-2" style="align-items:start;">'
+    + '<div class="b-card"><div style="font-size:13px;font-weight:700;color:#26265c;margin-bottom:8px;">'+iconSvg("camera",14,"#5b8fc9")+' Photography — the #1 lever</div><div style="font-size:12.5px;color:#374151;line-height:1.65;">Every post above lands harder with a real image. Priority shot list:<br>• Each community — exterior + one amenity + one interior<br>• Sanctuary Office Park — a building &amp; a sample suite<br>• Gulf South — an aerial / site progress<br>• The team &amp; leadership<br>• A few Northshore &amp; Old-Metairie lifestyle frames<br>• Anything archival — the founder, early projects (great for heritage posts)</div></div>'
+    + '<div class="b-card"><div style="font-size:13px;font-weight:700;color:#26265c;margin-bottom:8px;">'+iconSvg("repeat",14,"#5b8fc9")+' Recurring series (keeps cadence easy)</div><div style="font-size:12.5px;color:#374151;line-height:1.65;">• <strong>Community of the Month</strong> — rotate the eight<br>• <strong>Suite Spotlight</strong> — live office availability<br>• <strong>Now Leasing / Now Renting</strong> — from the dashboard<br>• <strong>Meet the Team</strong> — faces behind the name<br>• <strong>Northshore &amp; Metairie Notes</strong> — local pride, events<br>• <strong>Then &amp; Now</strong> — 1954 → today heritage</div></div>'
+    + '<div class="b-card"><div style="font-size:13px;font-weight:700;color:#26265c;margin-bottom:8px;">'+iconSvg("database",14,"#5b8fc9")+' Turn the dashboard into a content engine</div><div style="font-size:12.5px;color:#374151;line-height:1.65;">The rent roll, availability, and occupancy data already live here. I can auto-draft recurring posts from it — “Suite 206 just opened,” “95% leased,” leasing wins — so the feed stays current with near-zero effort.</div></div>'
+    + '<div class="b-card"><div style="font-size:13px;font-weight:700;color:#26265c;margin-bottom:8px;">'+iconSvg("message-circle",14,"#5b8fc9")+' Social proof &amp; data</div><div style="font-size:12.5px;color:#374151;line-height:1.65;">• Resident &amp; tenant testimonials, move-in stories (needs permission)<br>• Market stats from the St. Tammany office study<br>• Milestones — occupancy, anniversaries, leasing wins<br>• Google/Facebook reviews, reshared<br><br><strong>Cadence:</strong> start 2–3×/week; reassess after month one using what performs.</div></div>'
+    + '</div>';
 
   c.innerHTML = html;
   c.setAttribute("data-rendered","1");
