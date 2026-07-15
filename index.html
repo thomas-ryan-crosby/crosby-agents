@@ -375,6 +375,42 @@
     .post-tags { font-size: 12px; color: #5b8fc9; margin-top: 9px; }
     .post-pair { font-size: 11px; color: #9ca3af; margin-top: 9px; padding-top: 8px; border-top: 1px dashed #eef1f6; }
     .post-actions { margin-top: 10px; }
+    /* Brand hub — side tabs */
+    .brandhub { display: flex; gap: 24px; align-items: flex-start; margin-top: 18px; }
+    .bh-nav { flex: 0 0 210px; position: sticky; top: 14px; display: flex; flex-direction: column; gap: 3px; background: #f8fafc; border: 1px solid #eef1f6; border-radius: 12px; padding: 8px; }
+    .bh-tab { display: flex; align-items: center; gap: 10px; text-align: left; width: 100%; font-size: 13.5px; font-weight: 600; color: #4b5563; background: transparent; border: 0; border-radius: 8px; padding: 10px 12px; cursor: pointer; transition: all 140ms; }
+    .bh-tab:hover { background: #eef1f6; color: #26265c; }
+    .bh-tab.active { background: #26265c; color: #fff; }
+    .bh-main { flex: 1; min-width: 0; }
+    .bh-panel[hidden] { display: none; }
+    .bp-head { margin-bottom: 18px; }
+    .bp-h { display: flex; align-items: center; gap: 9px; font-family: 'Fraunces', Georgia, serif; font-size: 22px; font-weight: 600; letter-spacing: -.01em; color: #26265c; }
+    .bp-sub { font-size: 13px; color: #6b7280; margin-top: 5px; max-width: 72ch; line-height: 1.5; }
+    .b-cardtitle { font-size: 12.5px; font-weight: 700; color: #26265c; margin-bottom: 10px; }
+    @media (max-width: 600px) { .b-glance-grid { grid-template-columns: 1fr !important; } }
+    @media (max-width: 860px) { .brandhub { flex-direction: column; } .bh-nav { flex-direction: row; flex-wrap: wrap; position: static; width: 100%; } .bh-tab { width: auto; } }
+    /* Sub-brand cards */
+    .sub-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    @media (max-width: 720px) { .sub-grid { grid-template-columns: 1fr; } }
+    .sub-card { display: flex; gap: 14px; border: 1px solid #e5e7eb; border-radius: 12px; background: #fff; padding: 14px 16px; align-items: flex-start; }
+    .sub-logo { flex: 0 0 92px; height: 66px; background: #fff; border: 1px solid #eef1f6; border-radius: 8px; display: flex; align-items: center; justify-content: center; padding: 8px; }
+    .sub-logo img { max-width: 100%; max-height: 100%; width: auto; }
+    .sub-name { font-weight: 700; color: #26265c; font-size: 14.5px; display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+    .sub-sec { font-family: ui-monospace, Consolas, monospace; font-size: 9.5px; letter-spacing: .05em; text-transform: uppercase; color: #345096; background: #eef1f6; border-radius: 12px; padding: 2px 7px; }
+    .sub-loc { font-family: ui-monospace, Consolas, monospace; font-size: 11px; color: #9ca3af; margin-top: 3px; }
+    .sub-pos { font-size: 12.5px; color: #345096; line-height: 1.4; margin-top: 6px; }
+    .sub-pal { display: flex; gap: 5px; align-items: center; margin-top: 8px; }
+    .sub-pal i { width: 16px; height: 16px; border-radius: 4px; border: 1px solid rgba(0,0,0,.1); }
+    .sub-pal .hex { font-family: ui-monospace, Consolas, monospace; font-size: 10px; color: #9ca3af; margin-left: 4px; }
+    /* Asset-library logo grid */
+    .lib-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    @media (max-width: 720px) { .lib-grid { grid-template-columns: 1fr 1fr; } }
+    .lib-item { border: 1px solid #e5e7eb; border-radius: 11px; background: #fff; overflow: hidden; }
+    .lib-thumb { height: 84px; background: #f8fafc; display: flex; align-items: center; justify-content: center; padding: 12px; border-bottom: 1px solid #eef1f6; }
+    .lib-thumb img { max-height: 100%; max-width: 100%; width: auto; }
+    .lib-meta { padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+    .lib-nm { font-size: 12px; color: #374151; font-weight: 600; }
+    .b-dl.file { text-decoration: none; }
 
     /* Scoped rendering of the fetched doc bodies (mirrors the docs/*.html CSS). */
     .nd { font-size: 14px; color: #1f2937; line-height: 1.55; max-width: 840px; }
@@ -1086,135 +1122,152 @@ var POSTS = [
 ];
 function copyPost(i, btn){ var p = POSTS[i]; if(p) brandCopy(p.body + "\n\n" + p.tags, btn); }
 
+function brandEsc(t){ return String(t==null?"":t).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+
+// Community sub-brands (logo file in docs/brand/, positioning, sampled palette).
+var COMMUNITIES = [
+  { name:"Sanctuary Office Park", sector:"Class A office", loc:"Mandeville", url:"sanctuaryofficepark.com", logo:"sanctuary-office-park.png", pos:"The foundation for your business success.", pal:["#26265C","#5B8FC9"] },
+  { name:"Gulf South Commerce Park", sector:"Industrial", loc:"Mandeville", url:"gulfsouthcommercepark.com", logo:"gulf-south.png", pos:"Land in Louisiana. Grow in the Gulf. Connect to the world.", pal:["#123F5C","#8CC540","#2F9E9E"] },
+  { name:"The Sanctuary", sector:"Residential", loc:"Mandeville", url:"finesouthernproperties.com", logo:"the-sanctuary.jpg", pos:"Louisiana's luxury real estate.", pal:["#601A1A","#C2A24E"] },
+  { name:"Mandeville Lake", sector:"Apartments", loc:"Mandeville", url:"mandevillelake.com", logo:"mandeville-lake.jpg", pos:"Spacious residences, effortless Northshore living.", pal:["#8F1D1D","#9A9AA0"] },
+  { name:"Lakeside Village", sector:"Townhomes", loc:"Mandeville", url:"lakesidevillage.org", logo:"lakeside-village.jpg", pos:"Great location, affordable prices.", pal:["#B52626","#333333"] },
+  { name:"DeLimon Place", sector:"Townhomes", loc:"Old Metairie", url:"delimonoldmetairie.com", logo:"delimon.jpg", pos:"A picturesque Old Metairie community since 1981.", pal:["#0090C8","#1A1A1A"] },
+  { name:"Metairie Lake", sector:"Apartments", loc:"Metairie", url:"metairielake.com", logo:"metairie-lake.jpg", pos:"Great location at affordable prices.", pal:["#141414","#8A8A8A"] },
+  { name:"Metairie Plaza", sector:"Apartments", loc:"Metairie", url:"metairieplaza.com", logo:"metairie-plaza.jpg", pos:"The perfect location for your lifestyle.", pal:["#6B4A42","#B9A894"] }
+];
+// Downloadable logo files for the asset library.
+var BRAND_LOGOS = [
+  { nm:"Crosby — full logo", f:"crosby-master.jpg" }, { nm:"Crosby — monogram", f:"crosby-monogram.png" },
+  { nm:"Sanctuary Office Park", f:"sanctuary-office-park.png" }, { nm:"Gulf South Commerce Park", f:"gulf-south.png" },
+  { nm:"The Sanctuary", f:"the-sanctuary.jpg" }, { nm:"Mandeville Lake", f:"mandeville-lake.jpg" },
+  { nm:"Lakeside Village", f:"lakeside-village.jpg" }, { nm:"DeLimon Place", f:"delimon.jpg" },
+  { nm:"Metairie Lake", f:"metairie-lake.jpg" }, { nm:"Metairie Plaza", f:"metairie-plaza.jpg" }
+];
+var BRAND_TABS = [
+  { id:"overall",  label:"Overall Brand",    icon:"bookmark" },
+  { id:"sub",      label:"Sub-Brands",       icon:"layout-grid" },
+  { id:"strategy", label:"Content Strategy", icon:"compass" },
+  { id:"calendar", label:"Content Calendar", icon:"calendar-clock" },
+  { id:"library",  label:"Asset Library",    icon:"images" }
+];
+function showBrandTab(id){
+  document.querySelectorAll(".bh-tab").forEach(function(b){ b.classList.toggle("active", b.getAttribute("data-tab")===id); });
+  document.querySelectorAll(".bh-panel").forEach(function(p){ p.hidden = (p.id !== "bp-"+id); });
+  lucide.createIcons();
+}
+
 function renderBrand(){
   var c = document.getElementById("brandContent");
   if(!c) return;
   if(c.getAttribute("data-rendered") === "1"){ lucide.createIcons(); return; }
-  var esc = function(t){ return String(t==null?"":t).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); };
+  var esc = brandEsc;
+  var head = function(icon, title, sub){ return '<div class="bp-head"><div class="bp-h">'+iconSvg(icon,20,"#5b8fc9")+' '+esc(title)+'</div><div class="bp-sub">'+sub+'</div></div>'; };
+  var guide = function(href, ico, t, d){ return '<a class="b-guidecard" href="'+href+'" target="_blank" rel="noopener"><div class="gc-ico">'+iconSvg(ico,20)+'</div><div><div class="gc-t">'+t+'</div><div class="gc-d">'+d+'</div><div class="gc-go">Open guide '+iconSvg("arrow-up-right",13,"#5b8fc9")+'</div></div></a>'; };
+  var pal = [["Crosby Navy","#26265C"],["Crosby Blue","#5B8FC9"],["Deep Navy","#171733"],["Mist","#EEF1F6"]];
 
-  var pal = [
-    ["Crosby Navy","#26265C","Primary"], ["Crosby Blue","#5B8FC9","Secondary"],
-    ["Deep Navy","#171733","Ink"], ["Mist","#EEF1F6","Neutral"]
-  ];
-  var bio = "Family-owned developer of homes, workplaces & industry across Greater New Orleans and the Northshore. Building Louisiana communities since 1954.";
-
-  var html = "";
-  // header
-  html += '<div style="margin-bottom:8px;">'
-    + '<div class="b-eyebrow">Brand</div>'
-    + '<h2 class="b-h1">Crosby Development Brand</h2>'
-    + '<div class="b-sub">The master identity, sub-brands for every community, and a social-media asset studio — everything on-brand and ready to publish.</div></div>';
-
-  // guides
-  html += '<div class="b-sectitle">'+iconSvg("book-open",17,"#5b8fc9")+' Brand guides</div>';
-  html += '<div class="b-secsub">The full identity system, in two illustrated documents. Open in a new tab.</div>';
-  html += '<div class="grid-2" style="margin-bottom:8px;">'
-    + '<a class="b-guidecard" href="docs/brand-identity.html" target="_blank" rel="noopener"><div class="gc-ico">'+iconSvg("palette",20)+'</div><div><div class="gc-t">Master Brand Guide</div><div class="gc-d">Logo &amp; marks, color, type, voice, imagery, and applications.</div><div class="gc-go">Open guide '+iconSvg("arrow-up-right",13,"#5b8fc9")+'</div></div></a>'
-    + '<a class="b-guidecard" href="docs/community-sub-brands.html" target="_blank" rel="noopener"><div class="gc-ico">'+iconSvg("layout-grid",20)+'</div><div><div class="gc-t">Community Sub-Brands</div><div class="gc-d">A sub-brand identity for all eight communities + endorsement strategy.</div><div class="gc-go">Open guide '+iconSvg("arrow-up-right",13,"#5b8fc9")+'</div></div></a>'
-    + '</div>';
-
-  // brand at a glance
-  html += '<div class="b-sectitle">'+iconSvg("bookmark",17,"#5b8fc9")+' Brand at a glance</div>';
-  html += '<div class="b-card" style="margin-top:6px;"><div style="display:grid;grid-template-columns:200px 1fr;gap:24px;align-items:center;" class="b-glance-grid">'
+  // ── PANEL: Overall Brand ──
+  var pOverall = head("bookmark","Overall brand","Crosby Development's master identity — the mark, colors, type, and voice everything else answers to.")
+    + '<div class="b-card" style="margin-bottom:16px;"><div class="b-glance-grid" style="display:grid;grid-template-columns:200px 1fr;gap:24px;align-items:center;">'
     + '<div style="background:#fff;border:1px solid #eef1f6;border-radius:10px;padding:14px;display:flex;align-items:center;justify-content:center;"><img src="docs/brand/crosby-master.jpg" alt="Crosby Development logo" style="width:100%;max-width:180px;height:auto;"></div>'
     + '<div><div style="display:flex;gap:9px;flex-wrap:wrap;margin-bottom:12px;">'
     + pal.map(function(p){ return '<div class="b-hexchip" title="Copy '+p[1]+'" onclick="brandCopy(\''+p[1]+'\',this)"><span class="sw" style="background:'+p[1]+'"></span>'+esc(p[0])+' · '+p[1]+'</div>'; }).join("")
-    + '</div>'
-    + '<div style="font-size:13px;color:#374151;line-height:1.7;"><strong>Type:</strong> squared geometric sans (DIN / Bahnschrift) · <strong>Tagline:</strong> <em>&ldquo;Building Louisiana communities since 1954.&rdquo;</em></div>'
-    + '</div></div></div>';
-
-  // FOR SOCIALS
-  html += '<div class="b-sectitle" style="margin-top:40px;">'+iconSvg("share-2",17,"#5b8fc9")+' For Socials</div>';
-  html += '<div class="b-secsub">Profile pictures and cover art for the Crosby Development social accounts — click any tile to download a print-quality PNG.</div>';
-
-  // profile pics — crosby
-  html += '<div class="b-card" style="margin-bottom:16px;"><div style="font-size:12.5px;font-weight:700;color:#26265c;margin-bottom:14px;">Profile pictures · Crosby Development <span style="font-weight:500;color:#9ca3af;">1080 × 1080</span></div>';
-  html += '<div style="display:flex;gap:26px;flex-wrap:wrap;">';
-  BRAND_ASSETS.filter(function(a){return a.grp==="crosby";}).forEach(function(a){
-    html += '<div class="b-av"><div class="ring"><canvas id="av-'+a.id+'" width="220" height="220"></canvas></div>'
-      + '<div class="lbl">'+esc(a.label)+'</div>'
-      + '<button class="b-dl" onclick="brandDownload(BRAND_ASSETS.filter(function(x){return x.id===\''+a.id+'\';})[0])">'+iconSvg("download",12)+' PNG</button></div>';
-  });
-  html += '</div></div>';
-
-  // profile pics — communities
-  html += '<div class="b-card" style="margin-bottom:16px;"><div style="font-size:12.5px;font-weight:700;color:#26265c;margin-bottom:14px;">Profile pictures · Communities <span style="font-weight:500;color:#9ca3af;">1080 × 1080 · when each community opens its own accounts</span></div>';
-  html += '<div style="display:flex;gap:22px;flex-wrap:wrap;">';
-  BRAND_ASSETS.filter(function(a){return a.grp==="community";}).forEach(function(a){
-    html += '<div class="b-av"><div class="ring"><canvas id="av-'+a.id+'" width="220" height="220"></canvas></div>'
-      + '<div class="lbl">'+esc(a.label)+'</div>'
-      + '<button class="b-dl" onclick="brandDownload(BRAND_ASSETS.filter(function(x){return x.id===\''+a.id+'\';})[0])">'+iconSvg("download",12)+' PNG</button></div>';
-  });
-  html += '</div></div>';
-
-  // banners
-  html += '<div class="b-card" style="margin-bottom:16px;"><div style="font-size:12.5px;font-weight:700;color:#26265c;margin-bottom:3px;">Cover &amp; header art</div>'
-    + '<div style="font-size:11.5px;color:#9ca3af;margin-bottom:14px;">Use the size that matches the platform — each network crops other aspect ratios. Text is auto-fit and kept clear of the profile-picture zone.</div>';
-  html += '<div style="display:flex;flex-direction:column;gap:18px;">';
-  BRAND_BANNERS.forEach(function(b){
-    html += '<div class="b-banner"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;"><span style="font-size:12px;color:#6b7280;">'+esc(b.label)+'</span>'
-      + '<button class="b-dl" onclick="brandDownload(BRAND_BANNERS.filter(function(x){return x.id===\''+b.id+'\';})[0])">'+iconSvg("download",12)+' PNG</button></div>'
-      + '<canvas id="ban-'+b.id+'" width="'+b.w+'" height="'+b.h+'"></canvas></div>';
-  });
-  html += '</div></div>';
-
-  // social bio kit
-  html += '<div class="b-card"><div style="font-size:12.5px;font-weight:700;color:#26265c;margin-bottom:6px;">Social bio kit</div>'
-    + '<div style="font-size:12px;color:#6b7280;margin-bottom:8px;">Copy-ready profile details — consistent across every platform.</div>';
-  var kit = [
-    ["Handle","@CrosbyDevelopment"],
-    ["Name","Crosby Development Company"],
-    ["Bio", bio],
-    ["Website","crosbydevelopment.com"],
-    ["Location","Mandeville, Louisiana"]
-  ];
-  kit.forEach(function(k){
-    html += '<div class="b-copyrow"><span class="k">'+esc(k[0])+'</span><span class="v">'+esc(k[1])+'</span>'
-      + '<button class="b-copybtn" onclick="brandCopy('+JSON.stringify(k[1]).replace(/"/g,"&quot;")+',this)">Copy</button></div>';
-  });
-  html += '</div>';
-
-  // CONTENT QUEUE — ready-to-post captions
-  html += '<div class="b-sectitle" style="margin-top:40px;">'+iconSvg("calendar-clock",17,"#5b8fc9")+' Content queue — page warm-up</div>';
-  html += '<div class="b-secsub">A launch sequence of '+POSTS.length+' ready-to-post captions in the Crosby voice. Post 2–3 a week — that’s about two months of runway before you need new material. Click <strong>Copy caption</strong>, add the paired image, publish.</div>';
-  html += '<div class="grid-2" style="align-items:start;">';
-  POSTS.forEach(function(p, i){
-    html += '<div class="post-card">'
-      + '<div class="post-top"><span class="post-pill">'+esc(p.pillar)+'</span><span class="post-num">'+(i+1)+' / '+POSTS.length+'</span></div>'
-      + '<div class="post-title">'+esc(p.title)+'</div>'
-      + '<div class="post-body">'+esc(p.body)+'</div>'
-      + '<div class="post-tags">'+esc(p.tags)+'</div>'
-      + '<div class="post-pair">'+iconSvg("image",11,"#9ca3af")+' Pair with: '+esc(p.pair)+'</div>'
-      + '<div class="post-actions"><button class="b-copybtn" onclick="copyPost('+i+',this)">'+iconSvg("copy",11)+' Copy caption</button></div>'
-      + '</div>';
-  });
-  html += '</div>';
-
-  // DIRECTION — what to create next
-  html += '<div class="b-sectitle" style="margin-top:40px;">'+iconSvg("compass",17,"#5b8fc9")+' What to create next</div>';
-  html += '<div class="b-secsub">This queue runs on brand and copy alone. To keep the quality high past the warm-up, here’s where to invest.</div>';
-  html += '<div class="grid-2" style="align-items:start;">'
-    + '<div class="b-card"><div style="font-size:13px;font-weight:700;color:#26265c;margin-bottom:8px;">'+iconSvg("camera",14,"#5b8fc9")+' Photography — the #1 lever</div><div style="font-size:12.5px;color:#374151;line-height:1.65;">Every post above lands harder with a real image. Priority shot list:<br>• Each community — exterior + one amenity + one interior<br>• Sanctuary Office Park — a building &amp; a sample suite<br>• Gulf South — an aerial / site progress<br>• The team &amp; leadership<br>• A few Northshore &amp; Old-Metairie lifestyle frames<br>• Anything archival — the founder, early projects (great for heritage posts)</div></div>'
-    + '<div class="b-card"><div style="font-size:13px;font-weight:700;color:#26265c;margin-bottom:8px;">'+iconSvg("repeat",14,"#5b8fc9")+' Recurring series (keeps cadence easy)</div><div style="font-size:12.5px;color:#374151;line-height:1.65;">• <strong>Community of the Month</strong> — rotate the eight<br>• <strong>Suite Spotlight</strong> — live office availability<br>• <strong>Now Leasing / Now Renting</strong> — from the dashboard<br>• <strong>Meet the Team</strong> — faces behind the name<br>• <strong>Northshore &amp; Metairie Notes</strong> — local pride, events<br>• <strong>Then &amp; Now</strong> — 1954 → today heritage</div></div>'
-    + '<div class="b-card"><div style="font-size:13px;font-weight:700;color:#26265c;margin-bottom:8px;">'+iconSvg("database",14,"#5b8fc9")+' Turn the dashboard into a content engine</div><div style="font-size:12.5px;color:#374151;line-height:1.65;">The rent roll, availability, and occupancy data already live here. I can auto-draft recurring posts from it — “Suite 206 just opened,” “95% leased,” leasing wins — so the feed stays current with near-zero effort.</div></div>'
-    + '<div class="b-card"><div style="font-size:13px;font-weight:700;color:#26265c;margin-bottom:8px;">'+iconSvg("message-circle",14,"#5b8fc9")+' Social proof &amp; data</div><div style="font-size:12.5px;color:#374151;line-height:1.65;">• Resident &amp; tenant testimonials, move-in stories (needs permission)<br>• Market stats from the St. Tammany office study<br>• Milestones — occupancy, anniversaries, leasing wins<br>• Google/Facebook reviews, reshared<br><br><strong>Cadence:</strong> start 2–3×/week; reassess after month one using what performs.</div></div>'
+    + '</div><div style="font-size:13px;color:#374151;line-height:1.7;"><strong>Type:</strong> squared geometric sans (DIN / Bahnschrift) · <strong>Tagline:</strong> <em>&ldquo;Building Louisiana communities since 1954.&rdquo;</em></div></div></div></div>'
+    + '<div class="grid-2" style="align-items:start;">'
+    + '<div class="b-card"><div class="b-cardtitle">Brand essence</div><div style="font-size:12.5px;color:#374151;line-height:1.7;"><strong>Positioning —</strong> the multigenerational Louisiana developer that builds <em>and keeps</em> its communities.<br><strong>Personality —</strong> Rooted · Solid · Warm · Enduring · Understated.<br><strong>Voice —</strong> speak from permanence; warm, not corporate; specific and grounded; quietly confident.</div></div>'
+    + guide("docs/brand-identity.html","palette","Master Brand Guide","The full system — logo &amp; marks, color, type, voice, imagery, applications.")
     + '</div>';
+
+  // ── PANEL: Sub-Brands ──
+  var pSub = head("layout-grid","Community sub-brands","Each community keeps its own character; the recommendation is one &ldquo;A Crosby Community&rdquo; endorsement to tie the portfolio together. Full rationale in the guide.")
+    + '<div style="margin-bottom:16px;">'+guide("docs/community-sub-brands.html","layout-grid","Community Sub-Brands Guide","Profiles for all eight + the endorsement strategy &amp; consistency roadmap.")+'</div>'
+    + '<div class="sub-grid">'
+    + COMMUNITIES.map(function(m){
+        return '<div class="sub-card"><div class="sub-logo"><img src="docs/brand/'+esc(m.logo)+'" alt="'+esc(m.name)+' logo"></div>'
+          + '<div style="min-width:0;"><div class="sub-name">'+esc(m.name)+'<span class="sub-sec">'+esc(m.sector)+'</span></div>'
+          + '<div class="sub-loc">'+esc(m.url)+' · '+esc(m.loc)+'</div>'
+          + '<div class="sub-pos">&ldquo;'+esc(m.pos)+'&rdquo;</div>'
+          + '<div class="sub-pal">'+m.pal.map(function(h){ return '<i style="background:'+h+'" title="'+h+'"></i>'; }).join("")+'<span class="hex">'+m.pal.join("  ")+'</span></div>'
+          + '</div></div>';
+      }).join("")
+    + '</div>';
+
+  // ── PANEL: Content Strategy ──
+  var pStrategy = head("compass","Content strategy","How the feed stays on-brand and sustainable past the warm-up.")
+    + '<div class="b-card" style="margin-bottom:16px;"><div class="b-cardtitle">Content pillars</div><div style="font-size:12.5px;color:#374151;line-height:1.85;">'
+    + '<strong>Heritage</strong> — 1954, three generations, built to belong · <strong>Communities</strong> — spotlight the eight · <strong>Why Crosby</strong> — full-service gross, no CAM, stewardship · <strong>Place</strong> — Northshore &amp; Old Metairie pride · <strong>Leasing</strong> — availability &amp; CTAs · <strong>Engagement</strong> — questions that invite comments.'
+    + '</div></div>'
+    + '<div class="grid-2" style="align-items:start;">'
+    + '<div class="b-card"><div class="b-cardtitle">'+iconSvg("camera",14,"#5b8fc9")+' Photography — the #1 lever</div><div style="font-size:12.5px;color:#374151;line-height:1.65;">Every post lands harder with a real image. Priority shot list:<br>• Each community — exterior + one amenity + one interior<br>• Sanctuary Office Park — a building &amp; a sample suite<br>• Gulf South — an aerial / site progress<br>• The team &amp; leadership<br>• A few Northshore &amp; Old-Metairie lifestyle frames<br>• Anything archival — the founder, early projects</div></div>'
+    + '<div class="b-card"><div class="b-cardtitle">'+iconSvg("repeat",14,"#5b8fc9")+' Recurring series (easy cadence)</div><div style="font-size:12.5px;color:#374151;line-height:1.65;">• <strong>Community of the Month</strong> — rotate the eight<br>• <strong>Suite Spotlight</strong> — live office availability<br>• <strong>Now Leasing / Now Renting</strong> — from the dashboard<br>• <strong>Meet the Team</strong> — faces behind the name<br>• <strong>Northshore &amp; Metairie Notes</strong> — local pride, events<br>• <strong>Then &amp; Now</strong> — 1954 → today</div></div>'
+    + '<div class="b-card"><div class="b-cardtitle">'+iconSvg("database",14,"#5b8fc9")+' Dashboard as content engine</div><div style="font-size:12.5px;color:#374151;line-height:1.65;">Rent roll, availability, and occupancy already live here. I can auto-draft recurring posts from it — &ldquo;Suite 206 just opened,&rdquo; &ldquo;95% leased,&rdquo; leasing wins — so the feed stays current with near-zero effort.</div></div>'
+    + '<div class="b-card"><div class="b-cardtitle">'+iconSvg("message-circle",14,"#5b8fc9")+' Social proof &amp; data</div><div style="font-size:12.5px;color:#374151;line-height:1.65;">• Resident &amp; tenant testimonials (needs permission)<br>• Market stats from the St. Tammany office study<br>• Milestones — occupancy, anniversaries, leasing wins<br>• Reviews, reshared<br><br><strong>Cadence:</strong> 2–3×/week; reassess after month one on what performs.</div></div>'
+    + '</div>';
+
+  // ── PANEL: Content Calendar ──
+  var pCalendar = head("calendar-clock","Content calendar","A launch sequence of "+POSTS.length+" ready-to-post captions in the Crosby voice. At 2–3 a week that's ~2 months of runway. Copy, add the paired image, publish.")
+    + '<div class="b-card" style="margin-bottom:16px;"><div class="b-cardtitle">Suggested rhythm</div><div style="font-size:12.5px;color:#374151;line-height:1.7;"><strong>Mon</strong> — a community or heritage post &nbsp;·&nbsp; <strong>Wed</strong> — a &ldquo;Why Crosby&rdquo; / place / education post &nbsp;·&nbsp; <strong>Fri</strong> — a leasing CTA or an engagement question. Rotate pillars so it never reads like eight ads in a row.</div></div>'
+    + '<div class="grid-2" style="align-items:start;">'
+    + POSTS.map(function(p, i){
+        return '<div class="post-card"><div class="post-top"><span class="post-pill">'+esc(p.pillar)+'</span><span class="post-num">'+(i+1)+' / '+POSTS.length+'</span></div>'
+          + '<div class="post-title">'+esc(p.title)+'</div><div class="post-body">'+esc(p.body)+'</div>'
+          + '<div class="post-tags">'+esc(p.tags)+'</div>'
+          + '<div class="post-pair">'+iconSvg("image",11,"#9ca3af")+' Pair with: '+esc(p.pair)+'</div>'
+          + '<div class="post-actions"><button class="b-copybtn" onclick="copyPost('+i+',this)">'+iconSvg("copy",11)+' Copy caption</button></div></div>';
+      }).join("")
+    + '</div>';
+
+  // ── PANEL: Asset Library ──
+  var pLibrary = head("images","Image &amp; asset library","Logos, profile pictures, and cover art — all download-ready.");
+  // logos
+  pLibrary += '<div class="b-card" style="margin-bottom:16px;"><div class="b-cardtitle">Logos</div><div class="lib-grid">'
+    + BRAND_LOGOS.map(function(l){
+        return '<div class="lib-item"><div class="lib-thumb"><img src="docs/brand/'+esc(l.f)+'" alt="'+esc(l.nm)+'"></div><div class="lib-meta"><span class="lib-nm">'+esc(l.nm)+'</span><a class="b-dl file" href="docs/brand/'+esc(l.f)+'" download>'+iconSvg("download",12)+'</a></div></div>';
+      }).join("")
+    + '</div></div>';
+  // profile pics
+  pLibrary += '<div class="b-card" style="margin-bottom:16px;"><div class="b-cardtitle">Profile pictures · Crosby Development <span style="font-weight:500;color:#9ca3af;">1080 × 1080</span></div><div style="display:flex;gap:26px;flex-wrap:wrap;">'
+    + BRAND_ASSETS.filter(function(a){return a.grp==="crosby";}).map(function(a){
+        return '<div class="b-av"><div class="ring"><canvas id="av-'+a.id+'" width="220" height="220"></canvas></div><div class="lbl">'+esc(a.label)+'</div><button class="b-dl" onclick="brandDownload(BRAND_ASSETS.filter(function(x){return x.id===\''+a.id+'\';})[0])">'+iconSvg("download",12)+' PNG</button></div>';
+      }).join("")
+    + '</div></div>';
+  pLibrary += '<div class="b-card" style="margin-bottom:16px;"><div class="b-cardtitle">Profile pictures · Communities <span style="font-weight:500;color:#9ca3af;">for each community\'s own accounts</span></div><div style="display:flex;gap:22px;flex-wrap:wrap;">'
+    + BRAND_ASSETS.filter(function(a){return a.grp==="community";}).map(function(a){
+        return '<div class="b-av"><div class="ring"><canvas id="av-'+a.id+'" width="220" height="220"></canvas></div><div class="lbl">'+esc(a.label)+'</div><button class="b-dl" onclick="brandDownload(BRAND_ASSETS.filter(function(x){return x.id===\''+a.id+'\';})[0])">'+iconSvg("download",12)+' PNG</button></div>';
+      }).join("")
+    + '</div></div>';
+  // covers
+  pLibrary += '<div class="b-card" style="margin-bottom:16px;"><div class="b-cardtitle">Cover &amp; header art</div><div style="font-size:11.5px;color:#9ca3af;margin-bottom:14px;">Use the size that matches the platform — each network crops other ratios. Text auto-fits and stays clear of the profile-picture zone.</div><div style="display:flex;flex-direction:column;gap:18px;">'
+    + BRAND_BANNERS.map(function(b){
+        return '<div class="b-banner"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;"><span style="font-size:12px;color:#6b7280;">'+esc(b.label)+'</span><button class="b-dl" onclick="brandDownload(BRAND_BANNERS.filter(function(x){return x.id===\''+b.id+'\';})[0])">'+iconSvg("download",12)+' PNG</button></div><canvas id="ban-'+b.id+'" width="'+b.w+'" height="'+b.h+'"></canvas></div>';
+      }).join("")
+    + '</div></div>';
+  // bio kit
+  var kit = [["Handle","@CrosbyDevelopment"],["Name","Crosby Development Company"],["Bio","Family-owned developer of homes, workplaces & industry across Greater New Orleans and the Northshore. Building Louisiana communities since 1954."],["Website","crosbydevelopment.com"],["Location","Mandeville, Louisiana"]];
+  pLibrary += '<div class="b-card"><div class="b-cardtitle">Social bio kit</div><div style="font-size:12px;color:#6b7280;margin-bottom:8px;">Copy-ready profile details — consistent across every platform.</div>'
+    + kit.map(function(k){ return '<div class="b-copyrow"><span class="k">'+esc(k[0])+'</span><span class="v">'+esc(k[1])+'</span><button class="b-copybtn" onclick="brandCopy('+JSON.stringify(k[1]).replace(/"/g,"&quot;")+',this)">Copy</button></div>'; }).join("")
+    + '</div>';
+
+  // ── Assemble the hub ──
+  var panels = { overall:pOverall, sub:pSub, strategy:pStrategy, calendar:pCalendar, library:pLibrary };
+  var html = '<div class="b-eyebrow">Brand</div><h2 class="b-h1">Crosby Development Brand</h2>'
+    + '<div class="b-sub">The master identity, sub-brands for every community, and a full social-content studio — everything on-brand and ready to publish.</div>'
+    + '<div class="brandhub"><aside class="bh-nav">'
+    + BRAND_TABS.map(function(t, i){ return '<button class="bh-tab'+(i===0?' active':'')+'" data-tab="'+t.id+'" onclick="showBrandTab(\''+t.id+'\')">'+iconSvg(t.icon,16)+'<span>'+t.label+'</span></button>'; }).join("")
+    + '</aside><div class="bh-main">'
+    + BRAND_TABS.map(function(t, i){ return '<div class="bh-panel" id="bp-'+t.id+'"'+(i===0?"":" hidden")+'>'+panels[t.id]+'</div>'; }).join("")
+    + '</div></div>';
 
   c.innerHTML = html;
   c.setAttribute("data-rendered","1");
   lucide.createIcons();
 
-  // preload every logo, then paint all preview canvases
+  // preload logos, then paint the avatar + banner canvases in the library panel
   var need = {};
   BRAND_ASSETS.forEach(function(a){ if(a.img) need[a.img]=1; });
   need["crosby-master.jpg"] = 1;
   Promise.all(Object.keys(need).map(brandLoadImg)).then(function(){
-    BRAND_ASSETS.forEach(function(a){
-      var cv = document.getElementById("av-"+a.id); if(cv) brandPaint(cv.getContext("2d"), a, cv.width, cv.height);
-    });
-    BRAND_BANNERS.forEach(function(b){
-      var cv = document.getElementById("ban-"+b.id); if(cv) brandPaint(cv.getContext("2d"), {kind:"banner",id:b.id}, cv.width, cv.height);
-    });
+    BRAND_ASSETS.forEach(function(a){ var cv = document.getElementById("av-"+a.id); if(cv) brandPaint(cv.getContext("2d"), a, cv.width, cv.height); });
+    BRAND_BANNERS.forEach(function(b){ var cv = document.getElementById("ban-"+b.id); if(cv) brandPaint(cv.getContext("2d"), {kind:"banner",id:b.id}, cv.width, cv.height); });
   });
 }
 
