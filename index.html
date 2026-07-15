@@ -1308,13 +1308,22 @@ function brandLibAddFiles(files){
     });
   });
 }
-function brandLibImportLeasing(){
-  var photos = brandLibLeasingPhotos(), have = {}, added = 0;
-  (window.__brandMediaCache||[]).forEach(function(p){ if(p.url) have[brandLibTail(p.url)] = 1; });
-  photos.forEach(function(u, i){ if(have[brandLibTail(u)]) return; added++;
-    brandLibPut({ id:brandLibGenId(), url:u, tag:"Sanctuary Office Park", name:"leasing-import", order:Date.now()+i, addedAt:new Date().toISOString() });
+function brandHashUrl(u){ var s = u.length + "|" + u.slice(-160), h = 5381; for(var i=0;i<s.length;i++){ h = ((h<<5)+h+s.charCodeAt(i)) >>> 0; } return h.toString(36); }
+function brandLeasingId(u){ return "lz-" + brandHashUrl(u); }
+// Auto-mirror every Leasing-area photo into the library. Idempotent: each photo
+// gets a content-derived id, so re-runs and concurrent clients never duplicate.
+function brandAdoptLeasing(){
+  if(!brandLibReady()) return;
+  var photos = brandLibLeasingPhotos(); if(!photos.length) return;
+  window.__brandAdopting = window.__brandAdopting || {};
+  var have = {}; (window.__brandMediaCache||[]).forEach(function(p){ have[p.id] = 1; });
+  photos.forEach(function(u, i){
+    var id = brandLeasingId(u);
+    if(have[id] || window.__brandAdopting[id]) return;
+    window.__brandAdopting[id] = 1;
+    window.__brand.put({ id:id, url:u, tag:"Sanctuary Office Park", name:"leasing", source:"leasing", order:1000000 + i, addedAt:"2024-01-01T00:00:00.000Z" })
+      .catch(function(e){ console.error(e); delete window.__brandAdopting[id]; });
   });
-  if(!added) alert("All Leasing photos are already in the library.");
 }
 function brandLibSetTag(id, tag){
   var p = (window.__brandMediaCache||[]).filter(function(x){ return x.id===id; })[0]; if(p) p.tag = tag;
@@ -1353,17 +1362,15 @@ function renderBrandLibrary(){
   var items = all.filter(function(p){ return filter === "All" || (p.tag||"General") === filter; })
                  .sort(function(a,b){ return String(b.order||b.addedAt||"").localeCompare(String(a.order||a.addedAt||"")); });
   var chip = function(t){ return '<button class="lib-chip'+(filter===t?" on":"")+'" onclick="brandLibSetFilter(\''+esc(t).replace(/'/g,"&#39;")+'\')">'+esc(t)+' <span style="opacity:.6;">'+(t==="All"?counts.All:(counts[t]||0))+'</span></button>'; };
-  var leasingN = brandLibLeasingPhotos().length;
   var html = '<div style="display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin-bottom:14px;">'
     + chip("All") + BRAND_LIB_TAGS.map(chip).join("")
     + '<span style="flex:1;min-width:12px;"></span>'
     + '<button class="b-dl" onclick="document.getElementById(\'brandLibFile\').click()">'+iconSvg("upload",12)+' Add photos</button>'
-    + (leasingN ? '<button class="b-dl" onclick="brandLibImportLeasing()">'+iconSvg("download-cloud",12)+' Import '+leasingN+' from Leasing</button>' : '')
     + '<input type="file" id="brandLibFile" accept="image/*" multiple style="display:none;" onchange="brandLibAddFiles(this.files); this.value=\'\';">'
     + '</div>';
   if(!brandLibReady()) html += '<div style="font-size:11.5px;color:#b45309;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:8px 11px;margin-bottom:12px;">Live library isn\'t connected here — additions won\'t save until this runs on the deployed site.</div>';
   if(!items.length){
-    html += '<div style="font-size:12.5px;color:#9ca3af;padding:6px 0;">No photos'+(filter==="All"?"":' tagged &ldquo;'+esc(filter)+'&rdquo;')+' yet. Use <strong>Add photos</strong>'+(leasingN?' or <strong>Import from Leasing</strong>':'')+'.</div>';
+    html += '<div style="font-size:12.5px;color:#9ca3af;padding:6px 0;">No photos'+(filter==="All"?" in the library yet — Leasing photos appear here automatically once loaded":' tagged &ldquo;'+esc(filter)+'&rdquo; yet')+'. Use <strong>Add photos</strong> to upload more.</div>';
   } else {
     html += '<div class="lib-grid">' + items.map(function(p){
       var opts = BRAND_LIB_TAGS.map(function(t){ return '<option value="'+esc(t)+'"'+(((p.tag||"General")===t)?" selected":"")+'>'+esc(t)+'</option>'; }).join("");
@@ -1522,7 +1529,7 @@ function renderBrand(){
   // ── PANEL: Asset Library ──
   var pLibrary = head("images","Image &amp; asset library","Photography, logos, profile pictures, and cover art — all download-ready.");
   // photography (pulled live from the Leasing area's uploaded photos)
-  pLibrary += '<div class="b-card" style="margin-bottom:16px;"><div class="b-cardtitle">Photography <span style="font-weight:500;color:#9ca3af;">tag by community · add / remove · import from Leasing</span></div><div id="brandLib"><div style="font-size:12.5px;color:#9ca3af;">Loading…</div></div></div>';
+  pLibrary += '<div class="b-card" style="margin-bottom:16px;"><div class="b-cardtitle">Photography <span style="font-weight:500;color:#9ca3af;">Leasing photos included automatically · tag by community · add / remove</span></div><div id="brandLib"><div style="font-size:12.5px;color:#9ca3af;">Loading…</div></div></div>';
   // logos
   pLibrary += '<div class="b-card" style="margin-bottom:16px;"><div class="b-cardtitle">Logos</div><div class="lib-grid">'
     + BRAND_LOGOS.map(function(l){
@@ -6385,6 +6392,7 @@ document.addEventListener("DOMContentLoaded", init);
       .sort((a, b) => String(b.flaggedAt || "").localeCompare(String(a.flaggedAt || "")));
     if (typeof renderLeasing === "function") renderLeasing();
     if (typeof updateLeasingBadge === "function") updateLeasingBadge();
+    if (typeof window.brandAdoptLeasing === "function") window.brandAdoptLeasing();
   }
 
   // One-time lift of any pre-existing localStorage promotions (incl. photos/floor
@@ -6471,6 +6479,7 @@ document.addEventListener("DOMContentLoaded", init);
       onReady: (ok) => { window.__brand.ready = ok; },
       onItems: (a) => {
         window.__brandMediaCache = a.slice();
+        if (typeof window.brandAdoptLeasing === "function") window.brandAdoptLeasing();
         if (document.getElementById("view-brand")?.classList.contains("active")) {
           if (typeof renderBrandLibrary === "function") renderBrandLibrary();
           if (typeof renderBrandCalendar === "function") renderBrandCalendar();
