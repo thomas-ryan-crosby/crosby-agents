@@ -435,6 +435,10 @@
     .lib-tagsel { font-size: 11px; border: 1px solid #e5e7eb; border-radius: 6px; padding: 3px 6px; color: #374151; background: #fff; width: 100%; cursor: pointer; }
     .lib-del { background: transparent; border: 0; color: #bb4b3d; cursor: pointer; padding: 3px; border-radius: 5px; display: inline-flex; }
     .lib-del:hover { background: #fdecea; }
+    .lib-drop { display: flex; align-items: center; justify-content: center; gap: 10px; border: 2px dashed #c7d0e0; border-radius: 10px; padding: 16px; color: #6b7280; font-size: 13px; cursor: pointer; background: #f8fafc; transition: all 140ms; margin-bottom: 16px; }
+    .lib-drop:hover { border-color: #5b8fc9; color: #26265c; }
+    .lib-drop.drag { border-color: #26265c; background: #eef1f6; color: #26265c; }
+    .lib-drop strong { color: #345096; }
     /* Post ↔ photo assignment */
     .post-media { display: flex; gap: 7px; flex-wrap: wrap; align-items: center; margin-top: 9px; }
     .pm-thumb { position: relative; width: 54px; height: 54px; border-radius: 7px; overflow: hidden; border: 1px solid #e5e7eb; }
@@ -1336,6 +1340,9 @@ function brandLibDelete(id){
   if(brandLibReady()) window.__brand.delete(id).catch(function(e){ console.error(e); });
 }
 function brandLibSetFilter(t){ window.__brandLibFilter = t; renderBrandLibrary(); }
+function brandDragOver(e){ e.preventDefault(); if(e.dataTransfer) e.dataTransfer.dropEffect = "copy"; e.currentTarget.classList.add("drag"); }
+function brandDragLeave(e){ e.currentTarget.classList.remove("drag"); }
+function brandDrop(e){ e.preventDefault(); e.currentTarget.classList.remove("drag"); var f = e.dataTransfer && e.dataTransfer.files; if(f && f.length) brandLibAddFiles(f); }
 function brandCompressImage(file, cb){
   var reader = new FileReader();
   reader.onload = function(e){
@@ -1362,12 +1369,13 @@ function renderBrandLibrary(){
   var items = all.filter(function(p){ return filter === "All" || (p.tag||"General") === filter; })
                  .sort(function(a,b){ return String(b.order||b.addedAt||"").localeCompare(String(a.order||a.addedAt||"")); });
   var chip = function(t){ return '<button class="lib-chip'+(filter===t?" on":"")+'" onclick="brandLibSetFilter(\''+esc(t).replace(/'/g,"&#39;")+'\')">'+esc(t)+' <span style="opacity:.6;">'+(t==="All"?counts.All:(counts[t]||0))+'</span></button>'; };
-  var html = '<div style="display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin-bottom:14px;">'
+  var dropHint = (filter && filter !== "All") ? ' <span style="color:#9ca3af;">→ tagged &ldquo;'+esc(filter)+'&rdquo;</span>' : '';
+  var html = '<div style="display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin-bottom:12px;">'
     + chip("All") + BRAND_LIB_TAGS.map(chip).join("")
-    + '<span style="flex:1;min-width:12px;"></span>'
-    + '<button class="b-dl" onclick="document.getElementById(\'brandLibFile\').click()">'+iconSvg("upload",12)+' Add photos</button>'
+    + '</div>'
     + '<input type="file" id="brandLibFile" accept="image/*" multiple style="display:none;" onchange="brandLibAddFiles(this.files); this.value=\'\';">'
-    + '</div>';
+    + '<div class="lib-drop" ondragover="brandDragOver(event)" ondragleave="brandDragLeave(event)" ondrop="brandDrop(event)" onclick="document.getElementById(\'brandLibFile\').click()">'
+    + iconSvg("upload-cloud",18,"#5b8fc9")+' <span>Drag &amp; drop photos here, or <strong>click to browse</strong>'+dropHint+'</span></div>';
   if(!brandLibReady()) html += '<div style="font-size:11.5px;color:#b45309;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:8px 11px;margin-bottom:12px;">Live library isn\'t connected here — additions won\'t save until this runs on the deployed site.</div>';
   if(!items.length){
     html += '<div style="font-size:12.5px;color:#9ca3af;padding:6px 0;">No photos'+(filter==="All"?" in the library yet — Leasing photos appear here automatically once loaded":' tagged &ldquo;'+esc(filter)+'&rdquo; yet')+'. Use <strong>Add photos</strong> to upload more.</div>';
