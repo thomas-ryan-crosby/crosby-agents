@@ -410,6 +410,8 @@
     .lib-thumb img { max-height: 100%; max-width: 100%; width: auto; }
     .lib-meta { padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
     .lib-nm { font-size: 12px; color: #374151; font-weight: 600; }
+    .lib-thumb.photo { height: 130px; padding: 0; }
+    .lib-thumb.photo img { width: 100%; height: 100%; max-height: none; max-width: none; object-fit: cover; }
     .b-dl.file { text-decoration: none; }
 
     /* Scoped rendering of the fetched doc bodies (mirrors the docs/*.html CSS). */
@@ -1153,6 +1155,26 @@ var BRAND_TABS = [
 function showBrandTab(id){
   document.querySelectorAll(".bh-tab").forEach(function(b){ b.classList.toggle("active", b.getAttribute("data-tab")===id); });
   document.querySelectorAll(".bh-panel").forEach(function(p){ p.hidden = (p.id !== "bp-"+id); });
+  if(id === "library") buildLibraryPhotos();
+  lucide.createIcons();
+}
+// Pull the office-park photos already uploaded in the Leasing area (live from
+// the marketing cache) into the asset library, de-duplicated, with downloads.
+function buildLibraryPhotos(){
+  var host = document.getElementById("libPhotos"); if(!host) return;
+  var mc = window.__marketingCache || [], seen = {}, items = [];
+  mc.forEach(function(r){
+    (r.photos || []).forEach(function(u){
+      if(typeof u !== "string" || u.indexOf("data:image") !== 0) return;
+      var k = u.length + "|" + u.slice(-120); if(seen[k]) return; seen[k] = 1;  // dedup by tail (headers are identical)
+      items.push({ u:u, src:(r.building ? r.building + " · Ste " + r.suite : (r.tenant || "Sanctuary Office Park")) });
+    });
+  });
+  if(!items.length){ host.innerHTML = '<div style="font-size:12.5px;color:#9ca3af;">No photos uploaded in the Leasing area yet — add suite &amp; complex photos there and they appear here automatically.</div>'; return; }
+  host.innerHTML = '<div style="font-size:11.5px;color:#9ca3af;margin-bottom:12px;">'+items.length+' photos from marketed suites — click to download. Great for community &amp; suite-spotlight posts.</div>'
+    + '<div class="lib-grid">'
+    + items.map(function(p, i){ return '<div class="lib-item"><div class="lib-thumb photo"><img src="'+p.u+'" alt="Sanctuary Office Park photo" loading="lazy"></div><div class="lib-meta"><span class="lib-nm" style="font-size:10.5px;">'+brandEsc(p.src)+'</span><a class="b-dl file" href="'+p.u+'" download="sanctuary-office-park-'+(i+1)+'.jpg">'+iconSvg("download",12)+'</a></div></div>'; }).join("")
+    + '</div>';
   lucide.createIcons();
 }
 
@@ -1165,31 +1187,81 @@ function renderBrand(){
   var guide = function(href, ico, t, d){ return '<a class="b-guidecard" href="'+href+'" target="_blank" rel="noopener"><div class="gc-ico">'+iconSvg(ico,20)+'</div><div><div class="gc-t">'+t+'</div><div class="gc-d">'+d+'</div><div class="gc-go">Open guide '+iconSvg("arrow-up-right",13,"#5b8fc9")+'</div></div></a>'; };
   var pal = [["Crosby Navy","#26265C"],["Crosby Blue","#5B8FC9"],["Deep Navy","#171733"],["Mist","#EEF1F6"]];
 
-  // ── PANEL: Overall Brand ──
-  var pOverall = head("bookmark","Overall brand","Crosby Development's master identity — the mark, colors, type, and voice everything else answers to.")
-    + '<div class="b-card" style="margin-bottom:16px;"><div class="b-glance-grid" style="display:grid;grid-template-columns:200px 1fr;gap:24px;align-items:center;">'
+  var gsec = function(t){ return '<div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#5b8fc9;margin:30px 0 12px;">'+t+'</div>'; };
+  var DISP = "Bahnschrift,'DIN Alternate','Arial Narrow',system-ui,sans-serif";
+
+  var glanceCard = '<div class="b-card"><div class="b-glance-grid" style="display:grid;grid-template-columns:200px 1fr;gap:24px;align-items:center;">'
     + '<div style="background:#fff;border:1px solid #eef1f6;border-radius:10px;padding:14px;display:flex;align-items:center;justify-content:center;"><img src="docs/brand/crosby-master.jpg" alt="Crosby Development logo" style="width:100%;max-width:180px;height:auto;"></div>'
     + '<div><div style="display:flex;gap:9px;flex-wrap:wrap;margin-bottom:12px;">'
     + pal.map(function(p){ return '<div class="b-hexchip" title="Copy '+p[1]+'" onclick="brandCopy(\''+p[1]+'\',this)"><span class="sw" style="background:'+p[1]+'"></span>'+esc(p[0])+' · '+p[1]+'</div>'; }).join("")
-    + '</div><div style="font-size:13px;color:#374151;line-height:1.7;"><strong>Type:</strong> squared geometric sans (DIN / Bahnschrift) · <strong>Tagline:</strong> <em>&ldquo;Building Louisiana communities since 1954.&rdquo;</em></div></div></div></div>'
-    + '<div class="grid-2" style="align-items:start;">'
-    + '<div class="b-card"><div class="b-cardtitle">Brand essence</div><div style="font-size:12.5px;color:#374151;line-height:1.7;"><strong>Positioning —</strong> the multigenerational Louisiana developer that builds <em>and keeps</em> its communities.<br><strong>Personality —</strong> Rooted · Solid · Warm · Enduring · Understated.<br><strong>Voice —</strong> speak from permanence; warm, not corporate; specific and grounded; quietly confident.</div></div>'
-    + guide("docs/brand-identity.html","palette","Master Brand Guide","The full system — logo &amp; marks, color, type, voice, imagery, applications.")
+    + '</div><div style="font-size:13px;color:#374151;line-height:1.7;"><strong>Type:</strong> squared geometric sans (DIN / Bahnschrift) · <strong>Tagline:</strong> <em>&ldquo;Building Louisiana communities since 1954.&rdquo;</em></div></div></div></div>';
+
+  var COLORS = [["Crosby Navy","#26265C","Primary"],["Crosby Blue","#5B8FC9","Secondary"],["Deep Blue","#345096","Links on light"],["Deep Navy","#171733","Ink / text"],["Mist","#EEF1F6","Neutral ground"],["Slate","#565A7C","Secondary text"]];
+  var colorGrid = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:12px;">'
+    + COLORS.map(function(cl){ return '<div onclick="brandCopy(\''+cl[1]+'\',this)" title="Copy '+cl[1]+'" style="border:1px solid #e5e7eb;border-radius:10px;overflow:hidden;cursor:pointer;background:#fff;"><div style="height:56px;background:'+cl[1]+';"></div><div style="padding:9px 11px;"><div style="font-weight:700;color:#26265c;font-size:12.5px;">'+cl[0]+'</div><div style="font-family:ui-monospace,Consolas,monospace;font-size:10.5px;color:#9ca3af;">'+cl[1]+' · '+cl[2]+'</div></div></div>'; }).join("")
     + '</div>';
 
-  // ── PANEL: Sub-Brands ──
-  var pSub = head("layout-grid","Community sub-brands","Each community keeps its own character; the recommendation is one &ldquo;A Crosby Community&rdquo; endorsement to tie the portfolio together. Full rationale in the guide.")
-    + '<div style="margin-bottom:16px;">'+guide("docs/community-sub-brands.html","layout-grid","Community Sub-Brands Guide","Profiles for all eight + the endorsement strategy &amp; consistency roadmap.")+'</div>'
-    + '<div class="sub-grid">'
-    + COMMUNITIES.map(function(m){
+  var typeCard = '<div class="b-card"><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:18px;">'
+    + '<div><div style="font-family:'+DISP+';font-weight:700;font-size:44px;color:#26265c;line-height:1;">Aa</div><div style="font-weight:700;color:#26265c;font-size:13px;margin-top:8px;">Display — DIN / Bahnschrift</div><div style="font-size:11.5px;color:#6b7280;margin-top:2px;">Headlines, stats, labels. Squared &amp; structural, like the mark.</div></div>'
+    + '<div><div style="font-weight:600;font-size:40px;color:#26265c;line-height:1;">Aa</div><div style="font-weight:700;color:#26265c;font-size:13px;margin-top:8px;">Body — system sans</div><div style="font-size:11.5px;color:#6b7280;margin-top:2px;">Running text &amp; UI. Clear, invisible on purpose.</div></div>'
+    + '<div><div style="font-family:ui-monospace,Consolas,monospace;font-size:34px;color:#26265c;line-height:1;">Aa</div><div style="font-weight:700;color:#26265c;font-size:13px;margin-top:8px;">Data — monospace</div><div style="font-size:11.5px;color:#6b7280;margin-top:2px;">Rents, dimensions, dates — like a field book.</div></div>'
+    + '</div></div>';
+
+  var VOICE = [
+    ["Speak from permanence","&ldquo;Premium space available now — act fast!&rdquo;","&ldquo;Suite 206 is ready for its next twenty years. Come see it.&rdquo;"],
+    ["Warm, not corporate","&ldquo;Tenants shall submit maintenance requests via the portal.&rdquo;","&ldquo;Something need fixing? Tell us — we&rsquo;ll take care of it.&rdquo;"],
+    ["Specific and grounded","&ldquo;World-class amenities in a prime location.&rdquo;","&ldquo;Full-service gross, no CAM, on #1 Sanctuary Blvd — a mile off the Causeway.&rdquo;"],
+    ["Understated confidence","&ldquo;The #1 most trusted developer in Louisiana history!&rdquo;","&ldquo;Building Louisiana communities since 1954.&rdquo;"]
+  ];
+  var voiceRows = VOICE.map(function(v){ return '<div class="b-card" style="margin-bottom:10px;"><div style="font-weight:700;color:#26265c;font-size:13.5px;margin-bottom:8px;">'+v[0]+'</div><div style="font-size:12.5px;color:#9ca3af;margin-bottom:4px;"><span style="color:#bb4b3d;font-weight:600;">Avoid</span> — '+v[1]+'</div><div style="font-size:12.5px;color:#374151;"><span style="color:#345096;font-weight:600;">Crosby</span> — '+v[2]+'</div></div>'; }).join("");
+
+  // ── PANEL: Overall Brand (full guide, native) ──
+  var pOverall = head("bookmark","Overall brand","Crosby Development's master identity — the mark, colors, type, and voice everything else answers to.")
+    + glanceCard
+    + gsec("Foundation")
+    + '<div class="b-card"><div style="font-size:13px;color:#374151;line-height:1.7;">Founded in 1954 by John&nbsp;L.&nbsp;Crosby,&nbsp;Sr., Crosby Development builds and stewards residential, commercial, and industrial communities across Greater New Orleans and the Northshore. Seventy-two years, three generations, one idea: build places meant to last — then stay to look after them.<br><br><strong>Positioning —</strong> the multigenerational Louisiana developer that builds <em>and keeps</em> its communities. &nbsp;<strong>Personality —</strong> Rooted · Solid · Warm · Enduring · Understated.</div></div>'
+    + gsec("The marks")
+    + '<div class="grid-2">'
+      + '<div class="b-card"><div class="b-cardtitle">Primary lockup</div><div style="background:#fff;border:1px solid #eef1f6;border-radius:8px;padding:22px;display:flex;justify-content:center;"><img src="docs/brand/crosby-master.jpg" alt="Crosby logo" style="max-width:300px;width:100%;"></div></div>'
+      + '<div class="b-card"><div class="b-cardtitle">Monogram</div><div style="background:#fff;border:1px solid #eef1f6;border-radius:8px;padding:16px;display:flex;justify-content:center;"><img src="docs/brand/crosby-monogram.png" alt="Crosby monogram" style="height:126px;"></div></div>'
+    + '</div>'
+    + '<div class="b-card" style="margin-top:14px;"><div style="font-size:12.5px;color:#374151;line-height:1.8;"><span style="color:#345096;font-weight:700;">Do</span> — keep clear space of one monogram-height on all sides; hold the two-color navy + blue; the monogram may stand alone.<br><span style="color:#bb4b3d;font-weight:700;">Don&rsquo;t</span> — recolor, add gradients or shadows, stretch it, or place the color logo on a busy photo (use a white plate).</div></div>'
+    + gsec("Color")
+    + colorGrid
+    + gsec("Typography")
+    + typeCard
+    + gsec("Voice")
+    + voiceRows
+    + gsec("Tagline")
+    + '<div class="b-card" style="background:#26265c;border-color:#26265c;"><div style="font-family:'+DISP+';font-weight:700;font-size:23px;color:#fff;line-height:1.1;">Building Louisiana communities since 1954.</div><div style="color:#b7bfe0;font-size:12px;margin-top:8px;line-height:1.5;">Lead line — year-anchored, so it never dates. Alternates: &ldquo;Three generations. Communities that last.&rdquo; · &ldquo;Rooted here. Built to last.&rdquo;</div></div>';
+
+  // ── PANEL: Sub-Brands (native) ──
+  var communityCards = COMMUNITIES.map(function(m){
         return '<div class="sub-card"><div class="sub-logo"><img src="docs/brand/'+esc(m.logo)+'" alt="'+esc(m.name)+' logo"></div>'
           + '<div style="min-width:0;"><div class="sub-name">'+esc(m.name)+'<span class="sub-sec">'+esc(m.sector)+'</span></div>'
           + '<div class="sub-loc">'+esc(m.url)+' · '+esc(m.loc)+'</div>'
           + '<div class="sub-pos">&ldquo;'+esc(m.pos)+'&rdquo;</div>'
           + '<div class="sub-pal">'+m.pal.map(function(h){ return '<i style="background:'+h+'" title="'+h+'"></i>'; }).join("")+'<span class="hex">'+m.pal.join("  ")+'</span></div>'
           + '</div></div>';
-      }).join("")
-    + '</div>';
+      }).join("");
+  var endorseDemo = ["Mandeville Lake","DeLimon Place","Gulf South"].map(function(n){ return '<div style="flex:1 1 180px;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:14px 16px;"><div style="font-family:'+DISP+';font-weight:700;font-size:18px;color:#26265c;">'+n+'</div><div style="height:2px;width:34px;background:#5b8fc9;margin:7px 0;"></div><div style="font-family:ui-monospace,Consolas,monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#345096;">A Crosby Community</div></div>'; }).join("");
+  var ROADMAP = [
+    "Draw one &ldquo;A Crosby Community&rdquo; endorsement lockup — the single asset that unifies everything.",
+    "Start with the two commercial assets: Sanctuary Office Park adopts the Crosby mark directly; Gulf South keeps its mark and adds the endorsement.",
+    "Systemize the two Metairie crests (Lake &amp; Plaza) together — near-identical heraldry, re-cut in one system.",
+    "Unify the three Northshore residential scripts under one supporting typeface; each keeps its signature color.",
+    "Modernize the two oldest marks last (The Sanctuary, DeLimon), preserving the burgundy/gold and est.-1981 heritage."
+  ];
+  var roadmapList = ROADMAP.map(function(s,i){ return '<div style="display:flex;gap:12px;align-items:flex-start;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:12px 14px;margin-bottom:9px;"><span style="flex:0 0 24px;height:24px;border-radius:50%;background:#26265c;color:#fff;font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center;font-family:'+DISP+';">'+(i+1)+'</span><span style="font-size:12.5px;color:#374151;line-height:1.5;">'+s+'</span></div>'; }).join("");
+
+  var pSub = head("layout-grid","Community sub-brands","Each community keeps its own character; the recommendation is one &ldquo;A Crosby Community&rdquo; endorsement to tie the portfolio together.")
+    + gsec("Brand architecture")
+    + '<div class="b-card"><div style="font-size:13px;color:#374151;line-height:1.7;">The portfolio is an <strong>endorsed house of brands</strong>. Today the eight community marks don&rsquo;t share a system — scripts, crests, and illustrations from different eras. The fix isn&rsquo;t to erase them: let each keep its identity, and tie them together with one shared signature — <strong>&ldquo;A Crosby Community&rdquo;</strong> — plus shared navy/blue accents, type, and voice.</div>'
+      + '<div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:14px;">'+endorseDemo+'</div></div>'
+    + gsec("The portfolio")
+    + '<div class="sub-grid">'+communityCards+'</div>'
+    + gsec("Consistency roadmap")
+    + '<div>'+roadmapList+'</div>';
 
   // ── PANEL: Content Strategy ──
   var pStrategy = head("compass","Content strategy","How the feed stays on-brand and sustainable past the warm-up.")
@@ -1217,7 +1289,9 @@ function renderBrand(){
     + '</div>';
 
   // ── PANEL: Asset Library ──
-  var pLibrary = head("images","Image &amp; asset library","Logos, profile pictures, and cover art — all download-ready.");
+  var pLibrary = head("images","Image &amp; asset library","Photography, logos, profile pictures, and cover art — all download-ready.");
+  // photography (pulled live from the Leasing area's uploaded photos)
+  pLibrary += '<div class="b-card" style="margin-bottom:16px;"><div class="b-cardtitle">Photography · Sanctuary Office Park <span style="font-weight:500;color:#9ca3af;">pulled live from the Leasing area</span></div><div id="libPhotos"><div style="font-size:12.5px;color:#9ca3af;">Loading photos…</div></div></div>';
   // logos
   pLibrary += '<div class="b-card" style="margin-bottom:16px;"><div class="b-cardtitle">Logos</div><div class="lib-grid">'
     + BRAND_LOGOS.map(function(l){
@@ -1260,6 +1334,7 @@ function renderBrand(){
   c.innerHTML = html;
   c.setAttribute("data-rendered","1");
   lucide.createIcons();
+  buildLibraryPhotos();
 
   // preload logos, then paint the avatar + banner canvases in the library panel
   var need = {};
