@@ -402,6 +402,22 @@
     .sub-pal { display: flex; gap: 5px; align-items: center; margin-top: 8px; }
     .sub-pal i { width: 16px; height: 16px; border-radius: 4px; border: 1px solid rgba(0,0,0,.1); }
     .sub-pal .hex { font-family: ui-monospace, Consolas, monospace; font-size: 10px; color: #9ca3af; margin-left: 4px; }
+    .sub-blurb { font-size: 12px; color: #6b7280; line-height: 1.45; margin-top: 6px; }
+    .sub-traits { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 8px; }
+    .sub-traits span { font-size: 10.5px; font-weight: 600; color: #374151; background: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 5px; padding: 1px 7px; }
+    .sub-endorse { font-size: 11.5px; color: #345096; line-height: 1.45; background: #f4f8fd; border-left: 3px solid #5b8fc9; border-radius: 0 7px 7px 0; padding: 7px 10px; margin-top: 9px; }
+    .trait-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+    @media (max-width: 860px) { .trait-grid { grid-template-columns: repeat(2, 1fr); } }
+    .trait-card { border: 1px solid #e5e7eb; border-top: 3px solid #5b8fc9; border-radius: 11px; background: #fff; padding: 14px 14px; }
+    .trait-card .tn { font-weight: 700; color: #26265c; font-size: 15px; margin-bottom: 5px; }
+    .trait-card .td { font-size: 12px; color: #6b7280; line-height: 1.45; margin-bottom: 9px; }
+    .trait-card .ta { font-family: ui-monospace, Consolas, monospace; font-size: 10.5px; color: #345096; border-top: 1px dashed #eef1f6; padding-top: 8px; }
+    .img-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    @media (max-width: 720px) { .img-grid { grid-template-columns: 1fr 1fr; } }
+    .img-card { border: 1px solid #e5e7eb; border-radius: 11px; overflow: hidden; background: #fff; }
+    .img-card .band { height: 62px; }
+    .img-card .t { padding: 9px 11px; font-size: 12px; color: #374151; line-height: 1.4; }
+    .img-card .t b { display: block; color: #26265c; font-size: 12.5px; margin-bottom: 2px; }
     /* Asset-library logo grid */
     .lib-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
     @media (max-width: 720px) { .lib-grid { grid-template-columns: 1fr 1fr; } }
@@ -413,6 +429,12 @@
     .lib-thumb.photo { height: 130px; padding: 0; }
     .lib-thumb.photo img { width: 100%; height: 100%; max-height: none; max-width: none; object-fit: cover; }
     .b-dl.file { text-decoration: none; }
+    .lib-chip { font-size: 11.5px; font-weight: 600; color: #4b5563; background: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 16px; padding: 4px 11px; cursor: pointer; transition: all 130ms; }
+    .lib-chip:hover { color: #26265c; border-color: #c7d0e0; }
+    .lib-chip.on { background: #26265c; color: #fff; border-color: #26265c; }
+    .lib-tagsel { font-size: 11px; border: 1px solid #e5e7eb; border-radius: 6px; padding: 3px 6px; color: #374151; background: #fff; width: 100%; cursor: pointer; }
+    .lib-del { background: transparent; border: 0; color: #bb4b3d; cursor: pointer; padding: 3px; border-radius: 5px; display: inline-flex; }
+    .lib-del:hover { background: #fdecea; }
 
     /* Scoped rendering of the fetched doc bodies (mirrors the docs/*.html CSS). */
     .nd { font-size: 14px; color: #1f2937; line-height: 1.55; max-width: 840px; }
@@ -1128,14 +1150,30 @@ function brandEsc(t){ return String(t==null?"":t).replace(/&/g,"&amp;").replace(
 
 // Community sub-brands (logo file in docs/brand/, positioning, sampled palette).
 var COMMUNITIES = [
-  { name:"Sanctuary Office Park", sector:"Class A office", loc:"Mandeville", url:"sanctuaryofficepark.com", logo:"sanctuary-office-park.png", pos:"The foundation for your business success.", pal:["#26265C","#5B8FC9"] },
-  { name:"Gulf South Commerce Park", sector:"Industrial", loc:"Mandeville", url:"gulfsouthcommercepark.com", logo:"gulf-south.png", pos:"Land in Louisiana. Grow in the Gulf. Connect to the world.", pal:["#123F5C","#8CC540","#2F9E9E"] },
-  { name:"The Sanctuary", sector:"Residential", loc:"Mandeville", url:"finesouthernproperties.com", logo:"the-sanctuary.jpg", pos:"Louisiana's luxury real estate.", pal:["#601A1A","#C2A24E"] },
-  { name:"Mandeville Lake", sector:"Apartments", loc:"Mandeville", url:"mandevillelake.com", logo:"mandeville-lake.jpg", pos:"Spacious residences, effortless Northshore living.", pal:["#8F1D1D","#9A9AA0"] },
-  { name:"Lakeside Village", sector:"Townhomes", loc:"Mandeville", url:"lakesidevillage.org", logo:"lakeside-village.jpg", pos:"Great location, affordable prices.", pal:["#B52626","#333333"] },
-  { name:"DeLimon Place", sector:"Townhomes", loc:"Old Metairie", url:"delimonoldmetairie.com", logo:"delimon.jpg", pos:"A picturesque Old Metairie community since 1981.", pal:["#0090C8","#1A1A1A"] },
-  { name:"Metairie Lake", sector:"Apartments", loc:"Metairie", url:"metairielake.com", logo:"metairie-lake.jpg", pos:"Great location at affordable prices.", pal:["#141414","#8A8A8A"] },
-  { name:"Metairie Plaza", sector:"Apartments", loc:"Metairie", url:"metairieplaza.com", logo:"metairie-plaza.jpg", pos:"The perfect location for your lifestyle.", pal:["#6B4A42","#B9A894"] }
+  { name:"Sanctuary Office Park", sector:"Class A office", loc:"Mandeville", url:"sanctuaryofficepark.com", logo:"sanctuary-office-park.png", pos:"The foundation for your business success.", pal:["#26265C","#5B8FC9"],
+    blurb:"100,000+ SF across five buildings, 300–2,800 SF suites, full-service gross, 24-hr security. The flagship commercial asset.", traits:["Professional","Established","Full-service"],
+    endorse:"Closest to the parent — adopt the Crosby mark and navy/blue directly, as the corporate face of the portfolio." },
+  { name:"Gulf South Commerce Park", sector:"Industrial", loc:"Mandeville", url:"gulfsouthcommercepark.com", logo:"gulf-south.png", pos:"Land in Louisiana. Grow in the Gulf. Connect to the world.", pal:["#123F5C","#8CC540","#2F9E9E"],
+    blurb:"906 contiguous acres, multimodal (airports, ports, interstates, Class I rail), PILOT incentives — for multinationals in logistics & advanced manufacturing.", traits:["Connected","Scalable","Global"],
+    endorse:"Strong, current mark — keep it. Nudge the wordmark navy toward Crosby Navy and add the endorsement in the footer." },
+  { name:"The Sanctuary", sector:"Residential", loc:"Mandeville", url:"finesouthernproperties.com", logo:"the-sanctuary.jpg", pos:"Louisiana's luxury real estate.", pal:["#601A1A","#C2A24E"],
+    blurb:"A luxury Northshore residential community in West St. Tammany. Heritage cues (‘A John Crosby Development’), $125M+ in sales.", traits:["Prestige","Southern","Refined"],
+    endorse:"Modernize the vintage mark; keep burgundy + gold as the heritage accent; add the Crosby endorsement line." },
+  { name:"Mandeville Lake", sector:"Apartments", loc:"Mandeville", url:"mandevillelake.com", logo:"mandeville-lake.jpg", pos:"Spacious residences, effortless Northshore living.", pal:["#8F1D1D","#9A9AA0"],
+    blurb:"Resort-style luxury apartments — two pools, clubhouse, 24-hr fitness, tennis; botanical floor-plan names (Azalea, Cypress, Fern).", traits:["Resort","Effortless","Botanical"],
+    endorse:"Keep the wine script as its signature; standardize the supporting type and add the endorsement lockup." },
+  { name:"Lakeside Village", sector:"Townhomes", loc:"Mandeville", url:"lakesidevillage.org", logo:"lakeside-village.jpg", pos:"Great location, affordable prices.", pal:["#B52626","#333333"],
+    blurb:"Gated townhomes & cottages near the Causeway, with an on-site pond and community center — approachable luxury.", traits:["Gated","Lakeside","Approachable"],
+    endorse:"Refine the red script into a cleaner mark; unify under the shared type system + endorsement." },
+  { name:"DeLimon Place", sector:"Townhomes", loc:"Old Metairie", url:"delimonoldmetairie.com", logo:"delimon.jpg", pos:"A picturesque Old Metairie community since 1981.", pal:["#0090C8","#1A1A1A"],
+    blurb:"Established, landscaped townhomes & condos with a fountain centerpiece — a local icon built on heritage and belonging.", traits:["Heritage","Neighborly","Timeless"],
+    endorse:"Refresh the fountain mark; the est.-1981 heritage is an asset — keep it, add the endorsement." },
+  { name:"Metairie Lake", sector:"Apartments", loc:"Metairie", url:"metairielake.com", logo:"metairie-lake.jpg", pos:"Great location at affordable prices.", pal:["#141414","#8A8A8A"],
+    blurb:"Garden-style 1–2 BR apartments near the CBD, med schools & universities. Aimed at young professionals and students.", traits:["Practical","Convenient","Value"],
+    endorse:"Pair with Metairie Plaza — the two near-identical crests should be re-cut in one system together." },
+  { name:"Metairie Plaza", sector:"Apartments", loc:"Metairie", url:"metairieplaza.com", logo:"metairie-plaza.jpg", pos:"The perfect location for your lifestyle.", pal:["#6B4A42","#B9A894"],
+    blurb:"Garden-style 2–3 BR apartments & townhomes, fenced patios, minutes from the CBD — affordable convenience for families.", traits:["Homey","Central","Value"],
+    endorse:"Consolidate with Metairie Lake into one crest system; distinguish only by name & accent color." }
 ];
 // Downloadable logo files for the asset library.
 var BRAND_LOGOS = [
@@ -1155,27 +1193,112 @@ var BRAND_TABS = [
 function showBrandTab(id){
   document.querySelectorAll(".bh-tab").forEach(function(b){ b.classList.toggle("active", b.getAttribute("data-tab")===id); });
   document.querySelectorAll(".bh-panel").forEach(function(p){ p.hidden = (p.id !== "bp-"+id); });
-  if(id === "library") buildLibraryPhotos();
+  if(id === "library") renderBrandLibrary();
   lucide.createIcons();
 }
-// Pull the office-park photos already uploaded in the Leasing area (live from
-// the marketing cache) into the asset library, de-duplicated, with downloads.
-function buildLibraryPhotos(){
-  var host = document.getElementById("libPhotos"); if(!host) return;
-  var mc = window.__marketingCache || [], seen = {}, items = [];
-  mc.forEach(function(r){
-    (r.photos || []).forEach(function(u){
-      if(typeof u !== "string" || u.indexOf("data:image") !== 0) return;
-      var k = u.length + "|" + u.slice(-120); if(seen[k]) return; seen[k] = 1;  // dedup by tail (headers are identical)
-      items.push({ u:u, src:(r.building ? r.building + " · Ste " + r.suite : (r.tenant || "Sanctuary Office Park")) });
+
+// ── Managed brand photo library (shared via Firestore brandMedia) ────────────
+// Each photo: { id, url(dataURL), tag, name, order, addedAt }. Tags = "General"
+// or a community name. Add / remove / re-tag; import existing Leasing photos.
+var BRAND_LIB_TAGS = ["General"].concat(COMMUNITIES.map(function(m){ return m.name; }));
+function brandLibReady(){ return !!(window.__brand && window.__brand.ready); }
+function brandLibGenId(){ return "bm-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2,8); }
+function brandLibTail(u){ return u.length + "|" + u.slice(-120); }
+function brandLibDefaultTag(){ var f = window.__brandLibFilter; return (f && f !== "All") ? f : "General"; }
+// De-duplicated office-park photos currently in the Leasing area.
+function brandLibLeasingPhotos(){
+  var mc = window.__marketingCache || [], seen = {}, out = [];
+  mc.forEach(function(r){ (r.photos || []).forEach(function(u){
+    if(typeof u !== "string" || u.indexOf("data:image") !== 0) return;
+    var k = brandLibTail(u); if(seen[k]) return; seen[k] = 1; out.push(u);
+  }); });
+  return out;
+}
+function brandLibPut(doc){
+  if(brandLibReady()){ window.__brand.put(doc).catch(function(e){ console.error(e); alert("Couldn't save photo: " + ((e&&e.message)||e)); }); }
+  else { window.__brandMediaCache = (window.__brandMediaCache||[]).concat([doc]); renderBrandLibrary(); }
+}
+function brandLibAddFiles(files){
+  if(!files || !files.length) return;
+  var tag = brandLibDefaultTag(), n = 0;
+  [].forEach.call(files, function(f){
+    if(!/^image\//.test(f.type)) return;
+    brandCompressImage(f, function(url){
+      if(!url) return; n++;
+      brandLibPut({ id:brandLibGenId(), url:url, tag:tag, name:f.name||"", order:Date.now()+n, addedAt:new Date().toISOString() });
     });
   });
-  if(!items.length){ host.innerHTML = '<div style="font-size:12.5px;color:#9ca3af;">No photos uploaded in the Leasing area yet — add suite &amp; complex photos there and they appear here automatically.</div>'; return; }
-  host.innerHTML = '<div style="font-size:11.5px;color:#9ca3af;margin-bottom:12px;">'+items.length+' photos from marketed suites — click to download. Great for community &amp; suite-spotlight posts.</div>'
-    + '<div class="lib-grid">'
-    + items.map(function(p, i){ return '<div class="lib-item"><div class="lib-thumb photo"><img src="'+p.u+'" alt="Sanctuary Office Park photo" loading="lazy"></div><div class="lib-meta"><span class="lib-nm" style="font-size:10.5px;">'+brandEsc(p.src)+'</span><a class="b-dl file" href="'+p.u+'" download="sanctuary-office-park-'+(i+1)+'.jpg">'+iconSvg("download",12)+'</a></div></div>'; }).join("")
+}
+function brandLibImportLeasing(){
+  var photos = brandLibLeasingPhotos(), have = {}, added = 0;
+  (window.__brandMediaCache||[]).forEach(function(p){ if(p.url) have[brandLibTail(p.url)] = 1; });
+  photos.forEach(function(u, i){ if(have[brandLibTail(u)]) return; added++;
+    brandLibPut({ id:brandLibGenId(), url:u, tag:"Sanctuary Office Park", name:"leasing-import", order:Date.now()+i, addedAt:new Date().toISOString() });
+  });
+  if(!added) alert("All Leasing photos are already in the library.");
+}
+function brandLibSetTag(id, tag){
+  var p = (window.__brandMediaCache||[]).filter(function(x){ return x.id===id; })[0]; if(p) p.tag = tag;
+  if(brandLibReady()) window.__brand.put({ id:id, tag:tag }).catch(function(e){ console.error(e); });
+  renderBrandLibrary();
+}
+function brandLibDelete(id){
+  window.__brandMediaCache = (window.__brandMediaCache||[]).filter(function(p){ return p.id!==id; });
+  renderBrandLibrary();
+  if(brandLibReady()) window.__brand.delete(id).catch(function(e){ console.error(e); });
+}
+function brandLibSetFilter(t){ window.__brandLibFilter = t; renderBrandLibrary(); }
+function brandCompressImage(file, cb){
+  var reader = new FileReader();
+  reader.onload = function(e){
+    var img = new Image();
+    img.onload = function(){
+      var max = 1280, w = img.width, h = img.height, s = Math.min(1, max/Math.max(w,h));
+      var cw = Math.max(1, Math.round(w*s)), ch = Math.max(1, Math.round(h*s));
+      var cv = document.createElement("canvas"); cv.width = cw; cv.height = ch;
+      cv.getContext("2d").drawImage(img, 0, 0, cw, ch);
+      try { cb(cv.toDataURL("image/jpeg", 0.8)); } catch(err){ cb(null); }
+    };
+    img.onerror = function(){ cb(null); };
+    img.src = e.target.result;
+  };
+  reader.onerror = function(){ cb(null); };
+  reader.readAsDataURL(file);
+}
+function renderBrandLibrary(){
+  var host = document.getElementById("brandLib"); if(!host) return;
+  var esc = brandEsc, all = window.__brandMediaCache || [];
+  var counts = { All: all.length }; BRAND_LIB_TAGS.forEach(function(t){ counts[t] = 0; });
+  all.forEach(function(p){ var t = p.tag || "General"; counts[t] = (counts[t]||0) + 1; });
+  var filter = window.__brandLibFilter || "All";
+  var items = all.filter(function(p){ return filter === "All" || (p.tag||"General") === filter; })
+                 .sort(function(a,b){ return String(b.order||b.addedAt||"").localeCompare(String(a.order||a.addedAt||"")); });
+  var chip = function(t){ return '<button class="lib-chip'+(filter===t?" on":"")+'" onclick="brandLibSetFilter(\''+esc(t).replace(/'/g,"&#39;")+'\')">'+esc(t)+' <span style="opacity:.6;">'+(t==="All"?counts.All:(counts[t]||0))+'</span></button>'; };
+  var leasingN = brandLibLeasingPhotos().length;
+  var html = '<div style="display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin-bottom:14px;">'
+    + chip("All") + BRAND_LIB_TAGS.map(chip).join("")
+    + '<span style="flex:1;min-width:12px;"></span>'
+    + '<button class="b-dl" onclick="document.getElementById(\'brandLibFile\').click()">'+iconSvg("upload",12)+' Add photos</button>'
+    + (leasingN ? '<button class="b-dl" onclick="brandLibImportLeasing()">'+iconSvg("download-cloud",12)+' Import '+leasingN+' from Leasing</button>' : '')
+    + '<input type="file" id="brandLibFile" accept="image/*" multiple style="display:none;" onchange="brandLibAddFiles(this.files); this.value=\'\';">'
     + '</div>';
-  lucide.createIcons();
+  if(!brandLibReady()) html += '<div style="font-size:11.5px;color:#b45309;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:8px 11px;margin-bottom:12px;">Live library isn\'t connected here — additions won\'t save until this runs on the deployed site.</div>';
+  if(!items.length){
+    html += '<div style="font-size:12.5px;color:#9ca3af;padding:6px 0;">No photos'+(filter==="All"?"":' tagged &ldquo;'+esc(filter)+'&rdquo;')+' yet. Use <strong>Add photos</strong>'+(leasingN?' or <strong>Import from Leasing</strong>':'')+'.</div>';
+  } else {
+    html += '<div class="lib-grid">' + items.map(function(p){
+      var opts = BRAND_LIB_TAGS.map(function(t){ return '<option value="'+esc(t)+'"'+(((p.tag||"General")===t)?" selected":"")+'>'+esc(t)+'</option>'; }).join("");
+      var dl = "crosby-" + String(p.tag||"photo").toLowerCase().replace(/[^a-z0-9]+/g,"-") + ".jpg";
+      return '<div class="lib-item"><div class="lib-thumb photo"><img src="'+p.url+'" loading="lazy" alt="brand photo"></div>'
+        + '<div style="padding:8px 10px;display:flex;flex-direction:column;gap:7px;">'
+        + '<select class="lib-tagsel" onchange="brandLibSetTag(\''+p.id+'\',this.value)">'+opts+'</select>'
+        + '<div style="display:flex;justify-content:space-between;align-items:center;">'
+        + '<a class="b-dl file" href="'+p.url+'" download="'+dl+'" title="Download">'+iconSvg("download",12)+'</a>'
+        + '<button class="lib-del" title="Remove" onclick="brandLibDelete(\''+p.id+'\')">'+iconSvg("trash-2",13)+'</button>'
+        + '</div></div></div>';
+    }).join("") + '</div>';
+  }
+  host.innerHTML = html; lucide.createIcons();
 }
 
 function renderBrand(){
@@ -1216,24 +1339,58 @@ function renderBrand(){
   var voiceRows = VOICE.map(function(v){ return '<div class="b-card" style="margin-bottom:10px;"><div style="font-weight:700;color:#26265c;font-size:13.5px;margin-bottom:8px;">'+v[0]+'</div><div style="font-size:12.5px;color:#9ca3af;margin-bottom:4px;"><span style="color:#bb4b3d;font-weight:600;">Avoid</span> — '+v[1]+'</div><div style="font-size:12.5px;color:#374151;"><span style="color:#345096;font-weight:600;">Crosby</span> — '+v[2]+'</div></div>'; }).join("");
 
   // ── PANEL: Overall Brand (full guide, native) ──
+  var TRAITS = [
+    ["Rooted","Of this place. Named streets, real neighbors, seven decades in the same parishes.","local &amp; specific / not national"],
+    ["Solid","Engineered and built to hold — the look is structural, like the work.","structural / not decorative"],
+    ["Warm","A family firm that talks like one. People, not units.","human / not corporate"],
+    ["Enduring","Built to outlast the cycle — and the people who signed the lease.","long view / not next quarter"],
+    ["Understated","Craft over flash. Let the record do the bragging.","refined / not loud"]
+  ];
+  var traitGrid = '<div class="trait-grid">'+TRAITS.map(function(t){ return '<div class="trait-card"><div class="tn">'+t[0]+'</div><div class="td">'+t[1]+'</div><div class="ta">'+t[2]+'</div></div>'; }).join("")+'</div>';
+  var IMAGERY = [
+    ["Places, in context","linear-gradient(135deg,#26265c,#3a3c78)","Aerials &amp; wide shots — a campus in its landscape."],
+    ["People &amp; tenants","linear-gradient(135deg,#5b8fc9,#8bb0dc)","Real families and businesses — the reason it&rsquo;s built."],
+    ["Structure &amp; craft","linear-gradient(135deg,#345096,#5b8fc9)","Brick, steel, framing, a cornerstone — proof it lasts."],
+    ["Survey linework","linear-gradient(135deg,#171733,#26265c)","Contours &amp; frames as a navy/blue graphic layer."]
+  ];
+  var imageryGrid = '<div class="img-grid">'+IMAGERY.map(function(m){ return '<div class="img-card"><div class="band" style="background:'+m[1]+';"></div><div class="t"><b>'+m[0]+'</b>'+m[2]+'</div></div>'; }).join("")+'</div>'
+    + '<div class="b-card" style="margin-top:12px;"><div style="font-size:12.5px;color:#374151;line-height:1.7;"><span style="color:#345096;font-weight:700;">Do</span> — shoot in warm, natural light; keep the graphic layer cool navy/blue. <span style="color:#bb4b3d;font-weight:700;margin-left:8px;">Don&rsquo;t</span> — use cold empty stock renders or generic glass-tower clichés.</div></div>';
+  var applicationsCard = '<div class="b-card"><div style="font-size:12.5px;color:#374151;line-height:1.8;">The system applied — <strong>letterhead</strong> (logo top-left, 2px navy rule), <strong>email signature</strong> (logo + name + blue bar), <strong>offering-memorandum cover</strong> (logo in a white plate on navy + tagline), a <strong>cornerstone / signage medallion</strong> (the monogram), and the <strong>operating dashboards</strong> you&rsquo;re already using — all on Crosby Navy &amp; Blue, so the identity reads consistently end to end.</div></div>';
+
   var pOverall = head("bookmark","Overall brand","Crosby Development's master identity — the mark, colors, type, and voice everything else answers to.")
     + glanceCard
     + gsec("Foundation")
-    + '<div class="b-card"><div style="font-size:13px;color:#374151;line-height:1.7;">Founded in 1954 by John&nbsp;L.&nbsp;Crosby,&nbsp;Sr., Crosby Development builds and stewards residential, commercial, and industrial communities across Greater New Orleans and the Northshore. Seventy-two years, three generations, one idea: build places meant to last — then stay to look after them.<br><br><strong>Positioning —</strong> the multigenerational Louisiana developer that builds <em>and keeps</em> its communities. &nbsp;<strong>Personality —</strong> Rooted · Solid · Warm · Enduring · Understated.</div></div>'
+    + '<div class="b-card"><div style="font-family:'+DISP+';font-weight:700;font-size:clamp(18px,2.4vw,24px);color:#26265c;line-height:1.15;border-left:4px solid #5b8fc9;padding-left:16px;">We don&rsquo;t build to sell. We build to belong — and we&rsquo;re still here to prove it.</div>'
+      + '<div style="display:flex;gap:28px;flex-wrap:wrap;margin:16px 0 4px;">'
+        + '<div><div style="font-family:'+DISP+';font-weight:700;font-size:26px;color:#26265c;">72</div><div style="font-size:11px;color:#9ca3af;">years · three generations</div></div>'
+        + '<div><div style="font-family:'+DISP+';font-weight:700;font-size:26px;color:#26265c;">8</div><div style="font-size:11px;color:#9ca3af;">communities, two parishes</div></div>'
+        + '<div><div style="font-family:'+DISP+';font-weight:700;font-size:26px;color:#26265c;">3</div><div style="font-size:11px;color:#9ca3af;">sectors — living · working · industry</div></div>'
+      + '</div>'
+      + '<div style="font-size:13px;color:#374151;line-height:1.7;margin-top:8px;">Founded in 1954 by John&nbsp;L.&nbsp;Crosby,&nbsp;Sr., Crosby Development builds and stewards residential, commercial, and industrial communities across Greater New Orleans and the Northshore. <strong>Positioning —</strong> the multigenerational Louisiana developer that builds <em>and keeps</em> its communities.</div>'
+      + '<div style="font-size:12px;color:#6b7280;line-height:1.6;margin-top:12px;border-top:1px dashed #eef1f6;padding-top:12px;"><strong style="color:#26265c;">Boilerplate —</strong> Crosby Development Company is a family-owned developer of residential, commercial, and industrial communities across Greater New Orleans and the Northshore. Founded in 1954 by John&nbsp;L.&nbsp;Crosby,&nbsp;Sr., the firm has spent three generations building — and stewarding — the places where Louisiana families and businesses put down roots.</div>'
+    + '</div>'
+    + gsec("Personality")
+    + traitGrid
     + gsec("The marks")
     + '<div class="grid-2">'
       + '<div class="b-card"><div class="b-cardtitle">Primary lockup</div><div style="background:#fff;border:1px solid #eef1f6;border-radius:8px;padding:22px;display:flex;justify-content:center;"><img src="docs/brand/crosby-master.jpg" alt="Crosby logo" style="max-width:300px;width:100%;"></div></div>'
       + '<div class="b-card"><div class="b-cardtitle">Monogram</div><div style="background:#fff;border:1px solid #eef1f6;border-radius:8px;padding:16px;display:flex;justify-content:center;"><img src="docs/brand/crosby-monogram.png" alt="Crosby monogram" style="height:126px;"></div></div>'
     + '</div>'
-    + '<div class="b-card" style="margin-top:14px;"><div style="font-size:12.5px;color:#374151;line-height:1.8;"><span style="color:#345096;font-weight:700;">Do</span> — keep clear space of one monogram-height on all sides; hold the two-color navy + blue; the monogram may stand alone.<br><span style="color:#bb4b3d;font-weight:700;">Don&rsquo;t</span> — recolor, add gradients or shadows, stretch it, or place the color logo on a busy photo (use a white plate).</div></div>'
+    + '<div class="b-card" style="margin-top:14px;"><div style="font-size:12.5px;color:#374151;line-height:1.8;"><span style="color:#345096;font-weight:700;">Do</span> — keep clear space of one monogram-height on all sides; hold the two-color navy + blue; the monogram may stand alone.<br><span style="color:#bb4b3d;font-weight:700;">Don&rsquo;t</span> — recolor, add gradients or shadows, stretch it, or place the color logo on a busy photo (use a white plate).</div>'
+      + '<div style="font-size:11.5px;color:#6b7280;line-height:1.6;margin-top:11px;border-top:1px dashed #eef1f6;padding-top:11px;"><strong style="color:#26265c;">Production gap —</strong> a reversed (white) knockout and a one-color navy version should be cut from the vector master (CDC_Logo.eps / .pdf) for dark grounds, signage, embroidery, and single-color print. The files on hand are full-color raster only.</div></div>'
     + gsec("Color")
     + colorGrid
+    + '<div style="font-size:11.5px;color:#9ca3af;margin-top:8px;">Balance: Navy ~52% · Mist ~30% · Blue ~14% · Slate ~4% — the accent earns its scarcity.</div>'
     + gsec("Typography")
     + typeCard
     + gsec("Voice")
     + voiceRows
+    + gsec("Imagery")
+    + imageryGrid
+    + gsec("Applications")
+    + applicationsCard
     + gsec("Tagline")
-    + '<div class="b-card" style="background:#26265c;border-color:#26265c;"><div style="font-family:'+DISP+';font-weight:700;font-size:23px;color:#fff;line-height:1.1;">Building Louisiana communities since 1954.</div><div style="color:#b7bfe0;font-size:12px;margin-top:8px;line-height:1.5;">Lead line — year-anchored, so it never dates. Alternates: &ldquo;Three generations. Communities that last.&rdquo; · &ldquo;Rooted here. Built to last.&rdquo;</div></div>';
+    + '<div class="b-card" style="background:#26265c;border-color:#26265c;"><div style="font-family:'+DISP+';font-weight:700;font-size:23px;color:#fff;line-height:1.1;">Building Louisiana communities since 1954.</div><div style="color:#b7bfe0;font-size:12px;margin-top:8px;line-height:1.5;">Lead line — year-anchored, so it never dates. Alternates: &ldquo;Three generations. Communities that last.&rdquo; · &ldquo;Rooted here. Built to last.&rdquo; · descriptor: &ldquo;Developing homes, workplaces, and industry across Greater New Orleans and the Northshore.&rdquo;</div></div>';
 
   // ── PANEL: Sub-Brands (native) ──
   var communityCards = COMMUNITIES.map(function(m){
@@ -1241,7 +1398,10 @@ function renderBrand(){
           + '<div style="min-width:0;"><div class="sub-name">'+esc(m.name)+'<span class="sub-sec">'+esc(m.sector)+'</span></div>'
           + '<div class="sub-loc">'+esc(m.url)+' · '+esc(m.loc)+'</div>'
           + '<div class="sub-pos">&ldquo;'+esc(m.pos)+'&rdquo;</div>'
+          + '<div class="sub-blurb">'+esc(m.blurb)+'</div>'
+          + '<div class="sub-traits">'+(m.traits||[]).map(function(t){ return '<span>'+esc(t)+'</span>'; }).join("")+'</div>'
           + '<div class="sub-pal">'+m.pal.map(function(h){ return '<i style="background:'+h+'" title="'+h+'"></i>'; }).join("")+'<span class="hex">'+m.pal.join("  ")+'</span></div>'
+          + '<div class="sub-endorse"><strong>Endorsement:</strong> '+esc(m.endorse)+'</div>'
           + '</div></div>';
       }).join("");
   var endorseDemo = ["Mandeville Lake","DeLimon Place","Gulf South"].map(function(n){ return '<div style="flex:1 1 180px;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:14px 16px;"><div style="font-family:'+DISP+';font-weight:700;font-size:18px;color:#26265c;">'+n+'</div><div style="height:2px;width:34px;background:#5b8fc9;margin:7px 0;"></div><div style="font-family:ui-monospace,Consolas,monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#345096;">A Crosby Community</div></div>'; }).join("");
@@ -1291,7 +1451,7 @@ function renderBrand(){
   // ── PANEL: Asset Library ──
   var pLibrary = head("images","Image &amp; asset library","Photography, logos, profile pictures, and cover art — all download-ready.");
   // photography (pulled live from the Leasing area's uploaded photos)
-  pLibrary += '<div class="b-card" style="margin-bottom:16px;"><div class="b-cardtitle">Photography · Sanctuary Office Park <span style="font-weight:500;color:#9ca3af;">pulled live from the Leasing area</span></div><div id="libPhotos"><div style="font-size:12.5px;color:#9ca3af;">Loading photos…</div></div></div>';
+  pLibrary += '<div class="b-card" style="margin-bottom:16px;"><div class="b-cardtitle">Photography <span style="font-weight:500;color:#9ca3af;">tag by community · add / remove · import from Leasing</span></div><div id="brandLib"><div style="font-size:12.5px;color:#9ca3af;">Loading…</div></div></div>';
   // logos
   pLibrary += '<div class="b-card" style="margin-bottom:16px;"><div class="b-cardtitle">Logos</div><div class="lib-grid">'
     + BRAND_LOGOS.map(function(l){
@@ -1334,7 +1494,7 @@ function renderBrand(){
   c.innerHTML = html;
   c.setAttribute("data-rendered","1");
   lucide.createIcons();
-  buildLibraryPhotos();
+  renderBrandLibrary();
 
   // preload logos, then paint the avatar + banner canvases in the library panel
   var need = {};
@@ -6103,7 +6263,8 @@ document.addEventListener("DOMContentLoaded", init);
            subscribeMarketing, upsertMarketingSuite, deleteMarketingSuite, putMarketingMedia, deleteMarketingMedia, reorderMarketingMedia,
            subscribeProposed, upsertProposedSuite, deleteProposedSuite,
            subscribeTrackerPrefs, deprioritizeSuite, reprioritizeSuite,
-           uploadMarketingFlyer, deleteMarketingFile }
+           uploadMarketingFlyer, deleteMarketingFile,
+           subscribeBrandMedia, putBrandMedia, deleteBrandMedia }
     from "./crosby-data.js";
   import { deriveViewModel } from "./crosby-viewmodel.js";
   // Load the shared rent engine RESILIENTLY. A static import that 404s would
@@ -6125,6 +6286,8 @@ document.addEventListener("DOMContentLoaded", init);
     putMedia: putMarketingMedia, deleteMedia: deleteMarketingMedia, reorderMedia: reorderMarketingMedia,
     uploadFlyer: uploadMarketingFlyer, deleteFile: deleteMarketingFile,
   };
+  // Shared brand content-library writes (photos tagged by community).
+  window.__brand = { ready: false, mode: DATA_MODE, put: putBrandMedia, delete: deleteBrandMedia };
   // Shared proposed-suite writes.
   window.__proposed = { ready: false, mode: DATA_MODE, upsert: upsertProposedSuite, delete: deleteProposedSuite };
   // Shared lease-timeline tracker prefs (de-prioritized / set-aside suites).
@@ -6229,6 +6392,17 @@ document.addEventListener("DOMContentLoaded", init);
       },
       onMedia:  (a) => { __mktMedia = a; rebuildMarketing(); },
       onError:  (e) => console.error("[crosby] marketing sync error:", e),
+    });
+
+    // Live SHARED brand content library (photos, tagged by community).
+    await subscribeBrandMedia({
+      onReady: (ok) => { window.__brand.ready = ok; },
+      onItems: (a) => {
+        window.__brandMediaCache = a.slice();
+        if (typeof renderBrandLibrary === "function" &&
+            document.getElementById("view-brand")?.classList.contains("active")) renderBrandLibrary();
+      },
+      onError: (e) => console.error("[crosby] brand media sync error:", e),
     });
 
     // Live SHARED proposed-suite configurations.

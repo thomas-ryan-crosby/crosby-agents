@@ -210,6 +210,31 @@ export async function reorderMarketingMedia(updates) {
   await batch.commit();
 }
 
+// ── Brand content library (SHARED photos, tagged by community) ────────────────
+// One doc per photo in `brandMedia`: { id, url(dataURL), tag, name, order, addedAt }.
+// Public read+write, same posture as marketing, so the library is multi-user.
+const BRAND_MEDIA = "brandMedia";
+
+export async function subscribeBrandMedia(handlers) {
+  if (DATA_MODE === "local") { handlers.onReady?.(false); return () => {}; }
+  const fb = await ensureFirebase();
+  const unsub = fb.onSnapshot(fb.collection(fb.db, BRAND_MEDIA),
+    (s) => handlers.onItems?.(s.docs.map((d) => ({ id: d.id, ...d.data() }))),
+    (e) => handlers.onError?.(e));
+  handlers.onReady?.(true);
+  return unsub;
+}
+// Create/patch a photo doc (merge, so a tag change keeps the url).
+export async function putBrandMedia(media) {
+  const fb = await ensureFirebase();
+  await fb.setDoc(fb.doc(fb.db, BRAND_MEDIA, media.id),
+    { ...media, updatedAt: fb.serverTimestamp() }, { merge: true });
+}
+export async function deleteBrandMedia(id) {
+  const fb = await ensureFirebase();
+  await fb.deleteDoc(fb.doc(fb.db, BRAND_MEDIA, id));
+}
+
 // ── Proposed suites (hypothetical configurations) ─────────────────────────────
 // Shared, live, multi-user — same model as marketing. A proposed suite is a
 // combination/subdivision of real suites floated for a prospective tenant.

@@ -42,6 +42,11 @@ service cloud.firestore {
     match /trackerPrefs/{doc} {
       allow read, write: if true;
     }
+    // Brand content library — photos (tagged by community) for social/marketing.
+    // Same public read+write posture as marketing so it is multi-user / cross-device.
+    match /brandMedia/{doc} {
+      allow read, write: if true;
+    }
 
     // ⚠ TEMPORARY: public read for the unauthenticated dashboard preview
     // (firebase-config.js AUTH_ENABLED = false). This exposes ALL tenant PII
